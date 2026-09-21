@@ -7,6 +7,7 @@ Reviewed head / base SHAs (code review):
 Risk assessment:
 Coverage (criteria, plan items, diff, affected callers, prior repairs):
 Unchanged tree/head verification:
+Plan episode / ordinary revision launches and limit / escalation mode (plan review):
 
 ## Spec
 
@@ -26,9 +27,18 @@ Findings, or none with the alternatives examined.
 
 ## Finding format
 
-For each actionable finding: local ID, axis, severity, location, claim, concrete
-evidence, proposed correction. IDs belong only to this census. Blocker and major
-are blocking; minor is non-blocking. Remove this instructional section in output.
+For each actionable finding: local ID, origin review/ID, axis, severity, location,
+original failure scenario, acceptance condition, concrete evidence, and proposed
+correction. Local IDs belong only to this census; origin links preserve lineage.
+Blocker and major are blocking; minor is non-blocking. Use
+[finding resolution](../references/findings.md). Remove this instruction in output.
+
+## Prior-finding verification
+
+For every prior actionable finding: origin, primary's proposed change/refutation,
+candidate location, independent replay/trace and result, disposition, and evidence
+at this revision/head. Explain new scenarios and split/merged lineage. Use “none”
+only for a first census. Claims of “addressed” are not verification.
 
 ## Verdict
 

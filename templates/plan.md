@@ -3,6 +3,7 @@
 
 Specification revision / issue body updatedAt:
 Observed head / base:
+Plan episode / ordinary revision launches and limit / escalation mode:
 
 ## Current behavior and data shape
 
@@ -24,4 +25,8 @@ Repository checks and real user-surface demonstration.
 
 ## Revision response
 
-Disposition and evidence for prior actionable plan-review findings, or none.
+For every prior actionable finding: origin, original failure scenario, acceptance
+condition, proposed correction/refutation, changed plan location, and supporting
+evidence. Identify unresolved items; distinguish observed checks from planned tests.
+Use [finding resolution](../references/findings.md), or “none” for an initial plan.
+When escalated, include diagnosis evidence and the changed repair strategy.

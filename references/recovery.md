@@ -11,9 +11,11 @@ by itself, a human blocker. Preserve the active stage while recovering.
    Preserve completed work and brief only the unfinished portion.
 2. Record station, head, failed command/check and exit, redacted raw error, open
    findings, worker outcome, and evidence paths. Compare semantically with prior
-   attempts: changed head/error/findings/failing check is progress; the same failure
-   at the same head with the same findings is no progress. Explain this comparison
-   in run.md. Progress resets the same-failure count, not the total run budget.
+   attempts using original failure scenarios and acceptance conditions. A changed
+   head, error, finding ID/count, or plan length alone is not progress; cite the
+   newly satisfied condition or eliminated cause. Explain this comparison in
+   run.md. Verified progress resets the same-failure count, not the total run
+   budget or [plan revision count](plan-convergence.md).
 3. Choose the smallest response supported by evidence:
 
    | Condition | Response |
@@ -24,8 +26,9 @@ by itself, a human blocker. Preserve the active stage while recovering.
    | failed behavior/test/type/lint/build | primary repairs using original command/logs, diff, spec and plan; rerun that check |
    | unknown technical failure | fresh diagnosis worker; unknown does not mean human-required |
    | resolved same_failure_attempts reached (default 2) | fresh secondary independent diagnosis, then fresh primary repair |
-   | same failure after diagnosis and repair | one configured fallback attempt; if unavailable, fresh primary with a materially different hypothesis |
-   | actionable plan/review findings | normal planning revision or review/fix loop |
+   | same failure after diagnosis and repair | one configured fallback attempt per original failure scenario per run; if unavailable or already attempted, fresh primary with a materially different hypothesis |
+   | actionable plan findings | apply plan-convergence.md before another revision; bounded ordinary attempts then independent diagnosis and changed strategy |
+   | actionable code review findings | review/fix loop with findings.md reconciliation |
    | conflicts/CI | pre-merge reference's ordered recovery |
    | telemetry/local artifact/helper failure | recreate from remote evidence or use direct existing CLI; note the gap |
 

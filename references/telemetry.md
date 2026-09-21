@@ -13,6 +13,12 @@ head before/after, finding census, recovery hypotheses, label changes, and evide
 paths/remote URLs. Say `unknown` when not reported; never estimate or use zero for
 missing usage. Avoid adding both session totals and their constituent turn totals.
 
+For plan episodes, record ordinary revision launches/limit, escalation mode,
+diagnosis evidence, attempted strategies, and independent verification outcomes.
+Publish these with marked plan/review/activity artifacts for reconstruction after
+local loss. Finding censuses retain origin links and separate verified closure,
+unresolved/reopened, and genuinely new findings; counts alone are not progress.
+
 Use these event kinds when their trigger occurs:
 
 | Kind | Trigger |

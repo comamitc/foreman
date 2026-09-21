@@ -62,6 +62,7 @@ Optional `.capstan.json` in the target repository:
   "recovery": {
     "transient_retries": 3,
     "same_failure_attempts": 2,
+    "plan_revision_attempts": 2,
     "run_wall_timeout_min": 360,
     "max_cost_usd": null
   },
@@ -82,6 +83,14 @@ Read [contract](references/contract.md) for field rules and
 [harnesses](references/harnesses.md) for version-checked launch guidance. No parser
 is installed. A cost cap needs measurable reported cost; otherwise the coordinator
 asks for a usable budget decision rather than inventing usage.
+
+Reviews independently verify each finding against its original failure scenario
+and acceptance condition, retaining unresolved/new lineage. Planning allows two
+ordinary revisions by default, then escalates to independent diagnosis and a
+different repair strategy within the same run budget. The limit never approves
+or blocks an issue automatically. See [finding resolution](references/findings.md)
+and [plan convergence](references/plan-convergence.md); use
+`CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS` to override the revision limit.
 
 ## Trust and authority
 

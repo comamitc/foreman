@@ -136,7 +136,8 @@ wholesale. Call out unknown/invalid fields and use a valid lower-precedence valu
 salvage unambiguous values from malformed input without inventing ambiguous ones.
 
 Defaults: primary claude; secondary codex; optional fallback grok; model and effort
-null; transient_retries 3; same_failure_attempts 2; run_wall_timeout_min 360;
+null; transient_retries 3; same_failure_attempts 2; plan_revision_attempts 2;
+run_wall_timeout_min 360;
 max_cost_usd null; worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false.
 Timeouts must be positive; retry counts nonnegative integers; cost positive or
 null; unsafe_autonomy boolean. Null model/effort uses the harness default and is
@@ -144,6 +145,11 @@ recorded as such. Null fallback disables it. Prefer a different available second
 if only one harness works, disclose `independence: same-harness`. An explicitly
 requested unavailable setting fails visibly and enters recovery; never silently
 drop an effort setting. Record effective nonsecret configuration in run.md.
+
+`recovery.plan_revision_attempts` is a nonnegative integer, including zero.
+It bounds ordinary revisions, not total reviews; [plan convergence](plan-convergence.md)
+defines counting, resume, and escalation. Its environment override is
+`CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`.
 
 Budget begins when the run is accepted and survives ordinary resume through
 remote activity/summary timestamps. Loss of local telemetry does not reset it.
