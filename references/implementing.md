@@ -23,15 +23,19 @@ not independent approval of the corrected design or closure of its findings.
 5. Prepare PR text with Why, Scope, Tradeoffs, Blast Radius, and Verification.
    Report risks honestly and verify a clean worktree containing the intended commits.
 
-Add `## Acceptance proof`, `## Finding dispositions`, `## Resulting head`, and
-`## PR content` to common result headings. Complete when the diff is nonempty and
+For any blocker/major obligation carried from review, include the red/green/bite
+row from [finding resolution](findings.md); planned or proxy tests are insufficient.
+
+Add `## Acceptance proof`, `## Finding closure proofs`, `## Finding dispositions`,
+`## Resulting head`, and `## PR content` to common result headings. Complete when the diff is nonempty and
 in scope, declared checks
 pass, every carried finding has an evidenced proposed disposition, the user-visible
 result is demonstrated, commits contain the intended change, and the tree is clean.
 A no-op or already-delivered issue is reconciled with the
 coordinator; do not manufacture a change to satisfy the nonempty criterion.
 
-Coordinator independently checks evidence, pushes the exact issue branch without
+Coordinator independently checks evidence and applies the closure proof gate for
+every carried blocker/major, then pushes the exact issue branch without
 force, and finds or creates one non-draft PR with the contract marker and correct
 base. Observe a push rejection before deciding how to integrate remote human work;
 delegate any needed commit/repair to a worker. Read back PR/head/body, then review.

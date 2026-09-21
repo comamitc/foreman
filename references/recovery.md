@@ -32,7 +32,8 @@ preserve the active stage while recovering.
    | resolved same_failure_attempts reached (default 2) | fresh secondary independent diagnosis, then fresh primary repair |
    | same failure after diagnosis and repair | one configured fallback attempt per original failure scenario per run; if unavailable or already attempted, fresh primary with a materially different hypothesis |
    | actionable plan findings | single correction against the complete census, then implementing with every obligation; apply plan-convergence.md |
-   | actionable code review findings | review/fix loop with findings.md reconciliation |
+   | actionable code review findings | review/fix loop with findings.md reconciliation and the pre-push closure proof gate |
+   | recurrent/reopened scenario after a claimed fix | record the insufficient red/green/bite proof, obtain fresh secondary diagnosis, then use a materially different primary repair hypothesis |
    | conflicts/CI | pre-merge reference's ordered recovery |
    | telemetry/local artifact/helper failure | recreate from remote evidence or use direct existing CLI; note the gap |
 

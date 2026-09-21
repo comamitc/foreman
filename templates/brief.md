@@ -23,6 +23,10 @@ Implementation and code-review briefs carry ALL planning findings, their propose
 treatments or refutations, unfinished items, and required code-level proof. Keep
 this a standalone current brief; reference historical artifacts without nesting
 old briefs.
+For an implementing/fix brief carrying blocker/major findings, require one
+red/green/bite closure row per finding using `references/findings.md`. Name the
+exact reviewed head for red evidence and prohibit proxy checks that test a weaker
+condition than the original scenario.
 
 ## Numbered station steps
 
@@ -39,7 +43,8 @@ Inspect current files and side effects before repeating actions. Use the simplic
 ladder: need, existing code, standard library, platform, installed dependency, one
 line, minimum new code. Preserve human work and stay within scope. Report only
 observed commands/outcomes. At write stations commit coherent changes and provide
-meaningful regression proof for defects. At read stations preserve head and tree.
+meaningful regression proof for defects, including discriminating bite evidence
+for carried blocker/major findings. At read stations preserve head and tree.
 Write only to authorized paths. Do not push, mutate GitHub, open PRs, change labels,
 merge, deploy, force-push, or invoke external skills. Return raw errors redacted.
 
