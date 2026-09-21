@@ -1,7 +1,11 @@
 # Recovery inside the active station
 
-A failed attempt supplies evidence for another autonomous attempt. It is not,
-by itself, a human blocker. Preserve the active stage while recovering.
+A failed attempt supplies evidence for recovery, not by itself a human blocker.
+For planning and plan-review, [one-pass planning](plan-convergence.md) takes
+precedence over all generic retry, corrective-prompt, diagnosis, and fallback
+rules below. They cannot create another correction or second plan review.
+Technical diagnosis/repair of carried findings belongs in implementing. Elsewhere,
+preserve the active stage while recovering.
 
 ## Observe, diagnose, retry
 
@@ -15,7 +19,7 @@ by itself, a human blocker. Preserve the active stage while recovering.
    head, error, finding ID/count, or plan length alone is not progress; cite the
    newly satisfied condition or eliminated cause. Explain this comparison in
    run.md. Verified progress resets the same-failure count, not the total run
-   budget or [plan revision count](plan-convergence.md).
+   budget or the consumed single planning correction.
 3. Choose the smallest response supported by evidence:
 
    | Condition | Response |
@@ -27,7 +31,7 @@ by itself, a human blocker. Preserve the active stage while recovering.
    | unknown technical failure | fresh diagnosis worker; unknown does not mean human-required |
    | resolved same_failure_attempts reached (default 2) | fresh secondary independent diagnosis, then fresh primary repair |
    | same failure after diagnosis and repair | one configured fallback attempt per original failure scenario per run; if unavailable or already attempted, fresh primary with a materially different hypothesis |
-   | actionable plan findings | apply plan-convergence.md before another revision; bounded ordinary attempts then independent diagnosis and changed strategy |
+   | actionable plan findings | single correction against the complete census, then implementing with every obligation; apply plan-convergence.md |
    | actionable code review findings | review/fix loop with findings.md reconciliation |
    | conflicts/CI | pre-merge reference's ordered recovery |
    | telemetry/local artifact/helper failure | recreate from remote evidence or use direct existing CLI; note the gap |

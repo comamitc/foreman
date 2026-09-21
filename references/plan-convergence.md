@@ -1,58 +1,76 @@
-# Bounded plan revisions
+# One-pass planning
 
-The coordinator reads this before launching a plan revision and after every
-plan-review verdict. Track the planning episode from its initial plan until
-independent approval. The limit changes the repair strategy, not the ready gate.
+The coordinator reads this before dispatching planning or plan-review, after their
+results, and when resuming a run. Planning settles scope, architecture, irreversible
+decisions, and the implementation approach. Executable correctness is proved in
+implementing and code review, not through repeated plan judgments.
 
-## Ordinary revisions
+## Fixed sequence
 
-`recovery.plan_revision_attempts` defaults to 2: initial plan and review, then at
-most two ordinary revision worker launches, each followed by independent review.
-Check the limit before launching another revision. Zero means diagnose after the
-first rejected plan. An approval advances immediately, even at the limit.
+One initial plan → one independent plan review → one correction pass covering the
+entire feedback set → implementing. If the review has no actionable findings,
+skip the correction. There is no second plan-review or planning escalation loop.
 
-Count each launched ordinary revision, including a crash, timeout, or corrective
-continuation that attempts another revision. Do not count read-only review or
-result-only recovery that preserves an already produced candidate. Inspect effects
-before retrying. Changed IDs, fewer findings, longer plans, new spec/head, or fresh
-workers do not reset this count. General recovery can escalate earlier.
+| Observed evidence | Next action |
+| --- | --- |
+| No initial plan | Fresh primary produces the initial plan |
+| Initial plan, no complete review | Fresh secondary reviews once |
+| Complete review, no actionable findings | Enter implementing |
+| Complete review with findings, correction not launched | Fresh primary corrects the plan once against ALL findings |
+| Correction returned | Check coverage, publish the handoff, enter implementing |
+| Correction interrupted or incomplete | Preserve its output; hand off unfinished obligations to implementing |
 
-Publish the episode, ordinary launch count/limit, and ordinary/escalated mode in
-marked plan/review or activity evidence before dispatch; reconcile launch outcome
-afterward. Resume reconstructs them from remote attempts, not labels or a missing
-local counter. An ambiguous recorded launch counts conservatively. If history
-cannot establish remaining ordinary attempts, diagnose instead of granting a new
-quota. No special state file or parser is required.
+One correction means one pass over all N findings, not one finding per pass. Its
+brief includes the full census with original scenarios, acceptance conditions,
+and evidence. Each finding needs a concrete plan correction with an implementation
+check, an evidence-backed proposed refutation, or an explicitly identified
+prerequisite. Update affected plan items, not just a response table. Preserve
+settled scope; keep the correction proportional to the feedback.
 
-## Escalated repair
+The coordinator checks that every finding is represented in the handoff; this is
+a coverage check, not another design review. A correction is a proposed treatment,
+not verified closure. Carry the original review, corrected plan, and every finding
+into the implementation brief using [finding resolution](findings.md). If a finding
+was omitted or inadequately treated, retain it as unresolved with its original
+acceptance condition and an explicit implementation task; never infer closure.
+Implementation must complete this mapping before affected code is written.
 
-When another revision is needed at the limit, stay in the active planning station:
+## Prerequisites versus implementation obligations
 
-1. Launch a fresh independent secondary diagnosis using the admitted spec,
-   current candidate, full finding lineage, actual prior briefs/results, and source
-   evidence. Verify what feedback the primary received. Distinguish incomplete
-   repairs, contradictory requirements, new discoveries, and reviewer goalposts.
-2. Require a causal explanation tied to evidence and a materially different repair
-   strategy with bounded steps and explicit acceptance checks. Identify which
-   accepted parts stay unchanged. “Be more thorough” or another unbounded rewrite
-   is not a different strategy. Missing or unsupported diagnosis uses corrective
-   recovery; it is not permission to retry the same repair.
-3. Brief a fresh primary with that strategy and the complete current obligations.
-   Supply a standalone ordered brief, not nested copies of previous briefs. Repair
-   the demonstrated cause, preserve settled scope, and record evidence per finding.
-4. Obtain fresh independent plan review using [finding resolution](findings.md).
-   Approval advances; rejection stays escalated. Compare failed checks with the
-   diagnosis, then use fresh diagnosis or an evidence-backed alternative hypothesis.
-   For the same failure after diagnosis/repair, use shared recovery's configured
-   fallback once per original failure scenario per run; if unavailable or already
-   attempted, a fresh primary needs a materially different strategy.
-   A changed finding count alone never restores ordinary retries. Repeated failed
-   hypotheses are not new strategies. Keep an attempted-strategy history.
+Review severity alone does not stop implementation. Testable failure cases,
+cleanup protocols, checksums, validation, and other technical corrections become
+implementation tasks and regression checks. Code review independently verifies
+every carried finding against the resulting code and evidence. Its blocker/major
+gate remains unchanged.
 
-Escalation ends only with independent approval or a legitimate handoff. All workers
-consume the original run budget; apply configured time/cost limits before dispatch.
-Use [recovery](recovery.md) for unavailable harnesses, technical failures, and typed
-human capabilities. Neither revision exhaustion nor disagreement warrants blocked.
-Ask a human only for a demonstrated missing decision, permission, credential,
-other named capability, or budget approval. Never invent policy/authority to make
-a plan pass, lower its acceptance bar, or silently change configured model/effort.
+Only a demonstrated missing decision, authority, permission, credential, other
+human capability, or budget approval warrants [recovery](recovery.md)'s typed
+handoff. State the exact missing prerequisite and why safe implementation depends
+on it. Never invent rights or execute an unsafe step to meet the sequence.
+An unexplained architectural contradiction requires technical diagnosis before
+affected implementation, not automatic blocking or another plan-review cycle.
+Technical diagnosis and repair proceed inside implementing with executable or
+source-backed evidence; they do not reopen planning.
+
+## Recovery and resume
+
+Record the initial plan, complete review, correction launch/outcome, full finding
+handoff, and original budget start in marked remote artifacts and run.md. A
+correction launch consumes the single pass, including a crash or timeout. Observe
+effects first; recover an existing result without rewriting it. Unfinished
+correction work travels with the full census into implementing, rather than
+starting another read-only correction worker. Missing initial-plan/review output
+may be recovered for that same step, bounded by the original run budget; recovery
+must not review the corrected plan or generate successive design verdicts.
+
+Resume reconstructs these facts from GitHub and local evidence, not stage labels
+or counters alone. Legacy runs with any post-review correction already launched
+have consumed the pass: use the latest plan and all reconciled findings, and enter
+implementing once actual prerequisites are satisfied. An ambiguous launch counts
+as consumed. Missing history is reconstructed, not a fresh allowance. Preserve
+prior verified evidence while distinguishing plan-level traces from code proof.
+
+New findings, changed IDs/counts, technical repairs, base drift, fresh workers,
+and resume do not restart planning. Only an explicit operator-authorized scope or
+architectural change can reopen it; record the changed assumptions and affected
+obligations. Preserve the original budget unless the operator explicitly extends it.

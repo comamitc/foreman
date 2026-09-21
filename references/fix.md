@@ -4,7 +4,7 @@ Enter only for blocker/major findings from the current review census.
 Read [finding resolution](findings.md); the primary proposes closure and the fresh
 secondary verifies it. Preserve original scenarios and acceptance conditions.
 
-1. Read every blocking finding, its evidence, the admitted spec, accepted plan,
+1. Read every blocking finding, its evidence, the admitted spec, implementation plan,
    current diff, and applicable conventions. Reconcile any earlier repair effects.
 2. Reproduce or trace each finding. Fix its root cause with a regression check
    when a meaningful seam exists, or refute it with concrete evidence. Use the

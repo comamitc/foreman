@@ -7,7 +7,7 @@ Reviewed head / base SHAs (code review):
 Risk assessment:
 Coverage (criteria, plan items, diff, affected callers, prior repairs):
 Unchanged tree/head verification:
-Plan episode / ordinary revision launches and limit / escalation mode (plan review):
+Initial plan / single review artifact / correction launch/outcome (when applicable):
 
 ## Spec
 
@@ -30,7 +30,9 @@ Findings, or none with the alternatives examined.
 For each actionable finding: local ID, origin review/ID, axis, severity, location,
 original failure scenario, acceptance condition, concrete evidence, and proposed
 correction. Local IDs belong only to this census; origin links preserve lineage.
-Blocker and major are blocking; minor is non-blocking. Use
+In code review, blocker and major are blocking; minor is non-blocking. In plan
+review, separate actual prerequisites from implementation obligations; severity
+alone does not stop implementation. Use
 [finding resolution](../references/findings.md). Remove this instruction in output.
 
 ## Prior-finding verification
@@ -38,8 +40,11 @@ Blocker and major are blocking; minor is non-blocking. Use
 For every prior actionable finding: origin, primary's proposed change/refutation,
 candidate location, independent replay/trace and result, disposition, and evidence
 at this revision/head. Explain new scenarios and split/merged lineage. Use “none”
-only for a first census. Claims of “addressed” are not verification.
+only when no prior findings exist, including planning findings in the first code
+review. Claims of “addressed” are not verification.
 
 ## Verdict
 
-Approve or revise/fix, blocking census count, and unresolved risks.
+Plan review: approve or one correction of the complete feedback set; list actual
+prerequisites and implementation obligations separately. Code review: approve or
+fix, blocking census count, and unresolved risks.
