@@ -18,7 +18,7 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    Resolve identity, trust, configuration, repository instructions, and current
    evidence. Reconcile side effects before retrying operations or trusting labels.
 2. **Choose and load.** Select the current station from completion evidence.
-   Read only its reference from the table below. Repair contradictory labels.
+   Read that station's reference and no other station's. Repair contradictory labels.
 3. **Brief.** Before consuming issue content or writing a worker brief, read
    [security](references/security.md). Use [brief](templates/brief.md) with the
    admitted spec, repository conventions, current artifacts, numbered station

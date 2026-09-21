@@ -18,12 +18,12 @@ by itself, a human blocker. Preserve the active stage while recovering.
 
    | Condition | Response |
    | --- | --- |
-   | network/rate limit/temporary GitHub failure | up to 3 transient retries, 5/15/30 second backoff, honoring longer server guidance within budget |
+   | network/rate limit/temporary GitHub failure | use resolved transient_retries (default 3), 5/15/30 second backoff then 30 seconds for additional configured retries, honoring longer server guidance within budget |
    | crash/timeout | inspect effects and live processes; fresh worker for unfinished work |
    | missing/weak/malformed result | precise corrective feedback, up to 2 corrective prompts, then a fresh worker |
    | failed behavior/test/type/lint/build | primary repairs using original command/logs, diff, spec and plan; rerun that check |
    | unknown technical failure | fresh diagnosis worker; unknown does not mean human-required |
-   | two same-failure attempts | fresh secondary independent diagnosis, then fresh primary repair |
+   | resolved same_failure_attempts reached (default 2) | fresh secondary independent diagnosis, then fresh primary repair |
    | same failure after diagnosis and repair | one configured fallback attempt; if unavailable, fresh primary with a materially different hypothesis |
    | actionable plan/review findings | normal planning revision or review/fix loop |
    | conflicts/CI | pre-merge reference's ordered recovery |
@@ -38,9 +38,11 @@ by itself, a human blocker. Preserve the active stage while recovering.
    report unknown and resolve an explicit cost cap before exceeding what can be
    measured. Never request human diagnosis or repair of a technical error.
 
-Corrective attempts may contact the same worker session only to repair its result
-or finish its current station. Each new station, independent judgment, and replacement
-worker starts fresh. Do not launch a second writer while a prior writer is alive.
+Deliver corrective feedback to the current worker only if its session is still
+reachable through an installed, help-verified continuation interface. Otherwise
+start a fresh worker carrying the prior result and precise feedback; missing resume
+support is not a blocker. Each new station and independent judgment starts fresh.
+Do not launch a second writer while a prior writer is alive.
 
 ## Human capabilities
 

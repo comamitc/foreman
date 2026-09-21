@@ -23,7 +23,8 @@ Local CLI behavior is authoritative when a newer release changes flags.
    issue worktree and grant only necessary result/git-metadata paths. Record owned
    process/session and supervise output. On POSIX, an installed `timeout --signal=TERM --kill-after=10s 60m`
    can bound a process; verify its help or use the coordinator's process manager.
-   Timeout exit 124 is recovery evidence, not proof of no side effects.
+   Replace example 60m limits with the resolved worker_timeout_min, capped by
+   remaining run budget. Timeout exit 124 is recovery evidence, not proof of no side effects.
 5. Capture redacted raw output plus the Markdown result. Record wall time and exit.
    Inspect the result and repository independently. If the worker cannot write an
    external result under its protection mode, accept Markdown in stdout, persist it

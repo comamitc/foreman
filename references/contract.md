@@ -76,6 +76,8 @@ review censuses in PR comments. Human-readable revision, UTC time, head/base,
 and attempt lines disambiguate artifacts; no digest or schema protocol is needed.
 The admitted body keeps product content concise; machine identifiers belong in
 the hidden marker and evidence comments, not repeated product prose.
+Activity and summary shapes are prose-defined here and in telemetry; no additional
+template or rigid format is required.
 
 Inspect all paginated comments and exact markers before publishing. Preserve
 history by appending a new revision comment when judgment changes. On an
@@ -104,7 +106,7 @@ labels are repaired from evidence and recorded, never treated as a terminal erro
 | plan-review | approve / actionable revisions | implementing / planning |
 | implementing | verified commits/checks/outcome; marked non-draft PR | review |
 | review | exact-head census: blocking findings / none | fix / pre-merge |
-| fix | blocking census resolved or refuted; verified new head | review |
+| fix | blocking census resolved or refuted; verified resulting head (unchanged is valid after refutation) | review |
 | pre-merge | strict live ready gate in pre-merge reference | ready-to-deploy |
 
 Use `capstan:` before each stage name. Failed attempts preserve the active label.

@@ -9,6 +9,8 @@
 3. Produce [plan](../templates/plan.md). Map every acceptance criterion to ordered
    items with an observable outcome, affected area, verification command/seam,
    failure signal, and risk. Name final repository checks and real user-surface proof.
+   Scale the plan to the change: a small CLI option needs a short behavior map,
+   not repeated explanations of the same command in several sections.
 4. If revising, address each actionable plan-review finding or explain a concrete
    evidence-backed refutation. Preserve settled scope; surface missing product
    decisions to the coordinator rather than choosing consequential new behavior.
