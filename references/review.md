@@ -1,0 +1,30 @@
+# Code review — fresh secondary, read-only
+
+1. Record exact candidate head and base SHAs, initial status, spec revision, and
+   accepted plan. Inspect the cumulative `git diff BASE_SHA...HEAD_SHA`, changed
+   code, materially affected callers, relevant tests, and prior repair evidence.
+2. State a risk assessment. Allocate depth to actual uncertainty and impact.
+   For high-risk changes, inspect every applicable failure surface; for low-risk
+   changes, cover all applicable axes without inventing hypothetical problems.
+3. Keep four separate sections: Spec (requested behavior/scope), Standards (repo
+   rules and verification), Correctness (reachable failures/invariants), and
+   Simplicity (delete/reuse/native capability/shrink). Do not merge away disagreement.
+4. For every actionable finding, record axis, severity, file/symbol or plan item,
+   claim, evidence, and correction in [review](../templates/review.md). Blocking
+   correctness claims need a reachable call path, reproduced failure, violated
+   invariant, or direct spec contradiction. Omit unsupported hypotheticals or mark
+   them non-blocking. Unrelated pre-existing defects are outside blocking scope.
+5. Return the whole current census and verdict. Confirm no tree/head mutation.
+
+| Severity | Meaning | Effect |
+| --- | --- | --- |
+| blocker | security, data loss, irreversible corruption, fundamentally wrong implementation | fix |
+| major | required behavior missing/incorrect, unsafe behavior, substantial unrequested scope | fix |
+| minor | maintainability/simplicity improvement that does not prevent the outcome | non-blocking |
+
+Add `## Reviewed head and base`, `## Risk assessment`, `## Coverage`, `## Spec`,
+`## Standards`, `## Correctness`, `## Simplicity`, and `## Verdict` to common results.
+Complete when full diff and repair evidence have been examined, findings are
+grounded, and tree/head are unchanged. Coordinator publishes the marked census
+on the PR at the reviewed SHAs. Blocker/major enters fix; otherwise pre-merge.
+Any later head change requires fresh cumulative review before readiness.

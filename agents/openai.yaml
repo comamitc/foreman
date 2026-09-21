@@ -1,0 +1,6 @@
+interface:
+  display_name: "Capstan"
+  short_description: "Trusted issue to merge-ready pull request"
+  default_prompt: "Use $capstan to deliver this GitHub issue to a merge-ready pull request."
+policy:
+  allow_implicit_invocation: false
