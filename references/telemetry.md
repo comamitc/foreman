@@ -16,6 +16,10 @@ missing usage. Avoid adding both session totals and their constituent turn total
 For planning, record the initial plan, single review, correction launch/outcome,
 and full finding handoff into implementing. Record any operator-authorized reopening
 with its changed scope/architecture, not a reset caused by technical feedback.
+For implementing/fix attempts carrying blocker/major findings, record each closure
+gate row's reviewed head, red/green commands and outcomes, bite method, coordinator
+verification, and any proxy/incomplete reason that kept the station open.
+
 Publish these with marked plan/review/activity artifacts for reconstruction after
 local loss. Finding censuses retain origin links and separate verified closure,
 unresolved/reopened, and genuinely new findings; counts alone are not progress.

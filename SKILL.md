@@ -32,6 +32,9 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    the product worktree. Supervise the process until exit or recorded handoff.
 5. **Verify.** Inspect actual results, commands, commits, diff, and GitHub.
    Worker claims and successful process exits alone do not establish completion.
+   Before pushing a write-station candidate, apply [finding resolution's closure
+   proof gate](references/findings.md) to every carried blocker/major; incomplete
+   red/green/bite proof stays in the current station.
 6. **Recover.** Any failed attempt, command, check, missing artifact, or weak
    result loads [recovery](references/recovery.md). Recover within this station;
    fresh evidence determines whether previously completed work needs repeating.

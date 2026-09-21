@@ -91,6 +91,15 @@ the plan does not verify the code. Only an actual missing prerequisite or budget
 decision stops safe implementation. See [one-pass planning](references/plan-convergence.md)
 and [finding resolution](references/findings.md).
 
+Before a repaired candidate is pushed for review, every carried blocker/major must
+pass a coordinator-verified closure proof: the original scenario is red at the
+reviewed head, green at the candidate head, and the regression check demonstrably
+bites when the defect is present. A passing suite or an “addressed” table is not
+closure. Missing proof stays in the current write station instead of consuming a
+secondary review to rediscover incomplete work. A repeated scenario keeps its
+original lineage and triggers independent diagnosis plus a different repair
+hypothesis; only a distinct failure scenario is new.
+
 The former `recovery.plan_revision_attempts` setting and
 `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS` override are retired: warn and ignore
 them. Existing runs reuse their plans and findings without a fresh correction

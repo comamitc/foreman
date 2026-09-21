@@ -57,3 +57,43 @@ An omitted finding is an incomplete review, not implicit closure: use corrective
 recovery. Only independently verified dispositions close obligations. Fresh
 evidence may refute an old finding; history is not an immutable veto. Approve code
 only with zero supported open blocker/major findings and complete reconciliation.
+
+## Closure proof gate
+
+A primary repair result is a proposal, not closure. Before the coordinator pushes
+or starts code review, it gates every carried blocker/major against the original
+scenario. Each row must contain all of:
+
+- Exact reviewed head where the scenario was open, plus its original failure
+  scenario and acceptance condition without weakened wording.
+- **Red:** an observed command and failure signal at that reviewed head which
+  reproduces the scenario. Capture this before editing while the task worktree is
+  still at that head. When recovering partial work, reproduce it in an isolated
+  scratch checkout at the reviewed head. When no meaningful executable seam exists,
+  state why and give a deterministic old-path trace from reachable input to the
+  violated condition.
+- Candidate correction location and a regression check named by file/test or
+  exact command. The check must exercise the original scenario, not a proxy such
+  as field presence, a renamed variable, or a weaker invariant.
+- **Green:** the same scenario/check observed passing at the candidate head, with
+  command, exit, and output or evidence path.
+- **Bite:** evidence that the regression distinguishes the correction. Prefer the
+  red run of that check at the reviewed head. If the check was added with the fix,
+  use a repository-native mutation/bite mechanism, an isolated scratch checkout
+  containing only the regression change, or a controlled reversible fault that
+  restores the reviewed defect. For a justified non-executable seam, the
+  coordinator independently repeats the deterministic old/new trace.
+
+The coordinator independently reads the regression and correction, runs the green
+check, and validates the red/bite evidence against the exact SHAs. Worker prose,
+test names, a passing broad suite, or an “addressed” table cannot satisfy this gate.
+If any row is absent, uses a proxy scenario, or lacks discriminating proof, keep
+the finding `unresolved` and recover inside the write station. Do not push or spend
+a secondary review merely to discover incomplete primary work.
+
+A later review finding is `new` only when its reachable failure scenario and
+violated acceptance condition are distinct. A renamed, split, deeper instance, or
+weaker attempted fix of the same obligation is recurrent/reopened and retains its
+origin lineage. Recurrence after a passed closure gate is a gate failure: record
+which proof was insufficient, trigger independent diagnosis under recovery, and
+require a materially different repair hypothesis before another candidate advances.
