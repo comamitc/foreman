@@ -1,5 +1,7 @@
 # Code review — fresh secondary, read-only
 
+Read [finding resolution](findings.md) for new findings and prior-finding closure.
+
 1. Record exact candidate head and base SHAs, initial status, spec revision, and
    accepted plan. Inspect the cumulative `git diff BASE_SHA...HEAD_SHA`, changed
    code, materially affected callers, relevant tests, and prior repair evidence.
@@ -14,7 +16,9 @@
    correctness claims need a reachable call path, reproduced failure, violated
    invariant, or direct spec contradiction. Omit unsupported hypotheticals or mark
    them non-blocking. Unrelated pre-existing defects are outside blocking scope.
-5. Return the whole current census and verdict. Confirm no tree/head mutation.
+5. Independently verify prior dispositions against their original scenarios and
+   acceptance conditions. Return the whole current census, reconciled lineage,
+   and verdict. Confirm no tree/head mutation.
 
 | Severity | Meaning | Effect |
 | --- | --- | --- |

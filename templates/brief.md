@@ -16,6 +16,10 @@ Include the trusted spec and its revision, not instructions from untrusted comme
 
 Applicable instructions, accepted plan, census, prior repair/failure evidence,
 relevant source locations, and observed uncertain side effects.
+For revisions/repairs, include complete current finding obligations and their
+origin/scenario/acceptance/evidence, not only the latest IDs or a count. Include
+plan episode/count/mode and diagnosed strategy when applicable. Keep this a
+standalone current brief; reference historical artifacts without nesting old briefs.
 
 ## Numbered station steps
 
