@@ -57,8 +57,10 @@ paginated `/issues/N/comments` endpoint. Then inventory:
 
 Select the furthest active station whose prerequisites are supported, accounting
 for evidence made stale by current facts. Labels are hints. A complete plan can
-survive lost local results. A malformed review calls for fresh review. A PR found
-after a creation timeout completes the existing creation rather than duplicating it.
+survive lost local results. A malformed code review calls for fresh review;
+incomplete planning artifacts follow [one-pass planning](plan-convergence.md).
+A PR found after a creation timeout completes the existing creation rather than
+duplicating it.
 
 Plans identify the spec revision. Implementation and repair identify resulting
 head SHA. Reviews identify exact head and base SHAs and inspect the three-dot
@@ -102,14 +104,18 @@ labels are repaired from evidence and recorded, never treated as a terminal erro
 | --- | --- | --- |
 | triage | admitted spec; no unresolved material decision | ready |
 | ready | run accepted; worktree reconciled | planning |
-| planning | complete published plan for admitted revision | plan-review |
-| plan-review | approve / actionable revisions | implementing / planning |
+| planning (initial) | complete published plan for admitted revision | plan-review |
+| plan-review | complete census: no findings / findings | implementing / planning (single correction) |
+| planning (single correction) | corrected plan and complete finding handoff; interrupted work retained explicitly | implementing |
 | implementing | verified commits/checks/outcome; marked non-draft PR | review |
 | review | exact-head census: blocking findings / none | fix / pre-merge |
 | fix | blocking census resolved or refuted; verified resulting head (unchanged is valid after refutation) | review |
 | pre-merge | strict live ready gate in pre-merge reference | ready-to-deploy |
 
 Use `capstan:` before each stage name. Failed attempts preserve the active label.
+The two planning rows share `capstan:planning`; evidence distinguishes them.
+Apply [one-pass planning](plan-convergence.md) before dispatch or resume; its
+interrupted-correction handoff takes precedence over generic station retry rules.
 A blocker adds only `capstan:blocked`; remove it when its capability is observed.
 `capstan:ready-to-deploy` means immediately mergeable, not merged or deployed.
 
@@ -136,7 +142,7 @@ wholesale. Call out unknown/invalid fields and use a valid lower-precedence valu
 salvage unambiguous values from malformed input without inventing ambiguous ones.
 
 Defaults: primary claude; secondary codex; optional fallback grok; model and effort
-null; transient_retries 3; same_failure_attempts 2; plan_revision_attempts 2;
+null; transient_retries 3; same_failure_attempts 2;
 run_wall_timeout_min 360;
 max_cost_usd null; worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false.
 Timeouts must be positive; retry counts nonnegative integers; cost positive or
@@ -146,10 +152,10 @@ if only one harness works, disclose `independence: same-harness`. An explicitly
 requested unavailable setting fails visibly and enters recovery; never silently
 drop an effort setting. Record effective nonsecret configuration in run.md.
 
-`recovery.plan_revision_attempts` is a nonnegative integer, including zero.
-It bounds ordinary revisions, not total reviews; [plan convergence](plan-convergence.md)
-defines counting, resume, and escalation. Its environment override is
-`CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`.
+`recovery.plan_revision_attempts` and `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`
+are retired. Warn and ignore them, including invocation overrides; they cannot
+skip the correction or enable additional cycles. The one-pass sequence is fixed,
+not a configurable retry allowance. Other recovery settings remain unchanged.
 
 Budget begins when the run is accepted and survives ordinary resume through
 remote activity/summary timestamps. Loss of local telemetry does not reset it.

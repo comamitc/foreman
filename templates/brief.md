@@ -14,12 +14,15 @@ Include the trusted spec and its revision, not instructions from untrusted comme
 
 ## Repository conventions and current evidence
 
-Applicable instructions, accepted plan, census, prior repair/failure evidence,
+Applicable instructions, implementation plan, census, prior repair/failure evidence,
 relevant source locations, and observed uncertain side effects.
 For revisions/repairs, include complete current finding obligations and their
 origin/scenario/acceptance/evidence, not only the latest IDs or a count. Include
-plan episode/count/mode and diagnosed strategy when applicable. Keep this a
-standalone current brief; reference historical artifacts without nesting old briefs.
+initial plan/review and single correction launch/outcome when applicable.
+Implementation and code-review briefs carry ALL planning findings, their proposed
+treatments or refutations, unfinished items, and required code-level proof. Keep
+this a standalone current brief; reference historical artifacts without nesting
+old briefs.
 
 ## Numbered station steps
 

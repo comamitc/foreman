@@ -13,8 +13,9 @@ head before/after, finding census, recovery hypotheses, label changes, and evide
 paths/remote URLs. Say `unknown` when not reported; never estimate or use zero for
 missing usage. Avoid adding both session totals and their constituent turn totals.
 
-For plan episodes, record ordinary revision launches/limit, escalation mode,
-diagnosis evidence, attempted strategies, and independent verification outcomes.
+For planning, record the initial plan, single review, correction launch/outcome,
+and full finding handoff into implementing. Record any operator-authorized reopening
+with its changed scope/architecture, not a reset caused by technical feedback.
 Publish these with marked plan/review/activity artifacts for reconstruction after
 local loss. Finding censuses retain origin links and separate verified closure,
 unresolved/reopened, and genuinely new findings; counts alone are not progress.

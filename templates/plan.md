@@ -3,7 +3,7 @@
 
 Specification revision / issue body updatedAt:
 Observed head / base:
-Plan episode / ordinary revision launches and limit / escalation mode:
+Planning step (initial / single correction) / review artifact / correction launch:
 
 ## Current behavior and data shape
 
@@ -29,4 +29,7 @@ For every prior actionable finding: origin, original failure scenario, acceptanc
 condition, proposed correction/refutation, changed plan location, and supporting
 evidence. Identify unresolved items; distinguish observed checks from planned tests.
 Use [finding resolution](../references/findings.md), or “none” for an initial plan.
-When escalated, include diagnosis evidence and the changed repair strategy.
+For the single correction, cover ALL review findings in this pass and update
+affected plan items. Include implementation tasks/checks and actual prerequisites.
+These are proposed treatments, not verified closure. Preserve unfinished items
+explicitly in the implementation handoff; there is no second plan review.

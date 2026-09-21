@@ -19,6 +19,8 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    evidence. Reconcile side effects before retrying operations or trusting labels.
 2. **Choose and load.** Select the current station from completion evidence.
    Read that station's reference and no other station's. Repair contradictory labels.
+   For planning, plan-review, or their resume, apply [one-pass planning](references/plan-convergence.md)
+   before dispatch: initial plan → review → single all-findings correction → implementing.
 3. **Brief.** Before consuming issue content or writing a worker brief, read
    [security](references/security.md). Use [brief](templates/brief.md) with the
    admitted spec, repository conventions, current artifacts, numbered station

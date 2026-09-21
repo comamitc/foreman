@@ -3,8 +3,10 @@
 Read [finding resolution](findings.md) for new findings and prior-finding closure.
 
 1. Record exact candidate head and base SHAs, initial status, spec revision, and
-   accepted plan. Inspect the cumulative `git diff BASE_SHA...HEAD_SHA`, changed
-   code, materially affected callers, relevant tests, and prior repair evidence.
+   implementation plan and full planning finding handoff, including proposed
+   refutations and unfinished correction items. Inspect the cumulative
+   `git diff BASE_SHA...HEAD_SHA`, changed code, materially affected callers,
+   relevant tests, and prior repair evidence.
 2. State a risk assessment. Allocate depth to actual uncertainty and impact.
    For high-risk changes, inspect every applicable failure surface; for low-risk
    changes, cover all applicable axes without inventing hypothetical problems.
@@ -16,8 +18,10 @@ Read [finding resolution](findings.md) for new findings and prior-finding closur
    correctness claims need a reachable call path, reproduced failure, violated
    invariant, or direct spec contradiction. Omit unsupported hypotheticals or mark
    them non-blocking. Unrelated pre-existing defects are outside blocking scope.
-5. Independently verify prior dispositions against their original scenarios and
-   acceptance conditions. Return the whole current census, reconciled lineage,
+5. Independently verify every carried plan finding and prior code disposition
+   against its original scenario and acceptance condition. The first code review
+   must reconcile planning findings too; a plan correction is not closure.
+   Return the whole current census, reconciled lineage,
    and verdict. Confirm no tree/head mutation.
 
 | Severity | Meaning | Effect |

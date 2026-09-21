@@ -1,7 +1,7 @@
 # Planning — fresh primary, read-only
 
-Before a revision, the coordinator applies [plan convergence](plan-convergence.md).
-Revisions and their briefs must include [finding resolution](findings.md).
+Before dispatch, the coordinator applies [one-pass planning](plan-convergence.md).
+The single correction and its brief include [finding resolution](findings.md).
 
 1. Read the admitted spec, repository conventions, affected modules, tests, and
    callers. Trace existing behavior and cite concrete patterns rather than assuming
@@ -14,11 +14,11 @@ Revisions and their briefs must include [finding resolution](findings.md).
    failure signal, and risk. Name final repository checks and real user-surface proof.
    Scale the plan to the change: a small CLI option needs a short behavior map,
    not repeated explanations of the same command in several sections.
-4. If revising, propose a correction or evidence-backed refutation for every
-   actionable finding against its original scenario and acceptance condition.
-   Include the diagnosed repair strategy when escalated. Preserve settled scope;
-   surface missing product decisions to the coordinator rather than choosing
-   consequential new behavior.
+4. In the single correction pass, address ALL findings from the complete review.
+   For each original scenario and acceptance condition, update the affected plan
+   items and implementation checks, propose an evidence-backed refutation, or
+   identify an actual prerequisite. Carry technical obligations into implementation
+   for code-level verification. Preserve settled scope and report any omissions.
 5. Verify unchanged tree/head and write only the assigned result.
 
 Add `## Plan`, `## Acceptance mapping`, and `## Revision response` to the common
@@ -26,4 +26,6 @@ result headings. Complete when every acceptance criterion is covered, every item
 has observable verification and a failure signal, every prior finding has a
 supported proposed disposition, repository gates are named, and
 the tree is unchanged. The coordinator publishes the plan with its specification
-revision and advances to plan-review. A failure uses shared recovery.
+revision. The initial plan enters plan-review; the correction enters implementing
+with the complete finding handoff, without another plan review. Incomplete output
+follows the recovery rules in one-pass planning.
