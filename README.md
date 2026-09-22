@@ -118,7 +118,7 @@ ready or silently discards them. See
 The former `recovery.plan_revision_attempts` setting and
 `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS` override are retired: warn and ignore
 them. Existing runs reuse their plans and findings without a fresh correction
-allowance. The code-review gate and total run budget remain unchanged.
+allowance. The single-pass planning rule and total run budget remain unchanged.
 
 ## Trust and authority
 
