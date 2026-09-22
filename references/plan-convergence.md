@@ -40,8 +40,8 @@ Implementation must complete this mapping before affected code is written.
 Review severity alone does not stop implementation. Testable failure cases,
 cleanup protocols, checksums, validation, and other technical corrections become
 implementation tasks and regression checks. Code review independently verifies
-every carried finding against the resulting code and evidence. Its blocker/major
-gate remains unchanged.
+every carried finding against the resulting code and evidence. Code review applies
+[code-review convergence](review-convergence.md)'s effective policy.
 
 Only a demonstrated missing decision, authority, permission, credential, other
 human capability, or budget approval warrants [recovery](recovery.md)'s typed

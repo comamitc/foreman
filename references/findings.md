@@ -56,12 +56,13 @@ Complete code review requires both a whole current census and this reconciliatio
 An omitted finding is an incomplete review, not implicit closure: use corrective
 recovery. Only independently verified dispositions close obligations. Fresh
 evidence may refute an old finding; history is not an immutable veto. Approve code
-only with zero supported open blocker/major findings and complete reconciliation.
+only with zero effective blockers under
+[code-review convergence](review-convergence.md) and complete reconciliation.
 
 ## Closure proof gate
 
 A primary repair result is a proposal, not closure. Before the coordinator pushes
-or starts code review, it gates every carried blocker/major against the original
+or starts code review, it gates every carried effective blocker against the original
 scenario. Each row must contain all of:
 
 - Exact reviewed head where the scenario was open, plus its original failure

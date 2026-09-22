@@ -1,12 +1,14 @@
 <!-- capstan:blocker OWNER/REPO#N -->
-# Human capability required
+# Delivery blocked
 
-- Reason: one typed reason from recovery.
-- Requested action: one concrete human action.
-- Why an agent cannot supply it:
+- Blocker kind: one human-capability kind from recovery, or `review-exhausted`.
+- Reason:
+- Requested/qualifying resume action:
+- Why automation cannot continue on the same evidence/head:
 - Attempts and observed outcomes:
 - Evidence locations (redacted):
 - Preserved station / branch / head:
 - Resume: exact original host invocation with this issue URL.
-- Resume condition: observable capability, or explicit budget/scope decision.
+- Resume condition: observable capability/decision, or one of review-convergence's
+  review-exhausted resume conditions.
 - Owned process status: stopped, exited, or supervised with a named handoff.

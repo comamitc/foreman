@@ -9,8 +9,9 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    `authority-required`; do not change policy or rewrite history yourself.
 2. Delegate conflicts with both sides' source context and the admitted spec.
    Preserve compatible intent, otherwise follow the spec. Verify the merge,
-   checks, and clean tree; the coordinator pushes normally. Any new head or changed reviewed diff
-   returns through fresh cumulative review before completing this station.
+   checks, and clean tree; the coordinator pushes normally. Any new head or changed
+   reviewed diff returns through the confirmation review and ratchet in
+   [code-review convergence](review-convergence.md) before completing this station.
 3. Read current checks with `gh pr checks PR --repo OWNER/REPO --required --json name,state,bucket,link`
    and all checks with the same command without `--required`. Pending returns
    exit 8. An empty set is not proof of success: corroborate repository requirements

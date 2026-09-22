@@ -65,6 +65,12 @@ Optional `.capstan.json` in the target repository:
     "run_wall_timeout_min": 360,
     "max_cost_usd": null
   },
+  "review_policy": {
+    "block_threshold": "medium",
+    "min_confidence": 0.7,
+    "max_review_fix_rounds": 3,
+    "surface_recurrence_rounds": 3
+  },
   "worker_timeout_min": 60,
   "ci_timeout_min": 45,
   "unsafe_autonomy": false
@@ -74,7 +80,9 @@ Optional `.capstan.json` in the target repository:
 The coordinator interprets each value. Precedence is invocation, environment,
 file, defaults. Environment keys use uppercase paths joined by underscores, such
 as `CAPSTAN_PRIMARY_HARNESS` or `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`.
-Unknown/malformed values are called out and ignored individually. Model/effort
+Unknown/malformed values are called out and ignored individually. Review findings
+block only when they meet both the configured severity and confidence floors;
+other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
 `fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
 
@@ -91,7 +99,7 @@ the plan does not verify the code. Only an actual missing prerequisite or budget
 decision stops safe implementation. See [one-pass planning](references/plan-convergence.md)
 and [finding resolution](references/findings.md).
 
-Before a repaired candidate is pushed for review, every carried blocker/major must
+Before a repaired candidate is pushed for review, every carried effective blocker must
 pass a coordinator-verified closure proof: the original scenario is red at the
 reviewed head, green at the candidate head, and the regression check demonstrably
 bites when the defect is present. A passing suite or an “addressed” table is not
@@ -99,6 +107,13 @@ closure. Missing proof stays in the current write station instead of consuming a
 secondary review to rediscover incomplete work. A repeated scenario keeps its
 original lineage and triggers independent diagnosis plus a different repair
 hypothesis; only a distinct failure scenario is new.
+
+Code re-review is a ratchet, not a fresh unlimited scan: it verifies prior blockers
+and the repair delta. Complete review censuses are capped by
+`review_policy.max_review_fix_rounds`. If effective blockers remain at the ceiling,
+Capstan adds `capstan:blocked` with reason `review-exhausted`; it never marks the PR
+ready or silently discards them. See
+[code-review convergence](references/review-convergence.md).
 
 The former `recovery.plan_revision_attempts` setting and
 `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS` override are retired: warn and ignore

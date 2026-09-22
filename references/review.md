@@ -1,6 +1,8 @@
 # Code review — fresh secondary, read-only
 
-Read [finding resolution](findings.md) for new findings and prior-finding closure.
+Read [finding resolution](findings.md) for new findings and prior-finding closure,
+then [code-review convergence](review-convergence.md) for policy, partitioning,
+ratchet, and round ceilings.
 
 1. Record exact candidate head and base SHAs, initial status, spec revision, and
    implementation plan and full planning finding handoff, including proposed
@@ -13,8 +15,9 @@ Read [finding resolution](findings.md) for new findings and prior-finding closur
 3. Keep four separate sections: Spec (requested behavior/scope), Standards (repo
    rules and verification), Correctness (reachable failures/invariants), and
    Simplicity (delete/reuse/native capability/shrink). Do not merge away disagreement.
-4. For every actionable finding, record axis, severity, file/symbol or plan item,
-   claim, evidence, and correction in [review](../templates/review.md). Blocking
+4. For every actionable finding, record axis, severity, confidence, category,
+   file/symbol or plan item, claim, evidence, and correction in
+   [review](../templates/review.md). Blocking
    correctness claims need a reachable call path, reproduced failure, violated
    invariant, or direct spec contradiction. Omit unsupported hypotheticals or mark
    them non-blocking. Unrelated pre-existing defects are outside blocking scope.
@@ -24,15 +27,14 @@ Read [finding resolution](findings.md) for new findings and prior-finding closur
    Return the whole current census, reconciled lineage,
    and verdict. Confirm no tree/head mutation.
 
-| Severity | Meaning | Effect |
-| --- | --- | --- |
-| blocker | security, data loss, irreversible corruption, fundamentally wrong implementation | fix |
-| major | required behavior missing/incorrect, unsafe behavior, substantial unrequested scope | fix |
-| minor | maintainability/simplicity improvement that does not prevent the outcome | non-blocking |
-
 Add `## Reviewed head and base`, `## Risk assessment`, `## Coverage`, `## Spec`,
-`## Standards`, `## Correctness`, `## Simplicity`, and `## Verdict` to common results.
+`## Standards`, `## Correctness`, `## Simplicity`, `## Policy partition`, and
+`## Verdict` to common results.
 Complete when full diff and repair evidence have been examined, findings are
-grounded, and tree/head are unchanged. Coordinator publishes the marked census
-on the PR at the reviewed SHAs. Blocker/major enters fix; otherwise pre-merge.
-Any later head change requires fresh cumulative review before readiness.
+grounded, prior lineages are reconciled, and tree/head are unchanged. The
+coordinator independently partitions findings under the effective policy and
+publishes the marked census on the PR at the reviewed SHAs. Effective blockers
+enter fix while the round allowance remains; zero effective blockers enters
+pre-merge; a final allowed review with blockers adds the review-exhausted blocked
+overlay. Any later head change requires the confirmation behavior in code-review
+convergence before readiness.
