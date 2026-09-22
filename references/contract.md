@@ -15,6 +15,9 @@ do not infer it from `origin/HEAD`. Read applicable repository instructions firs
 | PR | exact head `capstan/N` and body line `Capstan: owner/repo#N` |
 | Local evidence root | `${CAPSTAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/capstan}/owner/repo/N/` |
 
+`capstan:ready-to-deploy` is not a substitute for `Capstan: owner/repo#N`, branch
+`capstan/N`, or the worktree.
+
 Titles never participate in identity. Resolve the primary repository location
 from `git worktree list --porcelain` rather than nesting worktrees in worktrees.
 Use a fresh worktree for a new issue; continue an existing matching issue
@@ -101,6 +104,26 @@ for observed old Capstan stage labels. Preserve every unrelated label. Read back
 with `gh issue view N --repo OWNER/REPO --json labels`. Multiple or stale stage
 labels are repaired from evidence and recorded, never treated as a terminal error.
 
+After a successful ready projection, add `capstan:ready-to-deploy` to the marked
+pull request with
+`gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`.
+That add has no `--remove-label`. Read the issue labels back with
+`gh issue view N --repo OWNER/REPO --json labels` and the pull-request labels
+with `gh pr view PR --repo OWNER/REPO --json labels`. If the pull-request label
+is absent, run the same add again on that pull request and read the pull-request
+labels again. Do not open a second pull request. On the pull request, add or
+remove only `capstan:ready-to-deploy`. Preserve unrelated pull-request labels.
+Do not copy `capstan:planning`, `capstan:review`, or `capstan:fix` onto the pull
+request. If a later observation shows the pull request is no longer immediately
+mergeable, run
+`gh pr edit PR --repo OWNER/REPO --remove-label capstan:ready-to-deploy`
+and read the removal back with `gh pr view PR --repo OWNER/REPO --json labels`.
+Success is a read-back that does not contain the label. If the label remains,
+remove it once more on that pull request and read it back again. Do not leave a
+stale ready label. Repair the issue label with the existing `gh issue edit` and
+`gh issue view` stage rules. These sentences apply on the next ready projection
+after they are in force.
+
 | Stage | Completion evidence | Next |
 | --- | --- | --- |
 | triage | admitted spec; no unresolved material decision | ready |
@@ -120,7 +143,8 @@ interrupted-correction handoff takes precedence over generic station retry rules
 A blocker adds only `capstan:blocked`. Remove a human-capability blocker when its
 capability is observed; remove a review-exhausted blocker only under
 [code-review convergence](review-convergence.md)'s resume conditions.
-`capstan:ready-to-deploy` means immediately mergeable, not merged or deployed.
+`capstan:ready-to-deploy` means immediately mergeable, not merged or deployed,
+on the marked pull request and on the issue.
 
 ## Concurrent activity
 
