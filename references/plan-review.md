@@ -12,8 +12,10 @@ This is the single review of the initial plan, not a review of its correction.
    and the initial tree. Open a named file only to confirm a cited line; a citation
    that does not match the file is a Standards or Correctness finding with the pack
    row as evidence. A path the pack does not name is a gap under Risks and
-   unresolved items, not a search. Run only the named commands. Count each file
-   read and command as a numbered line under `## Checks`; at the ceiling written in
+   unresolved items, not a search. Run only the named commands. Count each tool
+   call, one read call or one shell command, however many files it names, as a
+   numbered line under
+   `## Checks`; at the ceiling written in
    the brief header, stop, write the result, and list every unchecked criterion,
    item, citation, or check as a gap. A compact pack's single named file and check
    are the whole read allowance.

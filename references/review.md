@@ -12,8 +12,10 @@ the brief and the pack, nothing else.
    original scenario against the saved diff; a citation that does not match is a
    finding. Run only the named checks and record the observed exit at HEAD. Callers
    are the ones the pack names; the diff carries the rest. A path the pack does not
-   name is a gap under Risks and unresolved items, not a search. Count each file
-   read and command as a numbered line under `## Checks`; stop when the pack has
+   name is a gap under Risks and unresolved items, not a search. Count each tool
+   call, one read call or one shell command, however many files it names, as a
+   numbered line under
+   `## Checks`; stop when the pack has
    been checked or at the ceiling in the brief header, listing unchecked rows as
    gaps. A compact pack's single named file and check are the whole read allowance.
 2. State a risk assessment. Allocate depth to actual uncertainty and impact.

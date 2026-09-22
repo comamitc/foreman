@@ -17,7 +17,7 @@ Include the trusted spec and its revision, not instructions from untrusted comme
 ## Pack
 
 One owner-only file per launch, `briefs/<brief stem>.pack.md`, written by the
-coordinator from what it has read. It is the candidate itself. A path list is
+coordinator. It is the candidate itself. A path list is
 not a pack. Full form: seven headings in this order; a heading with nothing to
 carry reads `none` plus the reason.
 
@@ -37,7 +37,7 @@ carry reads `none` plus the reason.
 
 Compact form, the exception for one Named files entry, one check, and no open
 finding rows: nothing is written as `none`, no heading beyond Candidate appears,
-and the read-station ceiling is 7.
+and the read-station ceiling is 7 (1 + 1 + 5), an upper bound.
 
 ```
 # Pack — owner/repo#N, implementing attempt 1, candidate: plan comment URL, revision R
@@ -51,7 +51,7 @@ Named file: `src/cli.py:40-58` — the option parser this item edits
 
 The launch gate: if Candidate, Checks, or Open findings cannot be filled with
 content or an explicit `none` with a reason, do not launch; observe under recovery.
-Unknown is not `none`. Each station reference states its pack rows. A pre-merge
+Unknown is not `none`. A pre-merge
 repair pack carries the conflict hunks or failing check log, that check as one row,
 the failing gate, and both sides' files readable in full. Gap response, under
 one-pass planning precedence:
@@ -81,9 +81,12 @@ cannot cite the pack is not completion.
 
 Read the brief and the pack, nothing else. No repository tour: a path not in the
 pack is a reported gap, not a search. Read stations open a named file only to
-confirm a cited line; write stations read named files fully. Count each file read
-and command as a numbered line under `## Checks` (batched calls count each; the
-result write counts one); at the ceiling, stop and list unchecked items as gaps.
+confirm a cited line; write stations read named files fully. An operation is one
+tool call: one read call or one shell command, however many files it names.
+Number each under `## Checks`. Several tool calls in one turn count separately;
+one call that names several files counts once. Result delivery counts one.
+The numbered list is the operation count. The ceiling in the brief header is
+an upper bound. At the ceiling, stop and list unchecked items as gaps.
 Inspect current files and side effects before repeating actions. Use the simplicity
 ladder: need, existing code, standard library, platform, installed dependency, one
 line, minimum new code. Preserve human work and stay within scope. Report only

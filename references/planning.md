@@ -12,7 +12,9 @@ the worker reads the brief and the pack only.
    than assuming a framework or file structure. Open a named file only to confirm
    a cited line. A path the pack does not name is a gap under Risks and unresolved
    items, not a search. Record the initial head and worktree status. Count each
-   file read and command as a numbered line under `## Checks`; at the ceiling in
+   tool call, one read call or one shell command, however many files it names,
+   as a numbered line under
+   `## Checks`; at the ceiling in
    the brief header, stop and list unchecked items as gaps. The ceiling applies to
    both planning steps. The pack is sized to the unit: a one-file, one-check unit
    gets the compact form, whose single named file and check are the whole allowance.
