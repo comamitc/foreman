@@ -27,7 +27,9 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    one pack per launch, sized to the unit (compact for a one-file, one-check unit)
    and named in the brief as the worker's only reading. Extract the applicable
    rules into the pack; never paste a conventions file.
-4. **Delegate.** Triage is interactive coordinator work. For each other judgment
+4. **Delegate.** Triage is interactive coordinator work. Before you dispatch a
+   write station (implementing or fix) or a review station (plan-review or
+   review), load [ladder](references/ladder.md). For each other judgment
    or write station, start a fresh headless worker using
    [harnesses](references/harnesses.md). Pre-merge observation and GitHub actions
    stay with you; delegate its technical repairs. Write briefs, packs, and results

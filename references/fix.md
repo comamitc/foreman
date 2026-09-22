@@ -18,8 +18,8 @@ conditions.
    its red command/output. On recovery from partial work, use an isolated scratch
    checkout at that head. Fix its root cause with a regression check that exercises
    the original scenario, or justify a non-executable seam and supply a deterministic
-   old/new trace. Use the smallest coherent diff; avoid adjacent refactors and
-   opportunistic cleanup.
+   old/new trace. Follow [ladder](ladder.md). Do not restate the ladder. Use the
+   smallest coherent diff; avoid adjacent refactors and opportunistic cleanup.
 3. Run affected checks and the relevant final gates. Commit coherent repairs,
    preserve human work, and verify clean status. Record resulting head and proof
    for every finding, including evidence-backed refutations.

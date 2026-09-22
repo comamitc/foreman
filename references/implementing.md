@@ -35,8 +35,8 @@ design or closure of its findings.
    Triage does not create the file. Do not edit `CONTEXT.md`. Do not add a
    stage, a label, a config field, or an executable. Keep #20's per-issue
    Vocabulary and Decisions sections.
-   Use the planning simplicity ladder before introducing new code. Preserve human
-   changes and do not silently stage unrelated files.
+   Follow [ladder](ladder.md) before introducing new code. Do not restate the
+   ladder. Preserve human changes and do not silently stage unrelated files.
 4. Prove each carried finding's original acceptance condition against the code,
    or propose a refutation with concrete evidence. Record unfinished obligations
    explicitly; technical failures stay in implementing recovery, not planning.

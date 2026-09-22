@@ -28,7 +28,11 @@ else.
    changes, cover all applicable axes without inventing hypothetical problems.
 3. Keep four separate sections: Spec (requested behavior/scope), Standards (repo
    rules and verification), Correctness (reachable failures/invariants), and
-   Simplicity (delete/reuse/native capability/shrink). Do not merge away disagreement.
+   Simplicity ([ladder](ladder.md)). Do not merge away disagreement. Do not
+   restate the ladder. A new dependency, a new file, or a reimplementation of
+   an existing function is unrequested scope and blocks. A pure "this could be
+   shorter" note stays minor. Keep one judge. Do not add a second review
+   station. Do not install a ponytail skill.
 4. For every actionable finding, record axis, severity, confidence, category,
    file/symbol or plan item, claim, evidence, and correction in
    [review](../templates/review.md). Blocking
