@@ -6,6 +6,24 @@ policy, partitioning, ratchet, and round ceilings. It extracts the row format an
 applicable policy into the pack; the worker reads the brief and the pack, nothing
 else.
 
+`features` is the optional feature-map field. Resolution order is invocation,
+then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
+`.capstan/features` when that directory contains `README.md`. `features: null`
+disables the map. A missing explicit path is recorded in `run.md`. The run
+continues with no map. A missing map does not block the delivery.
+
+Review treats the map as a claim. The diff and the live command remain the
+proof. Removing a proof to pass blocks. Omitting a required map update blocks.
+A required map update is the same-commit feature-file change when reachability,
+drive steps, or the proof change, and one feature file plus one index line when
+a new user-facing behavior is added to a present map.
+
+Each feature file uses only these four H2 headings and no harness name:
+`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
+`Driving it` states the repository commands and the observable end state. A
+harness name, a host skill path, or another section does not satisfy the shape.
+No Launch, Doctor, Evidence, Cleanup, or Helpers section.
+
 1. Read the brief and the pack. The saved `git diff BASE_SHA...HEAD_SHA` in the
    pack is the candidate at the recorded SHAs; record them, the initial status,
    and the spec revision. Apply the effective policy and review ratchet extracted

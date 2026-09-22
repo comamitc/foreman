@@ -81,7 +81,8 @@ Optional `.capstan.json` in the target repository:
   },
   "worker_timeout_min": 60,
   "ci_timeout_min": 45,
-  "unsafe_autonomy": false
+  "unsafe_autonomy": false,
+  "features": null
 }
 ```
 
@@ -93,6 +94,22 @@ block only when they meet both the configured severity and confidence floors;
 other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
 `fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
+
+`features` is the optional feature-map field. Resolution order is invocation,
+then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
+`.capstan/features` when that directory contains `README.md`. The example value
+`features: null` disables the map. It does not fall through to
+`.capstan/features`. An absent `features` field is not `features: null`. A
+missing explicit path is recorded in `run.md`. The run continues with no map. A
+delivery with no map still completes. Capstan does not generate a map during an
+ordinary issue. Do not add a stage, a label, or a daily job for the map. Do not
+copy the map into a host skill directory.
+
+Each feature file uses only these four H2 headings and no harness name:
+`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
+`Driving it` states the repository commands and the observable end state. A
+harness name, a host skill path, or another section does not satisfy the shape.
+No Launch, Doctor, Evidence, Cleanup, or Helpers section.
 
 Read [contract](references/contract.md) for field rules and
 [harnesses](references/harnesses.md) for version-checked launch guidance. No parser
@@ -165,7 +182,7 @@ Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
 any other label. Use the label create command in [contract](references/contract.md).
 
 Init writes no secrets, no evidence directory, no worktree, and no feature map.
-Init does not edit product source.
+Init does not write `features`. Init does not edit product source.
 
 ## Trust and authority
 
