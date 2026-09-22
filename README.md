@@ -55,7 +55,8 @@ references: [Codex](https://learn.chatgpt.com/docs/build-skills),
 The same invocation resumes. Issue-title changes do not change branch `capstan/N`,
 worktree `.worktrees/capstan+N`, or marked PR lookup. You may specify overrides in
 the invocation, for example: “primary codex, secondary claude, wall budget 90 minutes.”
-Only one coordinator should work on an issue at a time.
+Only one coordinator should work on an issue at a time. These delivery forms do not
+enter init.
 
 ## Configuration
 
@@ -126,6 +127,45 @@ The former `recovery.plan_revision_attempts` setting and
 `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS` override are retired: warn and ignore
 them. Existing runs reuse their plans and findings without a fresh correction
 allowance. The single-pass planning rule and total run budget remain unchanged.
+
+## Init
+
+Init runs only on an explicit init invocation. A delivery, a resume, and an issue
+number do not enter init. Init is not a binary and not a station. Init is not a
+gate. Delivery remains valid without init. A missing `.capstan.json` still
+delivers. Delivery still creates a missing stage label. A Capstan init binary
+would violate this rule, not an implementation choice.
+
+Probe each harness CLI on `PATH` with that CLI's documented help command. Recommend
+a primary and a different secondary only from CLIs that answered. Do not invent a
+model, effort, or harness. When the observed primary and a different observed
+secondary are unambiguous, select that pair and report it. Do not ask. Do not
+prompt. Ask only when the probe is ambiguous. Ask that one pair and recommend an
+observed answer. Keep timeouts, cost, and `unsafe_autonomy` at the documented
+defaults in the example above. The invoking host does not become primary merely
+because it ran init. Do not copy a harness from that example unless that CLI
+answered during this init.
+
+If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
+only `primary`, `secondary`, and `fallback`, plus the documented recovery
+defaults. Those keys are the keys in the example above. Set model and effort to
+null. Set `fallback` to null when no third observed harness exists. Set
+`unsafe_autonomy` to false. Leave the file uncommitted. Do not switch branches.
+Do not commit, push, or open a pull request. The write is allowed on `main` and
+stays uncommitted. Exclusive create writes the new file only when it is absent.
+If the file is present before the write finishes, do not replace it.
+
+If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
+replace, or use `--force`. Report that the file already exists.
+
+Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
+`capstan:planning`, `capstan:plan-review`, `capstan:implementing`, `capstan:review`,
+`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`, and
+`capstan:blocked`. Create only absent labels. Re-read a race. Do not add or remove
+any other label. Use the label create command in [contract](references/contract.md).
+
+Init writes no secrets, no evidence directory, no worktree, and no feature map.
+Init does not edit product source.
 
 ## Trust and authority
 

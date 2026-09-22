@@ -6,8 +6,9 @@ disable-model-invocation: true
 
 # Capstan
 
-Start only on an explicit user invocation with an issue URL, or an issue number
-inside its repository. Repeating the invocation resumes the same delivery.
+Start a delivery only on an explicit user invocation with an issue URL, or an
+issue number inside its repository. Repeating that invocation resumes the same
+delivery. A delivery, a resume, and an issue number do not enter init.
 You are the coordinator. Own observation, user decisions, worker delegation,
 GitHub mechanics, and verification. Workers author product changes and commits.
 Finish at an open, immediately mergeable PR. Never merge or deploy.
@@ -71,3 +72,39 @@ activity markers call for bounded waiting and observation, not abandonment.
 On resume, observe whether the missing capability or review-exhausted resume
 condition has appeared before removing the blocked overlay. A formerly ready PR
 must satisfy the live gate again.
+
+## Init
+
+Init runs only on an explicit init invocation. A delivery, a resume, and an issue
+number do not enter init. Init is not a binary and not a station. Init is not a
+gate. Delivery remains valid without init. A missing `.capstan.json` still
+delivers. Delivery still creates a missing stage label.
+
+Probe each harness CLI on `PATH` with that CLI's documented help command. Recommend
+a primary and a different secondary only from CLIs that answered. Do not invent a
+model, effort, or harness. When the observed primary and a different observed
+secondary are unambiguous, select that pair and report it. Do not ask. Do not
+prompt. Ask only when the probe is ambiguous. Ask that one pair and recommend an
+observed answer. Keep timeouts, cost, and `unsafe_autonomy` at the documented
+defaults. The invoking host does not become primary merely because it ran init.
+
+If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
+only `primary`, `secondary`, and `fallback`, plus the documented recovery
+defaults. Set model and effort to null. Set `fallback` to null when no third
+observed harness exists. Set `unsafe_autonomy` to false. Leave the file
+uncommitted. Do not switch branches. Do not commit, push, or open a pull request.
+The write is allowed on `main` and stays uncommitted. Exclusive create writes the
+new file only when it is absent. If the file is present before the write finishes,
+do not replace it.
+
+If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
+replace, or use `--force`. Report that the file already exists.
+
+Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
+`capstan:planning`, `capstan:plan-review`, `capstan:implementing`, `capstan:review`,
+`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`, and
+`capstan:blocked`. Create only absent labels. Re-read a race. Do not add or remove
+any other label. Use the label create command in [contract](references/contract.md).
+
+Init writes no secrets, no evidence directory, no worktree, and no feature map.
+Init does not edit product source.
