@@ -31,7 +31,9 @@ carry reads `none` plus the reason.
    treatment or refutation and unfinished items; never prior essays.
 5. `## Rules that apply`: sentences from repository instructions quoted with
    `path:line`. Never a whole file; never `CLAUDE.md`, the operating contract, or
-   every caller pasted or pointed at for complete reading.
+   every caller pasted or pointed at for complete reading. For code review, include
+   the effective policy, severity/confidence calibration, partition rules, review
+   ratchet, counted round and remaining allowance from `references/review-convergence.md`.
 6. `## Checks`: exact commands with cwd and expected exit.
 7. `## Named files`: `path:line-range` plus reason, the only paths the worker may open.
 
@@ -62,7 +64,7 @@ one-pass planning precedence:
 | single correction | pass consumed; amend the implementing pack and carry the gap as an unresolved obligation |
 | implementing, review, fix, pre-merge repair | amend the pack; relaunch the unfinished portion in the same station |
 
-For an implementing/fix brief carrying blocker/major findings, require one
+For an implementing/fix brief carrying effective blocking findings, require one
 red/green/bite closure row per finding using `references/findings.md`. Name the
 exact reviewed head for red evidence and prohibit proxy checks that test a weaker
 condition than the original scenario.
@@ -92,7 +94,7 @@ ladder: need, existing code, standard library, platform, installed dependency, o
 line, minimum new code. Preserve human work and stay within scope. Report only
 observed commands/outcomes. At write stations commit coherent changes and provide
 meaningful regression proof for defects, including discriminating bite evidence
-for carried blocker/major findings. At read stations preserve head and tree.
+for carried effective blockers. At read stations preserve head and tree.
 Write only to authorized paths. Do not push, mutate GitHub, open PRs, change labels,
 merge, deploy, force-push, or invoke external skills. Return raw errors redacted.
 

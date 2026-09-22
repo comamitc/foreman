@@ -1,12 +1,13 @@
 # Fix — fresh primary, write
 
-Enter only for blocker/major findings from the current review census.
-The coordinator extracts [finding resolution](findings.md) into the pack; the
+Enter only for effective blockers from the coordinator-partitioned current review
+census. The coordinator extracts [code-review convergence](review-convergence.md)
+and [finding resolution](findings.md) into the pack; the
 primary proposes closure, the coordinator gates its proof, and the fresh secondary
 reviews the cumulative candidate. Preserve original scenarios and acceptance
 conditions.
 
-1. Read the brief and the pack. It carries the blocking rows with the red command
+1. Read the brief and the pack. It carries the effective blocking rows with the red command
    and output at the reviewed head, the saved diff, the functions the failing
    commands touch as Named files readable in full, and the failing commands plus
    the relevant final gates. Run those; a write station has no numeric ceiling,
@@ -26,11 +27,12 @@ conditions.
    the complete red/green/bite row required by [finding resolution](findings.md).
 
 Add `## Finding closure proofs`, `## Finding dispositions`, and `## Resulting head`
-to common results. Complete when every blocking finding has a complete proposed
+to common results. Complete when every effective blocking finding has a complete proposed
 closure row, checks pass, and the worktree is clean. The coordinator then applies
 the closure proof gate independently. An incomplete or non-discriminating row stays
 in fix recovery; it is not pushed for a secondary reviewer to rediscover. Only
 after the gate passes does the coordinator push normally and start a fresh review
-of the entire cumulative diff, even if a refutation left head unchanged. The new
+under the code-review convergence ratchet, even if a refutation left head
+unchanged. The pack carries the cumulative diff and identifies the repair delta. The new
 census replaces prior finding authority with explicit reconciliation; old finding
 IDs do not veto fresh evidence or disappear without a supported disposition.

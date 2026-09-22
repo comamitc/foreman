@@ -8,6 +8,7 @@ Risk assessment:
 Coverage (criteria, plan items, diff, affected callers, prior repairs):
 Unchanged tree/head verification:
 Initial plan / single review artifact / correction launch/outcome (when applicable):
+Code-review round and effective policy (when applicable):
 
 ## Spec
 
@@ -27,12 +28,12 @@ Findings, or none with the alternatives examined.
 
 ## Finding format
 
-For each actionable finding: local ID, origin review/ID, axis, severity, location,
-original failure scenario, acceptance condition, concrete evidence, and proposed
-correction. Local IDs belong only to this census; origin links preserve lineage.
-In code review, blocker and major are blocking; minor is non-blocking. In plan
-review, separate actual prerequisites from implementation obligations; severity
-alone does not stop implementation. Use
+For each actionable finding: local ID, origin review/ID, axis, category, severity,
+confidence, location, original failure scenario, acceptance condition, concrete
+evidence, and proposed correction. Local IDs belong only to this census; origin
+links preserve lineage. In code review use the severity/confidence calibration and
+ratchet from code-review convergence. In plan review, separate actual prerequisites
+from implementation obligations; severity alone does not stop implementation. Use
 [finding resolution](../references/findings.md). Remove this instruction in output.
 
 ## Prior-finding verification
@@ -43,8 +44,15 @@ at this revision/head. Explain new scenarios and split/merged lineage. Use “no
 only when no prior findings exist, including planning findings in the first code
 review. Claims of “addressed” are not verification.
 
+## Policy partition
+
+Effective policy; effective blockers; advisories with partition reasons; trusted
+dispositions; counted round and remaining allowance. The coordinator verifies this
+partition rather than accepting the reviewer's verdict as routing authority. Use
+“not applicable” for plan review.
+
 ## Verdict
 
 Plan review: approve or one correction of the complete feedback set; list actual
-prerequisites and implementation obligations separately. Code review: approve or
-fix, blocking census count, and unresolved risks.
+prerequisites and implementation obligations separately. Code review: approve,
+fix, or review-exhausted; effective-blocker and advisory counts; unresolved risks.

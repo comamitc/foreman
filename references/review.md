@@ -1,12 +1,17 @@
 # Code review — fresh secondary, read-only
 
 The coordinator reads [finding resolution](findings.md) for new findings and
-prior-finding closure and extracts its row format into the pack; the worker reads
-the brief and the pack, nothing else.
+prior-finding closure, then [code-review convergence](review-convergence.md) for
+policy, partitioning, ratchet, and round ceilings. It extracts the row format and
+applicable policy into the pack; the worker reads the brief and the pack, nothing
+else.
 
 1. Read the brief and the pack. The saved `git diff BASE_SHA...HEAD_SHA` in the
    pack is the candidate at the recorded SHAs; record them, the initial status,
-   and the spec revision. The pack carries every carried finding row with the
+   and the spec revision. Apply the effective policy and review ratchet extracted
+   into the pack: round 1 covers the cumulative diff; later rounds verify prior
+   effective blockers and the repair delta, with the policy's stated exceptions.
+   The pack carries every carried finding row with the
    primary's proposed disposition and candidate location, not prior plan-review
    essays or implementing narratives. Confirm each cited line and each row's
    original scenario against the saved diff; a citation that does not match is a
@@ -24,8 +29,9 @@ the brief and the pack, nothing else.
 3. Keep four separate sections: Spec (requested behavior/scope), Standards (repo
    rules and verification), Correctness (reachable failures/invariants), and
    Simplicity (delete/reuse/native capability/shrink). Do not merge away disagreement.
-4. For every actionable finding, record axis, severity, file/symbol or plan item,
-   claim, evidence, and correction in [review](../templates/review.md). Blocking
+4. For every actionable finding, record axis, severity, confidence, category,
+   file/symbol or plan item, claim, evidence, and correction in
+   [review](../templates/review.md). Blocking
    correctness claims need a reachable call path, reproduced failure, violated
    invariant, or direct spec contradiction. Omit unsupported hypotheticals or mark
    them non-blocking. Unrelated pre-existing defects are outside blocking scope.
@@ -35,16 +41,15 @@ the brief and the pack, nothing else.
    Return the whole current census, reconciled lineage,
    and verdict. Confirm no tree/head mutation.
 
-| Severity | Meaning | Effect |
-| --- | --- | --- |
-| blocker | security, data loss, irreversible corruption, fundamentally wrong implementation | fix |
-| major | required behavior missing/incorrect, unsafe behavior, substantial unrequested scope | fix |
-| minor | maintainability/simplicity improvement that does not prevent the outcome | non-blocking |
-
 Add `## Reviewed head and base`, `## Risk assessment`, `## Coverage`, `## Spec`,
-`## Standards`, `## Correctness`, `## Simplicity`, and `## Verdict` to common results.
-Complete when the saved diff and carried rows have been examined, findings are
-grounded, the result cites the pack, and tree/head are unchanged. Coordinator
-publishes the marked census on the PR at the reviewed SHAs. Blocker/major enters
-fix; otherwise pre-merge.
-Any later head change requires fresh cumulative review before readiness.
+`## Standards`, `## Correctness`, `## Simplicity`, `## Policy partition`, and
+`## Verdict` to common results.
+Complete when the saved diff and carried repair rows have been examined under the
+review ratchet, findings are grounded, prior lineages are reconciled, the result
+cites the pack, and tree/head are unchanged. The
+coordinator independently partitions findings under the effective policy and
+publishes the marked census on the PR at the reviewed SHAs. Effective blockers
+enter fix while the round allowance remains; zero effective blockers enters
+pre-merge; a final allowed review with blockers adds the review-exhausted blocked
+overlay. Any later head change requires the confirmation behavior in code-review
+convergence before readiness.

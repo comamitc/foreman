@@ -135,11 +135,14 @@ worker results are Markdown. A provider JSON change does not invalidate valid wo
 
 ```sh
 grok --cwd WORKTREE --prompt-file LAUNCH_FILE --permission-mode dontAsk \
-  --sandbox workspace-write --output-format json --no-subagents
+  --sandbox workspace --output-format json --no-subagents
 ```
 
 Help verified on 1.0.34. Add `--model MODEL` and `--reasoning-effort EFFORT` when
-configured. Verify installed sandbox profile support before use. Use explicit
+configured. `--sandbox` takes an installed profile name, not Codex's `-s` value.
+The built-in write profile is `workspace`. `workspace-write` is not a Grok profile;
+passing it exits before the model starts. Do not add a custom profile to make that
+spelling work. Use explicit
 `--allow` rules for the inspected task commands and workspace edits; dontAsk
 denies operations not preapproved. For read stations use `--sandbox read-only`
 (accepted on 1.0.34), `--permission-mode dontAsk`, `--allow` rules for the exact

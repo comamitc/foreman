@@ -32,7 +32,7 @@ design or closure of its findings.
    Report risks honestly and verify a clean worktree containing the intended commits.
    Finish everything the pack supports; the result cites the pack.
 
-For any blocker/major obligation carried from review, include the red/green/bite
+For any effective blocking obligation carried from review, include the red/green/bite
 row in the closure-row format the pack carries from
 [finding resolution](findings.md); planned or proxy tests are insufficient.
 
@@ -45,7 +45,7 @@ A no-op or already-delivered issue is reconciled with the
 coordinator; do not manufacture a change to satisfy the nonempty criterion.
 
 Coordinator independently checks evidence and applies the closure proof gate for
-every carried blocker/major, then pushes the exact issue branch without
+every carried effective blocker, then pushes the exact issue branch without
 force, and finds or creates one non-draft PR with the contract marker and correct
 base. Observe a push rejection before deciding how to integrate remote human work;
 delegate any needed commit/repair to a worker. Read back PR/head/body, then review.
