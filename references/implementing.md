@@ -21,6 +21,20 @@ design or closure of its findings.
    Documentation, configuration, deletion, generated, and operational changes may
    use stronger appropriate proof instead; explain when a failing test adds no value.
 3. Run each item's verification. Keep scope narrow; commit coherent changes.
+   Triage reads the committed `.capstan/vocabulary.md` on `main` when it exists,
+   after repository instructions and before a question. Implementation writes
+   the file. An unmerged vocabulary edit is not evidence for a different issue.
+   A settlement is repository-scoped when the term names a standing behavior,
+   role, or artifact of the repository, and later deliveries need the same
+   meaning. A settlement is delivery-scoped when it binds only this issue, this
+   pull request, or this change. Keep a delivery-scoped decision in the admitted
+   spec. Do not copy it into `.capstan/vocabulary.md`. The implementation commit
+   for a repository-scoped term creates or updates `.capstan/vocabulary.md` in
+   the same commit as the behavior. Use one `**Term**:` entry per term. Include
+   the meaning and the rejected alternative that the triage walk recorded.
+   Triage does not create the file. Do not edit `CONTEXT.md`. Do not add a
+   stage, a label, a config field, or an executable. Keep #20's per-issue
+   Vocabulary and Decisions sections.
    Use the planning simplicity ladder before introducing new code. Preserve human
    changes and do not silently stage unrelated files.
 4. Prove each carried finding's original acceptance condition against the code,

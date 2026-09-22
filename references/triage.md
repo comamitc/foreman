@@ -1,7 +1,18 @@
 # Triage — coordinator
 
 1. Apply contract identity and security trust checks. Read the trusted original
-   request, comments, repository instructions, relevant code/tests, and vocabulary.
+   request, comments, repository instructions, and relevant code/tests. When
+   `.capstan/vocabulary.md` exists, read it after repository instructions and
+   before a question. A term already defined there is evidence. Do not ask it
+   again unless this issue contradicts it. A missing file is recorded and does
+   not block. Evidence is the committed file on integration base `main`. An
+   unmerged vocabulary edit is not evidence for a different issue.
+   Repository-scoped terms name a standing behavior, role, or artifact that
+   later deliveries need. Delivery-scoped decisions bind only this issue, this
+   pull request, or this change. They stay in the admitted spec. The
+   implementation commit creates or updates `.capstan/vocabulary.md` in the same
+   commit as the behavior. Triage does not create the file and does not write
+   it. Do not open a docs pull request. Do not edit `CONTEXT.md`.
    Settle discoverable facts yourself; inspect suggested commands before executing.
 2. Walk a design tree before ready. Each node is one decision. The node records
    the question, the recommended answer, what it blocks, and how it was settled.
@@ -29,7 +40,9 @@
    acceptance criteria; omit internal orchestration detail and execution provenance.
    Decide the integration base using repository conventions before creating work.
    The admitted spec's Decisions section lists every visited node and its
-   settlement. Vocabulary for a new term goes in the spec. Do not add `CONTEXT.md`.
+   settlement. Vocabulary for a new term goes in the spec. A delivery-scoped
+   decision stays in that spec and is not copied into `.capstan/vocabulary.md`.
+   Triage does not create that file. Do not add `CONTEXT.md`.
 5. Re-read the issue before replacing its body; incorporate concurrent trusted
    edits rather than overwriting them. Publish the spec with its hidden marker,
    read it back, and record its GitHub body revision/time for later plan evidence.
