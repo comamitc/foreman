@@ -6,12 +6,20 @@ human-readable filenames, for example `planning-20260921T120000Z-1.md`. On resum
 append rather than overwrite surviving attempts. Follow security before capture.
 
 Write run.md directly. Record delivery identity, spec revision, effective nonsecret
-configuration, run start/budget, and a chronological station/attempt table. Each
-station records start/end UTC and wall time, role, harness/version/model/effort,
-safety mode, process exit/session, reported tokens/cost, checks and exit results,
-head before/after, finding census, recovery hypotheses, label changes, and evidence
-paths/remote URLs. Say `unknown` when not reported; never estimate or use zero for
-missing usage. Avoid adding both session totals and their constituent turn totals.
+configuration, run start/budget, and a chronological station/attempt table. Write
+one row per station attempt. The columns are stage, start UTC, end UTC, wall time,
+role, harness, and the usage fields that harness reported. Also record harness
+version, model, effort, safety mode, process exit/session, checks and exit
+results, head before/after, finding census, recovery hypotheses, label changes,
+and evidence paths/remote URLs. Say `unknown` when not reported; never estimate
+or use zero for missing usage. A field the harness did not report is `unknown`,
+not zero and not an estimate. Record Grok `total_cost_usd` when present. Record
+Codex `turn.completed` usage as its token fields. Codex cost stays `unknown`
+unless that log contains a cost field. Coordinator-only stages with no process
+timer, such as triage and ready, stay in the table. Their wall is `not timed`
+unless a start and an end were both observed. Print observed timestamps, such as
+spec admission and the ready label. Avoid adding both session totals and their
+constituent turn totals.
 
 For planning, record the initial plan, single review, correction launch/outcome,
 and full finding handoff into implementing. Record any operator-authorized reopening
@@ -47,9 +55,26 @@ or event is needed to choose a station. On failed append or malformed event, not
 the gap in run.md or the next available remote comment and continue.
 
 At terminal readiness or review exhaustion publish a marked issue summary containing
-PR URL, current head/base, observed ready-gate or exhaustion facts, station/attempt table, wall time, reported
-usage/cost, findings addressed/refuted, recovery history, human interventions,
-same-harness independence or unsafe mode disclosures, and gaps. Include recovered
+PR URL, current head/base, observed ready-gate or exhaustion facts, one station
+attempt table, two wall totals, reported usage/cost, findings addressed/refuted,
+recovery history, human interventions, same-harness independence or unsafe mode
+disclosures, and gaps. The table has one row per station attempt. The columns are
+stage, start UTC, end UTC, wall time, role, harness, and the usage fields that
+harness reported. Say `unknown` when not reported; never estimate or use zero for
+missing usage. A field the harness did not report is `unknown`, not zero and not
+an estimate. Record Grok `total_cost_usd` when present. Record Codex
+`turn.completed` usage as its token fields. Codex cost stays `unknown` unless that
+log contains a cost field. Keep coordinator-only stages with no process timer,
+such as triage and ready, in the table. Their wall is `not timed` unless a start
+and an end were both observed. Print observed timestamps, such as spec admission
+and the ready label. Worker-process wall is the sum of attempt rows that have a
+process start and exit. End-to-end wall is from spec admission to the ready-label
+read-back, or to the review-exhausted summary publication. A bound that was not
+observed is `unknown`. The two totals are not substitutes for each other. Sum
+token fields only within one harness and one field. Do not add cache reads again
+into a single mixed total. Do not add reasoning tokens again on top of output
+when the harness already counts them inside output. Name the summed fields. A
+telemetry gap in this table does not block ready-to-deploy. Include recovered
 counts only when evidence supports them. Lost local data yields unknown details,
 not an unrecoverable run. A failed GitHub summary publication uses normal transient
 recovery; do not pretend it published. Remote progress evidence preserves budget
