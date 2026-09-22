@@ -73,6 +73,9 @@ All other blocked overlays identify a missing human capability:
 | safety-boundary | explicit authority for a production-affecting/destructive step |
 | budget-approval | more time/cost, scope change, or cancel at circuit breaker |
 
+Failure to create this worktree's `index.lock` after the verified grant is
+technical recovery, not `safety-boundary`. `unsafe_autonomy` is not the remedy.
+
 Use [blocker](../templates/blocker.md). For human-capability blockers, publish one
 concrete action and why an agent cannot supply it. For review exhaustion, publish
 the qualifying repair/spec-policy/disposition resume choices and why automation

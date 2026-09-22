@@ -133,7 +133,10 @@ brief and CLI policies where supported. Do not use a blanket shell allow rule
 merely to make a denied command disappear. Claude's tool permissions are not a
 claim of OS containment. If stronger installed sandbox controls are configured,
 retain them. Never use bypassPermissions or skip-permission flags without
-explicit unsafe_autonomy.
+explicit unsafe_autonomy. Claude 2.1.278 is not a verified metadata grant.
+`--add-dir` on both `<repo>/.git` and `<repo>/.git/worktrees/capstan+N` under
+`--permission-mode acceptEdits` was denied as a sensitive file. The next
+harness is Codex. Do not set `unsafe_autonomy`.
 
 Observed JSON fields: `session_id`, `result`, `is_error`, `permission_denials`,
 `duration_ms`, `num_turns`, `usage`, `modelUsage`, `total_cost_usd`. A successful
@@ -147,6 +150,12 @@ codex exec -C WORKTREE -s workspace-write -c approval_policy='"never"' \
   --add-dir RESULT_DIR --json --output-last-message RESULT - < LAUNCH_FILE
 ```
 
+For a commit, the verified metadata grant on Codex 0.153.4 is
+`-s workspace-write` plus `--add-dir` on both git paths: `<repo>/.git` and
+`<repo>/.git/worktrees/capstan+N`. Probed 2026-09-22T22:32Z in
+`.worktrees/capstan+10`: `touch` and `rm` with no flags exited 0 on both
+paths. `--add-dir` on `.git` alone is not the grant.
+
 Help verified on `codex-cli 0.153.4`. `exec --help` has no cost flag. Add `--model MODEL` and
 `-c model_reasoning_effort='"EFFORT"'` when configured. Confirm the chosen model
 accepts the value. For pure inspection, prefer `-s read-only`: it executes
@@ -157,11 +166,11 @@ and the worker's numbered operation list are the controls. Record completed
 Probed 2026-09-22: the three
 named commands ran, and so did one unasked `cat` of a user instruction file; the
 sandbox bounds writes, not reads. The coordinator can persist
-the final Markdown response from stdout. For writes, verify linked-worktree git
-metadata is writable under the sandbox. Grant that precise metadata path only
-when needed; never grant the whole home directory. `--ignore-user-config` can
+the final Markdown response from stdout. For a commit, use only the metadata
+grant above. Never grant the whole home directory. `--ignore-user-config` can
 isolate unrelated defaults while retaining auth, but does not prove all discovered
-skills are absent. Do not use dangerous bypass flags to repair sandbox denials.
+skills are absent. Do not use dangerous bypass flags or `unsafe_autonomy` to
+repair sandbox denials.
 
 Observed JSONL includes `thread.started`, `item.completed`, and `turn.completed`.
 The latter reports usage such as input_tokens, cached_input_tokens, output_tokens.
@@ -183,7 +192,10 @@ Help verified on 1.0.34. Add `--model MODEL` and `--reasoning-effort EFFORT` whe
 configured. `--sandbox` takes an installed profile name, not Codex's `-s` value.
 The built-in write profile is `workspace`. `workspace-write` is not a Grok profile;
 passing it exits before the model starts. Do not add a custom profile to make that
-spelling work. Use explicit
+spelling work. Grok 1.0.34 has no `--add-dir`. `--sandbox workspace` returned
+`Permission denied` on the worktree git path. That is not a verified metadata
+grant. The next harness is Codex. Do not set `unsafe_autonomy`. Keep
+`--sandbox workspace`. Use explicit
 `--allow` rules for the inspected task commands and workspace edits; dontAsk
 denies operations not preapproved. For read stations use `--sandbox read-only`
 (accepted on 1.0.34), `--permission-mode dontAsk`, `--allow` rules for the exact

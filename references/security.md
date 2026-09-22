@@ -19,8 +19,11 @@
    Grok's built-in write profile is `workspace`, not Codex's `workspace-write`.
    Read-only workers need access to source but
    only their assigned result directory writable. Allow the linked worktree's
-   required git metadata only when needed to commit. Confirm that evidence paths
-   outside the worktree are accessible without granting broad home-directory writes.
+   required git metadata only when needed to commit. Failure to create this
+   worktree's `index.lock` after the verified grant is technical recovery, not
+   `safety-boundary`. `unsafe_autonomy` is not the remedy. Confirm that
+   evidence paths outside the worktree are accessible without granting broad
+   home-directory writes.
    Safety flags differ by host; use verified harness recipes. Permission bypass
    requires explicit `unsafe_autonomy: true` from the user and disclosure. A denied
    operation is diagnosed; do not silently escalate to bypass or disable protections.
