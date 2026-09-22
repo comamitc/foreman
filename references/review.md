@@ -1,12 +1,21 @@
 # Code review — fresh secondary, read-only
 
-Read [finding resolution](findings.md) for new findings and prior-finding closure.
+The coordinator reads [finding resolution](findings.md) for new findings and
+prior-finding closure and extracts its row format into the pack; the worker reads
+the brief and the pack, nothing else.
 
-1. Record exact candidate head and base SHAs, initial status, spec revision, and
-   implementation plan and full planning finding handoff, including proposed
-   refutations and unfinished correction items. Inspect the cumulative
-   `git diff BASE_SHA...HEAD_SHA`, changed code, materially affected callers,
-   relevant tests, and prior repair evidence.
+1. Read the brief and the pack. The saved `git diff BASE_SHA...HEAD_SHA` in the
+   pack is the candidate at the recorded SHAs; record them, the initial status,
+   and the spec revision. The pack carries every carried finding row with the
+   primary's proposed disposition and candidate location, not prior plan-review
+   essays or implementing narratives. Confirm each cited line and each row's
+   original scenario against the saved diff; a citation that does not match is a
+   finding. Run only the named checks and record the observed exit at HEAD. Callers
+   are the ones the pack names; the diff carries the rest. A path the pack does not
+   name is a gap under Risks and unresolved items, not a search. Count each file
+   read and command as a numbered line under `## Checks`; stop when the pack has
+   been checked or at the ceiling in the brief header, listing unchecked rows as
+   gaps. A compact pack's single named file and check are the whole read allowance.
 2. State a risk assessment. Allocate depth to actual uncertainty and impact.
    For high-risk changes, inspect every applicable failure surface; for low-risk
    changes, cover all applicable axes without inventing hypothetical problems.
@@ -32,7 +41,8 @@ Read [finding resolution](findings.md) for new findings and prior-finding closur
 
 Add `## Reviewed head and base`, `## Risk assessment`, `## Coverage`, `## Spec`,
 `## Standards`, `## Correctness`, `## Simplicity`, and `## Verdict` to common results.
-Complete when full diff and repair evidence have been examined, findings are
-grounded, and tree/head are unchanged. Coordinator publishes the marked census
-on the PR at the reviewed SHAs. Blocker/major enters fix; otherwise pre-merge.
+Complete when the saved diff and carried rows have been examined, findings are
+grounded, the result cites the pack, and tree/head are unchanged. Coordinator
+publishes the marked census on the PR at the reviewed SHAs. Blocker/major enters
+fix; otherwise pre-merge.
 Any later head change requires fresh cumulative review before readiness.

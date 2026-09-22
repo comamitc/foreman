@@ -23,21 +23,28 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    before dispatch: initial plan → review → single all-findings correction → implementing.
 3. **Brief.** Before consuming issue content or writing a worker brief, read
    [security](references/security.md). Use [brief](templates/brief.md) with the
-   admitted spec, repository conventions, current artifacts, numbered station
-   steps, and a checkable completion criterion.
+   admitted spec, numbered station steps, a checkable completion criterion, and
+   one pack per launch, sized to the unit (compact for a one-file, one-check unit)
+   and named in the brief as the worker's only reading. Extract the applicable
+   rules into the pack; never paste a conventions file.
 4. **Delegate.** Triage is interactive coordinator work. For each other judgment
    or write station, start a fresh headless worker using
    [harnesses](references/harnesses.md). Pre-merge observation and GitHub actions
-   stay with you; delegate its technical repairs. Write briefs/results outside
-   the product worktree. Supervise the process until exit or recorded handoff.
+   stay with you; delegate its technical repairs. Write briefs, packs, and results
+   outside the product worktree. Read stations get a numeric turn ceiling in the
+   brief; write stations read named files only. Supervise the process until exit
+   or recorded handoff.
 5. **Verify.** Inspect actual results, commands, commits, diff, and GitHub.
-   Worker claims and successful process exits alone do not establish completion.
+   Worker claims and successful process exits alone do not establish completion;
+   a result that cannot cite the pack is not completion.
    Before pushing a write-station candidate, apply [finding resolution's closure
    proof gate](references/findings.md) to every carried blocker/major; incomplete
    red/green/bite proof stays in the current station.
 6. **Recover.** Any failed attempt, command, check, missing artifact, or weak
-   result loads [recovery](references/recovery.md). Recover within this station;
-   fresh evidence determines whether previously completed work needs repeating.
+   result loads [recovery](references/recovery.md). A pack gap is a brief defect:
+   amend the pack; planning gaps follow one-pass planning. Recover within this
+   station; fresh evidence determines whether previously completed work needs
+   repeating.
 7. **Record.** Publish the station artifact with its revision or SHAs. Read
    [telemetry](references/telemetry.md) to record attempts and evidence. A telemetry
    failure is a reported gap, never a veto on delivery.

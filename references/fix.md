@@ -1,12 +1,18 @@
 # Fix — fresh primary, write
 
 Enter only for blocker/major findings from the current review census.
-Read [finding resolution](findings.md); the primary proposes closure, the coordinator
-gates its proof, and the fresh secondary reviews the cumulative candidate. Preserve
-original scenarios and acceptance conditions.
+The coordinator extracts [finding resolution](findings.md) into the pack; the
+primary proposes closure, the coordinator gates its proof, and the fresh secondary
+reviews the cumulative candidate. Preserve original scenarios and acceptance
+conditions.
 
-1. Read every blocking finding, its evidence, the admitted spec, implementation plan,
-   current diff, and applicable conventions. Reconcile any earlier repair effects.
+1. Read the brief and the pack. It carries the blocking rows with the red command
+   and output at the reviewed head, the saved diff, the functions the failing
+   commands touch as Named files readable in full, and the failing commands plus
+   the relevant final gates. Run those; a write station has no numeric ceiling,
+   and its reads are bounded to the named files. A path the pack does not name is
+   a gap reported under Risks and unresolved items, not a search. A one-file,
+   one-check repair gets a compact pack. Reconcile any earlier repair effects.
 2. Reproduce each finding at the exact reviewed head before editing and preserve
    its red command/output. On recovery from partial work, use an isolated scratch
    checkout at that head. Fix its root cause with a regression check that exercises
