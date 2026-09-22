@@ -1,13 +1,21 @@
 # Implementing — fresh primary, write
 
-Read [finding resolution](findings.md). Planning handoff is permission to implement,
-not independent approval of the corrected design or closure of its findings.
+The coordinator extracts the [finding resolution](findings.md) closure-row
+requirements into the pack; the worker reads the brief and the pack. Planning
+handoff is permission to implement, not independent approval of the corrected
+design or closure of its findings.
 
-1. Read the implementation plan, complete plan-review census, correction/handoff,
-   admitted spec, conventions, adjacent code/tests, and current status. Map ALL
-   carried findings to implementation tasks/checks or evidence-backed refutations,
-   including unfinished correction work. Complete this mapping before affected
-   code is written. Reconcile existing work before repeating interrupted steps.
+1. Read the brief and the pack: the current plan text, every carried finding row
+   with its proposed disposition including unfinished correction work, the rule
+   extract, the commands the plan names plus the final gates, and the plan's
+   affected files and tests as Named files. A write station may read named files
+   fully and run the named checks and declared final gates; it has no numeric
+   ceiling. A path the pack does not name is a gap reported under Risks and
+   unresolved items, not a search. A one-file, one-check item gets a compact pack
+   whose single named file and check bound the reads. Map ALL carried findings to
+   implementation tasks/checks or evidence-backed refutations. Complete this
+   mapping before affected code is written. Reconcile existing work before
+   repeating interrupted steps.
 2. Implement plan items in order. Use a failing behavior check where meaningful,
    prove it fails for the intended reason, then make the smallest change and rerun.
    Documentation, configuration, deletion, generated, and operational changes may
@@ -22,9 +30,11 @@ not independent approval of the corrected design or closure of its findings.
    commands, exit statuses, output/evidence paths, and the resulting head SHA.
 5. Prepare PR text with Why, Scope, Tradeoffs, Blast Radius, and Verification.
    Report risks honestly and verify a clean worktree containing the intended commits.
+   Finish everything the pack supports; the result cites the pack.
 
 For any effective blocking obligation carried from review, include the red/green/bite
-row from [finding resolution](findings.md); planned or proxy tests are insufficient.
+row in the closure-row format the pack carries from
+[finding resolution](findings.md); planned or proxy tests are insufficient.
 
 Add `## Acceptance proof`, `## Finding closure proofs`, `## Finding dispositions`,
 `## Resulting head`, and `## PR content` to common result headings. Complete when the diff is nonempty and
