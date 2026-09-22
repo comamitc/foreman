@@ -109,6 +109,8 @@ Exactly one stage label should exist, with optional `capstan:blocked` overlay.
 Create missing labels idempotently: inspect `gh label list --repo OWNER/REPO`,
 then `gh label create capstan:STAGE --repo OWNER/REPO --color 1d76db --description 'Capstan: STAGE'`
 only when absent. If creation races, re-read instead of treating it as fatal.
+Label creation during delivery remains required. Init is outside the delivery
+loop and does not replace that create. A missing `.capstan.json` still delivers.
 Use `gh issue edit N --repo OWNER/REPO --add-label capstan:NEXT --remove-label capstan:OLD`
 for observed old Capstan stage labels. Preserve every unrelated label. Read back
 with `gh issue view N --repo OWNER/REPO --json labels`. Multiple or stale stage
@@ -213,3 +215,45 @@ remote activity/summary timestamps. Loss of local telemetry does not reset it.
 Use earliest reliable run evidence; unknown cost remains unknown. If a configured
 cost limit cannot be measured, request a budget decision before unbounded spending;
 offer the measurable wall budget. Do not invent prices or usage.
+
+### Init
+
+Init is outside the delivery loop. It runs only on an explicit init invocation.
+A delivery, a resume, and an issue number do not enter init. Init is not a binary
+and not a station. Init is not a gate. Delivery remains valid without init. A
+missing `.capstan.json` still delivers. Label creation during delivery remains
+required. A Capstan init binary would violate this rule, not an implementation
+choice.
+
+Probe each harness CLI on `PATH` with that CLI's documented help command from the
+named checkout. Recommend a primary and a different secondary only from CLIs that
+answered. Do not invent a model, effort, or harness. When the observed primary
+and a different observed secondary are unambiguous, select that pair and report
+it. Do not ask. Do not prompt. Ask only when the probe is ambiguous. Ask that one
+pair and recommend an observed answer. Keep timeouts, cost, and `unsafe_autonomy`
+at the documented defaults in this section. The invoking host does not become
+primary merely because it ran init.
+
+If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
+only `primary`, `secondary`, and `fallback`, plus the documented recovery
+defaults. Set model and effort to null. Set `fallback` to null when no third
+observed harness exists. Set `unsafe_autonomy` to false. Leave the file
+uncommitted. Do not switch branches. Do not commit, push, or open a pull request.
+The write is allowed on `main` and stays uncommitted. Exclusive create writes the
+new file only when it is absent. If the file is present before the write finishes,
+do not replace it. Resolve the repository with
+`gh repo view --json nameWithOwner,defaultBranchRef` from that checkout. Do not
+start init from an issue number.
+
+If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
+replace, or use `--force`. Report that the file already exists.
+
+Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
+`capstan:planning`, `capstan:plan-review`, `capstan:implementing`, `capstan:review`,
+`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`, and
+`capstan:blocked`. Create only absent labels with the stage-projection command
+above. Re-read a race. Do not add or remove any other label.
+
+Init writes no secrets, no evidence directory, no worktree, and no feature map.
+Init does not edit product source. The `.capstan.json` write is init
+configuration, not a product-source edit and not a delivery commit.

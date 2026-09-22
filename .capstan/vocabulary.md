@@ -19,3 +19,7 @@
 **Identity**: the bytes of the lockfile or manifest that produced the toolchain. Not a language version. Rejected: a language-version pin.
 
 **Provenance**: which precedence step supplied the invocation. Rejected: a model judgment with no recorded step.
+
+**Init**: the explicit setup procedure that writes an absent `.capstan.json` and ensures the Capstan label set. Rejected: a Capstan binary or a delivery station.
+
+**Observed harness**: a harness CLI that answered its documented help command on `PATH` during this init. Rejected: a harness named without that answer.
