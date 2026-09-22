@@ -10,6 +10,21 @@
 - Result path (outside product tree):
 - Allowed writes: none to product at read stations; issue worktree at write stations;
   assigned result path in either case.
+- Affected feature files: only the feature files this issue can affect. Do not
+  name an unaffected feature file. Do not tell the worker to read the other
+  feature files.
+
+`features` is the optional feature-map field. Resolution order is invocation,
+then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
+`.capstan/features` when that directory contains `README.md`. `features: null`
+disables the map. A missing explicit path is recorded in `run.md`. The run
+continues with no map.
+
+Each feature file uses only these four H2 headings and no harness name:
+`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
+`Driving it` states the repository commands and the observable end state. A
+harness name, a host skill path, or another section does not satisfy the shape.
+No Launch, Doctor, Evidence, Cleanup, or Helpers section.
 
 ## Admitted specification
 

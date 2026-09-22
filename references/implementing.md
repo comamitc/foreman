@@ -5,6 +5,24 @@ requirements into the pack; the worker reads the brief and the pack. Planning
 handoff is permission to implement, not independent approval of the corrected
 design or closure of its findings.
 
+`features` is the optional feature-map field. Resolution order is invocation,
+then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
+`.capstan/features` when that directory contains `README.md`. `features: null`
+disables the map. A missing explicit path is recorded in `run.md`. The run
+continues with no map. A delivery with no map still completes. Do not generate
+a map during an ordinary issue.
+
+When a feature map is present, use the named `Driving it` steps for the
+user-surface proof. If the change alters reachability, drive steps, or the
+proof, the same commit updates that feature file. When the map is present, a
+new user-facing behavior adds one feature file and one index line.
+
+Each feature file uses only these four H2 headings and no harness name:
+`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
+`Driving it` states the repository commands and the observable end state. A
+harness name, a host skill path, or another section does not satisfy the shape.
+No Launch, Doctor, Evidence, Cleanup, or Helpers section.
+
 The coordinator runs the preflight below before this worker launches.
 
 Take commands from the plan's named checks, then the repository's documented runner.

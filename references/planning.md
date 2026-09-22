@@ -4,6 +4,23 @@ Before dispatch, the coordinator applies [one-pass planning](plan-convergence.md
 reads [finding resolution](findings.md) for the correction, and writes the pack;
 the worker reads the brief and the pack only.
 
+`features` is the optional feature-map field. Resolution order is invocation,
+then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
+`.capstan/features` when that directory contains `README.md`. `features: null`
+disables the map. A missing explicit path is recorded in `run.md`. The run
+continues with no map.
+
+When a map is present, observation reads the map `README.md` only and records
+its path in `run.md`. Planning cites only the feature files the issue can
+affect. The brief contains those paths. The worker is not told to read the
+other feature files.
+
+Each feature file uses only these four H2 headings and no harness name:
+`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
+`Driving it` states the repository commands and the observable end state. A
+harness name, a host skill path, or another section does not satisfy the shape.
+No Launch, Doctor, Evidence, Cleanup, or Helpers section.
+
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no
    review yet`, Checks the repository commands the coordinator observed or `none
