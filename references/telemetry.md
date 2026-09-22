@@ -14,8 +14,14 @@ results, head before/after, finding census, recovery hypotheses, label changes,
 and evidence paths/remote URLs. Say `unknown` when not reported; never estimate
 or use zero for missing usage. A field the harness did not report is `unknown`,
 not zero and not an estimate. Record Grok `total_cost_usd` when present. Record
-Codex `turn.completed` usage as its token fields. Codex cost stays `unknown`
-unless that log contains a cost field. Coordinator-only stages with no process
+Codex `turn.completed` usage as its token fields. Probe `codex-cli 0.153.4`:
+`exec --help` has no cost flag. Live `--json` turn
+`01a0caf9-a2b4-7ce3-aabc-1603e76df0a5` has no dollar field in
+`turn.completed.usage`. The matching session rollout has event types
+`token_count` and `token_usage_record` and no dollar cost key. Codex cost
+stays `unknown`. A newer CLI that later reports a dollar field in
+`turn.completed` or in that session rollout has that field copied as
+`reported`. Coordinator-only stages with no process
 timer, such as triage and ready, stay in the table. Their wall is `not timed`
 unless a start and an end were both observed. Print observed timestamps, such as
 spec admission and the ready label. Avoid adding both session totals and their
@@ -63,8 +69,14 @@ stage, start UTC, end UTC, wall time, role, harness, and the usage fields that
 harness reported. Say `unknown` when not reported; never estimate or use zero for
 missing usage. A field the harness did not report is `unknown`, not zero and not
 an estimate. Record Grok `total_cost_usd` when present. Record Codex
-`turn.completed` usage as its token fields. Codex cost stays `unknown` unless that
-log contains a cost field. Keep coordinator-only stages with no process timer,
+`turn.completed` usage as its token fields. Probe `codex-cli 0.153.4`:
+`exec --help` has no cost flag. Live `--json` turn
+`01a0caf9-a2b4-7ce3-aabc-1603e76df0a5` has no dollar field in
+`turn.completed.usage`. The matching session rollout has event types
+`token_count` and `token_usage_record` and no dollar cost key. Codex cost
+stays `unknown`. A newer CLI that later reports a dollar field in
+`turn.completed` or in that session rollout has that field copied as
+`reported`. Keep coordinator-only stages with no process timer,
 such as triage and ready, in the table. Their wall is `not timed` unless a start
 and an end were both observed. Print observed timestamps, such as spec admission
 and the ready label. Worker-process wall is the sum of attempt rows that have a
