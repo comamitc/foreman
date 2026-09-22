@@ -46,9 +46,19 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    Withhold readiness for BLOCKED, BEHIND, DIRTY, UNKNOWN, DRAFT, UNSTABLE, pending,
    or an unrecognized status until its actual impediment is resolved. Never bypass
    rules, enable auto-merge, enqueue, or merge to obtain a passing state.
-6. Publish final telemetry summary. Project `capstan:ready-to-deploy` on the
-   issue with the existing stage rules. Add the same label to the marked pull
-   request with
+6. Publish final telemetry summary. The summary states one attempt table, two
+   wall totals, and the no-estimate rule. The table has one row per station
+   attempt. The columns are stage, start UTC, end UTC, wall time, role,
+   harness, and the usage fields that harness reported. Say `unknown` when not
+   reported; never estimate or use zero for missing usage. A field the harness
+   did not report is `unknown`, not zero and not an estimate. Worker-process
+   wall is the sum of attempt rows that have a process start and exit.
+   End-to-end wall is from spec admission to the ready-label read-back, or to
+   the review-exhausted summary publication. A bound that was not observed is
+   `unknown`. The two totals are not substitutes for each other. A telemetry
+   gap in this table does not block `capstan:ready-to-deploy`. Project
+   `capstan:ready-to-deploy` on the issue with the existing stage rules. Add
+   the same label to the marked pull request with
    `gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`.
    Read issue labels with `gh issue view N --repo OWNER/REPO --json labels`.
    Read pull-request labels with `gh pr view PR --repo OWNER/REPO --json labels`.
