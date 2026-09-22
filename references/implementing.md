@@ -46,7 +46,17 @@ coordinator; do not manufacture a change to satisfy the nonempty criterion.
 
 Coordinator independently checks evidence and applies the closure proof gate for
 every carried effective blocker, then pushes the exact issue branch without
-force, and finds or creates one non-draft PR with the contract marker and correct
-base. Observe a push rejection before deciding how to integrate remote human work;
-delegate any needed commit/repair to a worker. Read back PR/head/body, then review.
+force, and finds or creates one non-draft PR on base `main` whose written body
+contains both the identity marker `Capstan: owner/repo#N` and a separate line
+`Closes #N`. `N` is the delivery issue number in the pull request's repository.
+The marker stays the identity check. The keyword is `Closes #N` only. Do not use
+`Fixes`. Do not use `owner/repo#N` as the close keyword. Do not close the issue
+at create. Do not wait for #16. Observe a push rejection before deciding how to
+integrate remote human work; delegate any needed commit/repair to a worker. Read
+back PR/head/body after create. If `Closes #N` is missing, add that line on the
+same pull request. Do not open a second pull request. If the body already
+contains `Closes #N` for that issue, leave it and do not write the keyword a
+second time. Shipping this text does not rewrite already-merged pull requests.
+The rule applies to pull requests Capstan creates or next edits after the text
+is in force. Then review.
 Attempt failures use recovery inside implementing rather than the review fix label.
