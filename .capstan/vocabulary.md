@@ -27,3 +27,7 @@
 **Feature map**: `README.md` plus one Markdown file per user-facing feature. Rejected: a host skill directory or a stored source analysis.
 
 **User-facing feature**: a behavior a person reaches through a screen, a command, or a job. Rejected: an internal module with no person-facing reach path.
+
+**Reported cost**: a dollar figure present in the installed CLI's own event or session record for that attempt. Rejected: a public list price.
+
+**Estimate**: a number produced from a price table, a credit balance delta, or an operator default. Capstan does not record one as cost. Rejected: writing an estimate into the cost cell.

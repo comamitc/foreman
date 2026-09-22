@@ -147,7 +147,7 @@ codex exec -C WORKTREE -s workspace-write -c approval_policy='"never"' \
   --add-dir RESULT_DIR --json --output-last-message RESULT - < LAUNCH_FILE
 ```
 
-Help verified on 0.153.4. Add `--model MODEL` and
+Help verified on `codex-cli 0.153.4`. `exec --help` has no cost flag. Add `--model MODEL` and
 `-c model_reasoning_effort='"EFFORT"'` when configured. Confirm the chosen model
 accepts the value. For pure inspection, prefer `-s read-only`: it executes
 model-generated shell commands in a read-only sandbox, and the worker reads files
@@ -165,7 +165,11 @@ skills are absent. Do not use dangerous bypass flags to repair sandbox denials.
 
 Observed JSONL includes `thread.started`, `item.completed`, and `turn.completed`.
 The latter reports usage such as input_tokens, cached_input_tokens, output_tokens.
-Cost was not reported in the probe: record `unknown`. Do not pass `--output-schema`;
+Live `--json` turn `01a0caf9-a2b4-7ce3-aabc-1603e76df0a5` has no dollar field in
+`turn.completed.usage`. The matching session rollout has event types `token_count`
+and `token_usage_record` and no dollar cost key. Cost stays `unknown`. A newer
+CLI that later reports a dollar field in `turn.completed` or in that session
+rollout has that field copied as `reported`. Do not pass `--output-schema`;
 worker results are Markdown. A provider JSON change does not invalidate valid work.
 
 ## Grok Build
