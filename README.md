@@ -5,9 +5,16 @@ records evidence, and recovers from technical failures. `capstan:ready-to-deploy
 means an open PR that GitHub says can merge immediately. Capstan never merges or
 deploys.
 
-The product is Markdown. There is no executable controller, installer, state
-database, wrapper, or external skill dependency. The coordinator reads GitHub/git
-facts and uses existing CLIs. Local evidence and labels help resume; they cannot
+The product is Markdown. Capstan's own behavior is a skill procedure executed
+by the coordinator. A Capstan executable, parser, or controller is forbidden
+unless an admitted issue records the exception. A Capstan init binary would
+violate this rule, not an implementation choice. The rule does not apply to a
+target repository unless that repository is Capstan. There is no installer,
+state database, wrapper, or external skill dependency. The coordinator reads
+GitHub/git facts. Permit only `git`, `gh`, existing harness CLIs, and a target
+repository's own CLI. A Capstan executable, parser, or controller stays
+forbidden unless an admitted issue records the exception. Do not permit the
+class "an installed CLI." Local evidence and labels help resume; they cannot
 overrule current facts.
 
 ## Install and invoke

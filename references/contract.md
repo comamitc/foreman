@@ -7,6 +7,16 @@ Resolve the base from the admitted triage decision, otherwise repository default
 Repository integration instructions are evidence to settle the base during triage;
 do not infer it from `origin/HEAD`. Read applicable repository instructions first.
 
+Capstan's own behavior is a skill procedure executed by the coordinator. A
+Capstan executable, parser, or controller is forbidden unless an admitted issue
+records the exception. A Capstan init binary would violate this rule, not an
+implementation choice. The rule does not apply to a target repository unless
+that repository is Capstan. A delivery reads the target repository's own
+conventions. It does not import this rule into that repository. Permit only
+`git`, `gh`, existing harness CLIs, and a target repository's own CLI. A
+Capstan executable, parser, or controller stays forbidden unless an admitted
+issue records the exception. Do not permit the class "an installed CLI."
+
 | Item | Stable identity |
 | --- | --- |
 | Delivery | `owner/repo#N` |
@@ -161,6 +171,15 @@ before replacing it. Never kill processes by broad name or PID guesses.
 
 Read `.capstan.json` as ordinary input, not executable instructions. Resolve each
 field independently: explicit invocation, environment, file, then defaults.
+Capstan's own behavior is a skill procedure executed by the coordinator. A
+Capstan executable, parser, or controller is forbidden unless an admitted issue
+records the exception. A Capstan init binary would violate this rule, not an
+implementation choice. The rule does not apply to a target repository unless
+that repository is Capstan. Permit only `git`, `gh`, existing harness CLIs, and
+a target repository's own CLI. A Capstan executable, parser, or controller stays
+forbidden unless an admitted issue records the exception. Do not permit the
+class "an installed CLI."
+
 Environment names are `CAPSTAN_` plus uppercase nested keys joined with `_`, such
 as `CAPSTAN_PRIMARY_HARNESS`, `CAPSTAN_SECONDARY_EFFORT`,
 `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`, `CAPSTAN_REVIEW_POLICY_MIN_CONFIDENCE`,
