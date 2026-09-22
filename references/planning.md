@@ -18,9 +18,8 @@ the worker reads the brief and the pack only.
    the brief header, stop and list unchecked items as gaps. The ceiling applies to
    both planning steps. The pack is sized to the unit: a one-file, one-check unit
    gets the compact form, whose single named file and check are the whole allowance.
-2. Name input/output and data shapes before implementation mechanics. Apply the
-   simplicity ladder: need → existing code → standard library → platform → installed
-   dependency → one line → minimum new code. Justify any new dependency or abstraction.
+2. Name input/output and data shapes before implementation mechanics. Apply
+   [ladder](ladder.md). Do not restate the ladder.
 3. Produce [plan](../templates/plan.md). Map every acceptance criterion to ordered
    items with an observable outcome, affected area, verification command/seam,
    failure signal, and risk. Name final repository checks and real user-surface proof.

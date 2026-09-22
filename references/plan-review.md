@@ -19,14 +19,15 @@ This is the single review of the initial plan, not a review of its correction.
    the brief header, stop, write the result, and list every unchecked criterion,
    item, citation, or check as a gap. A compact pack's single named file and check
    are the whole read allowance.
-2. Examine every acceptance criterion and plan item on all applicable axes:
+2. Examine every acceptance criterion and plan item on all applicable axes.
+   Judge simplicity by [ladder](ladder.md). Do not restate the ladder.
 
    | Axis | Question |
    | --- | --- |
    | Spec | Does it cover the requested behavior without unrequested scope? |
    | Standards | Does it follow repository rules and appropriate verification seams? |
    | Correctness | Can the proposed sequence produce the intended result safely? |
-   | Simplicity | Can it delete, reuse, use the standard library/native platform, or shrink? |
+   | Simplicity | Does it follow [ladder](ladder.md)? |
 
 3. Use [review](../templates/review.md) for separate axes and grounded findings.
    Record each finding's original scenario, acceptance condition, correction,
