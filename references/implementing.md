@@ -49,14 +49,22 @@ every carried effective blocker, then pushes the exact issue branch without
 force, and finds or creates one non-draft PR on base `main` whose written body
 contains both the identity marker `Capstan: owner/repo#N` and a separate line
 `Closes #N`. `N` is the delivery issue number in the pull request's repository.
-The marker stays the identity check. The keyword is `Closes #N` only. Do not use
+The created title is the subject, a space, then `(#N)`. `N` is not the
+pull-request number. The #12 shape is
+`Replace the repository tour with one coordinator-written pack per worker launch (#12)`.
+The marker stays the identity check. A title suffix is not a substitute for the
+marker. A wrong title does not retarget branch `capstan/N` or worktree
+`.worktrees/capstan+N`. The keyword is `Closes #N` only. Do not use
 `Fixes`. Do not use `owner/repo#N` as the close keyword. Do not close the issue
-at create. Do not wait for #16. Observe a push rejection before deciding how to
-integrate remote human work; delegate any needed commit/repair to a worker. Read
-back PR/head/body after create. If `Closes #N` is missing, add that line on the
-same pull request. Do not open a second pull request. If the body already
-contains `Closes #N` for that issue, leave it and do not write the keyword a
-second time. Shipping this text does not rewrite already-merged pull requests.
+at create. Observe a push rejection before deciding how to integrate remote
+human work; delegate any needed commit/repair to a worker. Read back
+PR/head/body after create. Read the title back after create. If the suffix is
+missing or different, repair it with `gh pr edit` on the same pull request. Do
+not open a second pull request. If the title already ends with ` (#N)` for that
+issue, leave it unchanged and do not double the suffix. If `Closes #N` is
+missing, add that line on the same pull request. If the body already contains
+`Closes #N` for that issue, leave it and do not write the keyword a second
+time. Shipping this text does not rewrite already-merged pull requests.
 The rule applies to pull requests Capstan creates or next edits after the text
 is in force. Then review.
 Attempt failures use recovery inside implementing rather than the review fix label.
