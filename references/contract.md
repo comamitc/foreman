@@ -65,8 +65,10 @@ paginated `/issues/N/comments` endpoint. Then inventory:
    Select the open PR with the exact marker and repository/head identity. Closed
    or merged PRs are evidence to inspect, not permission to recreate intent.
 4. Live PR base/head, checks, approvals, and mergeability; marked remote artifacts.
-5. Available local briefs, results, logs, and telemetry. Recreate missing evidence
-   directories and briefs from remote facts; missing files cannot strand a run.
+5. Available local briefs, results, logs, `ledger.md`, and other telemetry.
+   Recreate missing evidence directories and briefs from remote facts; missing
+   files cannot strand a run. `ledger.md` is the retained local record. `run.md`
+   and `events.jsonl` are not a second source of truth.
 
 Select the furthest active station whose prerequisites are supported, accounting
 for evidence made stale by current facts. Labels are hints. A complete plan can
@@ -185,17 +187,25 @@ class "an installed CLI."
 Environment names are `CAPSTAN_` plus uppercase nested keys joined with `_`, such
 as `CAPSTAN_PRIMARY_HARNESS`, `CAPSTAN_SECONDARY_EFFORT`,
 `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`, `CAPSTAN_REVIEW_POLICY_MIN_CONFIDENCE`,
-and `CAPSTAN_UNSAFE_AUTONOMY`.
+`CAPSTAN_UNSAFE_AUTONOMY`, and `CAPSTAN_EVIDENCE_DELETE_PILE`.
 `CAPSTAN_STATE` independently sets evidence storage. Never print environment values
 wholesale. Call out unknown/invalid fields and use a valid lower-precedence value;
 salvage unambiguous values from malformed input without inventing ambiguous ones.
+`evidence.delete_pile` is the exception to fall-through. It is a boolean. The
+default is `false`. Precedence is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE`,
+then `.capstan.json`, then the default. An invalid value is `false`. Do not fall
+through to a lower precedence value. Do not resolve an invalid or missing value
+to `true`. A missing `evidence.delete_pile` means `false`. Record the resolved
+value in `ledger.md`. The switch cannot suppress the ledger. There is no second
+flag.
 
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
 `.capstan/features` when that directory contains `README.md`. `features: null`
 disables the map. It does not fall through to `.capstan/features`. An absent
 `features` field is not `features: null`. A missing explicit path is recorded in
-`run.md`. The run continues with no map. A delivery with no map still completes.
+`ledger.md` and in `run.md`. The ledger is the retained record. The run
+continues with no map. A delivery with no map still completes.
 Capstan does not generate a map during an ordinary issue. Do not add a stage, a
 label, or a daily job for the map. Do not copy the map into a host skill
 directory.
@@ -219,7 +229,9 @@ a nonnegative integer where 0 disables that early guard. Null model/effort uses 
 recorded as such. Null fallback disables it. Prefer a different available secondary;
 if only one harness works, disclose `independence: same-harness`. An explicitly
 requested unavailable setting fails visibly and enters recovery; never silently
-drop an effort setting. Record effective nonsecret configuration in run.md.
+drop an effort setting. Record effective nonsecret configuration in `ledger.md`
+and in run.md. The ledger is the retained record. run.md is not a second source
+of truth. Unreported usage is `unknown`, never zero and never estimated.
 
 `recovery.plan_revision_attempts` and `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`
 are retired. Warn and ignore them, including invocation overrides; they cannot
@@ -253,7 +265,8 @@ primary merely because it ran init.
 If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
 only `primary`, `secondary`, and `fallback`, plus the documented recovery
 defaults. Set model and effort to null. Set `fallback` to null when no third
-observed harness exists. Set `unsafe_autonomy` to false. Leave the file
+observed harness exists. Set `unsafe_autonomy` to false. Do not write
+`evidence.delete_pile`. A missing `evidence.delete_pile` means `false`. Leave the file
 uncommitted. Do not switch branches. Do not commit, push, or open a pull request.
 The write is allowed on `main` and stays uncommitted. Exclusive create writes the
 new file only when it is absent. If the file is present before the write finishes,
@@ -274,3 +287,54 @@ Init writes no secrets, no evidence directory, no worktree, and no feature map.
 Init does not write `features`. Init does not edit product source. The
 `.capstan.json` write is init configuration, not a product-source edit and not a
 delivery commit.
+
+## Ledger, pile, and deletion
+
+These five records bind later deliveries. Do not add a sixth term for this rule.
+
+**Ledger**: `ledger.md`, the retained local record of totals and check outcomes. Always written. Rejected: a switch that disables it.
+
+**Pile**: briefs, results, worker captures, check scripts and logs, the task toolchain, and optional `events.jsonl`. Exact paths: `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`, `tooling/`, and `events.jsonl` when present. `toolchain/` is pile. Rejected: `ledger.md`.
+
+**Deletion switch**: `evidence.delete_pile`. It authorizes success-path removal of the pile and this run's worktree. It never authorizes removal of the ledger. Rejected: a second flag.
+
+**Check outcome**: the head, command, exit, and pass or fail signal. Not the script body. Rejected: treating `checks/fix-4-red.py` as the record.
+
+**Unknown**: the required state when a number was never reported, or was deleted before the ledger contained it. Not zero. Rejected: an estimate.
+
+Always write `ledger.md` at run acceptance and update it at each station end,
+whether or not deletion is enabled. Record identity, spec revision, nonsecret
+config, budget start, the resolved deletion switch, and one row per attempt.
+Each closure-gate check outcome is a ledger row before the next push or review.
+The row has the head, the command, the exit, and the pass or fail signal. A
+script path may be named. The script body is not the record. `run.md` and
+`events.jsonl` are not a second source of truth. Put required facts in the
+ledger before either may be deleted. The switch cannot suppress the ledger.
+Remote comments still publish. Budget start survives from the earliest remote
+timestamp. Unreported usage is `unknown`, never zero and never estimated.
+
+`evidence.delete_pile` defaults to `false`. The environment name is
+`CAPSTAN_EVIDENCE_DELETE_PILE`. Precedence is invocation, then
+`CAPSTAN_EVIDENCE_DELETE_PILE`, then `.capstan.json`, then the default. An
+invalid value is `false`. A missing value is `false`.
+
+No mid-run deletion. Delete the named pile paths only at ready-to-deploy, and
+only when all four gates pass: the switch is `true`, ledger read-back succeeds,
+the ledger is explicitly complete, and no worker from this run is active. A
+successful read-back is not completeness. The ledger is explicitly complete only
+when every required field is present. Required fields include identity, spec
+revision, nonsecret config, budget start, the resolved deletion switch, one row
+per required attempt, and each required closure-gate row (head, command, exit,
+pass or fail). A missing required field is incompleteness. An absent required
+attempt row or closure-gate row is a missing required field. An incomplete
+ledger keeps the pile and the worktree. Name each deleted path. Do not recurse
+over the evidence root or other issue directories. When the switch is `false`,
+the pile stays and the ledger says deletion was skipped.
+
+The same switch may remove only `.worktrees/capstan+N` created by this run, and
+only at ready-to-deploy, and only when the ledger is explicitly complete and the
+pushed head equals the ledger head. Do not remove the shared checkout. When the
+switch is `false`, or the ledger is incomplete, the worktree stays. A manual
+cleanup before ready-to-deploy stays the old exact-directory rule. Deletion is
+not a separate stage, label, or executable. The `.capstan.json` example in
+[the README](../README.md) includes `"evidence": {"delete_pile": false}`.

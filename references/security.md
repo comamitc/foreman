@@ -41,8 +41,51 @@
    redacted excerpts and evidence pointers, not full provider payloads or environment
    dumps. Preserve original error information apart from redaction so recovery can
    reason from it. Treat unknown usage format as a telemetry gap, not a secret leak.
+8. Always write `ledger.md`. It is the retained local record of totals and check
+   outcomes. Update it at run acceptance and at each station end, whether or not
+   deletion is enabled. Record identity, spec revision, nonsecret config, budget
+   start, the resolved deletion switch, and one row per attempt. Each
+   closure-gate check outcome is a ledger row before the next push or review:
+   head, command, exit, and pass or fail. A script path may be named. The script
+   body is not the record. `checks/fix-4-red.py` is not the record. `run.md` and
+   `events.jsonl` are not a second source of truth. Put required facts in the
+   ledger before either may be deleted. The switch cannot suppress the ledger.
+   Remote comments still publish. Budget start survives from the earliest remote
+   timestamp. Unreported usage is `unknown`, never zero and never estimated.
+   `unknown` is the required state when a number was never reported, or was
+   deleted before the ledger contained it. Not zero. Not an estimate.
+9. The pile is exactly `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`,
+   `tooling/`, and `events.jsonl` when present. `toolchain/` is pile. The pile
+   does not include `ledger.md`. `evidence.delete_pile` is a boolean deletion
+   switch. The default is `false`. Precedence is invocation, then
+   `CAPSTAN_EVIDENCE_DELETE_PILE`, then `.capstan.json`, then the default. An
+   invalid value is `false`. A missing value is `false`. Record the resolved
+   value in the ledger. There is no second flag. The switch authorizes
+   success-path removal of the pile and this run's worktree. It never authorizes
+   removal of the ledger.
+10. No mid-run deletion. Delete the named pile paths only at ready-to-deploy, and
+    only when all four gates pass: the switch is `true`, ledger read-back
+    succeeds, the ledger is explicitly complete, and no worker from this run is
+    active. A successful read-back is not completeness. The ledger is explicitly
+    complete only when every required field is present. Required fields include
+    identity, spec revision, nonsecret config, budget start, the resolved
+    deletion switch, one row per required attempt, and each required
+    closure-gate row (head, command, exit, pass or fail). A missing required
+    field is incompleteness. An absent required attempt row or closure-gate row
+    is a missing required field. An incomplete ledger keeps the pile and the
+    worktree. Name each deleted path. Do not recurse over the evidence root or
+    other issue directories. When the switch is `false`, the pile stays and the
+    ledger says deletion was skipped. The same switch may remove only
+    `.worktrees/capstan+N` created by this run, and only at ready-to-deploy, and
+    only when the ledger is explicitly complete and the pushed head equals the
+    ledger head. Do not remove the shared checkout. When the switch is `false`,
+    or the ledger is incomplete, the worktree stays. Deletion is not a separate
+    stage, label, or executable.
 
 Use body files or stdin for issue-derived text and briefs; shell-quote path
 arguments. Avoid eval, command substitution of issue text, and long prompt argv.
-Manual log cleanup must name an exact verified run directory; no broad recursive
-deletion recipe ships with Capstan. Deleting local evidence must remain survivable.
+Manual log cleanup before ready-to-deploy must name an exact verified run
+directory. That manual cleanup stays the old exact-directory rule. No broad
+recursive deletion recipe ships with Capstan. Do not recurse. Deleting local
+evidence must remain survivable: an incomplete ledger keeps the pile and the
+worktree, and unreported usage stays `unknown`.

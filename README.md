@@ -82,6 +82,9 @@ Optional `.capstan.json` in the target repository:
   "worker_timeout_min": 60,
   "ci_timeout_min": 45,
   "unsafe_autonomy": false,
+  "evidence": {
+    "delete_pile": false
+  },
   "features": null
 }
 ```
@@ -94,14 +97,22 @@ block only when they meet both the configured severity and confidence floors;
 other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
 `fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
+`evidence.delete_pile` is the deletion switch. It is a boolean. The default is
+`false`. Precedence is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE`, then
+`.capstan.json`, then the default. An invalid value is `false`. A missing value
+is `false`. Do not fall through to a lower precedence value. Do not resolve an
+invalid or missing value to `true`. The example above sets `"delete_pile"` to
+`false`. Init does not write `evidence.delete_pile`. Record the resolved value
+in `ledger.md`. The switch cannot suppress the ledger. There is no second flag.
 
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
 `.capstan/features` when that directory contains `README.md`. The example value
 `features: null` disables the map. It does not fall through to
 `.capstan/features`. An absent `features` field is not `features: null`. A
-missing explicit path is recorded in `run.md`. The run continues with no map. A
-delivery with no map still completes. Capstan does not generate a map during an
+missing explicit path is recorded in `ledger.md` and in `run.md`. The ledger
+is the retained record. The run continues with no map. A delivery with no map
+still completes. Capstan does not generate a map during an
 ordinary issue. Do not add a stage, a label, or a daily job for the map. Do not
 copy the map into a host skill directory.
 
@@ -165,9 +176,12 @@ answered during this init.
 
 If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
 only `primary`, `secondary`, and `fallback`, plus the documented recovery
-defaults. Those keys are the keys in the example above. Set model and effort to
+defaults. Those keys are the `primary`, `secondary`, `fallback`, and `recovery`
+keys in the example above, not `evidence.delete_pile`. Set model and effort to
 null. Set `fallback` to null when no third observed harness exists. Set
-`unsafe_autonomy` to false. Leave the file uncommitted. Do not switch branches.
+`unsafe_autonomy` to false. Do not write `evidence.delete_pile`. A missing
+`evidence.delete_pile` means `false`. Leave the file uncommitted. Do not switch
+branches.
 Do not commit, push, or open a pull request. The write is allowed on `main` and
 stays uncommitted. Exclusive create writes the new file only when it is absent.
 If the file is present before the write finishes, do not replace it.
@@ -205,15 +219,58 @@ protection. No hostile-input sandbox or distributed lock is provided in v1.
 ## Evidence and cleanup
 
 Evidence defaults to `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/`.
-Owner-only briefs, results, worker/check logs, run.md, and optional events.jsonl
-record observed commands and usage. Secrets are redacted before persistence or
-publication. Missing usage is unknown, never estimated.
+Always write `ledger.md` at run acceptance and update it at each station end,
+whether or not deletion is enabled. `ledger.md` is the retained local record of
+totals and check outcomes. Record identity, spec revision, nonsecret config,
+budget start, the resolved deletion switch, and one row per attempt. Each
+closure-gate check outcome is a ledger row before the next push or review: head,
+command, exit, and pass or fail. A script path may be named. The script body is
+not the record. `checks/fix-4-red.py` is not the record. `run.md` and
+`events.jsonl` are not a second source of truth. Put required facts in the
+ledger before either may be deleted. The switch cannot suppress the ledger.
+Remote comments still publish. Budget start survives from the earliest remote
+timestamp. Owner-only briefs, results, worker captures, check scripts and logs,
+`run.md`, and optional `events.jsonl` may also be written. Secrets are redacted
+before persistence or publication. Unreported usage is `unknown`, never zero and
+never estimated. `unknown` is the required state when a number was never
+reported, or was deleted before the ledger contained it.
 
-To clean raw logs manually, first resolve the exact delivery directory, inspect
-its contents, and confirm no worker is active. Archive it or remove only the
-selected files using your normal file manager. Keep remote marked evidence for
-resume. There is no automatic deletion job, and losing local evidence must not
-prevent delivery continuation.
+The pile is exactly `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`,
+`tooling/`, and `events.jsonl` when present. `toolchain/` is pile. The pile does
+not include `ledger.md`.
+
+`evidence.delete_pile` is a boolean deletion switch. The default is `false`.
+Precedence is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE`, then
+`.capstan.json`, then the default. An invalid value is `false`. A missing value
+is `false`. Record the resolved value in the ledger. There is no second flag.
+The switch authorizes success-path removal of the pile and this run's worktree.
+It never authorizes removal of the ledger.
+
+No mid-run deletion. Delete the named pile paths only at ready-to-deploy, and
+only when all four gates pass: the switch is `true`, ledger read-back succeeds,
+the ledger is explicitly complete, and no worker from this run is active. A
+successful read-back is not completeness. The ledger is explicitly complete only
+when every required field is present. Required fields include identity, spec
+revision, nonsecret config, budget start, the resolved deletion switch, one row
+per required attempt, and each required closure-gate row (head, command, exit,
+pass or fail). A missing required field is incompleteness. An absent required
+attempt row or closure-gate row is a missing required field. An incomplete
+ledger keeps the pile and the worktree. Name each deleted path. Do not recurse
+over the evidence root or other issue directories. When the switch is `false`,
+the pile stays and the ledger says deletion was skipped.
+
+The same switch may remove only `.worktrees/capstan+N` created by this run, and
+only at ready-to-deploy, and only when the ledger is explicitly complete and the
+pushed head equals the ledger head. Do not remove the shared checkout. When the
+switch is `false`, or the ledger is incomplete, the worktree stays.
+
+To clean raw logs manually before ready-to-deploy, first resolve the exact
+delivery directory, inspect its contents, and confirm no worker is active.
+Archive it or remove only the selected files using your normal file manager.
+That manual cleanup stays the old exact-directory rule. Keep remote marked
+evidence for resume. Losing local evidence before ready-to-deploy must not
+prevent delivery continuation. Deletion is not a separate stage, label, or
+executable.
 
 ## Development and provenance
 
