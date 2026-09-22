@@ -33,7 +33,7 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 5. **Verify.** Inspect actual results, commands, commits, diff, and GitHub.
    Worker claims and successful process exits alone do not establish completion.
    Before pushing a write-station candidate, apply [finding resolution's closure
-   proof gate](references/findings.md) to every carried blocker/major; incomplete
+   proof gate](references/findings.md) to every carried effective blocker; incomplete
    red/green/bite proof stays in the current station.
 6. **Recover.** Any failed attempt, command, check, missing artifact, or weak
    result loads [recovery](references/recovery.md). Recover within this station;
@@ -51,12 +51,14 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 | planning | [planning](references/planning.md) | fresh primary |
 | plan-review | [plan-review](references/plan-review.md) | fresh secondary |
 | implementing | [implementing](references/implementing.md) | fresh primary |
-| review | [review](references/review.md) | fresh secondary |
-| fix | [fix](references/fix.md), only for blocking findings | fresh primary |
+| review | [review](references/review.md), [code-review convergence](references/review-convergence.md) | fresh secondary |
+| fix | [fix](references/fix.md), [code-review convergence](references/review-convergence.md), only for effective blockers | fresh primary |
 | pre-merge | [pre-merge](references/pre-merge.md) | coordinator and repair workers |
 
-Stop only at verified `capstan:ready-to-deploy`, a typed human capability or
-budget decision from recovery, or user cancellation. Pending infrastructure and
+Stop only at verified `capstan:ready-to-deploy`, a verified review-exhausted
+blocked overlay, a typed human capability or budget decision from recovery, or
+user cancellation. Pending infrastructure and
 activity markers call for bounded waiting and observation, not abandonment.
-On resume, observe whether the missing capability has appeared before removing
-the blocked overlay. A formerly ready PR must satisfy the live gate again.
+On resume, observe whether the missing capability or review-exhausted resume
+condition has appeared before removing the blocked overlay. A formerly ready PR
+must satisfy the live gate again.

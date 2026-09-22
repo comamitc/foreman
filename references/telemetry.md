@@ -16,7 +16,7 @@ missing usage. Avoid adding both session totals and their constituent turn total
 For planning, record the initial plan, single review, correction launch/outcome,
 and full finding handoff into implementing. Record any operator-authorized reopening
 with its changed scope/architecture, not a reset caused by technical feedback.
-For implementing/fix attempts carrying blocker/major findings, record each closure
+For implementing/fix attempts carrying effective blocking findings, record each closure
 gate row's reviewed head, red/green commands and outcomes, bite method, coordinator
 verification, and any proxy/incomplete reason that kept the station open.
 
@@ -32,12 +32,12 @@ Use these event kinds when their trigger occurs:
 | station-start / station-end | station begins or completion criterion verified |
 | worker-start / worker-end | each worker attempt, including corrective attempts |
 | check | observed command/check outcome and applicable head |
-| finding-census | plan/code review verdict and finding counts at revision/SHAs |
+| finding-census | plan/code review verdict; policy; round; blocking/advisory partition at revision/SHAs |
 | recovery | failure, semantic progress comparison, hypothesis, next attempt |
 | label-change | observed before/after labels, including projection repair |
-| blocker / unblock | typed capability and observed satisfaction |
+| blocker / unblock | typed capability or review exhaustion, and observed resume condition |
 | telemetry-gap | missing, malformed, or failed evidence capture |
-| run-end | ready, capability/budget handoff, or cancellation |
+| run-end | ready, blocked handoff, or cancellation |
 
 Events may be Markdown paragraphs. JSONL is an optional convenience, with fields
 such as time, kind, station, attempt, head, outcome, and evidence. Existing `jq -cn`
@@ -46,8 +46,8 @@ Do not concatenate unescaped worker text into JSON. No validator, parser, helper
 or event is needed to choose a station. On failed append or malformed event, note
 the gap in run.md or the next available remote comment and continue.
 
-At terminal readiness publish a marked issue summary containing PR URL, current
-head/base, observed ready-gate facts, station/attempt table, wall time, reported
+At terminal readiness or review exhaustion publish a marked issue summary containing
+PR URL, current head/base, observed ready-gate or exhaustion facts, station/attempt table, wall time, reported
 usage/cost, findings addressed/refuted, recovery history, human interventions,
 same-harness independence or unsafe mode disclosures, and gaps. Include recovered
 counts only when evidence supports them. Lost local data yields unknown details,

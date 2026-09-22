@@ -72,13 +72,14 @@ judgments. PR readiness is always observed live.
 ## Marked Markdown artifacts
 
 Use `<!-- capstan:KIND owner/repo#N -->` for `spec`, `plan`, `plan-review`,
-`review`, `blocker`, `activity`, and `summary`. Put the spec marker in the issue
+`review`, `review-disposition`, `blocker`, `activity`, and `summary`. Put the spec marker in the issue
 body, plans/plan reviews/blockers/activity/summaries in issue comments, and code
-review censuses in PR comments. Human-readable revision, UTC time, head/base,
+review censuses and dispositions in PR comments. Human-readable revision, UTC time, head/base,
 and attempt lines disambiguate artifacts; no digest or schema protocol is needed.
 The admitted body keeps product content concise; machine identifiers belong in
 the hidden marker and evidence comments, not repeated product prose.
-Activity and summary shapes are prose-defined here and in telemetry; no additional
+Activity, summary, and disposition shapes are prose-defined here, in review
+convergence, and in telemetry; no additional
 template or rigid format is required.
 
 Inspect all paginated comments and exact markers before publishing. Preserve
@@ -107,16 +108,18 @@ labels are repaired from evidence and recorded, never treated as a terminal erro
 | planning (initial) | complete published plan for admitted revision | plan-review |
 | plan-review | complete census: no findings / findings | implementing / planning (single correction) |
 | planning (single correction) | corrected plan and complete finding handoff; interrupted work retained explicitly | implementing |
-| implementing | verified commits/checks/outcome; closure proof gate passed for carried blocker/major findings; marked non-draft PR | review |
-| review | exact-head census: blocking findings / none | fix / pre-merge |
-| fix | blocking census resolved or refuted; closure proof gate passed; verified resulting head (unchanged is valid after refutation) | review |
+| implementing | verified commits/checks/outcome; closure proof gate passed for carried effective blockers; marked non-draft PR | review |
+| review | exact-head policy partition: effective blockers / none / round ceiling | fix / pre-merge / blocked review-exhausted |
+| fix | effective blocking census resolved or refuted; closure proof gate passed; verified resulting head (unchanged is valid after refutation) | review |
 | pre-merge | strict live ready gate in pre-merge reference | ready-to-deploy |
 
 Use `capstan:` before each stage name. Failed attempts preserve the active label.
 The two planning rows share `capstan:planning`; evidence distinguishes them.
 Apply [one-pass planning](plan-convergence.md) before dispatch or resume; its
 interrupted-correction handoff takes precedence over generic station retry rules.
-A blocker adds only `capstan:blocked`; remove it when its capability is observed.
+A blocker adds only `capstan:blocked`. Remove a human-capability blocker when its
+capability is observed; remove a review-exhausted blocker only under
+[code-review convergence](review-convergence.md)'s resume conditions.
 `capstan:ready-to-deploy` means immediately mergeable, not merged or deployed.
 
 ## Concurrent activity
@@ -136,7 +139,8 @@ Read `.capstan.json` as ordinary input, not executable instructions. Resolve eac
 field independently: explicit invocation, environment, file, then defaults.
 Environment names are `CAPSTAN_` plus uppercase nested keys joined with `_`, such
 as `CAPSTAN_PRIMARY_HARNESS`, `CAPSTAN_SECONDARY_EFFORT`,
-`CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`, and `CAPSTAN_UNSAFE_AUTONOMY`.
+`CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`, `CAPSTAN_REVIEW_POLICY_MIN_CONFIDENCE`,
+and `CAPSTAN_UNSAFE_AUTONOMY`.
 `CAPSTAN_STATE` independently sets evidence storage. Never print environment values
 wholesale. Call out unknown/invalid fields and use a valid lower-precedence value;
 salvage unambiguous values from malformed input without inventing ambiguous ones.
@@ -144,9 +148,13 @@ salvage unambiguous values from malformed input without inventing ambiguous ones
 Defaults: primary claude; secondary codex; optional fallback grok; model and effort
 null; transient_retries 3; same_failure_attempts 2;
 run_wall_timeout_min 360;
-max_cost_usd null; worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false.
+max_cost_usd null; worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
+review_policy block_threshold medium, min_confidence 0.70,
+max_review_fix_rounds 3, surface_recurrence_rounds 3.
 Timeouts must be positive; retry counts nonnegative integers; cost positive or
-null; unsafe_autonomy boolean. Null model/effort uses the harness default and is
+null; unsafe_autonomy boolean. Review threshold must be critical/high/medium/low,
+confidence from 0 through 1, max rounds a positive integer, and recurrence rounds
+a nonnegative integer where 0 disables that early guard. Null model/effort uses the harness default and is
 recorded as such. Null fallback disables it. Prefer a different available secondary;
 if only one harness works, disclose `independence: same-harness`. An explicitly
 requested unavailable setting fails visibly and enters recovery; never silently

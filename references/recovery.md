@@ -32,7 +32,7 @@ preserve the active stage while recovering.
    | resolved same_failure_attempts reached (default 2) | fresh secondary independent diagnosis, then fresh primary repair |
    | same failure after diagnosis and repair | one configured fallback attempt per original failure scenario per run; if unavailable or already attempted, fresh primary with a materially different hypothesis |
    | actionable plan findings | single correction against the complete census, then implementing with every obligation; apply plan-convergence.md |
-   | actionable code review findings | review/fix loop with findings.md reconciliation and the pre-push closure proof gate |
+   | actionable code review findings | bounded review/fix loop with review-convergence.md partitioning, findings.md reconciliation, and the pre-push closure proof gate |
    | recurrent/reopened scenario after a claimed fix | record the insufficient red/green/bite proof, obtain fresh secondary diagnosis, then use a materially different primary repair hypothesis |
    | conflicts/CI | pre-merge reference's ordered recovery |
    | telemetry/local artifact/helper failure | recreate from remote evidence or use direct existing CLI; note the gap |
@@ -52,7 +52,15 @@ start a fresh worker carrying the prior result and precise feedback; missing res
 support is not a blocker. Each new station and independent judgment starts fresh.
 Do not launch a second writer while a prior writer is alive.
 
-## Human capabilities
+## Blocked overlays
+
+Review exhaustion is the one technical blocked overlay. Apply it only at
+[code-review convergence](review-convergence.md)'s configured round ceiling with
+effective blockers still open. It is not evidence that a person must diagnose or
+repair the code. Its published resume conditions are a materially different
+candidate repair, a policy/spec change, or an explicit trusted disposition.
+
+All other blocked overlays identify a missing human capability:
 
 | Reason | Exactly what the person supplies |
 | --- | --- |
@@ -65,15 +73,19 @@ Do not launch a second writer while a prior writer is alive.
 | safety-boundary | explicit authority for a production-affecting/destructive step |
 | budget-approval | more time/cost, scope change, or cancel at circuit breaker |
 
-Use [blocker](../templates/blocker.md). Publish one concrete action with why an
-agent cannot supply it, attempted recovery, evidence, station/branch/head, and exact
-resume invocation. Add blocked overlay without removing the stage. If GitHub access
+Use [blocker](../templates/blocker.md). For human-capability blockers, publish one
+concrete action and why an agent cannot supply it. For review exhaustion, publish
+the qualifying repair/spec-policy/disposition resume choices and why automation
+cannot continue on the same evidence. Include attempted recovery, evidence,
+station/branch/head, and exact resume invocation. Add blocked overlay without
+removing the stage. If GitHub access
 itself is unavailable, report the blocker locally and to the user, then publish
 when access returns; failure to publish does not hide the need.
 
 A pending check, provider outage, rate limit, or unavailable service remains a
 wait/retry condition unless a named human capability is missing. On a still-active
 session, re-observe an awaited approval automatically. On a new invocation, verify
-the capability or recorded budget decision, remove only the overlay, and continue.
+the capability, recorded budget decision, or review-exhausted resume condition;
+remove only the overlay, and continue.
 An elapsed wait is not approval. Stop/hand off owned processes explicitly on cancel
 or blocker; leave evidence of any safe completed work and remaining steps.
