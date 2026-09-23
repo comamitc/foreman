@@ -11,6 +11,16 @@ issue number inside its repository, or a text invocation. Repeating an issue
 invocation resumes the same delivery. A delivery, a resume, an issue number,
 and text intake do not enter init.
 
+An explicit invocation of an issue that has `capstan:blocked` starts. Do not
+refuse because of that label. Do not ask the operator to remove it first.
+Before removing the overlay, observe the existing resume condition. Remove a
+human-capability overlay only when the missing capability, decision, or budget
+is observed. Remove a review-exhausted overlay only when one of the published
+review-convergence resume conditions is observed. Keep the stage label. If that
+condition is not observed, leave `capstan:blocked`, leave the blocker handoff,
+and do not rerun the station. A label that is not `capstan:blocked`, including
+a label named `blocked`, does not refuse the invocation and is not removed.
+
 An issue URL uses that issue and does not create a second issue. Allowed
 overrides stay overrides. An invocation that is an issue number, with or
 without those overrides, uses that issue when it resolves in the current
