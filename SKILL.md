@@ -6,9 +6,31 @@ disable-model-invocation: true
 
 # Capstan
 
-Start a delivery only on an explicit user invocation with an issue URL, or an
-issue number inside its repository. Repeating that invocation resumes the same
-delivery. A delivery, a resume, and an issue number do not enter init.
+Start a delivery only on an explicit user invocation with an issue URL, an
+issue number inside its repository, or a text invocation. Repeating an issue
+invocation resumes the same delivery. A delivery, a resume, an issue number,
+and text intake do not enter init.
+
+An issue URL uses that issue and does not create a second issue. Allowed
+overrides stay overrides. An invocation that is an issue number, with or
+without those overrides, uses that issue when it resolves in the current
+checkout. Other prose is not this path even if it contains a digit.
+
+Other non-empty prose with no GitHub URL creates one issue in the repository
+`gh repo view` resolves from the invoking workspace. Title is the first
+non-empty line, at most 256 characters. Body is the full text. Emit the new
+issue URL in the host session before continuing. Then run the normal delivery.
+Preserve the text as the original request.
+
+If `gh repo view` cannot resolve a repository, create no issue and do not parse
+a name from the prose. Ask for `owner/repo`. A GitHub URL that is not an issue
+URL creates no issue. Empty text creates no issue. Do not read a filesystem
+path. Do not use the surrounding transcript.
+
+The created issue is the delivery identity. This one create is the only added
+authority. An ordinary delivery does not create issues. Text intake does not
+enter init and does not run init. No executable, parser, or controller.
+
 You are the coordinator. Own observation, user decisions, worker delegation,
 GitHub mechanics, and verification. Workers author product changes and commits.
 Finish at an open, immediately mergeable PR. Never merge or deploy.

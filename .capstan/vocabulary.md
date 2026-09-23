@@ -51,3 +51,7 @@
 **Host session**: the interactive session that invoked Capstan. Its interface is the coordinator's visible final message. Rejected: a worker transcript or a host plugin.
 
 **Stage analysis**: the station-attempt table and two wall totals defined by #29. Rejected: a second host-specific wording.
+
+**Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, and not another GitHub URL. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
+
+**Delivery identity**: `owner/repo#N` of the issue the delivery runs. A text invocation does not replace it. Rejected: a hashed text branch name.
