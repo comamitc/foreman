@@ -17,7 +17,8 @@ the pack carries the rule extract; do not paste conventions into the brief. Allo
 the result directory with `--add-dir RESULT_DIR` if needed. Explicitly choose write
 mode, which permits file writes but prompts for exec. For unattended test/git commands,
 use a temporary evidence-only `--config` overlay with exact task-specific
-`bash.patterns` allow rules and a narrow `--tools` list. Read stations use
+`bash: patterns:` rules, where each overlay item is `match` plus `approval`
+(`allow`, `prompt`, `deny`) with `*` wildcards only, and a narrow `--tools` list. Read stations use
 `--tools=read,bash` and an evidence-only overlay. Never use auto-approve or yolo
 without unsafe_autonomy, including an inherited yolo default.
 

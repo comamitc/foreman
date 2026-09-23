@@ -15,9 +15,12 @@ configured. Use `--setting-sources ''` to exclude unrelated project/user setting
 when required task/auth settings have been supplied explicitly. The installed CLI
 advertises low/medium/high/xhigh/max; verify model support too. `acceptEdits`
 approves file edits, not every shell command. For read stations use
-`--permission-mode plan`, exact allowed commands, recursive-search deny rules,
-and `--permission-prompts none`; return results in stdout. Deny rules beat allow
-rules. Probed 2026-09-22 at `1af7446`: recursive-form denies let the exact check
+`--permission-mode plan`, `--tools Read,Bash`, `--allowedTools` listing exactly
+`Bash(git status *)`, `Bash(git rev-parse *)`, `Bash(git diff *)`, and
+`--disallowedTools` spellings `Bash(grep -r*)`, `Bash(grep -R*)`,
+`Bash(grep --recursive*)`, `Bash(grep --dereference-recursive*)`, `Bash(rg *)`,
+and `Bash(find *)`, with `--permission-prompts none`; return results in stdout.
+Deny rules beat allow rules. Probed 2026-09-22 at `1af7446`: recursive-form denies let the exact check
 run and denied `grep -rn`, listed in `permission_denials`. `dontAsk` returned
 nothing within five minutes in the 2026-09-22 probe; do not use it. No turn-cap
 flag exists; the brief ceiling is the control. Never use bypassPermissions or

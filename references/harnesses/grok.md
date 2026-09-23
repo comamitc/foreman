@@ -16,7 +16,9 @@ Grok 1.0.34 has no `--add-dir`. `--sandbox workspace` returned `Permission denie
 on the worktree git path. That is not a verified metadata grant. The next harness
 is Codex. Do not set `unsafe_autonomy`. Keep `--sandbox workspace`. For read stations
 use `--sandbox read-only`, `--permission-mode dontAsk`, exact pack commands, and
-recursive-search deny rules. Do not switch to always-approve or bypassPermissions
+`--deny 'Bash(grep -r*)'`, `--deny 'Bash(grep -R*)'`,
+`--deny 'Bash(grep --recursive*)'`, `--deny 'Bash(grep --dereference-recursive*)'`,
+`--deny 'Bash(rg *)'`, and `--deny 'Bash(find *)'`. Do not switch to always-approve or bypassPermissions
 without unsafe_autonomy.
 
 Observed JSON fields: `text`, `stopReason`, `sessionId`, `usage`, `modelUsage`,
