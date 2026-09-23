@@ -31,3 +31,9 @@
 **Reported cost**: a dollar figure present in the installed CLI's own event or session record for that attempt. Rejected: a public list price.
 
 **Estimate**: a number produced from a price table, a credit balance delta, or an operator default. Capstan does not record one as cost. Rejected: writing an estimate into the cost cell.
+
+**Linked worktree git directory**: `<repo>/.git/worktrees/capstan+N`, where Git writes `index.lock` for `capstan/N`. Rejected: the worktree root.
+
+**Common git directory**: the directory `git rev-parse --git-common-dir` prints, where objects are written. Rejected: the worktree's `.git` file.
+
+**Metadata grant**: the smallest host flag that makes those two paths writable for a commit. Not a permission bypass. Rejected: `unsafe_autonomy` or a home-directory grant.
