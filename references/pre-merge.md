@@ -99,5 +99,20 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    not a substitute for that marker, branch `capstan/N`, or the worktree. Stop
    without merging or deploying.
 
+   Emission: after the marked summary is read back, the coordinator's final
+   message in the host session contains the stage-analysis table and the two
+   wall totals. A URL may follow. The URL alone does not satisfy this. Trigger
+   only at verified `capstan:ready-to-deploy` or review exhaustion. No
+   mid-station note. The surface is that final message on Claude Code, Codex,
+   Grok, and Oh My Pi. No plugin, notification command, status-line API, or
+   new marker. Workers do not post the table. Do not add a second summary
+   comment or post the table on the pull request.
+
+   Same-figures rule: copy the published summary's figures. Do not recompute.
+   `unknown` stays `unknown`.
+
+   Gap rule: a missed host message is a telemetry gap in `run.md`. It does not
+   skip the GitHub summary and does not withhold ready.
+
 Technical repair workers use the common result headings plus `## Resulting head`
 and `## Original failure verification`. Failed attempts use shared recovery.

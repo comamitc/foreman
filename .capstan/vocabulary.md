@@ -47,3 +47,7 @@
 **Bot claim**: a pull-request comment or review from a non-human author. It is not yet a finding. Rejected: a hardcoded login list.
 
 **Dismissal**: a published reason that the claim is noise, out of scope, already fixed, or not reproducible on the current head. Rejected: silence.
+
+**Host session**: the interactive session that invoked Capstan. Its interface is the coordinator's visible final message. Rejected: a worker transcript or a host plugin.
+
+**Stage analysis**: the station-attempt table and two wall totals defined by #29. Rejected: a second host-specific wording.
