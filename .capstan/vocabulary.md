@@ -61,3 +61,5 @@
 **Publication boundary**: the point after local code review converges and base freshness is confirmed, when Capstan first pushes the exact reviewed candidate and creates or reconciles the pull request. Rejected: every implementing or fix completion.
 
 **Local CI**: the declared checks run on the local machine during the local loop, including tests and the other commands the plan or repository conventions already name. Rejected: a GitHub Actions replay or a workflow parser.
+
+**Fetched base**: the SHA `git fetch` stored for `origin/<resolved base>` in this run, immediately before the worktree is created. Rejected: local `main`, or an `origin/main` ref from an earlier run.

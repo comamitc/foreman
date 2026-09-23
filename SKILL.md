@@ -97,6 +97,8 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 | fix | [fix](references/fix.md), [code-review convergence](references/review-convergence.md), only for effective blockers | fresh primary |
 | pre-merge | [pre-merge](references/pre-merge.md) | coordinator and repair workers |
 
+Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run. For this repository that command is `git fetch origin main`. Immediately after a successful fetch, record the SHA of that ref. Create the worktree from that SHA. Local `main`, an unfetched `origin/main`, and `origin/HEAD` are not valid parents. If the fetch fails, stop. Do not create the worktree from local `main`. An existing `capstan/N` worktree is not rebased or recreated. Do not fast-forward, switch, or edit the shared checkout.
+
 Stop only at verified `capstan:ready-to-deploy`, a verified review-exhausted
 blocked overlay, a typed human capability or budget decision from recovery, or
 user cancellation. Pending infrastructure and
