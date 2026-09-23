@@ -46,7 +46,27 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    Withhold readiness for BLOCKED, BEHIND, DIRTY, UNKNOWN, DRAFT, UNSTABLE, pending,
    or an unrecognized status until its actual impediment is resolved. Never bypass
    rules, enable auto-merge, enqueue, or merge to obtain a passing state.
-6. Publish final telemetry summary. The summary states one attempt table, two
+6. Trace each bot claim before telemetry. A comment or review from Bugbot, an
+   agentic security review, or any other non-human author is a bot claim, not a
+   finding. Trace each claim against the current head and the admitted spec. A
+   reachable, in-scope failure is recorded as a finding with severity and
+   confidence. A claim that does not survive the trace is dismissed with a
+   reason: noise, out of scope, already fixed, or not reproducible on the
+   current head. Dismissal is not silence. A dismissed claim does not enter
+   fix, does not consume a review-fix round, and does not block
+   `capstan:ready-to-deploy`. An undismissed, untraced bot claim blocks ready.
+   Do not project ready while a bot thread on the marked pull request has
+   neither a trace nor a dismissal. Publish the trace or dismissal on the pull
+   request in a comment marked `<!-- capstan:review-disposition owner/repo#N -->`.
+   Name the bot comment URL, the head SHA, and either the finding or the
+   dismissal reason. Do not add a marker kind. A later head change requires
+   open bot claims to be traced again. A dismissal that names an older head
+   does not cover the new head. A bot approval does not satisfy a required
+   approving review. A bot request-changes does not, by itself, satisfy the
+   effective-blocker test. Bot claims do not replace the secondary code-review
+   census and do not replace round 1. Do not set `unsafe_autonomy`. Do not redo
+   the git-metadata grant. Do not merge.
+7. Publish final telemetry summary. The summary states one attempt table, two
    wall totals, and the no-estimate rule. The table has one row per station
    attempt. The columns are stage, start UTC, end UTC, wall time, role,
    harness, and the usage fields that harness reported. Say `unknown` when not

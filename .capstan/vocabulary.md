@@ -43,3 +43,7 @@
 **Skill package**: this repository root. The install symlink points at it. Rejected: a per-host copy of `SKILL.md`.
 
 **Host manifest**: a plugin or marketplace file an installer requires before it will load the skill. `agents/openai.yaml` is not one. It is Codex presentation metadata. Rejected: a dot-folder per harness.
+
+**Bot claim**: a pull-request comment or review from a non-human author. It is not yet a finding. Rejected: a hardcoded login list.
+
+**Dismissal**: a published reason that the claim is noise, out of scope, already fixed, or not reproducible on the current head. Rejected: silence.
