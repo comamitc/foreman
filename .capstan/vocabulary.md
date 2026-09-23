@@ -63,3 +63,7 @@
 **Local CI**: the declared checks run on the local machine during the local loop, including tests and the other commands the plan or repository conventions already name. Rejected: a GitHub Actions replay or a workflow parser.
 
 **Fetched base**: the SHA `git fetch` stored for `origin/<resolved base>` in this run, immediately before the worktree is created. Rejected: local `main`, or an `origin/main` ref from an earlier run.
+
+**Rule owner**: the single file that states a behavioral rule. Other files name it and do not restate the rule. Rejected: a second full copy.
+
+**Host adapter**: the file that states one harness's launch flags and usage extraction. Rejected: all hosts' flags in the shared harness file.
