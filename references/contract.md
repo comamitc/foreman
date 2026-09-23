@@ -27,6 +27,16 @@ The created issue is the delivery identity. This one create is the only added
 authority. An ordinary delivery does not create issues. Text intake does not
 enter init and does not run init. No executable, parser, or controller.
 
+An explicit invocation of an issue that has `capstan:blocked` starts. Do not
+refuse because of that label. Do not ask the operator to remove it first.
+Before removing the overlay, observe the existing resume condition. Remove a
+human-capability overlay only when the missing capability, decision, or budget
+is observed. Remove a review-exhausted overlay only when one of the published
+review-convergence resume conditions is observed. Keep the stage label. If that
+condition is not observed, leave `capstan:blocked`, leave the blocker handoff,
+and do not rerun the station. A label that is not `capstan:blocked`, including
+a label named `blocked`, does not refuse the invocation and is not removed.
+
 Capstan's own behavior is a skill procedure executed by the coordinator. A
 Capstan executable, parser, or controller is forbidden unless an admitted issue
 records the exception. A Capstan init binary would violate this rule, not an
