@@ -43,6 +43,10 @@ alternatives and explicit invocation forms are:
 | Grok Build | `~/.grok/skills/capstan/` | `/capstan https://github.com/OWNER/REPO/issues/N` |
 | Oh My Pi | `~/.agents/skills/capstan/` | `/skill:capstan https://github.com/OWNER/REPO/issues/N` |
 
+Install is this directory symlinked or copied into the host skill path already
+listed. Capstan does not ship a marketplace manifest, a converter, or a per-host
+copy of the skill.
+
 Restart the host or use its documented reload after installation. Confirm Capstan
 appears in its explicit skill menu. Frontmatter disables model invocation; Codex
 also receives `policy.allow_implicit_invocation: false` presentation metadata.

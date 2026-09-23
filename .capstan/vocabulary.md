@@ -37,3 +37,9 @@
 **Common git directory**: the directory `git rev-parse --git-common-dir` prints, where objects are written. Rejected: the worktree's `.git` file.
 
 **Metadata grant**: the smallest host flag that makes those two paths writable for a commit. Not a permission bypass. Rejected: `unsafe_autonomy` or a home-directory grant.
+
+**Contributor instruction file**: text a harness loads because this checkout is the working tree. It is not the target repository's instructions during a delivery into another repository. Rejected: station procedure.
+
+**Skill package**: this repository root. The install symlink points at it. Rejected: a per-host copy of `SKILL.md`.
+
+**Host manifest**: a plugin or marketplace file an installer requires before it will load the skill. `agents/openai.yaml` is not one. It is Codex presentation metadata. Rejected: a dot-folder per harness.
