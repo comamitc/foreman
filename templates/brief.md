@@ -30,8 +30,8 @@ Do not ask the worker to advance stations or load another skill.
 
 ## Completion criterion
 
-The station's checkable criterion and required observable proof. A result that
-cannot cite the pack is not completion.
+The station's checkable criterion and required observable proof.
+[references/harnesses/shared.md](../references/harnesses/shared.md) owns result acceptance.
 
 ## Worker constraints
 
