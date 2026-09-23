@@ -54,6 +54,8 @@
 
 **Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, and not another GitHub URL. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
 
+**Provisional title**: the issue title set to the first non-empty line of a text invocation, kept only while the live title still equals that line. Rejected: a title taken from the surrounding transcript, or a title a person already changed.
+
 **Delivery identity**: `owner/repo#N` of the issue the delivery runs. A text invocation does not replace it. Rejected: a hashed text branch name.
 
 **Blocked overlay**: the `capstan:blocked` label Capstan adds beside the stage label. Rejected: a label named `blocked`, or a GitHub issue dependency.
