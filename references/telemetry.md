@@ -11,21 +11,15 @@ one row per station attempt. The columns are stage, start UTC, end UTC, wall tim
 role, harness, and the usage fields that harness reported. Also record harness
 version, model, effort, safety mode, process exit/session, checks and exit
 results, head before/after, finding census, recovery hypotheses, label changes,
-and evidence paths/remote URLs. Say `unknown` when not reported; never estimate
-or use zero for missing usage. A field the harness did not report is `unknown`,
-not zero and not an estimate. Record Grok `total_cost_usd` when present. Record
-Codex `turn.completed` usage as its token fields. Probe `codex-cli 0.153.4`:
-`exec --help` has no cost flag. Live `--json` turn
-`01a0caf9-a2b4-7ce3-aabc-1603e76df0a5` has no dollar field in
-`turn.completed.usage`. The matching session rollout has event types
-`token_count` and `token_usage_record` and no dollar cost key. Codex cost
-stays `unknown`. A newer CLI that later reports a dollar field in
-`turn.completed` or in that session rollout has that field copied as
-`reported`. Coordinator-only stages with no process
+and evidence paths/remote URLs. Say `unknown` when not reported; never estimate or use zero for missing usage. A field the harness did not report is `unknown`,
+not zero and not an estimate. Coordinator-only stages with no process
 timer, such as triage and ready, stay in the table. Their wall is `not timed`
 unless a start and an end were both observed. Print observed timestamps, such as
 spec admission and the ready label. Avoid adding both session totals and their
-constituent turn totals.
+constituent turn totals. Sum token fields only within one harness and one field.
+Do not add cache reads again into a single mixed total. Do not add reasoning tokens
+again on top of output when the harness already counts them inside output. Name the
+summed fields.
 
 For planning, record the initial plan, single review, correction launch/outcome,
 and full finding handoff into implementing. Record any operator-authorized reopening
@@ -64,37 +58,18 @@ At terminal readiness or review exhaustion publish a marked issue summary contai
 PR URL, current head/base, observed ready-gate or exhaustion facts, one station
 attempt table, two wall totals, reported usage/cost, findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
-disclosures, and gaps. The table has one row per station attempt. The columns are
-stage, start UTC, end UTC, wall time, role, harness, and the usage fields that
-harness reported. Say `unknown` when not reported; never estimate or use zero for
-missing usage. A field the harness did not report is `unknown`, not zero and not
-an estimate. Record Grok `total_cost_usd` when present. Record Codex
-`turn.completed` usage as its token fields. Probe `codex-cli 0.153.4`:
-`exec --help` has no cost flag. Live `--json` turn
-`01a0caf9-a2b4-7ce3-aabc-1603e76df0a5` has no dollar field in
-`turn.completed.usage`. The matching session rollout has event types
-`token_count` and `token_usage_record` and no dollar cost key. Codex cost
-stays `unknown`. A newer CLI that later reports a dollar field in
-`turn.completed` or in that session rollout has that field copied as
-`reported`. Keep coordinator-only stages with no process timer,
-such as triage and ready, in the table. Their wall is `not timed` unless a start
-and an end were both observed. Print observed timestamps, such as spec admission
-and the ready label. Worker-process wall is the sum of attempt rows that have a
+disclosures, and gaps. The attempt-table field rules are stated above. Worker-process
+wall is the sum of attempt rows that have a
 process start and exit. End-to-end wall is from spec admission to the ready-label
 read-back, or to the review-exhausted summary publication. A bound that was not
-observed is `unknown`. The two totals are not substitutes for each other. Sum
-token fields only within one harness and one field. Do not add cache reads again
-into a single mixed total. Do not add reasoning tokens again on top of output
-when the harness already counts them inside output. Name the summed fields. A
-telemetry gap in this table does not block ready-to-deploy. Include recovered
+observed is `unknown`. The two totals are not substitutes for each other. A telemetry
+gap in this table does not block ready-to-deploy. Include recovered
 counts only when evidence supports them. Lost local data yields unknown details,
 not an unrecoverable run. A failed GitHub summary publication uses normal transient
 recovery; do not pretend it published. Remote progress evidence preserves budget
 and rerun history across local deletion.
 
-Emission: after the marked summary is read back, the coordinator's final
-message in the host session contains the stage-analysis table and the two wall
-totals. A URL may follow. The URL alone does not satisfy this. Trigger only at
+Emission: after the marked summary is read back, the coordinator's final message in the host session contains the stage-analysis table and the two wall totals. A URL may follow. The URL alone does not satisfy this. Trigger only at
 verified `capstan:ready-to-deploy` or review exhaustion. No mid-station note.
 The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
 No plugin, notification command, status-line API, or new marker. Workers do
@@ -107,4 +82,4 @@ Same-figures rule: copy the published summary's figures. Do not recompute.
 Gap rule: a missed host message is a telemetry gap in `run.md`. It does not
 skip the GitHub summary and does not withhold ready.
 
-A new delivery with no remote issue branch or pull request stays on local `capstan/N` through code review and fix. Do not push, and do not create the pull request, at that transition. The secondary reviews the exact local base and head SHAs and their three-dot diff. A fix commit is not pushed merely to start the next review. The closure-proof gate still applies before review. Local CI is the declared checks run on the local machine, including tests and the other commands the plan or repository conventions already name. Do not invent a check from a file extension. Do not parse workflow YAML. A named check that cannot run locally is recorded as not run locally and remains a pre-merge GitHub check. A missing or failing local check uses existing recovery and does not advance toward publication. The publication boundary is the point after local code review converges and base freshness is confirmed. Before the first push, fetch the resolved base. A stale-base ordinary merge that changes the head is a changed candidate. It needs a fresh review of the new local SHAs and three-dot diff, zero effective blockers, and a rerun of affected local CI before the first push. Do not publish the pre-merge head. Then push the exact reviewed `capstan/N` head once without force and create or reconcile one non-draft pull request. Apply the existing marker, `Closes #N`, title suffix, and read-backs. The observed pull-request head must equal the reviewed local head before pre-merge. Before the pull request exists, marked code-review censuses and dispositions are issue comments. After creation, the final converged exact-head census and applicable dispositions go on the pull request and link that issue history. No new marker kind. Do not read, wait for, or rerun GitHub-hosted checks before the publication boundary. Pre-merge owns those checks after publication. Do not use `[skip ci]`, workflow disabling, draft behavior, branch-rule changes, or a synthetic empty commit. This is not a promise of one workflow run. Record why each post-publication push was necessary. If a matching remote branch or marked pull request already exists, preserve it. Do not delete, close, or recreate it to obtain the deferred path.
+[publication.md](publication.md) owns publication.

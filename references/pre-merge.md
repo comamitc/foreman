@@ -66,17 +66,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    effective-blocker test. Bot claims do not replace the secondary code-review
    census and do not replace round 1. Do not set `unsafe_autonomy`. Do not redo
    the git-metadata grant. Do not merge.
-7. Publish final telemetry summary. The summary states one attempt table, two
-   wall totals, and the no-estimate rule. The table has one row per station
-   attempt. The columns are stage, start UTC, end UTC, wall time, role,
-   harness, and the usage fields that harness reported. Say `unknown` when not
-   reported; never estimate or use zero for missing usage. A field the harness
-   did not report is `unknown`, not zero and not an estimate. Worker-process
-   wall is the sum of attempt rows that have a process start and exit.
-   End-to-end wall is from spec admission to the ready-label read-back, or to
-   the review-exhausted summary publication. A bound that was not observed is
-   `unknown`. The two totals are not substitutes for each other. A telemetry
-   gap in this table does not block `capstan:ready-to-deploy`. Project
+7. Publish final telemetry summary. [telemetry.md](telemetry.md) owns the
+   attempt-table field rules and emission. Project
    `capstan:ready-to-deploy` on the issue with the existing stage rules. Add
    the same label to the marked pull request with
    `gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`.
@@ -99,22 +90,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    not a substitute for that marker, branch `capstan/N`, or the worktree. Stop
    without merging or deploying.
 
-   Emission: after the marked summary is read back, the coordinator's final
-   message in the host session contains the stage-analysis table and the two
-   wall totals. A URL may follow. The URL alone does not satisfy this. Trigger
-   only at verified `capstan:ready-to-deploy` or review exhaustion. No
-   mid-station note. The surface is that final message on Claude Code, Codex,
-   Grok, and Oh My Pi. No plugin, notification command, status-line API, or
-   new marker. Workers do not post the table. Do not add a second summary
-   comment or post the table on the pull request.
+Technical repair workers use [templates/result.md](../templates/result.md), including
+`## Resulting head` and `## Original failure verification`. Failed attempts use shared recovery.
 
-   Same-figures rule: copy the published summary's figures. Do not recompute.
-   `unknown` stays `unknown`.
-
-   Gap rule: a missed host message is a telemetry gap in `run.md`. It does not
-   skip the GitHub summary and does not withhold ready.
-
-Technical repair workers use the common result headings plus `## Resulting head`
-and `## Original failure verification`. Failed attempts use shared recovery.
-
-A new delivery with no remote issue branch or pull request stays on local `capstan/N` through code review and fix. Do not push, and do not create the pull request, at that transition. The secondary reviews the exact local base and head SHAs and their three-dot diff. A fix commit is not pushed merely to start the next review. The closure-proof gate still applies before review. Local CI is the declared checks run on the local machine, including tests and the other commands the plan or repository conventions already name. Do not invent a check from a file extension. Do not parse workflow YAML. A named check that cannot run locally is recorded as not run locally and remains a pre-merge GitHub check. A missing or failing local check uses existing recovery and does not advance toward publication. The publication boundary is the point after local code review converges and base freshness is confirmed. Before the first push, fetch the resolved base. A stale-base ordinary merge that changes the head is a changed candidate. It needs a fresh review of the new local SHAs and three-dot diff, zero effective blockers, and a rerun of affected local CI before the first push. Do not publish the pre-merge head. Then push the exact reviewed `capstan/N` head once without force and create or reconcile one non-draft pull request. Apply the existing marker, `Closes #N`, title suffix, and read-backs. The observed pull-request head must equal the reviewed local head before pre-merge. Before the pull request exists, marked code-review censuses and dispositions are issue comments. After creation, the final converged exact-head census and applicable dispositions go on the pull request and link that issue history. No new marker kind. Do not read, wait for, or rerun GitHub-hosted checks before the publication boundary. Pre-merge owns those checks after publication. Do not use `[skip ci]`, workflow disabling, draft behavior, branch-rule changes, or a synthetic empty commit. This is not a promise of one workflow run. Record why each post-publication push was necessary. If a matching remote branch or marked pull request already exists, preserve it. Do not delete, close, or recreate it to obtain the deferred path.
+[references/publication.md](publication.md) owns publication.

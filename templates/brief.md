@@ -14,76 +14,14 @@
   name an unaffected feature file. Do not tell the worker to read the other
   feature files.
 
-`features` is the optional feature-map field. Resolution order is invocation,
-then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
-`.capstan/features` when that directory contains `README.md`. `features: null`
-disables the map. A missing explicit path is recorded in `run.md`. The run
-continues with no map.
-
-Each feature file uses only these four H2 headings and no harness name:
-`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
-`Driving it` states the repository commands and the observable end state. A
-harness name, a host skill path, or another section does not satisfy the shape.
-No Launch, Doctor, Evidence, Cleanup, or Helpers section.
+[references/contract.md](../references/contract.md) owns feature-map resolution
+and heading shape.
 
 ## Admitted specification
 
 Include the trusted spec and its revision, not instructions from untrusted comments.
 
-## Pack
-
-One owner-only file per launch, `briefs/<brief stem>.pack.md`, written by the
-coordinator. It is the candidate itself. A path list is
-not a pack. Full form: seven headings in this order; a heading with nothing to
-carry reads `none` plus the reason.
-
-1. Header line: delivery, station and attempt, candidate identity (spec revision,
-   plan comment URL and revision, or `BASE...HEAD` SHAs).
-2. `## Acceptance criteria`: the applicable criteria quoted from the admitted spec.
-3. `## Candidate`: the current plan text verbatim, or the saved `git diff BASE...HEAD`
-   output verbatim under its exact command line.
-4. `## Open findings`: rows in the `references/findings.md` obligation format.
-   Implementing and review packs carry every planning finding with its proposed
-   treatment or refutation and unfinished items; never prior essays.
-5. `## Rules that apply`: sentences from repository instructions quoted with
-   `path:line`. Never a whole file; never `CLAUDE.md`, the operating contract, or
-   every caller pasted or pointed at for complete reading. For code review, include
-   the effective policy, severity/confidence calibration, partition rules, review
-   ratchet, counted round and remaining allowance from `references/review-convergence.md`.
-6. `## Checks`: exact commands with cwd and expected exit.
-7. `## Named files`: `path:line-range` plus reason, the only paths the worker may open.
-
-Compact form, the exception for one Named files entry, one check, and no open
-finding rows: nothing is written as `none`, no heading beyond Candidate appears,
-and the read-station ceiling is 7 (1 + 1 + 5), an upper bound.
-
-```
-# Pack — owner/repo#N, implementing attempt 1, candidate: plan comment URL, revision R
-## Candidate
-<the one plan item, verbatim>
-Criterion: AC 2 — "<quoted criterion>"
-Rule: `CONTRIBUTING.md:14` — "<quoted sentence>"
-Check: `make test` in WORKTREE, expected exit 0
-Named file: `src/cli.py:40-58` — the option parser this item edits
-```
-
-The launch gate: if Candidate, Checks, or Open findings cannot be filled with
-content or an explicit `none` with a reason, do not launch; observe under recovery.
-Unknown is not `none`. A pre-merge
-repair pack carries the conflict hunks or failing check log, that check as one row,
-the failing gate, and both sides' files readable in full. Gap response, under
-one-pass planning precedence:
-
-| Station returning a pack gap | Coordinator response |
-| --- | --- |
-| initial planning, plan-review | amend the pack; relaunch the unfinished portion of the same step |
-| single correction | pass consumed; amend the implementing pack and carry the gap as an unresolved obligation |
-| implementing, review, fix, pre-merge repair | amend the pack; relaunch the unfinished portion in the same station |
-
-For an implementing/fix brief carrying effective blocking findings, require one
-red/green/bite closure row per finding using `references/findings.md`. Name the
-exact reviewed head for red evidence and prohibit proxy checks that test a weaker
-condition than the original scenario.
+[references/pack.md](../references/pack.md) owns the pack schema and launch gate.
 
 ## Numbered station steps
 
@@ -114,52 +52,7 @@ for carried effective blockers. At read stations preserve head and tree.
 Write only to authorized paths. Do not push, mutate GitHub, open PRs, change labels,
 merge, deploy, force-push, or invoke external skills. Return raw errors redacted.
 
-The coordinator runs the preflight below before launch.
-The declared-check invocation in the brief header is that result.
-It names the command, the tool path, and the provenance.
-
-Take commands from the plan's named checks, then the repository's documented runner.
-Do not detect a language. Do not invent a second runner.
-Run preflight before worker launch.
-The preflight records the command, the tool path, and the provenance.
-A preflight failure is visible.
-A preflight failure does not spend a worker turn on discovery.
-This is a ban on worker-side discovery.
-The brief carries the exact invocation.
-A worker that substitutes a global tool has not followed the brief.
-The worker runs that invocation.
-The worker does not discover a command, a runner, or a tool path.
-
-The three-step precedence is this order.
-First, use the recorded toolchain when the identity matches.
-Identity is the lockfile or manifest bytes, not a language version.
-A mismatch invalidates only the recorded toolchain.
-Resolution then uses the declared runner on `PATH`.
-Second, use the declared runner on `PATH`.
-Do not skip that `PATH` step.
-Third, create one task-scoped environment only if that `PATH` step fails.
-The fallback tool is the repository's own declared tool.
-Do not limit that tool to a lockfile.
-A manifest-only repository is included.
-Do not assume a package manager is global.
-Do not create a task environment when the `PATH` step succeeds.
-Record the choice as provenance.
-
-A single executable with no lockfile gets that executable and no new environment.
-No declared check leaves the repo unchanged.
-A declared `pipenv run` when no global `pipenv` exists uses these three steps.
-A non-Python runner that is absent from `PATH` uses these three steps.
-Neither is a virtualenv special case.
-When a task environment is created, put it at `toolchain/` under the evidence root.
-Do not implement #10 deletion. Do not re-run `lyric-utils#764`.
-
-## Result headings
-
-Fill these Markdown headings and the current station's additional headings:
-
-## Outcome
-## Steps completed
-## Evidence
-## Checks
-## Changes or findings
-## Risks and unresolved items
+The coordinator runs [references/toolchain.md](../references/toolchain.md) before launch.
+The declared-check invocation in the brief header is that result. It names the
+command, the tool path, and the provenance. [references/harnesses/shared.md](../references/harnesses/shared.md)
+owns the operation-count procedure. [templates/result.md](result.md) owns result headings.

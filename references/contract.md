@@ -27,15 +27,7 @@ The created issue is the delivery identity. This one create is the only added
 authority. An ordinary delivery does not create issues. Text intake does not
 enter init and does not run init. No executable, parser, or controller.
 
-An explicit invocation of an issue that has `capstan:blocked` starts. Do not
-refuse because of that label. Do not ask the operator to remove it first.
-Before removing the overlay, observe the existing resume condition. Remove a
-human-capability overlay only when the missing capability, decision, or budget
-is observed. Remove a review-exhausted overlay only when one of the published
-review-convergence resume conditions is observed. Keep the stage label. If that
-condition is not observed, leave `capstan:blocked`, leave the blocker handoff,
-and do not rerun the station. A label that is not `capstan:blocked`, including
-a label named `blocked`, does not refuse the invocation and is not removed.
+[references/recovery.md](recovery.md) owns blocked-overlay removal.
 
 Capstan's own behavior is a skill procedure executed by the coordinator. A
 Capstan executable, parser, or controller is forbidden unless an admitted issue
@@ -174,7 +166,7 @@ after they are in force.
 | planning (initial) | complete published plan for admitted revision | plan-review |
 | plan-review | complete census: no findings / findings | implementing / planning (single correction) |
 | planning (single correction) | corrected plan and complete finding handoff; interrupted work retained explicitly | implementing |
-| implementing | verified commits/checks/outcome; closure proof gate passed for carried effective blockers; marked non-draft PR | review |
+| implementing | verified commits/checks/outcome; closure proof gate passed for carried effective blockers; [references/publication.md](publication.md) | review |
 | review | exact-head policy partition: effective blockers / none / round ceiling | fix / pre-merge / blocked review-exhausted |
 | fix | effective blocking census resolved or refuted; closure proof gate passed; verified resulting head (unchanged is valid after refutation) | review |
 | pre-merge | strict live ready gate in pre-merge reference | ready-to-deploy |
@@ -306,4 +298,4 @@ Init does not write `features`. Init does not edit product source. The
 `.capstan.json` write is init configuration, not a product-source edit and not a
 delivery commit.
 
-A new delivery with no remote issue branch or pull request stays on local `capstan/N` through code review and fix. Do not push, and do not create the pull request, at that transition. The secondary reviews the exact local base and head SHAs and their three-dot diff. A fix commit is not pushed merely to start the next review. The closure-proof gate still applies before review. Local CI is the declared checks run on the local machine, including tests and the other commands the plan or repository conventions already name. Do not invent a check from a file extension. Do not parse workflow YAML. A named check that cannot run locally is recorded as not run locally and remains a pre-merge GitHub check. A missing or failing local check uses existing recovery and does not advance toward publication. The publication boundary is the point after local code review converges and base freshness is confirmed. Before the first push, fetch the resolved base. A stale-base ordinary merge that changes the head is a changed candidate. It needs a fresh review of the new local SHAs and three-dot diff, zero effective blockers, and a rerun of affected local CI before the first push. Do not publish the pre-merge head. Then push the exact reviewed `capstan/N` head once without force and create or reconcile one non-draft pull request. Apply the existing marker, `Closes #N`, title suffix, and read-backs. The observed pull-request head must equal the reviewed local head before pre-merge. Before the pull request exists, marked code-review censuses and dispositions are issue comments. After creation, the final converged exact-head census and applicable dispositions go on the pull request and link that issue history. No new marker kind. Do not read, wait for, or rerun GitHub-hosted checks before the publication boundary. Pre-merge owns those checks after publication. Do not use `[skip ci]`, workflow disabling, draft behavior, branch-rule changes, or a synthetic empty commit. This is not a promise of one workflow run. Record why each post-publication push was necessary. If a matching remote branch or marked pull request already exists, preserve it. Do not delete, close, or recreate it to obtain the deferred path.
+[references/publication.md](publication.md) owns publication.

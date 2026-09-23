@@ -64,25 +64,7 @@ enter init.
 
 ### Text invocation
 
-An issue URL uses that issue and does not create a second issue. Allowed
-overrides stay overrides. An invocation that is an issue number, with or
-without those overrides, uses that issue when it resolves in the current
-checkout. Other prose is not this path even if it contains a digit.
-
-Other non-empty prose with no GitHub URL creates one issue in the repository
-`gh repo view` resolves from the invoking workspace. Title is the first
-non-empty line, at most 256 characters. Body is the full text. Emit the new
-issue URL in the host session before continuing. Then run the normal delivery.
-Preserve the text as the original request.
-
-If `gh repo view` cannot resolve a repository, create no issue and do not parse
-a name from the prose. Ask for `owner/repo`. A GitHub URL that is not an issue
-URL creates no issue. Empty text creates no issue. Do not read a filesystem
-path. Do not use the surrounding transcript.
-
-The created issue is the delivery identity. This one create is the only added
-authority. An ordinary delivery does not create issues. Text intake does not
-enter init and does not run init. No executable, parser, or controller.
+[contract](references/contract.md) owns text intake.
 
 ## Configuration
 
@@ -121,21 +103,7 @@ other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
 `fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
 
-`features` is the optional feature-map field. Resolution order is invocation,
-then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
-`.capstan/features` when that directory contains `README.md`. The example value
-`features: null` disables the map. It does not fall through to
-`.capstan/features`. An absent `features` field is not `features: null`. A
-missing explicit path is recorded in `run.md`. The run continues with no map. A
-delivery with no map still completes. Capstan does not generate a map during an
-ordinary issue. Do not add a stage, a label, or a daily job for the map. Do not
-copy the map into a host skill directory.
-
-Each feature file uses only these four H2 headings and no harness name:
-`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
-`Driving it` states the repository commands and the observable end state. A
-harness name, a host skill path, or another section does not satisfy the shape.
-No Launch, Doctor, Evidence, Cleanup, or Helpers section.
+[contract](references/contract.md) owns feature-map resolution and heading shape.
 
 Read [contract](references/contract.md) for field rules and
 [harnesses](references/harnesses.md) for version-checked launch guidance. No parser
@@ -173,42 +141,7 @@ allowance. The single-pass planning rule and total run budget remain unchanged.
 
 ## Init
 
-Init runs only on an explicit init invocation. A delivery, a resume, and an issue
-number do not enter init. Init is not a binary and not a station. Init is not a
-gate. Delivery remains valid without init. A missing `.capstan.json` still
-delivers. Delivery still creates a missing stage label. A Capstan init binary
-would violate this rule, not an implementation choice.
-
-Probe each harness CLI on `PATH` with that CLI's documented help command. Recommend
-a primary and a different secondary only from CLIs that answered. Do not invent a
-model, effort, or harness. When the observed primary and a different observed
-secondary are unambiguous, select that pair and report it. Do not ask. Do not
-prompt. Ask only when the probe is ambiguous. Ask that one pair and recommend an
-observed answer. Keep timeouts, cost, and `unsafe_autonomy` at the documented
-defaults in the example above. The invoking host does not become primary merely
-because it ran init. Do not copy a harness from that example unless that CLI
-answered during this init.
-
-If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
-only `primary`, `secondary`, and `fallback`, plus the documented recovery
-defaults. Those keys are the keys in the example above. Set model and effort to
-null. Set `fallback` to null when no third observed harness exists. Set
-`unsafe_autonomy` to false. Leave the file uncommitted. Do not switch branches.
-Do not commit, push, or open a pull request. The write is allowed on `main` and
-stays uncommitted. Exclusive create writes the new file only when it is absent.
-If the file is present before the write finishes, do not replace it.
-
-If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
-replace, or use `--force`. Report that the file already exists.
-
-Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
-`capstan:planning`, `capstan:plan-review`, `capstan:implementing`, `capstan:review`,
-`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`, and
-`capstan:blocked`. Create only absent labels. Re-read a race. Do not add or remove
-any other label. Use the label create command in [contract](references/contract.md).
-
-Init writes no secrets, no evidence directory, no worktree, and no feature map.
-Init does not write `features`. Init does not edit product source.
+[contract](references/contract.md) owns init.
 
 ## Trust and authority
 
@@ -233,7 +166,7 @@ protection. No hostile-input sandbox or distributed lock is provided in v1.
 Evidence defaults to `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/`.
 Owner-only briefs, results, worker/check logs, run.md, and optional events.jsonl
 record observed commands and usage. Secrets are redacted before persistence or
-publication. Missing usage is unknown, never estimated.
+publication. [references/telemetry.md](references/telemetry.md) owns missing-usage rules.
 
 To clean raw logs manually, first resolve the exact delivery directory, inspect
 its contents, and confirm no worker is active. Archive it or remove only the
@@ -252,4 +185,4 @@ Historical ideas came from ponytail, firstmate, Matt Pocock's skills, and pstack
 This attribution is provenance only. All shipped instructions are Capstan-owned;
 no third-party skill is installed, copied, invoked, or needed. MIT licensed.
 
-A new delivery with no remote issue branch or pull request stays on local `capstan/N` through code review and fix. Do not push, and do not create the pull request, at that transition. The secondary reviews the exact local base and head SHAs and their three-dot diff. A fix commit is not pushed merely to start the next review. The closure-proof gate still applies before review. Local CI is the declared checks run on the local machine, including tests and the other commands the plan or repository conventions already name. Do not invent a check from a file extension. Do not parse workflow YAML. A named check that cannot run locally is recorded as not run locally and remains a pre-merge GitHub check. A missing or failing local check uses existing recovery and does not advance toward publication. The publication boundary is the point after local code review converges and base freshness is confirmed. Before the first push, fetch the resolved base. A stale-base ordinary merge that changes the head is a changed candidate. It needs a fresh review of the new local SHAs and three-dot diff, zero effective blockers, and a rerun of affected local CI before the first push. Do not publish the pre-merge head. Then push the exact reviewed `capstan/N` head once without force and create or reconcile one non-draft pull request. Apply the existing marker, `Closes #N`, title suffix, and read-backs. The observed pull-request head must equal the reviewed local head before pre-merge. Before the pull request exists, marked code-review censuses and dispositions are issue comments. After creation, the final converged exact-head census and applicable dispositions go on the pull request and link that issue history. No new marker kind. Do not read, wait for, or rerun GitHub-hosted checks before the publication boundary. Pre-merge owns those checks after publication. Do not use `[skip ci]`, workflow disabling, draft behavior, branch-rule changes, or a synthetic empty commit. This is not a promise of one workflow run. Record why each post-publication push was necessary. If a matching remote branch or marked pull request already exists, preserve it. Do not delete, close, or recreate it to obtain the deferred path.
+[references/publication.md](references/publication.md) owns publication.

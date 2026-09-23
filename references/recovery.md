@@ -56,9 +56,7 @@ Do not launch a second writer while a prior writer is alive.
 
 An explicit invocation of an issue that has `capstan:blocked` starts. Do not
 refuse because of that label. Do not ask the operator to remove it first.
-Before removing the overlay, observe the existing resume condition. Remove a
-human-capability overlay only when the missing capability, decision, or budget
-is observed. Remove a review-exhausted overlay only when one of the published
+Before removing the overlay, observe the existing resume condition. Remove a human-capability overlay only when the missing capability, decision, or budget is observed. Remove a review-exhausted overlay only when one of the published
 review-convergence resume conditions is observed. Keep the stage label. If that
 condition is not observed, leave `capstan:blocked`, leave the blocker handoff,
 and do not rerun the station. A label that is not `capstan:blocked`, including
