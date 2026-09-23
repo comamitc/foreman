@@ -27,6 +27,12 @@ The created issue is the delivery identity. This one create is the only added
 authority. An ordinary delivery does not create issues. Text intake does not
 enter init and does not run init. No executable, parser, or controller.
 
+The create-time title is the provisional title. It is the first non-empty line of the preserved original request, at most 256 characters. On the `gh issue edit` that publishes the admitted spec, pass `--title` only when the live title still equals that provisional title and the Problem cut is non-empty. If the live title does not equal that provisional title, omit `--title`. If the live title equals that provisional title and the Problem cut is empty, omit `--title` and still publish the spec body. A title a person already changed stays as it is. An issue opened by URL or number uses this same comparison. Do not add a marker kind. Do not read the surrounding transcript.
+
+When `--title` is set, its value is the first sentence of the admitted Problem section. Use the Problem body under that heading and before the next heading. Use the first non-empty paragraph. A paragraph is a maximal run of non-blank lines. If the Problem body has no such paragraph, the cut is empty. If the paragraph contains `.`, `!`, or `?`, keep the text through the first of those characters. If it does not, keep the paragraph. Trim each kept line, drop a line that becomes empty, and join the remaining lines with one space. Trim the ends. If the result is longer than 256 characters, keep the first 256 characters. If the result is empty, omit `--title` on that same publishing edit. Still publish the spec body. The empty cut is not a successful title write. Record the empty cut in the publication record that triage step 5 already requires. Do not send an empty title. Do not send `--title` on a later edit.
+
+Read the title back after that edit. If `--title` was sent, the read-back title must equal the sent title. If `--title` was omitted, the read-back title must equal the live title from before the edit. A mismatch is not a successful publish. An empty cut is not a reason to skip the spec publish. Do not send a second edit to change the title.
+
 [references/recovery.md](recovery.md) owns blocked-overlay removal.
 
 Capstan's own behavior is a skill procedure executed by the coordinator. A
