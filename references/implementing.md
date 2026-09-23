@@ -13,7 +13,8 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    with its proposed disposition including unfinished correction work, the rule
    extract, the commands the plan names plus the final gates, and the plan's
    affected files and tests as Named files. A write station may read named files
-   fully and run the named checks and declared final gates; it has no numeric
+   fully and run the named checks and declared final gates except silent checks,
+   which `references/harnesses/shared.md` assigns to the coordinator; it has no numeric
    ceiling. A path the pack does not name is a gap reported under Risks and
    unresolved items, not a search. A one-file, one-check item gets a compact pack
    whose single named file and check bound the reads. Map ALL carried findings to
@@ -44,8 +45,9 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
 4. Prove each carried finding's original acceptance condition against the code,
    or propose a refutation with concrete evidence. Record unfinished obligations
    explicitly; technical failures stay in implementing recovery, not planning.
-   Run all declared final checks and exercise the real user surface. Use the
-   exact invocation the brief carries. Record actual
+   Run all declared final checks except a silent check and exercise the real user
+   surface. Use the exact invocation the brief carries. For a silent check, record the coordinator
+   result in the form `references/harnesses/shared.md` states. Record actual
    commands, exit statuses, output/evidence paths, and the resulting head SHA.
 5. Prepare PR text with Why, Scope, Tradeoffs, Blast Radius, and Verification.
    Report risks honestly and verify a clean worktree containing the intended commits.
