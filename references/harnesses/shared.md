@@ -32,6 +32,18 @@ when a newer release changes flags.
    can bound a process; verify its help or use the coordinator's process manager.
    Replace example 60m limits with the resolved worker_timeout_min, capped by
    remaining run budget. Timeout exit 124 is recovery evidence, not proof of no side effects.
+
+A silent check is a declared check that can stay silent longer than the selected harness's command-log window. That window is the harness's own. This rule adds no Capstan number, timeout, config field, parser, or executable. The worker_timeout_min bound and timeout exit 124 above still apply to the station process. They are not this check's result.
+
+The coordinator runs a silent check. The worker brief does not tell the worker to start it.
+
+Before the coordinator starts one, it looks at the worker process it already recorded for this station. Recognition succeeds only when that process has a live child whose command line equals the declared check invocation already written in the brief. The coordinator does not parse worker prose. If recognition succeeds, the coordinator does not start a second process. It does not signal, restart, or kill the recognized process, and it does not wrap that process in timeout. It waits until that process exits. Silence is not an exit. The command it records is the declared invocation that matched. The exit code and output are the ones that process produced. An empty captured stream is not a percent and is not an exit code.
+
+If recognition fails, the coordinator starts the check itself and waits for that process to exit. It does not ask the worker to start it.
+
+A worker that is already running the check does not restart it, does not kill it, and does not treat missing streamed output as a stall. The check is complete only when the process exits. The recorded result is that exit code.
+
+The station result records the coordinator's command, that exit code, and a summary of the output. A worker sentence that the check stalled at a percent is not a check result.
 5. Capture redacted raw output plus the Markdown result. Record wall time and exit.
    Record the worker's operation count (its numbered lines under `## Checks`)
    against the brief ceiling. That list is authoritative. Record each harness

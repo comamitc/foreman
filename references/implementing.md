@@ -45,7 +45,8 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    or propose a refutation with concrete evidence. Record unfinished obligations
    explicitly; technical failures stay in implementing recovery, not planning.
    Run all declared final checks and exercise the real user surface. Use the
-   exact invocation the brief carries. Record actual
+   exact invocation the brief carries. For a silent check, record the coordinator
+   result in the form `references/harnesses/shared.md` states. Record actual
    commands, exit statuses, output/evidence paths, and the resulting head SHA.
 5. Prepare PR text with Why, Scope, Tradeoffs, Blast Radius, and Verification.
    Report risks honestly and verify a clean worktree containing the intended commits.

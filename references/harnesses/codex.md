@@ -5,7 +5,11 @@ operations: cross-check telemetry. One completed item is one shell command that
 reached the item log. Review attempt 1 at `1af7446` listed 17 shell attempts;
 the raw JSONL has 16 completed `command_execution` items. The absent event is the
 pre-execution failure (the shell could not create a heredoc temp file; exit 1
-before the command ran). `item.started` duplicates a start. `agent_message` items
+before the command ran).
+
+`references/harnesses/shared.md` owns the silent-check rule. This command-log fact is not that rule.
+
+`item.started` duplicates a start. `agent_message` items
 are not operations. Result delivery is a completed item only when it is itself a
 shell command.
 

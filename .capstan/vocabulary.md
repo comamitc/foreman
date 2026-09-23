@@ -68,4 +68,6 @@
 
 **Rule owner**: the single file that states a behavioral rule. Other files name it and do not restate the rule. Rejected: a second full copy.
 
+**Silent check**: a declared check that can stay silent longer than the selected harness's command-log window. The rule owner is `references/harnesses/shared.md`. Rejected: missing streamed output treated as a stall, or a second copy of that rule.
+
 **Host adapter**: the file that states one harness's launch flags and usage extraction. Rejected: all hosts' flags in the shared harness file.
