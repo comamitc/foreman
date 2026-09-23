@@ -91,3 +91,18 @@ counts only when evidence supports them. Lost local data yields unknown details,
 not an unrecoverable run. A failed GitHub summary publication uses normal transient
 recovery; do not pretend it published. Remote progress evidence preserves budget
 and rerun history across local deletion.
+
+Emission: after the marked summary is read back, the coordinator's final
+message in the host session contains the stage-analysis table and the two wall
+totals. A URL may follow. The URL alone does not satisfy this. Trigger only at
+verified `capstan:ready-to-deploy` or review exhaustion. No mid-station note.
+The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
+No plugin, notification command, status-line API, or new marker. Workers do
+not post the table. Do not add a second summary comment or post the table on
+the pull request.
+
+Same-figures rule: copy the published summary's figures. Do not recompute.
+`unknown` stays `unknown`.
+
+Gap rule: a missed host message is a telemetry gap in `run.md`. It does not
+skip the GitHub summary and does not withhold ready.
