@@ -38,8 +38,7 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    brief; write stations read named files only. Supervise the process until exit
    or recorded handoff.
 5. **Verify.** Inspect actual results, commands, commits, diff, and GitHub.
-   Worker claims and successful process exits alone do not establish completion;
-   a result that cannot cite the pack is not completion.
+   [references/harnesses/shared.md](references/harnesses/shared.md) owns result acceptance.
    Before pushing a write-station candidate, apply [finding resolution's closure
    proof gate](references/findings.md) to every carried effective blocker; incomplete
    red/green/bite proof stays in the current station.
@@ -51,7 +50,8 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 7. **Record.** Publish the station artifact with its revision or SHAs. Read
    [telemetry](references/telemetry.md) to record attempts and evidence. A telemetry
    failure is a reported gap, never a veto on delivery.
-8. **Advance and re-observe.** Only after the station criterion holds, project
+8. **Advance and re-observe.** Only after result acceptance owned by
+   [references/harnesses/shared.md](references/harnesses/shared.md) holds, project
    the next stage label and read it and external state back. Repeat the loop.
 
 | Station | Reference | Owner |

@@ -68,6 +68,8 @@
 
 **Rule owner**: the single file that states a behavioral rule. Other files name it and do not restate the rule. Rejected: a second full copy.
 
+**Stub result**: a worker exit that is not a captured result. The rule owner is `references/harnesses/shared.md`. Rejected: treating exit 0, a commit SHA, or a stall percent as station completion.
+
 **Silent check**: a declared check that can stay silent longer than the selected harness's command-log window. The rule owner is `references/harnesses/shared.md`. Rejected: missing streamed output treated as a stall, or a second copy of that rule.
 
 **Host adapter**: the file that states one harness's launch flags and usage extraction. Rejected: all hosts' flags in the shared harness file.

@@ -56,6 +56,18 @@ The station result records the coordinator's command, that exit code, and a summ
    its protection mode, accept Markdown in stdout, persist it as coordinator
    evidence, and verify it; do not weaken safety just for formatting.
 
+`references/harnesses/shared.md` owns result acceptance. This is the only statement of the rule.
+
+The coordinator has a captured result only when the captured text meets both conditions. The text contains every heading that the current station reference already names. The text contains the pack path named in the brief. The station reference already names those headings, including the headings it takes from `templates/result.md`. This rule does not add a heading list.
+
+The captured text is the Markdown result file. When the worker cannot write that file, the captured text is the Markdown final message the coordinator persists from stdout. The same two conditions apply to that persisted message.
+
+Worker claims do not meet the conditions. A process exit of 0 does not meet the conditions. Text that only names the unwritable path, a commit SHA, or a stall percent does not meet the conditions. That text is a stub result. A stub result is not a captured result.
+
+When the text is a stub result, the coordinator starts same-station recovery for a missing, weak, or malformed result. `references/recovery.md` owns that recovery. The coordinator does not change the stage label. The coordinator does not publish a plan, a review census, or a pull request from that attempt.
+
+This rule adds no parser, no executable, no marker kind, and no config field. The coordinator reads the captured text and the brief. The coordinator does not start a program to make this decision.
+
 ## Diagnosis and fallback
 
 Use a fresh secondary for independent diagnosis; include original errors, current
