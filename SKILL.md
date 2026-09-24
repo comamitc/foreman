@@ -6,9 +6,9 @@ disable-model-invocation: true
 
 # Capstan
 
-Start a delivery only on an explicit user invocation with an issue URL, or an
-issue number inside its repository. Repeating that invocation resumes the same
-delivery. A delivery, a resume, and an issue number do not enter init.
+[references/contract.md](references/contract.md) owns text intake. [references/recovery.md](references/recovery.md)
+owns blocked-overlay removal.
+
 You are the coordinator. Own observation, user decisions, worker delegation,
 GitHub mechanics, and verification. Workers author product changes and commits.
 Finish at an open, immediately mergeable PR. Never merge or deploy.
@@ -38,8 +38,7 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    brief; write stations read named files only. Supervise the process until exit
    or recorded handoff.
 5. **Verify.** Inspect actual results, commands, commits, diff, and GitHub.
-   Worker claims and successful process exits alone do not establish completion;
-   a result that cannot cite the pack is not completion.
+   [references/harnesses/shared.md](references/harnesses/shared.md) owns result acceptance.
    Before pushing a write-station candidate, apply [finding resolution's closure
    proof gate](references/findings.md) to every carried effective blocker; incomplete
    red/green/bite proof stays in the current station.
@@ -51,7 +50,8 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 7. **Record.** Publish the station artifact with its revision or SHAs. Read
    [telemetry](references/telemetry.md) to record attempts and evidence. A telemetry
    failure is a reported gap, never a veto on delivery.
-8. **Advance and re-observe.** Only after the station criterion holds, project
+8. **Advance and re-observe.** Only after result acceptance owned by
+   [references/harnesses/shared.md](references/harnesses/shared.md) holds, project
    the next stage label and read it and external state back. Repeat the loop.
 
 | Station | Reference | Owner |
@@ -65,46 +65,19 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 | fix | [fix](references/fix.md), [code-review convergence](references/review-convergence.md), only for effective blockers | fresh primary |
 | pre-merge | [pre-merge](references/pre-merge.md) | coordinator and repair workers |
 
+Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run. For this repository that command is `git fetch origin main`. Immediately after a successful fetch, record the SHA of that ref. Create the worktree from that SHA. Local `main`, an unfetched `origin/main`, and `origin/HEAD` are not valid parents. If the fetch fails, stop. Do not create the worktree from local `main`. An existing `capstan/N` worktree is not rebased or recreated. Do not fast-forward, switch, or edit the shared checkout.
+
 Stop only at verified `capstan:ready-to-deploy`, a verified review-exhausted
 blocked overlay, a typed human capability or budget decision from recovery, or
 user cancellation. Pending infrastructure and
 activity markers call for bounded waiting and observation, not abandonment.
-On resume, observe whether the missing capability or review-exhausted resume
-condition has appeared before removing the blocked overlay. A formerly ready PR
-must satisfy the live gate again.
+On resume, [references/recovery.md](references/recovery.md) owns blocked-overlay
+removal. A formerly ready PR must satisfy the live gate again.
+
+[references/telemetry.md](references/telemetry.md) owns stage-analysis emission.
 
 ## Init
 
-Init runs only on an explicit init invocation. A delivery, a resume, and an issue
-number do not enter init. Init is not a binary and not a station. Init is not a
-gate. Delivery remains valid without init. A missing `.capstan.json` still
-delivers. Delivery still creates a missing stage label.
+[references/contract.md](references/contract.md) owns init.
 
-Probe each harness CLI on `PATH` with that CLI's documented help command. Recommend
-a primary and a different secondary only from CLIs that answered. Do not invent a
-model, effort, or harness. When the observed primary and a different observed
-secondary are unambiguous, select that pair and report it. Do not ask. Do not
-prompt. Ask only when the probe is ambiguous. Ask that one pair and recommend an
-observed answer. Keep timeouts, cost, and `unsafe_autonomy` at the documented
-defaults. The invoking host does not become primary merely because it ran init.
-
-If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
-only `primary`, `secondary`, and `fallback`, plus the documented recovery
-defaults. Set model and effort to null. Set `fallback` to null when no third
-observed harness exists. Set `unsafe_autonomy` to false. Leave the file
-uncommitted. Do not switch branches. Do not commit, push, or open a pull request.
-The write is allowed on `main` and stays uncommitted. Exclusive create writes the
-new file only when it is absent. If the file is present before the write finishes,
-do not replace it.
-
-If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
-replace, or use `--force`. Report that the file already exists.
-
-Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
-`capstan:planning`, `capstan:plan-review`, `capstan:implementing`, `capstan:review`,
-`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`, and
-`capstan:blocked`. Create only absent labels. Re-read a race. Do not add or remove
-any other label. Use the label create command in [contract](references/contract.md).
-
-Init writes no secrets, no evidence directory, no worktree, and no feature map.
-Init does not edit product source.
+[references/publication.md](references/publication.md) owns publication.

@@ -7,6 +7,34 @@ Resolve the base from the admitted triage decision, otherwise repository default
 Repository integration instructions are evidence to settle the base during triage;
 do not infer it from `origin/HEAD`. Read applicable repository instructions first.
 
+An issue URL uses that issue and does not create a second issue. Allowed
+overrides stay overrides. An invocation that is an issue number, with or
+without those overrides, uses that issue when it resolves in the current
+checkout. Other prose is not this path even if it contains a digit.
+
+Other non-empty prose with no GitHub URL creates one issue in the repository
+`gh repo view` resolves from the invoking workspace. Title is the first
+non-empty line, at most 256 characters. Body is the full text. Emit the new
+issue URL in the host session before continuing. Then run the normal delivery.
+Preserve the text as the original request.
+
+If `gh repo view` cannot resolve a repository, create no issue and do not parse
+a name from the prose. Ask for `owner/repo`. A GitHub URL that is not an issue
+URL creates no issue. Empty text creates no issue. Do not read a filesystem
+path. Do not use the surrounding transcript.
+
+The created issue is the delivery identity. This one create is the only added
+authority. An ordinary delivery does not create issues. Text intake does not
+enter init and does not run init. No executable, parser, or controller.
+
+The create-time title is the provisional title. It is the first non-empty line of the preserved original request, at most 256 characters. On the `gh issue edit` that publishes the admitted spec, pass `--title` only when the live title still equals that provisional title and the Problem cut is non-empty. If the live title does not equal that provisional title, omit `--title`. If the live title equals that provisional title and the Problem cut is empty, omit `--title` and still publish the spec body. A title a person already changed stays as it is. An issue opened by URL or number uses this same comparison. Do not add a marker kind. Do not read the surrounding transcript.
+
+When `--title` is set, its value is the first sentence of the admitted Problem section. Use the Problem body under that heading and before the next heading. Use the first non-empty paragraph. A paragraph is a maximal run of non-blank lines. If the Problem body has no such paragraph, the cut is empty. If the paragraph contains `.`, `!`, or `?`, keep the text through the first of those characters. If it does not, keep the paragraph. Trim each kept line, drop a line that becomes empty, and join the remaining lines with one space. Trim the ends. If the result is longer than 256 characters, keep the first 256 characters. If the result is empty, omit `--title` on that same publishing edit. Still publish the spec body. The empty cut is not a successful title write. Record the empty cut in the publication record that triage step 5 already requires. Do not send an empty title. Do not send `--title` on a later edit.
+
+Read the title back after that edit. If `--title` was sent, the read-back title must equal the sent title. If `--title` was omitted, the read-back title must equal the live title from before the edit. A mismatch is not a successful publish. An empty cut is not a reason to skip the spec publish. Do not send a second edit to change the title.
+
+[references/recovery.md](recovery.md) owns blocked-overlay removal.
+
 Capstan's own behavior is a skill procedure executed by the coordinator. A
 Capstan executable, parser, or controller is forbidden unless an admitted issue
 records the exception. A Capstan init binary would violate this rule, not an
@@ -32,8 +60,9 @@ Titles never participate in identity. Resolve the primary repository location
 from `git worktree list --porcelain` rather than nesting worktrees in worktrees.
 Use a fresh worktree for a new issue; continue an existing matching issue
 worktree. Never switch the shared checkout or edit the integration branch there.
+Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run. For this repository that command is `git fetch origin main`. Immediately after a successful fetch, record the SHA of that ref. Create the worktree from that SHA. Local `main`, an unfetched `origin/main`, and `origin/HEAD` are not valid parents. If the fetch fails, stop. Do not create the worktree from local `main`. An existing `capstan/N` worktree is not rebased or recreated. Do not fast-forward, switch, or edit the shared checkout.
 When absent, create it with `git worktree add -b capstan/N ./.worktrees/capstan+N origin/BASE`
-from the repository root after fetching and resolving BASE. If a matching branch
+from the repository root after fetching and resolving BASE. Its parent is the recorded SHA, not the ref name alone. If a matching branch
 already exists, attach that branch without `-b`. Preserve dirty work and human
 commits. An unrelated branch, worktree, or PR occupying the identity is a
 collision, not permission to overwrite it. Observe ancestry, marked comments,
@@ -67,8 +96,7 @@ paginated `/issues/N/comments` endpoint. Then inventory:
 4. Live PR base/head, checks, approvals, and mergeability; marked remote artifacts.
 5. Available local briefs, results, logs, `ledger.md`, and other telemetry.
    Recreate missing evidence directories and briefs from remote facts; missing
-   files cannot strand a run. `ledger.md` is the retained local record. `run.md`
-   and `events.jsonl` are not a second source of truth.
+   files cannot strand a run. [telemetry.md](telemetry.md) owns `ledger.md`.
 
 Select the furthest active station whose prerequisites are supported, accounting
 for evidence made stale by current facts. Labels are hints. A complete plan can
@@ -145,7 +173,7 @@ after they are in force.
 | planning (initial) | complete published plan for admitted revision | plan-review |
 | plan-review | complete census: no findings / findings | implementing / planning (single correction) |
 | planning (single correction) | corrected plan and complete finding handoff; interrupted work retained explicitly | implementing |
-| implementing | verified commits/checks/outcome; closure proof gate passed for carried effective blockers; marked non-draft PR | review |
+| implementing | verified commits/checks/outcome; closure proof gate passed for carried effective blockers; [references/publication.md](publication.md) | review |
 | review | exact-head policy partition: effective blockers / none / round ceiling | fix / pre-merge / blocked review-exhausted |
 | fix | effective blocking census resolved or refuted; closure proof gate passed; verified resulting head (unchanged is valid after refutation) | review |
 | pre-merge | strict live ready gate in pre-merge reference | ready-to-deploy |
@@ -196,15 +224,15 @@ default is `false`. Precedence is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE
 then `.capstan.json`, then the default. An invalid value is `false`. Do not fall
 through to a lower precedence value. Do not resolve an invalid or missing value
 to `true`. A missing `evidence.delete_pile` means `false`. Record the resolved
-value in `ledger.md`. The switch cannot suppress the ledger. There is no second
-flag.
+value in `ledger.md`. [telemetry.md](telemetry.md) owns that file and deletion.
+The switch cannot suppress the ledger. There is no second flag.
 
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
 `.capstan/features` when that directory contains `README.md`. `features: null`
 disables the map. It does not fall through to `.capstan/features`. An absent
 `features` field is not `features: null`. A missing explicit path is recorded in
-`ledger.md` and in `run.md`. The ledger is the retained record. The run
+`ledger.md`. The run
 continues with no map. A delivery with no map still completes.
 Capstan does not generate a map during an ordinary issue. Do not add a stage, a
 label, or a daily job for the map. Do not copy the map into a host skill
@@ -229,9 +257,8 @@ a nonnegative integer where 0 disables that early guard. Null model/effort uses 
 recorded as such. Null fallback disables it. Prefer a different available secondary;
 if only one harness works, disclose `independence: same-harness`. An explicitly
 requested unavailable setting fails visibly and enters recovery; never silently
-drop an effort setting. Record effective nonsecret configuration in `ledger.md`
-and in run.md. The ledger is the retained record. run.md is not a second source
-of truth. Unreported usage is `unknown`, never zero and never estimated.
+drop an effort setting. Record effective nonsecret configuration in `ledger.md`.
+[telemetry.md](telemetry.md) owns that file.
 
 `recovery.plan_revision_attempts` and `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`
 are retired. Warn and ignore them, including invocation overrides; they cannot
@@ -288,53 +315,4 @@ Init does not write `features`. Init does not edit product source. The
 `.capstan.json` write is init configuration, not a product-source edit and not a
 delivery commit.
 
-## Ledger, pile, and deletion
-
-These five records bind later deliveries. Do not add a sixth term for this rule.
-
-**Ledger**: `ledger.md`, the retained local record of totals and check outcomes. Always written. Rejected: a switch that disables it.
-
-**Pile**: briefs, results, worker captures, check scripts and logs, the task toolchain, and optional `events.jsonl`. Exact paths: `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`, `tooling/`, and `events.jsonl` when present. `toolchain/` is pile. Rejected: `ledger.md`.
-
-**Deletion switch**: `evidence.delete_pile`. It authorizes success-path removal of the pile and this run's worktree. It never authorizes removal of the ledger. Rejected: a second flag.
-
-**Check outcome**: the head, command, exit, and pass or fail signal. Not the script body. Rejected: treating `checks/fix-4-red.py` as the record.
-
-**Unknown**: the required state when a number was never reported, or was deleted before the ledger contained it. Not zero. Rejected: an estimate.
-
-Always write `ledger.md` at run acceptance and update it at each station end,
-whether or not deletion is enabled. Record identity, spec revision, nonsecret
-config, budget start, the resolved deletion switch, and one row per attempt.
-Each closure-gate check outcome is a ledger row before the next push or review.
-The row has the head, the command, the exit, and the pass or fail signal. A
-script path may be named. The script body is not the record. `run.md` and
-`events.jsonl` are not a second source of truth. Put required facts in the
-ledger before either may be deleted. The switch cannot suppress the ledger.
-Remote comments still publish. Budget start survives from the earliest remote
-timestamp. Unreported usage is `unknown`, never zero and never estimated.
-
-`evidence.delete_pile` defaults to `false`. The environment name is
-`CAPSTAN_EVIDENCE_DELETE_PILE`. Precedence is invocation, then
-`CAPSTAN_EVIDENCE_DELETE_PILE`, then `.capstan.json`, then the default. An
-invalid value is `false`. A missing value is `false`.
-
-No mid-run deletion. Delete the named pile paths only at ready-to-deploy, and
-only when all four gates pass: the switch is `true`, ledger read-back succeeds,
-the ledger is explicitly complete, and no worker from this run is active. A
-successful read-back is not completeness. The ledger is explicitly complete only
-when every required field is present. Required fields include identity, spec
-revision, nonsecret config, budget start, the resolved deletion switch, one row
-per required attempt, and each required closure-gate row (head, command, exit,
-pass or fail). A missing required field is incompleteness. An absent required
-attempt row or closure-gate row is a missing required field. An incomplete
-ledger keeps the pile and the worktree. Name each deleted path. Do not recurse
-over the evidence root or other issue directories. When the switch is `false`,
-the pile stays and the ledger says deletion was skipped.
-
-The same switch may remove only `.worktrees/capstan+N` created by this run, and
-only at ready-to-deploy, and only when the ledger is explicitly complete and the
-pushed head equals the ledger head. Do not remove the shared checkout. When the
-switch is `false`, or the ledger is incomplete, the worktree stays. A manual
-cleanup before ready-to-deploy stays the old exact-directory rule. Deletion is
-not a separate stage, label, or executable. The `.capstan.json` example in
-[the README](../README.md) includes `"evidence": {"delete_pile": false}`.
+[references/publication.md](publication.md) owns publication.

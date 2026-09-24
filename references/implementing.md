@@ -5,66 +5,16 @@ requirements into the pack; the worker reads the brief and the pack. Planning
 handoff is permission to implement, not independent approval of the corrected
 design or closure of its findings.
 
-`features` is the optional feature-map field. Resolution order is invocation,
-then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
-`.capstan/features` when that directory contains `README.md`. `features: null`
-disables the map. A missing explicit path is recorded in `run.md`. The run
-continues with no map. A delivery with no map still completes. Do not generate
-a map during an ordinary issue.
+[contract](contract.md) owns feature-map resolution and heading shape.
 
-When a feature map is present, use the named `Driving it` steps for the
-user-surface proof. If the change alters reachability, drive steps, or the
-proof, the same commit updates that feature file. When the map is present, a
-new user-facing behavior adds one feature file and one index line.
-
-Each feature file uses only these four H2 headings and no harness name:
-`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
-`Driving it` states the repository commands and the observable end state. A
-harness name, a host skill path, or another section does not satisfy the shape.
-No Launch, Doctor, Evidence, Cleanup, or Helpers section.
-
-The coordinator runs the preflight below before this worker launches.
-
-Take commands from the plan's named checks, then the repository's documented runner.
-Do not detect a language. Do not invent a second runner.
-Run preflight before worker launch.
-The preflight records the command, the tool path, and the provenance.
-A preflight failure is visible.
-A preflight failure does not spend a worker turn on discovery.
-This is a ban on worker-side discovery.
-The brief carries the exact invocation.
-A worker that substitutes a global tool has not followed the brief.
-The worker runs that invocation.
-The worker does not discover a command, a runner, or a tool path.
-
-The three-step precedence is this order.
-First, use the recorded toolchain when the identity matches.
-Identity is the lockfile or manifest bytes, not a language version.
-A mismatch invalidates only the recorded toolchain.
-Resolution then uses the declared runner on `PATH`.
-Second, use the declared runner on `PATH`.
-Do not skip that `PATH` step.
-Third, create one task-scoped environment only if that `PATH` step fails.
-The fallback tool is the repository's own declared tool.
-Do not limit that tool to a lockfile.
-A manifest-only repository is included.
-Do not assume a package manager is global.
-Do not create a task environment when the `PATH` step succeeds.
-Record the choice as provenance.
-
-A single executable with no lockfile gets that executable and no new environment.
-No declared check leaves the repo unchanged.
-A declared `pipenv run` when no global `pipenv` exists uses these three steps.
-A non-Python runner that is absent from `PATH` uses these three steps.
-Neither is a virtualenv special case.
-When a task environment is created, put it at `toolchain/` under the evidence root.
-Do not implement #10 deletion. Do not re-run `lyric-utils#764`.
+The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
 1. Read the brief and the pack: the current plan text, every carried finding row
    with its proposed disposition including unfinished correction work, the rule
    extract, the commands the plan names plus the final gates, and the plan's
    affected files and tests as Named files. A write station may read named files
-   fully and run the named checks and declared final gates; it has no numeric
+   fully and run the named checks and declared final gates except silent checks,
+   which `references/harnesses/shared.md` assigns to the coordinator; it has no numeric
    ceiling. A path the pack does not name is a gap reported under Risks and
    unresolved items, not a search. A one-file, one-check item gets a compact pack
    whose single named file and check bound the reads. Map ALL carried findings to
@@ -95,8 +45,9 @@ Do not implement #10 deletion. Do not re-run `lyric-utils#764`.
 4. Prove each carried finding's original acceptance condition against the code,
    or propose a refutation with concrete evidence. Record unfinished obligations
    explicitly; technical failures stay in implementing recovery, not planning.
-   Run all declared final checks and exercise the real user surface. Use the
-   exact invocation the brief carries. Record actual
+   Run all declared final checks except a silent check and exercise the real user
+   surface. Use the exact invocation the brief carries. For a silent check, record the coordinator
+   result in the form `references/harnesses/shared.md` states. Record actual
    commands, exit statuses, output/evidence paths, and the resulting head SHA.
 5. Prepare PR text with Why, Scope, Tradeoffs, Blast Radius, and Verification.
    Report risks honestly and verify a clean worktree containing the intended commits.
@@ -106,8 +57,7 @@ For any effective blocking obligation carried from review, include the red/green
 row in the closure-row format the pack carries from
 [finding resolution](findings.md); planned or proxy tests are insufficient.
 
-Add `## Acceptance proof`, `## Finding closure proofs`, `## Finding dispositions`,
-`## Resulting head`, and `## PR content` to common result headings. Complete when the diff is nonempty and
+Use [templates/result.md](../templates/result.md) for common and implementing result headings. Complete when the diff is nonempty and
 in scope, the brief's exact declared-check invocations
 pass, every carried finding has an evidenced proposed disposition, the user-visible
 result is demonstrated, commits contain the intended change, and the tree is clean.
@@ -115,26 +65,6 @@ A no-op or already-delivered issue is reconciled with the
 coordinator; do not manufacture a change to satisfy the nonempty criterion.
 
 Coordinator independently checks evidence and applies the closure proof gate for
-every carried effective blocker, then pushes the exact issue branch without
-force, and finds or creates one non-draft PR on base `main` whose written body
-contains both the identity marker `Capstan: owner/repo#N` and a separate line
-`Closes #N`. `N` is the delivery issue number in the pull request's repository.
-The created title is the subject, a space, then `(#N)`. `N` is not the
-pull-request number. The #12 shape is
-`Replace the repository tour with one coordinator-written pack per worker launch (#12)`.
-The marker stays the identity check. A title suffix is not a substitute for the
-marker. A wrong title does not retarget branch `capstan/N` or worktree
-`.worktrees/capstan+N`. The keyword is `Closes #N` only. Do not use
-`Fixes`. Do not use `owner/repo#N` as the close keyword. Do not close the issue
-at create. Observe a push rejection before deciding how to integrate remote
-human work; delegate any needed commit/repair to a worker. Read back
-PR/head/body after create. Read the title back after create. If the suffix is
-missing or different, repair it with `gh pr edit` on the same pull request. Do
-not open a second pull request. If the title already ends with ` (#N)` for that
-issue, leave it unchanged and do not double the suffix. If `Closes #N` is
-missing, add that line on the same pull request. If the body already contains
-`Closes #N` for that issue, leave it and do not write the keyword a second
-time. Shipping this text does not rewrite already-merged pull requests.
-The rule applies to pull requests Capstan creates or next edits after the text
-is in force. Then review.
+every carried effective blocker. [references/publication.md](publication.md)
+owns publication. Then review.
 Attempt failures use recovery inside implementing rather than the review fix label.

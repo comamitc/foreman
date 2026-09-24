@@ -7,42 +7,7 @@ primary proposes closure, the coordinator gates its proof, and the fresh seconda
 reviews the cumulative candidate. Preserve original scenarios and acceptance
 conditions.
 
-The coordinator runs the preflight below before this worker launches.
-
-Take commands from the plan's named checks, then the repository's documented runner.
-Do not detect a language. Do not invent a second runner.
-Run preflight before worker launch.
-The preflight records the command, the tool path, and the provenance.
-A preflight failure is visible.
-A preflight failure does not spend a worker turn on discovery.
-This is a ban on worker-side discovery.
-The brief carries the exact invocation.
-A worker that substitutes a global tool has not followed the brief.
-The worker runs that invocation.
-The worker does not discover a command, a runner, or a tool path.
-
-The three-step precedence is this order.
-First, use the recorded toolchain when the identity matches.
-Identity is the lockfile or manifest bytes, not a language version.
-A mismatch invalidates only the recorded toolchain.
-Resolution then uses the declared runner on `PATH`.
-Second, use the declared runner on `PATH`.
-Do not skip that `PATH` step.
-Third, create one task-scoped environment only if that `PATH` step fails.
-The fallback tool is the repository's own declared tool.
-Do not limit that tool to a lockfile.
-A manifest-only repository is included.
-Do not assume a package manager is global.
-Do not create a task environment when the `PATH` step succeeds.
-Record the choice as provenance.
-
-A single executable with no lockfile gets that executable and no new environment.
-No declared check leaves the repo unchanged.
-A declared `pipenv run` when no global `pipenv` exists uses these three steps.
-A non-Python runner that is absent from `PATH` uses these three steps.
-Neither is a virtualenv special case.
-When a task environment is created, put it at `toolchain/` under the evidence root.
-Do not implement #10 deletion. Do not re-run `lyric-utils#764`.
+The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
 1. Read the brief and the pack. It carries the effective blocking rows with the red command
    and output at the reviewed head, the saved diff, the functions the failing
@@ -64,13 +29,14 @@ Do not implement #10 deletion. Do not re-run `lyric-utils#764`.
 4. Write the result; never push or publish it yourself. For every finding, include
    the complete red/green/bite row required by [finding resolution](findings.md).
 
-Add `## Finding closure proofs`, `## Finding dispositions`, and `## Resulting head`
-to common results. Complete when every effective blocking finding has a complete proposed
+Use [templates/result.md](../templates/result.md) for common and fix result headings. Complete when every effective blocking finding has a complete proposed
 closure row, checks pass, and the worktree is clean. The coordinator then applies
 the closure proof gate independently. An incomplete or non-discriminating row stays
 in fix recovery; it is not pushed for a secondary reviewer to rediscover. Only
-after the gate passes does the coordinator push normally and start a fresh review
+after the gate passes does the coordinator start a fresh review
 under the code-review convergence ratchet, even if a refutation left head
 unchanged. The pack carries the cumulative diff and identifies the repair delta. The new
 census replaces prior finding authority with explicit reconciliation; old finding
 IDs do not veto fresh evidence or disappear without a supported disposition.
+
+[references/publication.md](publication.md) owns publication.

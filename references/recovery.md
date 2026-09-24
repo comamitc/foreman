@@ -54,6 +54,14 @@ Do not launch a second writer while a prior writer is alive.
 
 ## Blocked overlays
 
+An explicit invocation of an issue that has `capstan:blocked` starts. Do not
+refuse because of that label. Do not ask the operator to remove it first.
+Before removing the overlay, observe the existing resume condition. Remove a human-capability overlay only when the missing capability, decision, or budget is observed. Remove a review-exhausted overlay only when one of the published
+review-convergence resume conditions is observed. Keep the stage label. If that
+condition is not observed, leave `capstan:blocked`, leave the blocker handoff,
+and do not rerun the station. A label that is not `capstan:blocked`, including
+a label named `blocked`, does not refuse the invocation and is not removed.
+
 Review exhaustion is the one technical blocked overlay. Apply it only at
 [code-review convergence](review-convergence.md)'s configured round ceiling with
 effective blockers still open. It is not evidence that a person must diagnose or
@@ -72,6 +80,9 @@ All other blocked overlays identify a missing human capability:
 | authority-required | required approval or action beyond v1 authority |
 | safety-boundary | explicit authority for a production-affecting/destructive step |
 | budget-approval | more time/cost, scope change, or cancel at circuit breaker |
+
+Failure to create this worktree's `index.lock` after the verified grant is
+technical recovery, not `safety-boundary`. `unsafe_autonomy` is not the remedy.
 
 Use [blocker](../templates/blocker.md). For human-capability blockers, publish one
 concrete action and why an agent cannot supply it. For review exhaustion, publish

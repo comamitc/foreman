@@ -28,6 +28,13 @@
    document.
    Ask: the choice changes scope, safety, or an irreversible outcome, and
    evidence does not settle it.
+   If a visited decision removes or replaces an existing user-visible surface,
+   the settlement is Ask in this run even when the issue Decisions section
+   states that removal. Evidence and Default are illegal for that node. The
+   issue text is not Evidence that the invoker confirmed the deletion in this
+   run. The question recommends the issue's answer and names what the removal
+   deletes. This rule does not ask the invoker for every decision. Ready is
+   illegal until that Ask is answered.
 3. Maintain a frontier of unresolved product decisions. Ask numbered rounds only
    for consequential choices that evidence cannot settle. Recommend an answer and
    explain its effect. An ask is one numbered round of the current frontier. Each
@@ -48,6 +55,7 @@
    read it back, and record its GitHub body revision/time for later plan evidence.
    Keep the existing issue-body spec marker `<!-- capstan:spec owner/repo#N -->`.
    Do not remove it. Do not delete `spec`. Do not add a marker kind.
+   On that same publish edit, apply the publication title rule in `references/contract.md`. Do not restate it here.
 6. Do not invoke the grilling skill, `pipeline grill`, `grill-with-docs`, or any
    host grill command. Do not add a taxonomy module, an envelope, a new marker
    kind, a `CONTEXT.md` pull request, a stage, a label, or an executable.

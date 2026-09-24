@@ -46,17 +46,28 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    Withhold readiness for BLOCKED, BEHIND, DIRTY, UNKNOWN, DRAFT, UNSTABLE, pending,
    or an unrecognized status until its actual impediment is resolved. Never bypass
    rules, enable auto-merge, enqueue, or merge to obtain a passing state.
-6. Publish final telemetry summary. The summary states one attempt table, two
-   wall totals, and the no-estimate rule. The table has one row per station
-   attempt. The columns are stage, start UTC, end UTC, wall time, role,
-   harness, and the usage fields that harness reported. Say `unknown` when not
-   reported; never estimate or use zero for missing usage. A field the harness
-   did not report is `unknown`, not zero and not an estimate. Worker-process
-   wall is the sum of attempt rows that have a process start and exit.
-   End-to-end wall is from spec admission to the ready-label read-back, or to
-   the review-exhausted summary publication. A bound that was not observed is
-   `unknown`. The two totals are not substitutes for each other. A telemetry
-   gap in this table does not block `capstan:ready-to-deploy`. Project
+6. Trace each bot claim before telemetry. A comment or review from Bugbot, an
+   agentic security review, or any other non-human author is a bot claim, not a
+   finding. Trace each claim against the current head and the admitted spec. A
+   reachable, in-scope failure is recorded as a finding with severity and
+   confidence. A claim that does not survive the trace is dismissed with a
+   reason: noise, out of scope, already fixed, or not reproducible on the
+   current head. Dismissal is not silence. A dismissed claim does not enter
+   fix, does not consume a review-fix round, and does not block
+   `capstan:ready-to-deploy`. An undismissed, untraced bot claim blocks ready.
+   Do not project ready while a bot thread on the marked pull request has
+   neither a trace nor a dismissal. Publish the trace or dismissal on the pull
+   request in a comment marked `<!-- capstan:review-disposition owner/repo#N -->`.
+   Name the bot comment URL, the head SHA, and either the finding or the
+   dismissal reason. Do not add a marker kind. A later head change requires
+   open bot claims to be traced again. A dismissal that names an older head
+   does not cover the new head. A bot approval does not satisfy a required
+   approving review. A bot request-changes does not, by itself, satisfy the
+   effective-blocker test. Bot claims do not replace the secondary code-review
+   census and do not replace round 1. Do not set `unsafe_autonomy`. Do not redo
+   the git-metadata grant. Do not merge.
+7. Publish final telemetry summary. [telemetry.md](telemetry.md) owns the
+   attempt-table field rules and emission. Project
    `capstan:ready-to-deploy` on the issue with the existing stage rules. Add
    the same label to the marked pull request with
    `gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`.
@@ -78,54 +89,11 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    `Capstan: owner/repo#N` remains the identity check. The pull-request label is
    not a substitute for that marker, branch `capstan/N`, or the worktree.
 
-   Publish the summary from `ledger.md`. Always write `ledger.md`. It is the
-   retained local record of totals and check outcomes. Update it at run
-   acceptance and at each station end, whether or not deletion is enabled.
-   Record identity, spec revision, nonsecret config, budget start, the resolved
-   deletion switch, and one row per attempt. Each closure-gate check outcome is
-   a ledger row before the next push or review: head, command, exit, and pass
-   or fail. A script path may be named. The script body is not the record.
-   `checks/fix-4-red.py` is not the record. `run.md` and `events.jsonl` are not
-   a second source of truth. Put required facts in the ledger before either may
-   be deleted. The switch cannot suppress the ledger. Remote comments still
-   publish. Budget start survives from the earliest remote timestamp.
-   Unreported usage is `unknown`, never zero and never estimated. `unknown` is
-   the required state when a number was never reported, or was deleted before
-   the ledger contained it.
+   After that read-back still holds, follow [telemetry.md](telemetry.md) for the
+   ledger and for deletion. If the ready label was removed, do not delete the
+   pile or the worktree. Stop without merging or deploying.
 
-   The pile is exactly `briefs/`, `results/`, `workers/`, `checks/`,
-   `toolchain/`, `tooling/`, and `events.jsonl` when present. `toolchain/` is
-   pile. The pile does not include `ledger.md`. `evidence.delete_pile` is a
-   boolean deletion switch. The default is `false`. Precedence is invocation,
-   then `CAPSTAN_EVIDENCE_DELETE_PILE`, then `.capstan.json`, then the default.
-   An invalid value is `false`. A missing value is `false`. Record the resolved
-   value in the ledger. There is no second flag. The switch authorizes
-   success-path removal of the pile and this run's worktree. It never
-   authorizes removal of the ledger.
+Technical repair workers use [templates/result.md](../templates/result.md), including
+`## Resulting head` and `## Original failure verification`. Failed attempts use shared recovery.
 
-   No mid-run deletion. After the ready projection still holds, delete the
-   named pile paths only when all four gates pass: the switch is `true`, ledger
-   read-back succeeds, the ledger is explicitly complete, and no worker from
-   this run is active. Ready-to-deploy is that moment. A successful read-back
-   is not completeness. The ledger is explicitly complete only when every
-   required field is present. Required fields include identity, spec revision,
-   nonsecret config, budget start, the resolved deletion switch, one row per
-   required attempt, and each required closure-gate row (head, command, exit,
-   pass or fail). A missing required field is incompleteness. An absent
-   required attempt row or closure-gate row is a missing required field. An
-   incomplete ledger keeps the pile and the worktree. Name each deleted path.
-   Do not recurse over the evidence root or other issue directories. When the
-   switch is `false`, the pile stays and the ledger says deletion was skipped.
-   If the ready label was removed because the live gate no longer holds, do not
-   delete the pile or the worktree.
-
-   The same switch may remove only `.worktrees/capstan+N` created by this run,
-   and only at ready-to-deploy, and only when the ledger is explicitly complete
-   and the pushed head equals the ledger head. Do not remove the shared
-   checkout. When the switch is `false`, or the ledger is incomplete, the
-   worktree stays. A manual cleanup before ready-to-deploy stays the old
-   exact-directory rule. Deletion is not a separate stage, label, or
-   executable. Stop without merging or deploying.
-
-Technical repair workers use the common result headings plus `## Resulting head`
-and `## Original failure verification`. Failed attempts use shared recovery.
+[references/publication.md](publication.md) owns publication.

@@ -43,6 +43,10 @@ alternatives and explicit invocation forms are:
 | Grok Build | `~/.grok/skills/capstan/` | `/capstan https://github.com/OWNER/REPO/issues/N` |
 | Oh My Pi | `~/.agents/skills/capstan/` | `/skill:capstan https://github.com/OWNER/REPO/issues/N` |
 
+Install is this directory symlinked or copied into the host skill path already
+listed. Capstan does not ship a marketplace manifest, a converter, or a per-host
+copy of the skill.
+
 Restart the host or use its documented reload after installation. Confirm Capstan
 appears in its explicit skill menu. Frontmatter disables model invocation; Codex
 also receives `policy.allow_implicit_invocation: false` presentation metadata.
@@ -57,6 +61,10 @@ worktree `.worktrees/capstan+N`, or marked PR lookup. You may specify overrides 
 the invocation, for example: “primary codex, secondary claude, wall budget 90 minutes.”
 Only one coordinator should work on an issue at a time. These delivery forms do not
 enter init.
+
+### Text invocation
+
+[contract](references/contract.md) owns text intake.
 
 ## Configuration
 
@@ -97,30 +105,9 @@ block only when they meet both the configured severity and confidence floors;
 other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
 `fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
-`evidence.delete_pile` is the deletion switch. It is a boolean. The default is
-`false`. Precedence is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE`, then
-`.capstan.json`, then the default. An invalid value is `false`. A missing value
-is `false`. Do not fall through to a lower precedence value. Do not resolve an
-invalid or missing value to `true`. The example above sets `"delete_pile"` to
-`false`. Init does not write `evidence.delete_pile`. Record the resolved value
-in `ledger.md`. The switch cannot suppress the ledger. There is no second flag.
+[contract](references/contract.md) owns `evidence.delete_pile`. [telemetry](references/telemetry.md) owns the ledger and deletion.
 
-`features` is the optional feature-map field. Resolution order is invocation,
-then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
-`.capstan/features` when that directory contains `README.md`. The example value
-`features: null` disables the map. It does not fall through to
-`.capstan/features`. An absent `features` field is not `features: null`. A
-missing explicit path is recorded in `ledger.md` and in `run.md`. The ledger
-is the retained record. The run continues with no map. A delivery with no map
-still completes. Capstan does not generate a map during an
-ordinary issue. Do not add a stage, a label, or a daily job for the map. Do not
-copy the map into a host skill directory.
-
-Each feature file uses only these four H2 headings and no harness name:
-`Sub-features`, `How to get to it (user POV)`, `Driving it`, `Gotchas`.
-`Driving it` states the repository commands and the observable end state. A
-harness name, a host skill path, or another section does not satisfy the shape.
-No Launch, Doctor, Evidence, Cleanup, or Helpers section.
+[contract](references/contract.md) owns feature-map resolution and heading shape.
 
 Read [contract](references/contract.md) for field rules and
 [harnesses](references/harnesses.md) for version-checked launch guidance. No parser
@@ -158,45 +145,7 @@ allowance. The single-pass planning rule and total run budget remain unchanged.
 
 ## Init
 
-Init runs only on an explicit init invocation. A delivery, a resume, and an issue
-number do not enter init. Init is not a binary and not a station. Init is not a
-gate. Delivery remains valid without init. A missing `.capstan.json` still
-delivers. Delivery still creates a missing stage label. A Capstan init binary
-would violate this rule, not an implementation choice.
-
-Probe each harness CLI on `PATH` with that CLI's documented help command. Recommend
-a primary and a different secondary only from CLIs that answered. Do not invent a
-model, effort, or harness. When the observed primary and a different observed
-secondary are unambiguous, select that pair and report it. Do not ask. Do not
-prompt. Ask only when the probe is ambiguous. Ask that one pair and recommend an
-observed answer. Keep timeouts, cost, and `unsafe_autonomy` at the documented
-defaults in the example above. The invoking host does not become primary merely
-because it ran init. Do not copy a harness from that example unless that CLI
-answered during this init.
-
-If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
-only `primary`, `secondary`, and `fallback`, plus the documented recovery
-defaults. Those keys are the `primary`, `secondary`, `fallback`, and `recovery`
-keys in the example above, not `evidence.delete_pile`. Set model and effort to
-null. Set `fallback` to null when no third observed harness exists. Set
-`unsafe_autonomy` to false. Do not write `evidence.delete_pile`. A missing
-`evidence.delete_pile` means `false`. Leave the file uncommitted. Do not switch
-branches.
-Do not commit, push, or open a pull request. The write is allowed on `main` and
-stays uncommitted. Exclusive create writes the new file only when it is absent.
-If the file is present before the write finishes, do not replace it.
-
-If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
-replace, or use `--force`. Report that the file already exists.
-
-Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
-`capstan:planning`, `capstan:plan-review`, `capstan:implementing`, `capstan:review`,
-`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`, and
-`capstan:blocked`. Create only absent labels. Re-read a race. Do not add or remove
-any other label. Use the label create command in [contract](references/contract.md).
-
-Init writes no secrets, no evidence directory, no worktree, and no feature map.
-Init does not write `features`. Init does not edit product source.
+[contract](references/contract.md) owns init.
 
 ## Trust and authority
 
@@ -219,58 +168,17 @@ protection. No hostile-input sandbox or distributed lock is provided in v1.
 ## Evidence and cleanup
 
 Evidence defaults to `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/`.
-Always write `ledger.md` at run acceptance and update it at each station end,
-whether or not deletion is enabled. `ledger.md` is the retained local record of
-totals and check outcomes. Record identity, spec revision, nonsecret config,
-budget start, the resolved deletion switch, and one row per attempt. Each
-closure-gate check outcome is a ledger row before the next push or review: head,
-command, exit, and pass or fail. A script path may be named. The script body is
-not the record. `checks/fix-4-red.py` is not the record. `run.md` and
-`events.jsonl` are not a second source of truth. Put required facts in the
-ledger before either may be deleted. The switch cannot suppress the ledger.
-Remote comments still publish. Budget start survives from the earliest remote
-timestamp. Owner-only briefs, results, worker captures, check scripts and logs,
-`run.md`, and optional `events.jsonl` may also be written. Secrets are redacted
-before persistence or publication. Unreported usage is `unknown`, never zero and
-never estimated. `unknown` is the required state when a number was never
-reported, or was deleted before the ledger contained it.
-
-The pile is exactly `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`,
-`tooling/`, and `events.jsonl` when present. `toolchain/` is pile. The pile does
-not include `ledger.md`.
-
-`evidence.delete_pile` is a boolean deletion switch. The default is `false`.
-Precedence is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE`, then
-`.capstan.json`, then the default. An invalid value is `false`. A missing value
-is `false`. Record the resolved value in the ledger. There is no second flag.
-The switch authorizes success-path removal of the pile and this run's worktree.
-It never authorizes removal of the ledger.
-
-No mid-run deletion. Delete the named pile paths only at ready-to-deploy, and
-only when all four gates pass: the switch is `true`, ledger read-back succeeds,
-the ledger is explicitly complete, and no worker from this run is active. A
-successful read-back is not completeness. The ledger is explicitly complete only
-when every required field is present. Required fields include identity, spec
-revision, nonsecret config, budget start, the resolved deletion switch, one row
-per required attempt, and each required closure-gate row (head, command, exit,
-pass or fail). A missing required field is incompleteness. An absent required
-attempt row or closure-gate row is a missing required field. An incomplete
-ledger keeps the pile and the worktree. Name each deleted path. Do not recurse
-over the evidence root or other issue directories. When the switch is `false`,
-the pile stays and the ledger says deletion was skipped.
-
-The same switch may remove only `.worktrees/capstan+N` created by this run, and
-only at ready-to-deploy, and only when the ledger is explicitly complete and the
-pushed head equals the ledger head. Do not remove the shared checkout. When the
-switch is `false`, or the ledger is incomplete, the worktree stays.
+Owner-only briefs, results, worker/check logs, and optional events.jsonl
+record observed commands and usage. Secrets are redacted before persistence or
+publication. [references/telemetry.md](references/telemetry.md) owns the ledger,
+the pile, deletion, and missing-usage rules.
+[references/contract.md](references/contract.md) owns `evidence.delete_pile`.
 
 To clean raw logs manually before ready-to-deploy, first resolve the exact
 delivery directory, inspect its contents, and confirm no worker is active.
 Archive it or remove only the selected files using your normal file manager.
-That manual cleanup stays the old exact-directory rule. Keep remote marked
-evidence for resume. Losing local evidence before ready-to-deploy must not
-prevent delivery continuation. Deletion is not a separate stage, label, or
-executable.
+Keep remote marked evidence for resume. Losing local evidence before
+ready-to-deploy must not prevent delivery continuation.
 
 ## Development and provenance
 
@@ -282,3 +190,5 @@ Help checks and document validation alone do not meet that bar.
 Historical ideas came from ponytail, firstmate, Matt Pocock's skills, and pstack.
 This attribution is provenance only. All shipped instructions are Capstan-owned;
 no third-party skill is installed, copied, invoked, or needed. MIT licensed.
+
+[references/publication.md](references/publication.md) owns publication.
