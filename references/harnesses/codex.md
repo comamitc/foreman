@@ -22,7 +22,7 @@ codex exec -C WORKTREE -s workspace-write -c approval_policy='"never"' \
 
 When the supervisor cannot pass stdin, the Codex launch uses a shell redirect of the launch file. The recipe above is that redirect: `- < LAUNCH_FILE`.
 
-A launch that uses `-` and produces no output is a hung worker. Kill it and relaunch with the shell redirect. Do not wait out the worker timeout.
+A launch that uses `-` and produces no output and no `thread.started` event because stdin was not attached is a hung worker, not a silent check. Kill it and relaunch with the shell redirect. Do not wait out the worker timeout.
 
 For a commit, the verified metadata grant on Codex 0.153.4 is
 `-s workspace-write` plus `--add-dir` on both git paths: `<repo>/.git` and
