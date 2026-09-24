@@ -246,6 +246,8 @@ No Launch, Doctor, Evidence, Cleanup, or Helpers section.
 
 [references/implementing.md](implementing.md) owns the feature-map write.
 
+[references/planning.md](planning.md) owns feature-map adoption.
+
 Defaults: primary claude; secondary codex; optional fallback grok; model and effort
 null; transient_retries 3; same_failure_attempts 2;
 run_wall_timeout_min 360;
