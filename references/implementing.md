@@ -13,6 +13,8 @@ design or closure of its findings.
 
 [planning](planning.md) owns the feature-map audit.
 
+[planning](planning.md) owns the ADR rule.
+
 When a map is present and [review](review.md) requires a map update, the plan names the feature file and the index line. The implementing pack includes those paths as Named files. Write that update in the same commit as the behavior.
 
 When a delivery has no map, or the change does not require a map update, write no feature file and no index line.

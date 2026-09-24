@@ -18,6 +18,12 @@ Block a second map. Block an internal-only feature file. Block an unverifiable c
 
 Deleting a still-true claim to make the audit pass blocks. Weakening a proof to make the audit pass blocks.
 
+[references/planning.md](planning.md) owns the ADR rule.
+
+Block a missing required ADR. Block a broken supersession link. Block invented rationale. Block a contradiction with the diff.
+
+The ADR is a claim. Code and checks are proof.
+
 Review treats the map as a claim. The diff and the live command remain the
 proof. Removing a proof to pass blocks. Omitting a required map update blocks.
 A required map update is the same-commit feature-file change when reachability,
