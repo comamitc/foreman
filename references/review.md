@@ -28,6 +28,10 @@ The ADR is a claim. Code and checks are proof.
 
 Block treating a lesson as authority.
 
+Block rewriting a valid invariant to fit a regression.
+
+Block age-only deletion.
+
 Review treats the map as a claim. The diff and the live command remain the
 proof. Removing a proof to pass blocks. Omitting a required map update blocks.
 A required map update is the same-commit feature-file change when reachability,

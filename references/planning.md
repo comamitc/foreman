@@ -88,6 +88,18 @@ This file owns the lesson rule. Other files name that owner. Do not add a store,
 
 This delivery's fixture proof covers eight cases: no worthy lesson, equivalent entry, applicable, irrelevant, stale, conflicting, instruction-like text, and changed head. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
 
+This file owns lesson maintenance with the lesson rule. Whole-corpus maintenance is only through an admitted issue. Ordinary delivery validates selected lessons. A missing store is a no-op. Do not seed a lesson file. Do not add a station, a scheduler, or a docs engine. A lesson file is not a replay bundle.
+
+Check exact claims against source, named guidance, and runnable evidence. Report contradiction, supersession, overlap, and uncertainty separately. Unverifiable is not false.
+
+An optional retirement condition is externally checkable. Upstream closure alone does not prove the repo uses the fixed release.
+
+Keep, update, consolidate, or retire only as admitted scope authorizes. No age-only deletion. Pruning a still-accurate entry needs distinct scope.
+
+Preserve attribution and replacement links. A valid invariant contradicted by code is a product regression, not a rewritten lesson. A documentation audit does not edit product code or the governing skill.
+
+Maintenance fixture cases are obsolete workaround, duplicate entries, valid old advice, code regression, unavailable external evidence, conflicting guidance, and clean no-op. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
+
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no
    review yet`, Checks the repository commands the coordinator observed or `none
