@@ -6,6 +6,8 @@ the worker reads the brief and the pack only.
 
 [contract](contract.md) owns feature-map resolution and heading shape.
 
+[implementing](implementing.md) owns the feature-map write.
+
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no
    review yet`, Checks the repository commands the coordinator observed or `none

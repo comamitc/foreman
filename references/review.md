@@ -8,6 +8,8 @@ else.
 
 [references/contract.md](contract.md) owns feature-map resolution and heading shape.
 
+[references/implementing.md](implementing.md) owns the feature-map write.
+
 Review treats the map as a claim. The diff and the live command remain the
 proof. Removing a proof to pass blocks. Omitting a required map update blocks.
 A required map update is the same-commit feature-file change when reachability,

@@ -244,6 +244,8 @@ Each feature file uses only these four H2 headings and no harness name:
 harness name, a host skill path, or another section does not satisfy the shape.
 No Launch, Doctor, Evidence, Cleanup, or Helpers section.
 
+[references/implementing.md](implementing.md) owns the feature-map write.
+
 Defaults: primary claude; secondary codex; optional fallback grok; model and effort
 null; transient_retries 3; same_failure_attempts 2;
 run_wall_timeout_min 360;
