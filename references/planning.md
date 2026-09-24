@@ -56,6 +56,24 @@ The delivery uses the normal plan, implementation, review, and ready gate. The f
 
 This delivery's fixture proof covers eight cases: a clean map, a stale command, a renamed reach path, an orphaned index entry, a missing new feature, a false expected result caused by a product defect, a custom map path, and an absent or explicitly disabled map. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
 
+This file owns the ADR rule.
+
+Repository instructions or the admitted issue decide whether an ADR is required. Do not invent a universal ADR threshold. Do not create an ADR directory merely because a design choice exists.
+
+Discover the existing ADR path, template, numbering or naming rule, status model, index, and declared validation command. The plan names the exact ADR and index paths. An unnamed path is a gap, not a search.
+
+A required ADR uses the repository's native format for context, decision, alternatives, consequences, and supersession. Do not copy the issue. Do not duplicate `.capstan/vocabulary.md`.
+
+The new or superseding ADR lands in the same commit as the architectural behavior. Do not rewrite accepted historical ADR text to erase the earlier decision, except for a repository-permitted mechanical correction.
+
+[implementing](implementing.md) writes only the paths the plan names.
+
+No convention and no explicit issue requirement means write no ADR and create no ADR infrastructure.
+
+Do not add an external ADR tool, OpenSpec, a stage, a label, a generator, a daemon, or a host-skill copy. A declared ADR checker stays a declared check.
+
+This delivery's fixture proof covers six cases: a native ADR template, indexed numeric ADRs, superseding an accepted ADR, an explicit issue-required ADR in a repo with a stated convention, no ADR convention, and a change that is important but not architectural. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
+
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no
    review yet`, Checks the repository commands the coordinator observed or `none
