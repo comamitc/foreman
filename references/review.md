@@ -75,8 +75,7 @@ to avoid the update blocks.
 
 Use [templates/result.md](../templates/result.md) for common and review result headings.
 
-Review independently assesses the ledger rows that [telemetry.md](telemetry.md)
-owns, and exit zero is not certification.
+Review names [telemetry.md](telemetry.md) as the owner of the ledger row.
 
 Complete when the saved diff and carried repair rows have been examined under the
 review ratchet, findings are grounded, prior lineages are reconciled, the result
