@@ -13,6 +13,16 @@ When a map is present and [review](review.md) requires a map update, the plan na
 
 When a delivery has no map, or the change does not require a map update, write no feature file and no index line.
 
+This file owns which existing page must change.
+
+The page is an existing `README.md`, an existing file under `docs/`, or an existing config example, and only when this diff makes a stated setup step, command, workflow, feature, flag, or env var false. The plan names that page. The implementing pack includes it as a Named file. A path the pack does not name is a gap, not a search.
+
+Write the correction in the same commit as the behavior. Do not delete a still-true statement to avoid the update.
+
+If no existing page describes the changed behavior, write nothing. Do not create a docs tree, a README section, a stage, a label, or a generator.
+
+Do not write `CONTEXT.md`, `CLAUDE.md`, `AGENTS.md`, or a host skill. Do not add a pre-merge docs harness, an OpenSpec dependency, or a Capstan-owned docs generator. A target repository's already-declared docs check stays a declared check.
+
 The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
 1. Read the brief and the pack: the current plan text, every carried finding row

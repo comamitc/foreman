@@ -16,6 +16,10 @@ A required map update is the same-commit feature-file change when reachability,
 drive steps, or the proof change, and one feature file plus one index line when
 a new user-facing behavior is added to a present map.
 
+[references/implementing.md](implementing.md) owns which existing page must
+change. Omitting a required page update blocks. Deleting a still-true statement
+to avoid the update blocks.
+
 1. Read the brief and the pack. The saved `git diff BASE_SHA...HEAD_SHA` in the
    pack is the candidate at the recorded SHAs; record them, the initial status,
    and the spec revision. Apply the effective policy and review ratchet extracted
