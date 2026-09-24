@@ -21,7 +21,7 @@ and evidence paths/remote URLs. Say `unknown` when not reported; never estimate 
 not zero and not an estimate. Coordinator-only stages with no process
 timer, such as triage and ready, stay in the table. Their wall is `not timed`
 unless a start and an end were both observed. Print observed timestamps, such as
-spec admission and the ready label. Avoid adding both session totals and their
+spec admission and the ready label. A supervisor record that still has the start and the exit is observed. If the exit notice lacks those clocks, read that record, then write the ledger row. Publishing `unknown` for start, end, or wall while that record still has them is a telemetry gap, not a permitted `unknown`. `unknown` remains only when that record is gone, and the summary names the gap. A missing clock does not block ready-to-deploy. Do not name a host path. Do not add an executable. Avoid adding both session totals and their
 constituent turn totals. Sum token fields only within one harness and one field.
 Do not add cache reads again into a single mixed total. Do not add reasoning tokens
 again on top of output when the harness already counts them inside output. Name the
@@ -73,7 +73,7 @@ disclosures, and gaps. The attempt-table field rules are stated above. Worker-pr
 wall is the sum of attempt rows that have a
 process start and exit. End-to-end wall is from spec admission to the ready-label
 read-back, or to the review-exhausted summary publication. A bound that was not
-observed is `unknown`. The two totals are not substitutes for each other. A telemetry
+observed is `unknown`. The supervisor-record rule above is that observation. The two totals are not substitutes for each other. A telemetry
 gap in this table does not block ready-to-deploy. Include recovered
 counts only when evidence supports them. Lost local data yields unknown details,
 not an unrecoverable run. A failed GitHub summary publication uses normal transient
