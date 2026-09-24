@@ -74,6 +74,10 @@ to avoid the update blocks.
    and verdict. Confirm no tree/head mutation.
 
 Use [templates/result.md](../templates/result.md) for common and review result headings.
+
+Review independently assesses the ledger rows that [telemetry.md](telemetry.md)
+owns, and exit zero is not certification.
+
 Complete when the saved diff and carried repair rows have been examined under the
 review ratchet, findings are grounded, prior lineages are reconciled, the result
 cites the pack, and tree/head are unchanged. The
