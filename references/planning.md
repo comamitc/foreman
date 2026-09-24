@@ -32,6 +32,8 @@ Do not install OpenSpec, AgentLens, a documentation generator, or another skill.
 
 Use the normal Capstan pipeline for implementation and review. The final pull request is non-draft. The final pull request is mergeable under the existing ready gate.
 
+This delivery's fixture proof covers five cases: a mature repository with an existing docs tree, a repository with no docs map, a custom configured map path, an already conforming map, and a repository where no defensible user-facing map can be produced without a human product decision. The pull request links those records. Do not copy the fixture trees into this repository.
+
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no
    review yet`, Checks the repository commands the coordinator observed or `none
