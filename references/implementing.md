@@ -13,8 +13,6 @@ When a map is present and [review](review.md) requires a map update, the plan na
 
 When a delivery has no map, or the change does not require a map update, write no feature file and no index line.
 
-Do not include reachability, drive steps, user-facing, Sub-features, How to get to it, Driving it, or Gotchas.
-
 The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
 1. Read the brief and the pack: the current plan text, every carried finding row
