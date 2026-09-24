@@ -70,6 +70,8 @@
 
 **Stub result**: a worker exit that is not a captured result. The rule owner is `references/harnesses/shared.md`. Rejected: treating exit 0, a commit SHA, or a stall percent as station completion.
 
+**Invoker ask**: a question to the person who invoked this run, required before ready when a decision removes or replaces an existing user-visible surface. Rejected: treating the issue Decisions section as that confirmation. The rule owner is `references/triage.md`.
+
 **Silent check**: a declared check that can stay silent longer than the selected harness's command-log window. The rule owner is `references/harnesses/shared.md`. Rejected: missing streamed output treated as a stall, or a second copy of that rule.
 
 **Host adapter**: the file that states one harness's launch flags and usage extraction. Rejected: all hosts' flags in the shared harness file.

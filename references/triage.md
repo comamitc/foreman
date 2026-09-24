@@ -28,6 +28,13 @@
    document.
    Ask: the choice changes scope, safety, or an irreversible outcome, and
    evidence does not settle it.
+   If a visited decision removes or replaces an existing user-visible surface,
+   the settlement is Ask in this run even when the issue Decisions section
+   states that removal. Evidence and Default are illegal for that node. The
+   issue text is not Evidence that the invoker confirmed the deletion in this
+   run. The question recommends the issue's answer and names what the removal
+   deletes. This rule does not ask the invoker for every decision. Ready is
+   illegal until that Ask is answered.
 3. Maintain a frontier of unresolved product decisions. Ask numbered rounds only
    for consequential choices that evidence cannot settle. Recommend an answer and
    explain its effect. An ask is one numbered round of the current frontier. Each
