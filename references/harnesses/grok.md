@@ -21,6 +21,12 @@ use `--sandbox read-only`, `--permission-mode dontAsk`, exact pack commands, and
 `--deny 'Bash(rg *)'`, and `--deny 'Bash(find *)'`. Do not switch to always-approve or bypassPermissions
 without unsafe_autonomy.
 
+`references/harnesses/grok.md` owns the read-only result rule. Other files name this owner and do not restate this procedure.
+
+A Grok read-only launch uses `--sandbox read-only` and `--prompt-file LAUNCH_FILE`. The launch prompt tells the worker to return the station Markdown in the final message. The launch prompt does not ask for a write outside the worktree. The coordinator persists that message. The launch does not spend a turn on a write the sandbox will deny.
+
+Grok 1.0.34 has no `--add-dir`. Do not grant the external result path. Do not switch the read station to `workspace`, `bypassPermissions`, or `unsafe_autonomy` to make that write succeed.
+
 Observed JSON fields: `text`, `stopReason`, `sessionId`, `usage`, `modelUsage`,
 `total_cost_usd`. Record Grok `total_cost_usd` when present. The probe returned text
 CAPSTAN_PROBE_OK and reported usage/cost. Official
