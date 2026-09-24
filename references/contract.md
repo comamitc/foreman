@@ -225,7 +225,16 @@ then `.capstan.json`, then the default. An invalid value is `false`. Do not fall
 through to a lower precedence value. Do not resolve an invalid or missing value
 to `true`. A missing `evidence.delete_pile` means `false`. Record the resolved
 value in `ledger.md`. [telemetry.md](telemetry.md) owns that file and deletion.
-The switch cannot suppress the ledger. There is no second flag.
+The switch cannot suppress the ledger. There is no second cleanup flag.
+
+`evidence.retain_replay` is a boolean. The default is `false`. Precedence is
+invocation, then `CAPSTAN_EVIDENCE_RETAIN_REPLAY`, then `.capstan.json`, then
+the default. An invalid value is `false`. A missing `evidence.retain_replay`
+means `false`. Do not fall through to a lower precedence value. Do not resolve
+an invalid or missing value to `true`. Record the resolved value in `ledger.md`.
+`evidence.retain_replay` cannot suppress the ledger or provenance.
+`evidence.retain_replay` is not a cleanup flag. [telemetry.md](telemetry.md)
+owns retention and provenance. This file owns `evidence.retain_replay`.
 
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
@@ -301,7 +310,8 @@ If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
 only `primary`, `secondary`, and `fallback`, plus the documented recovery
 defaults. Set model and effort to null. Set `fallback` to null when no third
 observed harness exists. Set `unsafe_autonomy` to false. Do not write
-`evidence.delete_pile`. A missing `evidence.delete_pile` means `false`. Leave the file
+`evidence.delete_pile`. A missing `evidence.delete_pile` means `false`.
+Do not write `evidence.retain_replay`. Leave the file
 uncommitted. Do not switch branches. Do not commit, push, or open a pull request.
 The write is allowed on `main` and stays uncommitted. Exclusive create writes the
 new file only when it is absent. If the file is present before the write finishes,

@@ -95,23 +95,61 @@ skip the GitHub summary and does not withhold ready.
 
 ## Ledger, pile, and deletion
 
-This file owns the ledger and deletion. [contract.md](contract.md) owns
-resolution of `evidence.delete_pile`.
+This file owns the ledger, deletion, retention, and provenance. [contract.md](contract.md) owns
+resolution of `evidence.delete_pile` and owns `evidence.retain_replay`.
 
 `ledger.md` is the retained local record of totals and check outcomes. Always
 write it, whether or not deletion is enabled. The attempt-table field rules
 above are the ledger row. The switch cannot suppress `ledger.md`.
 
+Provenance is part of `ledger.md`. It records revision or digest, nonsecret
+configuration, spec revision, initial target SHA, pack identities, harness
+version, and reported model identity. A missing harness version or reported
+model identity stays `unknown`. `unknown` stays `unknown`. Provenance is not
+configurable off. No switch suppresses provenance. Delivery identity, run
+identity, and attempt identity stay distinct. Retention does not change branch
+identity. Retention does not change pull-request identity. The ledger records
+the resolved `evidence.retain_replay`. [contract.md](contract.md) owns that
+field.
+
 If `run.md` or `events.jsonl` exists, its required facts are already in
 `ledger.md` before it may be deleted. Remote marked comments are still
 published. Budget start still survives from the earliest remote activity or
-summary timestamp. Loss of the pile does not reset the budget. A missing raw
-file is `unknown` only when the ledger does not already contain the number.
+summary timestamp. Loss of the pile does not reset the budget. Resume does not
+reset budgets. A missing raw file is `unknown` only when the ledger does not
+already contain the number.
 Unreported usage is `unknown`, never zero and never estimated.
 
 The pile is exactly `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`,
 `tooling/`, and `events.jsonl` when present. It does not include `ledger.md`.
 `run.md` is not pile.
+
+A selected bundle is not pile only when the resolved `evidence.retain_replay`
+is `true`. When `evidence.retain_replay` is `false`, pile deletion is
+unchanged. `evidence.delete_pile: false` does not mark a run replayable.
+
+Replay-selection rule: a run is selected only when capture records a bundle of
+admitted inputs, pack content, check bodies, setup references, and outcomes.
+The bundle has no credentials and no unrestricted raw traces. Redaction removes
+a credential. A bundle that still contains a credential is not selected. The
+rule is not a script in `.capstan.json`. An unselected run has no replay
+bundle. A missing capture is recorded in `ledger.md` and is not replayable. A
+failed capture is recorded in `ledger.md` and is not replayable. Benchmark
+capture is not a ready gate. A selected bundle survives pile cleanup only when
+`evidence.retain_replay` is `true`. Do not add a database, parser, skill,
+service, or stage. Do not add a path for the bundle.
+
+Reconstruction after cleanup uses the retained check body and the initial
+target SHA. A state the bundle does not keep is the named limitation
+`unavailable-after-cleanup`. The rule does not claim that the model is
+deterministic.
+
+Missing switch and invalid switch are not replayable.
+[contract.md](contract.md) owns that resolution.
+
+The fixture cases are resumed run, unknown model or version, failed capture,
+redaction, unselected run, selected replay surviving cleanup, missing switch,
+and invalid switch.
 
 No mid-run deletion. At ready-to-deploy, after the ready-label read-back still
 holds, after `ledger.md` is written and read back, and after no worker from
