@@ -7,6 +7,8 @@ design or closure of its findings.
 
 [contract](contract.md) owns feature-map resolution and heading shape.
 
+[planning](planning.md) owns feature-map adoption.
+
 [review](review.md) owns what counts as a required map update.
 
 When a map is present and [review](review.md) requires a map update, the plan names the feature file and the index line. The implementing pack includes those paths as Named files. Write that update in the same commit as the behavior.

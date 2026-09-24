@@ -10,6 +10,10 @@ else.
 
 [references/implementing.md](implementing.md) owns the feature-map write.
 
+[references/planning.md](planning.md) owns feature-map adoption.
+
+Block a second map. Block an internal-only feature file. Block an unverifiable claim.
+
 Review treats the map as a claim. The diff and the live command remain the
 proof. Removing a proof to pass blocks. Omitting a required map update blocks.
 A required map update is the same-commit feature-file change when reachability,
