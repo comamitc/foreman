@@ -7,8 +7,12 @@ list is the count.
 ```sh
 claude -p --permission-mode acceptEdits --output-format json \
   --disable-slash-commands --strict-mcp-config --mcp-config '{"mcpServers":{}}' \
-  --add-dir RESULT_DIR < LAUNCH_FILE
+  --add-dir RESULT_DIR --add-dir BRIEF_DIR < LAUNCH_FILE
 ```
+
+This file owns the write-station grant. Pass `--add-dir` for the `RESULT_DIR`
+subdirectory, the `BRIEF_DIR` subdirectory, and each evidence subdirectory the
+pack names for reading. Do not pass the evidence root. Do not pass `$HOME`.
 
 Use the worktree as cwd. Add `--model MODEL` and `--effort EFFORT` only when
 configured. Use `--setting-sources ''` to exclude unrelated project/user settings
