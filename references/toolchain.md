@@ -12,6 +12,8 @@ A worker that substitutes a global tool has not followed the brief.
 The worker runs that invocation.
 The worker does not discover a command, a runner, or a tool path.
 
+Preflight proof runs the exact command the brief names. When that command cannot run as the proof, preflight runs the smallest probe that shows that command's real entry point exists. A check of an empty path is not that proof. When that command comes from the project's dev dependencies, preflight installs those dependencies before the proof. The text `All dependencies are now up-to-date` is not success when the entry point is missing. A lock-hash mismatch is a visible preflight failure. A lock-hash mismatch does not fall through to a sync that omits dev packages. A version probe does not create a virtualenv.
+
 The three-step precedence is this order.
 First, use the recorded toolchain when the identity matches.
 Identity is the lockfile or manifest bytes, not a language version.
