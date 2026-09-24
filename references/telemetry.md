@@ -102,6 +102,33 @@ resolution of `evidence.delete_pile` and owns `evidence.retain_replay`.
 write it, whether or not deletion is enabled. The attempt-table field rules
 above are the ledger row. The switch cannot suppress `ledger.md`.
 
+This file owns the acceptance ledger row. Other files name this owner. Other
+files do not restate the row fields. The row is a ledger row in `ledger.md`.
+Always write the row. No switch suppresses the row. Do not add a retention
+flag.
+
+The row keeps the criterion identity tied to the spec revision. The row states
+`verified`, `unresolved`, or `not-applicable`. The row states the evidence
+command or artifact, the applicable head, and the verifier. `not-applicable`
+requires a reason. The row joins finding obligations and closure proofs. The
+row does not copy the full narrative. The row does not reset review budgets.
+
+Planning maps intended checks. Implementation records observed evidence. Review
+independently assesses required claims. A planned check is not a passed check.
+A changed spec or a changed head invalidates the affected claims. Contradictory
+evidence stays `unresolved`. Process exit and result headings cannot certify
+correctness.
+
+A structured export is not station-selection authority. This rule is
+coordinator-enforced Markdown procedure. It is not server-enforced attestation.
+Do not add an executable, a schema server, or an unsupported security
+guarantee.
+
+The fixture cases are partial satisfaction, failed check despite exit zero,
+stale SHA, changed criterion, supported not-applicable, and conflicting
+observations. The pull request links those records in
+`comamitc/capstan-fixtures`. Do not copy those trees here.
+
 Provenance is part of `ledger.md`. It records revision or digest, nonsecret
 configuration, spec revision, initial target SHA, pack identities, harness
 version, and reported model identity. A missing harness version or reported

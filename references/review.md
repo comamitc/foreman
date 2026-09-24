@@ -74,6 +74,9 @@ to avoid the update blocks.
    and verdict. Confirm no tree/head mutation.
 
 Use [templates/result.md](../templates/result.md) for common and review result headings.
+
+Review names [telemetry.md](telemetry.md) as the owner of the ledger row.
+
 Complete when the saved diff and carried repair rows have been examined under the
 review ratchet, findings are grounded, prior lineages are reconciled, the result
 cites the pack, and tree/head are unchanged. The

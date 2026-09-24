@@ -79,6 +79,8 @@ For any effective blocking obligation carried from review, include the red/green
 row in the closure-row format the pack carries from
 [finding resolution](findings.md); planned or proxy tests are insufficient.
 
+The implementing result names [telemetry.md](telemetry.md) as the owner of the ledger row.
+
 Use [templates/result.md](../templates/result.md) for common and implementing result headings. Complete when the diff is nonempty and
 in scope, the brief's exact declared-check invocations
 pass, every carried finding has an evidenced proposed disposition, the user-visible

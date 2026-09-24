@@ -109,6 +109,8 @@ This delivery's fixture proof covers six cases: a native ADR template, indexed n
 The plan names declared checks. It does not resolve a runner. The coordinator
 runs [toolchain](toolchain.md) before the implementing worker launches.
 
+The planning result names [telemetry.md](telemetry.md) as the owner of the ledger row.
+
 Use [templates/result.md](../templates/result.md) for planning result headings. Complete when every acceptance criterion is covered, every item
 has observable verification and a failure signal, every prior finding has a
 supported proposed disposition, repository gates are named, the plan cites the
