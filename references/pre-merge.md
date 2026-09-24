@@ -87,8 +87,11 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    remove it once more on that pull request and read it back again. Do not leave
    it. Repair the issue label only with the existing stage rules.
    `Capstan: owner/repo#N` remains the identity check. The pull-request label is
-   not a substitute for that marker, branch `capstan/N`, or the worktree. Stop
-   without merging or deploying.
+   not a substitute for that marker, branch `capstan/N`, or the worktree.
+
+   After that read-back still holds, follow [telemetry.md](telemetry.md) for the
+   ledger and for deletion. If the ready label was removed, do not delete the
+   pile or the worktree. Stop without merging or deploying.
 
 Technical repair workers use [templates/result.md](../templates/result.md), including
 `## Resulting head` and `## Original failure verification`. Failed attempts use shared recovery.

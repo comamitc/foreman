@@ -90,6 +90,9 @@ Optional `.capstan.json` in the target repository:
   "worker_timeout_min": 60,
   "ci_timeout_min": 45,
   "unsafe_autonomy": false,
+  "evidence": {
+    "delete_pile": false
+  },
   "features": null
 }
 ```
@@ -102,6 +105,7 @@ block only when they meet both the configured severity and confidence floors;
 other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
 `fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
+[contract](references/contract.md) owns `evidence.delete_pile`. [telemetry](references/telemetry.md) owns the ledger and deletion.
 
 [contract](references/contract.md) owns feature-map resolution and heading shape.
 
@@ -164,15 +168,17 @@ protection. No hostile-input sandbox or distributed lock is provided in v1.
 ## Evidence and cleanup
 
 Evidence defaults to `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/`.
-Owner-only briefs, results, worker/check logs, run.md, and optional events.jsonl
+Owner-only briefs, results, worker/check logs, and optional events.jsonl
 record observed commands and usage. Secrets are redacted before persistence or
-publication. [references/telemetry.md](references/telemetry.md) owns missing-usage rules.
+publication. [references/telemetry.md](references/telemetry.md) owns the ledger,
+the pile, deletion, and missing-usage rules.
+[references/contract.md](references/contract.md) owns `evidence.delete_pile`.
 
-To clean raw logs manually, first resolve the exact delivery directory, inspect
-its contents, and confirm no worker is active. Archive it or remove only the
-selected files using your normal file manager. Keep remote marked evidence for
-resume. There is no automatic deletion job, and losing local evidence must not
-prevent delivery continuation.
+To clean raw logs manually before ready-to-deploy, first resolve the exact
+delivery directory, inspect its contents, and confirm no worker is active.
+Archive it or remove only the selected files using your normal file manager.
+Keep remote marked evidence for resume. Losing local evidence before
+ready-to-deploy must not prevent delivery continuation.
 
 ## Development and provenance
 

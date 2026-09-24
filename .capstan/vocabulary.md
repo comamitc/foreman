@@ -32,6 +32,16 @@
 
 **Estimate**: a number produced from a price table, a credit balance delta, or an operator default. Capstan does not record one as cost. Rejected: writing an estimate into the cost cell.
 
+**Ledger**: `ledger.md`, the retained local record of totals and check outcomes. Always written. The rule owner is `references/telemetry.md`. Rejected: a switch that disables it.
+
+**Pile**: briefs, results, worker captures, check scripts and logs, the task toolchain, and optional `events.jsonl`. Exact paths: `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`, `tooling/`, and `events.jsonl` when present. Rejected: `ledger.md`.
+
+**Deletion switch**: `evidence.delete_pile`. It authorizes success-path removal of the pile and this run's worktree. It never authorizes removal of the ledger. Rejected: a second flag.
+
+**Check outcome**: the head, command, exit, and pass or fail signal. Not the script body. Rejected: treating `checks/fix-4-red.py` as the record.
+
+**Unknown**: the required state when a number was never reported, or was deleted before the ledger contained it. Not zero. Rejected: an estimate.
+
 **Linked worktree git directory**: `<repo>/.git/worktrees/capstan+N`, where Git writes `index.lock` for `capstan/N`. Rejected: the worktree root.
 
 **Common git directory**: the directory `git rev-parse --git-common-dir` prints, where objects are written. Rejected: the worktree's `.git` file.

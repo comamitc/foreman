@@ -94,8 +94,9 @@ paginated `/issues/N/comments` endpoint. Then inventory:
    Select the open PR with the exact marker and repository/head identity. Closed
    or merged PRs are evidence to inspect, not permission to recreate intent.
 4. Live PR base/head, checks, approvals, and mergeability; marked remote artifacts.
-5. Available local briefs, results, logs, and telemetry. Recreate missing evidence
-   directories and briefs from remote facts; missing files cannot strand a run.
+5. Available local briefs, results, logs, `ledger.md`, and other telemetry.
+   Recreate missing evidence directories and briefs from remote facts; missing
+   files cannot strand a run. [telemetry.md](telemetry.md) owns `ledger.md`.
 
 Select the furthest active station whose prerequisites are supported, accounting
 for evidence made stale by current facts. Labels are hints. A complete plan can
@@ -214,17 +215,25 @@ class "an installed CLI."
 Environment names are `CAPSTAN_` plus uppercase nested keys joined with `_`, such
 as `CAPSTAN_PRIMARY_HARNESS`, `CAPSTAN_SECONDARY_EFFORT`,
 `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`, `CAPSTAN_REVIEW_POLICY_MIN_CONFIDENCE`,
-and `CAPSTAN_UNSAFE_AUTONOMY`.
+`CAPSTAN_UNSAFE_AUTONOMY`, and `CAPSTAN_EVIDENCE_DELETE_PILE`.
 `CAPSTAN_STATE` independently sets evidence storage. Never print environment values
 wholesale. Call out unknown/invalid fields and use a valid lower-precedence value;
 salvage unambiguous values from malformed input without inventing ambiguous ones.
+`evidence.delete_pile` is the exception to fall-through. It is a boolean. The
+default is `false`. Precedence is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE`,
+then `.capstan.json`, then the default. An invalid value is `false`. Do not fall
+through to a lower precedence value. Do not resolve an invalid or missing value
+to `true`. A missing `evidence.delete_pile` means `false`. Record the resolved
+value in `ledger.md`. [telemetry.md](telemetry.md) owns that file and deletion.
+The switch cannot suppress the ledger. There is no second flag.
 
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
 `.capstan/features` when that directory contains `README.md`. `features: null`
 disables the map. It does not fall through to `.capstan/features`. An absent
 `features` field is not `features: null`. A missing explicit path is recorded in
-`run.md`. The run continues with no map. A delivery with no map still completes.
+`ledger.md`. The run
+continues with no map. A delivery with no map still completes.
 Capstan does not generate a map during an ordinary issue. Do not add a stage, a
 label, or a daily job for the map. Do not copy the map into a host skill
 directory.
@@ -248,7 +257,8 @@ a nonnegative integer where 0 disables that early guard. Null model/effort uses 
 recorded as such. Null fallback disables it. Prefer a different available secondary;
 if only one harness works, disclose `independence: same-harness`. An explicitly
 requested unavailable setting fails visibly and enters recovery; never silently
-drop an effort setting. Record effective nonsecret configuration in run.md.
+drop an effort setting. Record effective nonsecret configuration in `ledger.md`.
+[telemetry.md](telemetry.md) owns that file.
 
 `recovery.plan_revision_attempts` and `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`
 are retired. Warn and ignore them, including invocation overrides; they cannot
@@ -282,7 +292,8 @@ primary merely because it ran init.
 If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
 only `primary`, `secondary`, and `fallback`, plus the documented recovery
 defaults. Set model and effort to null. Set `fallback` to null when no third
-observed harness exists. Set `unsafe_autonomy` to false. Leave the file
+observed harness exists. Set `unsafe_autonomy` to false. Do not write
+`evidence.delete_pile`. A missing `evidence.delete_pile` means `false`. Leave the file
 uncommitted. Do not switch branches. Do not commit, push, or open a pull request.
 The write is allowed on `main` and stays uncommitted. Exclusive create writes the
 new file only when it is absent. If the file is present before the write finishes,
