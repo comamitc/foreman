@@ -7,6 +7,14 @@ design or closure of its findings.
 
 [contract](contract.md) owns feature-map resolution and heading shape.
 
+[review](review.md) owns what counts as a required map update.
+
+When a map is present and [review](review.md) requires a map update, the plan names the feature file and the index line. The implementing pack includes those paths as Named files. Write that update in the same commit as the behavior.
+
+When a delivery has no map, or the change does not require a map update, write no feature file and no index line.
+
+Do not include reachability, drive steps, user-facing, Sub-features, How to get to it, Driving it, or Gotchas.
+
 The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
 1. Read the brief and the pack: the current plan text, every carried finding row
