@@ -24,6 +24,10 @@ Block a missing required ADR. Block a broken supersession link. Block invented r
 
 The ADR is a claim. Code and checks are proof.
 
+[references/planning.md](planning.md) owns the lesson rule.
+
+Block treating a lesson as authority.
+
 Review treats the map as a claim. The diff and the live command remain the
 proof. Removing a proof to pass blocks. Omitting a required map update blocks.
 A required map update is the same-commit feature-file change when reachability,
