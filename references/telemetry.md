@@ -174,6 +174,18 @@ the exact revisions, the command, the result, and the limitations. Do not
 relabel an old evaluation as current-main proof. Prefer an executable check
 and a known fault injection. Do not reward weakening verification.
 
+On demand. No daemon, scheduler, external skill, or database. A named batch.
+Evidence-backed causes. A ledger failure with no bundle is still a failure. An
+empty bundle batch is not "no failures." A proposal cites run identities, the
+scenario, a counterexample, a falsifiable hypothesis, and a discriminating
+benchmark. Deduplicate against open issues. An issue is published only after an
+explicit improvement invocation. Analysis-only stays a report. Compare baseline
+and candidate with a held-out check. A weaker rubric is rejected. Workers do not
+rewrite the running skill. The improvement stops at an open pull request. A
+rejected or unsupported proposal does not manufacture a product change. The
+fixture cases are recurring defect, duplicate proposal, unsupported hypothesis,
+and benchmark regression.
+
 A selected bundle survives pile cleanup only when
 `evidence.retain_replay` is `true`. Do not add a database, parser, skill,
 service, or stage. Do not add a path for the bundle.
