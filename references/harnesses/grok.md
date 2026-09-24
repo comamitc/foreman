@@ -13,8 +13,14 @@ Help verified on 1.0.34. Add `--model MODEL` and `--reasoning-effort EFFORT` whe
 configured. `--sandbox` takes an installed profile name, not Codex's `-s` value.
 The built-in write profile is `workspace`. `workspace-write` is not a Grok profile.
 Grok 1.0.34 has no `--add-dir`. `--sandbox workspace` returned `Permission denied`
-on the worktree git path. That is not a verified metadata grant. The next harness
-is Codex. Do not set `unsafe_autonomy`. Keep `--sandbox workspace`. For read stations
+on the worktree git path. That is not a verified metadata grant. It does not
+replace the primary. A write station still launches Grok with `--sandbox workspace`
+and explicit `--allow` rules for the workspace edits. `dontAsk` denies an
+operation that is not preapproved. Do not use `workspace-write`. That spelling
+exits before the model starts. Do not set `unsafe_autonomy`. Keep
+`--sandbox workspace`. Codex may run only the commit, and only after Grok cannot
+create `index.lock`. That row is a committer, not a primary. The product diff is
+already Grok's. For read stations
 use `--sandbox read-only`, `--permission-mode dontAsk`, exact pack commands, and
 `--deny 'Bash(grep -r*)'`, `--deny 'Bash(grep -R*)'`,
 `--deny 'Bash(grep --recursive*)'`, `--deny 'Bash(grep --dereference-recursive*)'`,
