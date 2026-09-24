@@ -19,9 +19,14 @@ when a newer release changes flags.
    5 (brief, pack, head and status before and after, result delivery). One command
    that reads several named files is one operation and finishes under that bound.
    The worker's numbered list under `## Checks` is the operation count. The short
-   launch prompt says: read this absolute brief, perform it, write the result to
-   this absolute path. Put the launch prompt in an evidence file or stdin; do not
-   expand the entire brief into argv. Read security before persistence/capture.
+   launch prompt says: read this absolute brief, perform it, and write the result to
+   this absolute path. `references/harnesses/codex.md` owns the stdin rule.
+   `references/harnesses/grok.md` owns the read-only result rule. This file names
+   those owners and does not restate those procedures. Where
+   `references/harnesses/grok.md` applies, use that owner's prompt instead of the
+   write sentence in this paragraph. Put the launch prompt in an evidence file or
+   stdin; do not expand the entire brief into argv. Read security before
+   persistence/capture.
 3. Use existing CLI controls for the narrowest unattended access the station needs.
    Inspect effective user/project settings for unsafe overrides without exposing
    secrets. Exclude unrelated plugins/skills/tools where the host supports it.
