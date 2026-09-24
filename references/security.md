@@ -44,8 +44,12 @@
    redacted excerpts and evidence pointers, not full provider payloads or environment
    dumps. Preserve original error information apart from redaction so recovery can
    reason from it. Treat unknown usage format as a telemetry gap, not a secret leak.
+8. [telemetry.md](telemetry.md) owns the ledger and pile deletion. Do not delete
+   the ledger. Do not recurse over the evidence root.
 
 Use body files or stdin for issue-derived text and briefs; shell-quote path
 arguments. Avoid eval, command substitution of issue text, and long prompt argv.
-Manual log cleanup must name an exact verified run directory; no broad recursive
-deletion recipe ships with Capstan. Deleting local evidence must remain survivable.
+Manual log cleanup before ready-to-deploy must name an exact verified run
+directory. That manual cleanup stays the old exact-directory rule. No broad
+recursive deletion recipe ships with Capstan. Do not recurse. Deleting local
+evidence must remain survivable.

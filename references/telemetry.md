@@ -1,12 +1,18 @@
 # Evidence, not control state
 
 At the contract's delivery evidence root, create owner-only `briefs/`, `results/`,
-`workers/`, `checks/`, `run.md`, and optional `events.jsonl`. Give attempts unique
+`workers/`, `checks/`, and optional `events.jsonl`. Always write `ledger.md` at
+run acceptance and update it at each station end, including an interrupted
+attempt, whether or not deletion is enabled. `run.md` is not a second source of
+truth. `toolchain/` and `tooling/` are pile when present. Give attempts unique
 human-readable filenames, for example `planning-20260921T120000Z-1.md`. On resume,
 append rather than overwrite surviving attempts. Follow security before capture.
 
-Write run.md directly. Record delivery identity, spec revision, effective nonsecret
-configuration, run start/budget, and a chronological station/attempt table. Write
+Write the ledger row directly. [contract.md](contract.md) owns resolution of
+`evidence.delete_pile`. Record delivery
+identity, spec revision, effective nonsecret configuration, budget start, the
+resolved deletion switch, and
+a chronological station/attempt table. Write
 one row per station attempt. The columns are stage, start UTC, end UTC, wall time,
 role, harness, and the usage fields that harness reported. Also record harness
 version, model, effort, safety mode, process exit/session, checks and exit
@@ -27,6 +33,9 @@ with its changed scope/architecture, not a reset caused by technical feedback.
 For implementing/fix attempts carrying effective blocking findings, record each closure
 gate row's reviewed head, red/green commands and outcomes, bite method, coordinator
 verification, and any proxy/incomplete reason that kept the station open.
+A closure-gate check outcome is a ledger row before the next review and before
+publication: exact head, command, exit, and pass or fail. A proof script path
+may be named. The script body is not the record.
 
 Publish these with marked plan/review/activity artifacts for reconstruction after
 local loss. Finding censuses retain origin links and separate verified closure,
@@ -52,9 +61,11 @@ such as time, kind, station, attempt, head, outcome, and evidence. Existing `jq 
 with `--arg` or another installed JSON emitter can append correctly escaped lines.
 Do not concatenate unescaped worker text into JSON. No validator, parser, helper,
 or event is needed to choose a station. On failed append or malformed event, note
-the gap in run.md or the next available remote comment and continue.
+the gap in `ledger.md`. A remote comment may still publish the gap. `run.md` is
+not the record. Continue.
 
-At terminal readiness or review exhaustion publish a marked issue summary containing
+At terminal readiness or review exhaustion publish a marked issue summary from
+`ledger.md`. Do not recompute it from the pile. The summary contains
 PR URL, current head/base, observed ready-gate or exhaustion facts, one station
 attempt table, two wall totals, reported usage/cost, findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
@@ -79,7 +90,50 @@ the pull request.
 Same-figures rule: copy the published summary's figures. Do not recompute.
 `unknown` stays `unknown`.
 
-Gap rule: a missed host message is a telemetry gap in `run.md`. It does not
+Gap rule: a missed host message is a telemetry gap in `ledger.md`. It does not
 skip the GitHub summary and does not withhold ready.
+
+## Ledger, pile, and deletion
+
+This file owns the ledger and deletion. [contract.md](contract.md) owns
+resolution of `evidence.delete_pile`.
+
+`ledger.md` is the retained local record of totals and check outcomes. Always
+write it, whether or not deletion is enabled. The attempt-table field rules
+above are the ledger row. The switch cannot suppress `ledger.md`.
+
+If `run.md` or `events.jsonl` exists, its required facts are already in
+`ledger.md` before it may be deleted. Remote marked comments are still
+published. Budget start still survives from the earliest remote activity or
+summary timestamp. Loss of the pile does not reset the budget. A missing raw
+file is `unknown` only when the ledger does not already contain the number.
+Unreported usage is `unknown`, never zero and never estimated.
+
+The pile is exactly `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`,
+`tooling/`, and `events.jsonl` when present. It does not include `ledger.md`.
+`run.md` is not pile.
+
+No mid-run deletion. At ready-to-deploy, after the ready-label read-back still
+holds, after `ledger.md` is written and read back, and after no worker from
+this run is active, delete the named pile paths only when the resolved switch
+is `true` and every required ledger field is present. A successful read-back
+is not completeness. A missing required field keeps the pile and the worktree,
+and the gap is recorded, even when the switch is `true`. When the switch is
+`false`, the pile stays and the ledger says deletion was skipped. Name each
+deleted path. Do not recurse over the evidence root,
+`$HOME/.local/state/capstan`, or any other issue directory. If the ready label
+was removed because the live gate no longer holds, do not delete.
+
+The same step may remove only `.worktrees/capstan+N` created by this run, and
+only when the switch is `true`, the ledger is complete, and the pushed head
+equals the ledger head. It does not remove a worktree this run did not create,
+and it does not remove the shared checkout. When the switch is `false` or the
+ledger is incomplete, the worktree stays.
+
+Before ready-to-deploy, the pile and the worktree stay while a worker is active
+or while the attempt's ledger row is unwritten. A manual cleanup before that
+point names one verified run directory. Shipping this text does not delete
+existing evidence directories. Deletion is not a separate stage, label, or
+executable.
 
 [publication.md](publication.md) owns publication.

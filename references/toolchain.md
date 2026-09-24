@@ -35,4 +35,4 @@ A declared `pipenv run` when no global `pipenv` exists uses these three steps.
 A non-Python runner that is absent from `PATH` uses these three steps.
 Neither is a virtualenv special case.
 When a task environment is created, put it at `toolchain/` under the evidence root.
-Do not implement #10 deletion. Do not re-run `lyric-utils#764`.
+`toolchain/` is pile. [telemetry.md](telemetry.md) owns its deletion. Do not re-run `lyric-utils#764`.
