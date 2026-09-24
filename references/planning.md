@@ -34,6 +34,28 @@ Use the normal Capstan pipeline for implementation and review. The final pull re
 
 This delivery's fixture proof covers five cases: a mature repository with an existing docs tree, a repository with no docs map, a custom configured map path, an already conforming map, and a repository where no defensible user-facing map can be produced without a human product decision. The pull request links those records. Do not copy the fixture trees into this repository.
 
+This file owns the feature-map audit.
+
+Run the audit only when the admitted issue or the text invocation states that the outcome is an audit of the configured feature map. A normal feature delivery, init, or resume does not enter the audit. Do not add a recurring job, a watcher, a daemon, a stage, or a label. Do not run the audit during an unrelated delivery.
+
+The coordinator resolves the map exactly as [contract](contract.md) specifies. A disabled or absent map produces a clear no-map result. Do not seed a map.
+
+Before the plan names a repair, inventory the map index, every indexed feature file, the repo instructions, the linked authoritative pages, the named source and tests, and the declared drive commands. Bound the reads through named packs. An unnamed path is a gap, not a search.
+
+Check orphaned index entries, unindexed feature files, duplicate coverage, broken links, nonconforming headings, stale reach paths, stale commands, false observable results, missing material gotchas, and newly user-facing behavior absent from a present map.
+
+Every finding cites the exact documentation claim and the current contradictory source or runnable evidence. Classify a failed drive command before repair. Documentation drift may update the docs. Report a product defect. Do not silently redefine the expected behavior.
+
+Preserve the target repository's authoritative documentation structure. A feature-map change follows the heading shape that [contract](contract.md) owns. An existing user-facing page follows the page rule that [implementing](implementing.md) owns. Do not delete a still-true claim. Do not weaken a proof to make the audit pass.
+
+Change only verified stale or missing documentation. When no drift is found, reconcile the issue as a no-op. Do not manufacture a diff.
+
+Name every verified repair that the audit writes. [implementing](implementing.md) writes only those repairs.
+
+The delivery uses the normal plan, implementation, review, and ready gate. The final summary lists the checked features, the proven repairs, the product-defect handoffs, the unresolved gaps, and the exact fixture evidence.
+
+This delivery's fixture proof covers eight cases: a clean map, a stale command, a renamed reach path, an orphaned index entry, a missing new feature, a false expected result caused by a product defect, a custom map path, and an absent or explicitly disabled map. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
+
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no
    review yet`, Checks the repository commands the coordinator observed or `none

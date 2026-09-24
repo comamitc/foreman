@@ -12,7 +12,11 @@ else.
 
 [references/planning.md](planning.md) owns feature-map adoption.
 
+[references/planning.md](planning.md) owns the feature-map audit.
+
 Block a second map. Block an internal-only feature file. Block an unverifiable claim.
+
+Deleting a still-true claim to make the audit pass blocks. Weakening a proof to make the audit pass blocks.
 
 Review treats the map as a claim. The diff and the live command remain the
 proof. Removing a proof to pass blocks. Omitting a required map update blocks.
