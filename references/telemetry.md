@@ -162,7 +162,19 @@ a credential. A bundle that still contains a credential is not selected. The
 rule is not a script in `.capstan.json`. An unselected run has no replay
 bundle. A missing capture is recorded in `ledger.md` and is not replayable. A
 failed capture is recorded in `ledger.md` and is not replayable. Benchmark
-capture is not a ready gate. A selected bundle survives pile cleanup only when
+capture is not a ready gate.
+
+Consume a replay input only when `evidence.retain_replay` marked that input
+replayable. A missing bundle, an off switch, or a failed capture is a named
+limitation, not a zero. A kept pile is not a benchmark case. Compare the
+baseline and the candidate on equivalent inputs. One run is not a victory.
+Report acceptance, false-ready, intervention, recurrence, wall, and reported
+cost. Unknown usage is not zero. Do not add incompatible token fields. Publish
+the exact revisions, the command, the result, and the limitations. Do not
+relabel an old evaluation as current-main proof. Prefer an executable check
+and a known fault injection. Do not reward weakening verification.
+
+A selected bundle survives pile cleanup only when
 `evidence.retain_replay` is `true`. Do not add a database, parser, skill,
 service, or stage. Do not add a path for the bundle.
 
