@@ -5,7 +5,7 @@
 - Base / branch / worktree / current head:
 - Cumulative diff command:
 - Pack (required and only reading):
-- Declared-check invocation (command, tool path, provenance):
+- Declared-check invocation (one plain command, tool path, provenance; [references/harnesses/claude.md](../references/harnesses/claude.md) owns the write-station shell grant; no `&&`, no semicolon, no `git -C`, no heredoc):
 - Turn ceiling (operations; read stations):
 - Result path (outside product tree):
 - Allowed writes: none to product at read stations; issue worktree at write stations;

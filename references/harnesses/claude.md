@@ -7,12 +7,18 @@ list is the count.
 ```sh
 claude -p --permission-mode acceptEdits --output-format json \
   --disable-slash-commands --strict-mcp-config --mcp-config '{"mcpServers":{}}' \
-  --add-dir RESULT_DIR --add-dir BRIEF_DIR < LAUNCH_FILE
+  --add-dir RESULT_DIR --add-dir BRIEF_DIR \
+  --permission-prompts none \
+  --allowedTools 'Bash(git add *)' 'Bash(git commit *)' 'Bash(git status *)' 'Bash(git diff *)' 'Bash(git log *)' 'Bash(git rev-parse *)' 'Bash(git show *)' 'Bash(git restore -- *)' \
+  --disallowedTools 'Bash(git checkout *)' 'Bash(git reset --hard *)' 'Bash(git push *)' 'Bash(gh *)' \
+  < LAUNCH_FILE
 ```
 
 This file owns the write-station grant. Pass `--add-dir` for the `RESULT_DIR`
 subdirectory, the `BRIEF_DIR` subdirectory, and each evidence subdirectory the
 pack names for reading. Do not pass the evidence root. Do not pass `$HOME`.
+
+Bite restore is `git restore -- <path>`. `git checkout` is not the restore path. The coordinator adds one `--allowedTools` entry for each declared check, verbatim. Probed 2026-09-25 on claude 2.1.278: `Bash(git status *)` and `Bash(git restore -- *)` ran, and `Bash(git checkout *)` was the only `permission_denials` entry. This host did not re-run PraxisIQ/fuseiq-core#500.
 
 Use the worktree as cwd. Add `--model MODEL` and `--effort EFFORT` only when
 configured. Use `--setting-sources ''` to exclude unrelated project/user settings
