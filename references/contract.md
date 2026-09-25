@@ -60,9 +60,9 @@ Titles never participate in identity. Resolve the primary repository location
 from `git worktree list --porcelain` rather than nesting worktrees in worktrees.
 Use a fresh worktree for a new issue; continue an existing matching issue
 worktree. Never switch the shared checkout or edit the integration branch there.
-Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run. For this repository that command is `git fetch origin main`. Immediately after a successful fetch, record the SHA of that ref. Create the worktree from that SHA. Local `main`, an unfetched `origin/main`, and `origin/HEAD` are not valid parents. If the fetch fails, stop. Do not create the worktree from local `main`. An existing `capstan/N` worktree is not rebased or recreated. Do not fast-forward, switch, or edit the shared checkout.
-When absent, create it with `git worktree add -b capstan/N ./.worktrees/capstan+N origin/BASE`
-from the repository root after fetching and resolving BASE. Its parent is the recorded SHA, not the ref name alone. If a matching branch
+Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run. For example, a repository whose resolved base is `main` fetches `origin/main`. Immediately after a successful fetch, record the SHA of that ref. Create the worktree from that SHA. Local `<base>`, an unfetched `origin/<base>`, and `origin/HEAD` are not valid parents. If the fetch fails, stop. Do not create the worktree from local `<base>`. An existing `capstan/N` worktree is not rebased or recreated. Do not fast-forward, switch, or edit the shared checkout.
+When absent, create it with `git worktree add -b capstan/N ./.worktrees/capstan+N <recorded-sha>`
+from the repository root. Its parent is the recorded SHA, not the ref name alone. If a matching branch
 already exists, attach that branch without `-b`. Preserve dirty work and human
 commits. An unrelated branch, worktree, or PR occupying the identity is a
 collision, not permission to overwrite it. Observe ancestry, marked comments,
