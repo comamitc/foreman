@@ -66,7 +66,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    effective-blocker test. Bot claims do not replace the secondary code-review
    census and do not replace round 1. Do not set `unsafe_autonomy`. Do not redo
    the git-metadata grant. Do not merge.
-7. Publish final telemetry summary. [telemetry.md](telemetry.md) owns the
+7. [telemetry.md](telemetry.md) owns the
    attempt-table field rules and emission. Project
    `capstan:ready-to-deploy` on the issue with the existing stage rules. Add
    the same label to the marked pull request with
@@ -88,6 +88,11 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    it. Repair the issue label only with the existing stage rules.
    `Capstan: owner/repo#N` remains the identity check. The pull-request label is
    not a substitute for that marker, branch `capstan/N`, or the worktree.
+
+   [telemetry.md](telemetry.md) owns the attempt-table field rules and the
+   end-to-end wall. That wall ends at the ready-label read-back. Publish the
+   marked summary after that read-back. Read the summary back. Emission follows
+   the summary read-back.
 
    After that read-back still holds, follow [telemetry.md](telemetry.md) for the
    ledger and for deletion. If the ready label was removed, do not delete the
