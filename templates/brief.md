@@ -41,8 +41,9 @@ confirm a cited line; write stations read named files fully. An operation is one
 tool call: one read call or one shell command, however many files it names.
 Number each under `## Checks`. Several tool calls in one turn count separately;
 one call that names several files counts once. Result delivery counts one.
-The numbered list is the operation count. The ceiling in the brief header is
-an upper bound. At the ceiling, stop and list unchecked items as gaps.
+The numbered list is the operation count.
+[references/harnesses/shared.md](../references/harnesses/shared.md) owns the ceiling.
+At the ceiling, stop and list unchecked items as gaps.
 Inspect current files and side effects before repeating actions. Use the simplicity
 ladder: need, existing code, standard library, platform, installed dependency, one
 line, minimum new code. Preserve human work and stay within scope. Report only
