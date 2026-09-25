@@ -64,7 +64,10 @@ or event is needed to choose a station. On failed append or malformed event, not
 the gap in `ledger.md`. A remote comment may still publish the gap. `run.md` is
 not the record. Continue.
 
-Project the ready label and read it back before publishing the summary. At
+At terminal readiness, project the ready label and read it back before
+publishing the summary. At review exhaustion, do not project
+`capstan:ready-to-deploy`. Publish the marked summary after that read-back, or
+after the exhaustion decision when no ready label is projected. At
 terminal readiness or review exhaustion, publish a marked issue summary from
 `ledger.md`. Do not recompute it from the pile. The summary contains
 PR URL, current head/base, observed ready-gate or exhaustion facts, one station
