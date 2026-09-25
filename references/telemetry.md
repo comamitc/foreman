@@ -64,7 +64,8 @@ or event is needed to choose a station. On failed append or malformed event, not
 the gap in `ledger.md`. A remote comment may still publish the gap. `run.md` is
 not the record. Continue.
 
-At terminal readiness or review exhaustion publish a marked issue summary from
+Project the ready label and read it back before publishing the summary. At
+terminal readiness or review exhaustion, publish a marked issue summary from
 `ledger.md`. Do not recompute it from the pile. The summary contains
 PR URL, current head/base, observed ready-gate or exhaustion facts, one station
 attempt table, two wall totals, reported usage/cost, findings addressed/refuted,
@@ -72,7 +73,8 @@ recovery history, human interventions, same-harness independence or unsafe mode
 disclosures, and gaps. The attempt-table field rules are stated above. Worker-process
 wall is the sum of attempt rows that have a
 process start and exit. End-to-end wall is from spec admission to the ready-label
-read-back, or to the review-exhausted summary publication. A bound that was not
+read-back, before summary publication, or to the review-exhausted summary
+publication. A bound that was not
 observed is `unknown`. The supervisor-record rule above is that observation. The two totals are not substitutes for each other. A telemetry
 gap in this table does not block ready-to-deploy. Include recovered
 counts only when evidence supports them. Lost local data yields unknown details,
@@ -80,7 +82,7 @@ not an unrecoverable run. A failed GitHub summary publication uses normal transi
 recovery; do not pretend it published. Remote progress evidence preserves budget
 and rerun history across local deletion.
 
-Emission: after the marked summary is read back, the coordinator's final message in the host session contains the stage-analysis table and the two wall totals. A URL may follow. The URL alone does not satisfy this. Trigger only at
+Emission follows the summary read-back. The coordinator's final message in the host session contains the stage-analysis table and the two wall totals. A URL may follow. The URL alone does not satisfy this. Trigger only at
 verified `capstan:ready-to-deploy` or review exhaustion. No mid-station note.
 The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
 No plugin, notification command, status-line API, or new marker. Workers do
