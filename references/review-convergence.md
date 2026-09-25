@@ -81,7 +81,9 @@ one lineage does not cover a renamed distinct scenario.
 
 Count marked, complete code-review censuses for this delivery from GitHub evidence,
 including reviews recovered after lost local state. A malformed review does not
-consume a round. A review of a new head after implementation or fix does. Resume,
+consume a round. A census taken before the checks in the gate owned by
+[implementing.md](implementing.md) have exited 0 does not consume a round. A
+review of a new head after implementation or fix does. Resume,
 worker replacement, renamed finding IDs, and changed counts do not reset it.
 
 For a delivery already in progress when this policy is installed, retain all legacy
