@@ -5,7 +5,7 @@
    `.capstan/vocabulary.md` exists, read it after repository instructions and
    before a question. A term already defined there is evidence. Do not ask it
    again unless this issue contradicts it. A missing file is recorded and does
-   not block. Evidence is the committed file on integration base `main`. An
+   not block. Evidence is the committed file on the resolved integration base. An
    unmerged vocabulary edit is not evidence for a different issue.
    Repository-scoped terms name a standing behavior, role, or artifact that
    later deliveries need. Delivery-scoped decisions bind only this issue, this
