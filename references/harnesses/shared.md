@@ -16,9 +16,10 @@ when a newer release changes flags.
    is one tool call: one read call or one shell command, however many files it
    names. Several tool calls in one assistant turn count separately. The ceiling
    is an upper bound, not an expected count: Named files entries plus Checks plus
-   5 (brief, pack, head and status before and after, result delivery). When one
-   read does not return the whole pack, add one operation per observed page and
-   name that count in the brief. One command
+   5 (brief, pack, head and status before and after, result delivery). Before the
+   read-station launch, observe how many lines one host read returns. If that
+   page does not cover the pack, add one operation per page and name that count
+   in the brief. Do not discover the count after the review starts. One command
    that reads several named files is one operation and finishes under that bound.
    The worker's numbered list under `## Checks` is the operation count. The short
    launch prompt says: read this absolute brief, perform it, and write the result to
