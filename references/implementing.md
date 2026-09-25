@@ -90,5 +90,7 @@ coordinator; do not manufacture a change to satisfy the nonempty criterion.
 
 Coordinator independently checks evidence and applies the closure proof gate for
 every carried effective blocker. [references/publication.md](publication.md)
-owns publication. Then review.
+owns publication. Implementing is not complete, and no review starts, until
+every coordinator-run silent check declared for it has exited 0. A silent-check
+failure is implementing recovery, not `fix`. Then review.
 Attempt failures use recovery inside implementing rather than the review fix label.
