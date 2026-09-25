@@ -35,6 +35,8 @@ prefer `-s read-only`. 0.153.4 has no tool or turn flag, so the brief ceiling an
 worker's numbered operation list are the controls. Never grant the whole home
 directory. Do not use dangerous bypass flags or `unsafe_autonomy` to repair sandbox denials.
 
+A bwrap loopback or uid-map error with no `command_execution` item is a host-sandbox failure, not a worker defect. Probe once. Then name the same-harness rule in `references/contract.md`: if only one harness works, disclose `independence: same-harness`. Do not use bypass flags.
+
 Observed JSONL includes `thread.started`, `item.completed`, and `turn.completed`.
 Record Codex `turn.completed` usage as its token fields. The latter reports usage
 such as input_tokens, cached_input_tokens, output_tokens. Live `--json` turn
