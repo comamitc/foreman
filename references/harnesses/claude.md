@@ -31,7 +31,10 @@ flag exists; the brief ceiling is the control. Never use bypassPermissions or
 skip-permission flags without explicit unsafe_autonomy. Claude 2.1.278 is not a
 verified metadata grant. `--add-dir` on both `<repo>/.git` and
 `<repo>/.git/worktrees/capstan+N` under `--permission-mode acceptEdits` was denied
-as a sensitive file. The next harness is Codex. Do not set `unsafe_autonomy`.
+as a sensitive file. Issue https://github.com/comamitc/capstan/issues/102 reports
+a Claude 2.1.282 commit with `acceptEdits`, allowed `git add` and `git commit`,
+and empty `permission_denials`. This host did not reproduce that result. Do not
+set `unsafe_autonomy`.
 
 Observed JSON fields: `session_id`, `result`, `is_error`, `permission_denials`,
 `duration_ms`, `num_turns`, `usage`, `modelUsage`, `total_cost_usd`. A successful
