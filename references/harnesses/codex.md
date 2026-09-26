@@ -61,13 +61,17 @@ store. Do not copy auth into a writable file. Do not edit the original auth or
 the original config. Keep a private config snapshot read-only. Never grant all
 of `~/.codex`, all of `~/.grok`, or the home directory writable.
 
-The outer interactive host uses a Codex native permission profile
-(`--permission-profile`). The verified profile extends `:workspace` and grants
-write only on the private runtime directory. Legacy writable roots accept
-directories. An exact file path fails on Codex 0.153.4 because the host creates
-a synthetic `.git` path and a synthetic `.codex` path under that file. Do not
-combine a permission profile with legacy sandbox settings. Do not pass `-s`,
-`--add-dir`, or `sandbox_workspace_write.writable_roots` on that profile
+The outer interactive host selects a Codex native permission profile with
+invocation-scoped config: `-c default_permissions="capstan-runtime"` names the
+profile and `-c permissions=<inline-profile>` defines it. The interactive
+`codex --help` on 0.153.4 exposes no `--permission-profile` flag; do not claim
+one. `codex sandbox -P` selects a profile only for direct sandbox commands and
+does not launch the interactive host. The verified profile extends `:workspace`
+and grants write only on the private runtime directory. Legacy writable roots
+accept directories. An exact file path fails on Codex 0.153.4 because the host
+creates a synthetic `.git` path and a synthetic `.codex` path under that file.
+Do not combine a permission profile with legacy sandbox settings. Do not pass
+`-s`, `--add-dir`, or `sandbox_workspace_write.writable_roots` on that profile
 invocation. Omit legacy `sandbox_mode` from the private Codex config snapshot.
 The direct-worker recipe still uses `-s` and `--add-dir`.
 
