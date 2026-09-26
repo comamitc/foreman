@@ -21,13 +21,15 @@ When a delivery has no map, or the change does not require a map update, write n
 
 This file owns which existing page must change.
 
-The page is an existing `README.md`, an existing file under `docs/`, or an existing config example, and only when this diff makes a stated setup step, command, workflow, feature, flag, or env var false. The plan names that page. The implementing pack includes it as a Named file. A path the pack does not name is a gap, not a search.
+The page is an existing `README.md`, an existing file under `docs/`, an existing config example, or the target repository's existing root agent-instructions file, and only when this diff makes a stated setup step, command, workflow, feature, flag, env var, limit, or invariant false. The agent-instructions file is `AGENTS.md`, or `CLAUDE.md` when no `AGENTS.md` exists; a `CLAUDE.md` symlink to `AGENTS.md` is the same file, and the write goes to `AGENTS.md`. The plan names that page. The implementing pack includes it as a Named file. A path the pack does not name is a gap, not a search.
+
+The pack names the agent-instructions file as a `path:line-range` covering only the affected statement or the required section's location, never the whole file ([pack](pack.md)). In that file, correct the statement this diff makes false. Add a section only when the admitted spec requires one. Do not restructure the file, rewrite unrelated text, or restate the diff.
 
 Write the correction in the same commit as the behavior. Do not delete a still-true statement to avoid the update.
 
 If no existing page describes the changed behavior, write nothing. Do not create a docs tree, a README section, a stage, a label, or a generator.
 
-Do not write `CONTEXT.md`, `CLAUDE.md`, `AGENTS.md`, or a host skill. Do not add a pre-merge docs harness, an OpenSpec dependency, or a Capstan-owned docs generator. A target repository's already-declared docs check stays a declared check.
+Do not create `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`. Do not write `CONTEXT.md` or a host skill. Do not add a pre-merge docs harness, an OpenSpec dependency, or a Capstan-owned docs generator. A target repository's already-declared docs check stays a declared check.
 
 The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
