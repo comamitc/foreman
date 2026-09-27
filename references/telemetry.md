@@ -118,6 +118,12 @@ command or artifact, the applicable head, and the verifier. `not-applicable`
 requires a reason. The row joins finding obligations and closure proofs. The
 row does not copy the full narrative. The row does not reset review budgets.
 
+Documentation evidence starts with `added`, `updated`, `intentionally unchanged`,
+or `unverified`, then the canonical path. Missing, contradictory, or unresolved
+evidence stays `unverified`. `unverified` uses row state `unresolved`. The other
+three use `verified` only after the named check passes. `intentionally unchanged`
+is not `not-applicable`. A result word cannot replace the row.
+
 Planning maps intended checks. Implementation records observed evidence. Review
 independently assesses required claims. A planned check is not a passed check.
 A changed spec or a changed head invalidates the affected claims. Contradictory

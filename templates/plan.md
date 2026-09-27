@@ -19,6 +19,15 @@ Why this is the smallest sufficient approach after checking reuse/native options
 | --- | --- | --- | --- | --- |
 | 1 | AC 1 | | | |
 
+## Documentation impact
+
+[references/planning.md](../references/planning.md) owns this field. [references/implementing.md](../references/implementing.md) owns which page must change.
+
+- Behavior:
+- Canonical path:
+- Decision:
+- Verification:
+
 ## Final proof
 
 Repository checks and real user-surface demonstration.

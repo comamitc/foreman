@@ -87,3 +87,5 @@
 **Preflight proof**: the proof preflight runs for the brief's command before worker launch. The rule owner is `references/toolchain.md`. Rejected: a second copy of that procedure.
 
 **Host adapter**: the file that states one harness's launch flags and usage extraction. Rejected: all hosts' flags in the shared harness file.
+
+**Canonical document**: a durable product document that states user-visible or operational behavior. Rejected: a historical delivery artifact, a host transcript, or a new `docs/changes` tree.
