@@ -66,6 +66,26 @@ enter init.
 
 [contract](references/contract.md) owns text intake.
 
+Feature-map adoption. The issue or the text invocation states that the outcome
+is feature-map adoption. A normal feature delivery does not enter it.
+
+Documentation backfill. The issue or the text invocation states that the
+outcome is documentation backfill, and it names the audience and the workflow.
+A normal feature delivery, init, or resume does not enter it.
+
+Incremental maintenance. A normal feature delivery corrects a canonical page
+in the same commit when that delivery makes a public statement false. It does
+not enter documentation backfill. It does not require a feature map. It is not
+lesson maintenance.
+
+Feature-map audit. The issue or the text invocation states that the outcome is
+an audit of the configured feature map. An absent or disabled map (`features`
+null or absent) produces a no-map result. The audit does not seed a map.
+
+Optional map. A configured `features` path may link to a canonical page. The
+map is not a second copy of that page. No map does not block documentation
+backfill, and backfill does not seed a map.
+
 ## Configuration
 
 Optional `.capstan.json` in the target repository:
