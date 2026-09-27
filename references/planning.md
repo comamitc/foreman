@@ -125,7 +125,9 @@ Maintenance fixture cases are obsolete workaround, duplicate entries, valid old 
    to the exact canonical path, a required change or a reasoned no-change, and
    the verification. One behavior uses four lines. A table is only for repeated
    behaviors. Every Documentation impact path is copied into later Named files
-   and every verification into Checks. Unknown paths stay `discovery gap:`.
+   and every verification into Checks. Record a required new canonical page as
+   a required change, not write-nothing. `discovery gap:` stays only for an
+   unknown path.
 4. In the single correction pass, the pack is the current plan text, all
    plan-review rows, the commands the plan names, and the rows' citations as Named
    files. Address ALL findings from the complete review. For each original scenario

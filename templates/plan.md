@@ -21,7 +21,7 @@ Why this is the smallest sufficient approach after checking reuse/native options
 
 ## Documentation impact
 
-[references/planning.md](../references/planning.md) owns this field. [references/implementing.md](../references/implementing.md) owns which page must change.
+[references/planning.md](../references/planning.md) owns this field. [references/implementing.md](../references/implementing.md) owns documentation completeness.
 
 - Behavior:
 - Canonical path:
