@@ -121,6 +121,11 @@ Maintenance fixture cases are obsolete workaround, duplicate entries, valid old 
    failure signal, and risk. Name final repository checks and real user-surface proof.
    Scale the plan to the change: a small CLI option needs a short behavior map,
    not repeated explanations of the same command in several sections.
+   Fill Documentation impact. Map each changed public or operational behavior
+   to the exact canonical path, a required change or a reasoned no-change, and
+   the verification. One behavior uses four lines. A table is only for repeated
+   behaviors. Every Documentation impact path is copied into later Named files
+   and every verification into Checks. Unknown paths stay `discovery gap:`.
 4. In the single correction pass, the pack is the current plan text, all
    plan-review rows, the commands the plan names, and the rows' citations as Named
    files. Address ALL findings from the complete review. For each original scenario

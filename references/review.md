@@ -42,6 +42,14 @@ a new user-facing behavior is added to a present map.
 change. Omitting a required page update blocks. Deleting a still-true statement
 to avoid the update blocks.
 
+A populated Documentation impact or Documentation disposition section is not
+sufficient. Compare it with the diff. Do not mark the claim complete when the
+path or decision does not match the diff, or when the disposition is
+`unverified`.
+
+The review pack copies every Documentation impact path into Named files and
+every verification into Checks. Unknown paths stay `discovery gap:`.
+
 1. Read the brief and the pack. The saved `git diff BASE_SHA...HEAD_SHA` in the
    pack is the candidate at the recorded SHAs; record them, the initial status,
    and the spec revision. Apply the effective policy and review ratchet extracted
