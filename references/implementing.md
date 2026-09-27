@@ -19,17 +19,23 @@ When a map is present and [review](review.md) requires a map update, the plan na
 
 When a delivery has no map, or the change does not require a map update, write no feature file and no index line.
 
-This file owns which existing page must change.
+This file owns documentation completeness and assesses public interfaces, user workflows, configuration/setup requirements, migrations, and operational recovery changes for a required Canonical document. Internal-only changes do not mechanically require a Canonical document. That limit does not skip a correction when a public statement becomes false.
 
-The page is an existing `README.md`, an existing file under `docs/`, an existing config example, or the target repository's existing root agent-instructions file, and only when this diff makes a stated setup step, command, workflow, feature, flag, env var, limit, or invariant false. The agent-instructions file is `AGENTS.md`, or `CLAUDE.md` when no `AGENTS.md` exists; a `CLAUDE.md` symlink to `AGENTS.md` is the same file, and the write goes to `AGENTS.md`. The plan names that page. The implementing pack includes it as a Named file. A path the pack does not name is a gap, not a search.
+Prefer an existing canonical page. Add a new page or section only when necessary and in admitted scope. Do not require feature-map adoption. Do not create a docs tree. When the repository has no convention, planning names the smallest destination.
+
+An existing canonical page is an existing `README.md`, an existing file under `docs/`, an existing config example, or the target repository's existing root agent-instructions file. Prefer that existing page when it is a suitable destination. When no suitable existing destination exists, and the addition is necessary and admitted, write the smallest new page or section that planning names. Correct existing public documentation whenever this diff makes a stated setup step, command, workflow, feature, flag, env var, limit, usage, limitation, or invariant false. That false-statement condition applies to correcting existing documentation. It does not decide canonical-document eligibility. The agent-instructions file is `AGENTS.md`, or `CLAUDE.md` when no `AGENTS.md` exists; a `CLAUDE.md` symlink to `AGENTS.md` is the same file, and the write goes to `AGENTS.md`. The plan names that page. The implementing pack includes it as a Named file. A path the pack does not name is a gap, not a search.
 
 The pack names the agent-instructions file as a `path:line-range` covering only the affected statement or the required section's location, never the whole file ([pack](pack.md)). In that file, correct the statement this diff makes false. Add a section only when the admitted spec requires one. Do not restructure the file, rewrite unrelated text, or restate the diff.
 
 Write the correction in the same commit as the behavior. Do not delete a still-true statement to avoid the update.
 
-If no existing page describes the changed behavior, write nothing. Do not create a docs tree, a README section, a stage, a label, or a generator.
+Do not create a docs tree, a stage, a label, or a generator. A README section is allowed when the plan names it.
+
+The new page rule does not override the agent-instruction section rule or the ban on creating `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`.
 
 Do not create `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`. Do not write `CONTEXT.md` or a host skill. Do not add a pre-merge docs harness, an OpenSpec dependency, or a Capstan-owned docs generator. A target repository's already-declared docs check stays a declared check.
+
+The fixture cases are a new public feature with no prior page and no feature map, an extension of an existing guide, an internal refactor with docs unchanged, a restoring bug fix with docs unchanged, a bug fix that changes documented usage or limitations, and an omitted required page that review blocks and recovery repairs. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy those trees here.
 
 The coordinator runs [toolchain](toolchain.md) before this worker launches.
 

@@ -38,9 +38,11 @@ A required map update is the same-commit feature-file change when reachability,
 drive steps, or the proof change, and one feature file plus one index line when
 a new user-facing behavior is added to a present map.
 
-[references/implementing.md](implementing.md) owns which existing page must
-change. Omitting a required page update blocks. Deleting a still-true statement
-to avoid the update blocks.
+[references/implementing.md](implementing.md) owns documentation completeness.
+Omitting required canonical coverage blocks. An unsupported behavior claim
+blocks. Rewriting a valid documented invariant to fit a regression blocks.
+Deleting a still-true statement to avoid the update blocks. Changed-head
+invalidation follows `references/telemetry.md:129`.
 
 A populated Documentation impact or Documentation disposition section is not
 sufficient. Compare it with the diff. Do not mark the claim complete when the
