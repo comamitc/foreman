@@ -7,7 +7,7 @@ design or closure of its findings.
 
 [contract](contract.md) owns feature-map resolution and heading shape.
 
-[planning](planning.md) owns feature-map adoption.
+[planning](planning.md) owns feature-map adoption. [planning](planning.md) owns documentation backfill.
 
 [review](review.md) owns what counts as a required map update.
 

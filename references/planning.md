@@ -100,6 +100,36 @@ Preserve attribution and replacement links. A valid invariant contradicted by co
 
 Maintenance fixture cases are obsolete workaround, duplicate entries, valid old advice, code regression, unavailable external evidence, conflicting guidance, and clean no-op. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
 
+This file owns documentation backfill.
+
+Run it only when the admitted issue or the text invocation states that the outcome is documentation backfill. A normal feature delivery, init, or resume does not enter it.
+
+Settle the audience, the workflow, and the canonical destinations before any write. If that bound is absent, do not invent a whole-repository scope and do not write.
+
+Inventory in-scope source, entry points, tests, configuration, and existing authoritative docs. Classify each in-scope subject as `documented`, `stale`, `missing`, or `unverified`. Do not claim an exhaustive audit outside that scope. An unnamed path stays a gap.
+
+`documented` means the page and the current source or observed behavior agree. `stale` means the page disagrees with current source or observed behavior, and the page is the defective artifact. `missing` means the bound requires a statement and no suitable canonical page has it. `unverified` means there is no source and no observation. A page that states a valid expectation while the product disagrees is not `stale`. It is a product defect. Do not change the page to match the defect.
+
+One coverage record names one in-scope subject, one of those four classes, and one evidence pointer. The pointer is a source `path:line` or a command and the observed result. The action is the write selected by the documentation-completeness and canonical-page eligibility rule owned by [implementing](implementing.md) lines 22-32, or a mode-specific result of no-change, explicit gap, or product-defect handoff. Do not restate that rule.
+
+Point at the adoption and audit procedures owned by `references/planning.md` lines 11-57. Do not copy their procedure clauses. Backfill does not enter adoption or the audit. Enter either mode only when its own outcome is admitted. An optional map may link to a canonical page without copying that page. An absent or disabled map does not block backfill and does not get seeded.
+
+Use the documentation-completeness and canonical-page eligibility rule owned by [implementing](implementing.md) lines 22-32, including the same-commit write in that range. Do not restate that rule. Do not add a second write rule. Preserve a custom documentation layout. Do not move that layout to `docs/` or to `.capstan/features`.
+
+Separate observed current behavior, intended behavior, known defects, and unknowns. Do not invent historical architectural rationale. Do not rewrite a valid expectation to excuse a regression. Do not delete a still-true statement.
+
+Every material new or corrected claim cites source or an observed result. Run a runnable example when its prerequisite is present. The mature partial docs fixture is the positive proof. Its live record captures the target repository's exact declared command, the exit status, and the observed output. If the prerequisite is absent, record an explicit gap. Do not fabricate success. A present prerequisite with a skipped or failed example is a failure.
+
+A created page or section maps to `added`. An updated page maps to `updated`. A checked page with no write maps to `intentionally unchanged`. A gap, an unavailable prerequisite, or an unverified claim maps to `unverified` and row state `unresolved`. A product defect is a handoff in the summary. Contradictory evidence stays `unresolved` ([telemetry](telemetry.md) line 129). Do not add a fifth disposition word. [telemetry](telemetry.md) lines 121-125 own those four words.
+
+The summary reports coverage, created pages, updated pages, intentionally unchanged docs, defects, and gaps, with the disposition map above.
+
+An unchanged in-scope repository produces no diff. A second backfill of that same unchanged repository does not add a duplicate page, a duplicate section, or a changelog line. The second diff is empty. Do not manufacture a commit to satisfy a nonempty-diff rule. [implementing](implementing.md) lines 96-97 own that reconciliation.
+
+This delivery's fixture proof is seven live records in `comamitc/capstan-fixtures`: a mature partial docs tree, absent docs, a custom docs layout, conflicting docs and product evidence, an unavailable prerequisite, a clean no-op, and a repeated backfill. Do not copy the fixture trees into this repository. Evidence follows the terminal outcome. A diff-producing journey links its issue, its pull request, its head, and its logs. The clean no-op and the repeated backfill link the admitted issue or reconciliation record, the unchanged head, empty `git status --porcelain`, empty `git diff`, and proof that no duplicate was created. Those two journeys have no fixture pull request. The Capstan pull request links every record. That link does not assert that every record has its own pull request. The mature partial docs record also captures the exact declared command, the exit status, and the observed output of its runnable example.
+
+Do not add an executable, a stage, a label, a scheduled job, a daemon, a generator, OpenSpec, a host-skill copy, or a `.capstan.json` field. Admission is the outcome sentence. `features` remains the map switch only.
+
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no
    review yet`, Checks the repository commands the coordinator observed or `none

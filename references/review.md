@@ -10,7 +10,7 @@ else.
 
 [references/implementing.md](implementing.md) owns the feature-map write.
 
-[references/planning.md](planning.md) owns feature-map adoption.
+[references/planning.md](planning.md) owns feature-map adoption. [planning](planning.md) owns documentation backfill.
 
 [references/planning.md](planning.md) owns the feature-map audit.
 
@@ -43,6 +43,10 @@ Omitting required canonical coverage blocks. An unsupported behavior claim
 blocks. Rewriting a valid documented invariant to fit a regression blocks.
 Deleting a still-true statement to avoid the update blocks. Changed-head
 invalidation follows `references/telemetry.md:129`.
+
+Invented historical architectural rationale blocks. A claim of an exhaustive
+audit outside the admitted scope blocks. A manufactured diff, duplicate page,
+or duplicate section on an unchanged repository blocks.
 
 A populated Documentation impact or Documentation disposition section is not
 sufficient. Compare it with the diff. Do not mark the claim complete when the
