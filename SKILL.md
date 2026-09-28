@@ -37,6 +37,7 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    outside the product worktree. Read stations get a numeric turn ceiling in the
    brief; write stations read named files only. Supervise the process until exit
    or recorded handoff.
+   [references/telemetry.md](references/telemetry.md) owns the host status line.
 5. **Verify.** Inspect actual results, commands, commits, diff, and GitHub.
    [references/harnesses/shared.md](references/harnesses/shared.md) owns result acceptance.
    Before pushing a write-station candidate, apply [finding resolution's closure
@@ -50,9 +51,11 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 7. **Record.** Publish the station artifact with its revision or SHAs. Read
    [telemetry](references/telemetry.md) to record attempts and evidence. A telemetry
    failure is a reported gap, never a veto on delivery.
+   [references/telemetry.md](references/telemetry.md) owns the host status line.
 8. **Advance and re-observe.** Only after result acceptance owned by
    [references/harnesses/shared.md](references/harnesses/shared.md) holds, project
    the next stage label and read it and external state back. Repeat the loop.
+   [references/telemetry.md](references/telemetry.md) owns the host status line.
 
 | Station | Reference | Owner |
 | --- | --- | --- |
