@@ -41,6 +41,9 @@ when a newer release changes flags.
    can bound a process; verify its help or use the coordinator's process manager.
    Replace example 60m limits with the resolved worker_timeout_min, capped by
    remaining run budget. Timeout exit 124 is recovery evidence, not proof of no side effects.
+   Supervision does not block the coordinator's host output for a whole worker
+   run. Observe the process with the host's wait mechanism.
+   [references/telemetry.md](../telemetry.md) owns the host status line.
 
 A silent check is a declared check that can stay silent longer than the selected harness's command-log window. That window is the harness's own. This rule adds no Capstan number, timeout, config field, parser, or executable. The worker_timeout_min bound and timeout exit 124 above still apply to the station process. They are not this check's result.
 

@@ -103,3 +103,5 @@
 **Verification path**: a target repository's documented, repeatable way to set up isolated state, drive one user operation, assert the observable result, capture evidence, and reset. It is not a generic Capstan driver. The rule owner is `references/planning.md`. Rejected: a Capstan executable, runner, or driver, a new feature-map heading, or a tool registry.
 
 **Performance requirement**: an admitted acceptance criterion, or an applicable existing repository budget, that names a user operation, a metric, and a threshold. The rule owner is `references/planning.md`. Rejected: a universal frame, latency, or memory limit, or agent wall time or cost.
+
+**Host status line**: one coordinator-posted line in the invoking host session for one event-table event or one changed supervision observation. It names the delivery, station, event, and one observed fact. The rule owner is `references/telemetry.md`. Rejected: a plugin, a notification command, a status-line API, or a worker-posted line.

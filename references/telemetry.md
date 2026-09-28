@@ -86,11 +86,41 @@ recovery; do not pretend it published. Remote progress evidence preserves budget
 and rerun history across local deletion.
 
 Emission follows the summary read-back. The coordinator's final message in the host session contains the stage-analysis table and the two wall totals. A URL may follow. The URL alone does not satisfy this. Trigger only at
-verified `capstan:ready-to-deploy` or review exhaustion. No mid-station note.
+verified `capstan:ready-to-deploy` or review exhaustion. The table stays terminal-only.
 The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
 No plugin, notification command, status-line API, or new marker. Workers do
 not post the table. Do not add a second summary comment or post the table on
 the pull request.
+
+Host status line rule: while a run is active, the coordinator posts one line in
+the invoking host session when an event-table event occurs. Shape:
+`capstan OWNER/REPO#N · STATION · EVENT: FACT`, for example
+`capstan owner/repo#N · review · finding-census round 1: 2 blocking, 3 advisory → fix`.
+FACT is one observed value from that event's evidence. A value not observed is
+`unknown`. No estimates. A blocker line or a typed human decision line ends with
+what the operator must do. This narrows decision 3 of
+https://github.com/comamitc/capstan/issues/34: the stage-analysis table stays
+terminal-only, and one-line host status lines are allowed and required.
+
+Supervision observations follow the same rule: a running worker, a silent-check
+wait, and the pre-merge CI wait. An observation posts a line only when it
+changes something the line reports. For a worker, that is a new worktree head,
+a new commit, or the result file appearing. The line gives elapsed time,
+worktree head, new commits since the last line, and whether the result file
+exists, for example
+`capstan owner/repo#N · implementing · observation: 19m elapsed, head 1a2b3c4, 1 new commit, result absent`.
+For a silent-check or CI wait, a snapshot is an observation while the silent
+check still runs or a required CI check is still pending. The first snapshot
+and each changed check state post an observation line with elapsed time, the
+head, and the observed states. The settled outcome is the `check` event: the
+silent check exits, or no required CI check is pending. It posts the `check`
+line only, not an observation line. A change that is itself an event-table
+event posts that event's line only. An unchanged observation posts nothing.
+Lines come from observations the coordinator already makes, not from a new
+timer. This rule adds no Capstan number, config field, or timeout. Workers do
+not post status lines. A missed status line is a `telemetry-gap` in
+`ledger.md`. It does not block a station, a label projection, or
+ready-to-deploy.
 
 Same-figures rule: copy the published summary's figures. Do not recompute.
 `unknown` stays `unknown`.

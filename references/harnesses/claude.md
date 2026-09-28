@@ -46,3 +46,13 @@ Observed JSON fields: `session_id`, `result`, `is_error`, `permission_denials`,
 `duration_ms`, `num_turns`, `usage`, `modelUsage`, `total_cost_usd`. A successful
 probe returned `{"type":"result","subtype":"success","result":"CAPSTAN_PROBE_OK"}`.
 Inspect permission denials even if the process exits zero.
+
+## Claude Code host
+
+The `claude -p` recipe above is the worker. It stays as written. This
+subsection is the interactive Claude Code coordinator that launches it. Start
+the worker as a background task, not as one foreground call that holds the
+session until the worker exits. Observe it with the host's wait mechanism, such
+as the background task's exit notice. At each observation, read the worktree
+head, new commits, and whether the result file exists.
+[references/telemetry.md](../telemetry.md) owns the host status line.
