@@ -56,6 +56,10 @@ references: [Codex](https://learn.chatgpt.com/docs/build-skills),
 [Grok](https://docs.x.ai/build/features/skills-plugins-marketplaces),
 [OMP](https://github.com/can1357/oh-my-pi/blob/main/docs/skills.md).
 
+### Compatibility with host instructions
+
+The completion endpoint is a verified open merge-ready PR. Capstan does not deploy. A fresh task inspects and resolves the base, fetches that branch, records the SHA, and creates the worktree before product edits. [contract](references/contract.md) owns that order, the host exceptions, and each conflicting host instruction. This section adds no installer, no parser, and no precedence system.
+
 The same invocation resumes. Issue-title changes do not change branch `capstan/N`,
 worktree `.worktrees/capstan+N`, or marked PR lookup. You may specify overrides in
 the invocation, for example: “primary codex, secondary claude, wall budget 90 minutes.”
