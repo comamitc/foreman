@@ -158,7 +158,7 @@ Use the documentation-completeness and canonical-page eligibility rule owned by 
 
 Separate observed current behavior, intended behavior, known defects, and unknowns. Do not invent historical architectural rationale. Do not rewrite a valid expectation to excuse a regression. Do not delete a still-true statement.
 
-Every material new or corrected claim cites source or an observed result. Run a runnable example when its prerequisite is present. The mature partial docs fixture is the positive proof. Its live record captures the target repository's exact declared command, the exit status, and the observed output. If the prerequisite is absent, record an explicit gap. Do not fabricate success. A present prerequisite with a skipped or failed example is a failure.
+Every material new or corrected claim cites source or an observed result. Run a runnable example when its prerequisite is present. Record the target repository's exact declared command, the exit status, and the observed output of that run. If the prerequisite is absent, record an explicit gap. Do not fabricate success. A present prerequisite with a skipped or failed example is a failure.
 
 A created page or section maps to `added`. An updated page maps to `updated`. A checked page with no write maps to `intentionally unchanged`. A gap, an unavailable prerequisite, or an unverified claim maps to `unverified` and row state `unresolved`. A product defect is a handoff in the summary. Contradictory evidence stays `unresolved` ([telemetry](telemetry.md) line 129). Do not add a fifth disposition word. [telemetry](telemetry.md) lines 121-125 own those four words.
 
@@ -166,9 +166,11 @@ The summary reports coverage, created pages, updated pages, intentionally unchan
 
 An unchanged in-scope repository produces no diff. A second backfill of that same unchanged repository does not add a duplicate page, a duplicate section, or a changelog line. The second diff is empty. Do not manufacture a commit to satisfy a nonempty-diff rule. [implementing](implementing.md) lines 96-97 own that reconciliation.
 
-This delivery's fixture proof is seven live records in `comamitc/capstan-fixtures`: a mature partial docs tree, absent docs, a custom docs layout, conflicting docs and product evidence, an unavailable prerequisite, a clean no-op, and a repeated backfill. Do not copy the fixture trees into this repository. Evidence follows the terminal outcome. A diff-producing journey links its issue, its pull request, its head, and its logs. The clean no-op and the repeated backfill link the admitted issue or reconciliation record, the unchanged head, empty `git status --porcelain`, empty `git diff`, and proof that no duplicate was created. Those two journeys have no fixture pull request. The Capstan pull request links every record. That link does not assert that every record has its own pull request. The mature partial docs record also captures the exact declared command, the exit status, and the observed output of its runnable example.
+Evidence follows the terminal outcome. A diff-producing backfill links its issue, its pull request, its head, and its logs. A clean no-op or a repeated backfill opens no pull request. It links the admitted issue or reconciliation record, the unchanged head, empty `git status --porcelain`, empty `git diff`, and proof that no duplicate was created.
 
 Do not add an executable, a stage, a label, a scheduled job, a daemon, a generator, OpenSpec, a host-skill copy, or a `.capstan.json` field. Admission is the outcome sentence. `features` remains the map switch only.
+
+Acceptance is the normal pipeline and reviewer evidence on the diff.
 
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no

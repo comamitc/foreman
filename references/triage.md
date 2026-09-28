@@ -43,8 +43,12 @@
    A question whose answer depends on an open question in the same round waits for
    the next round. Do not ask the user to find files or diagnose technical errors.
 4. Write the smallest complete admitted spec with [spec](../templates/spec.md).
-   Preserve the original request verbatim. Use numbered, independently verifiable
-   acceptance criteria; omit internal orchestration detail and execution provenance.
+   Preserve the original request verbatim inside a backtick fence longer than any
+   backtick run in the request. The fence is at least three backticks long. Every
+   request line is byte-identical inside the fence. When the request has no final
+   newline, add one line break before the closing fence. That line break is not
+   request content. Use numbered, independently verifiable acceptance criteria;
+   omit internal orchestration detail and execution provenance.
    Decide the integration base using repository conventions before creating work.
    The admitted spec's Decisions section lists every visited node and its
    settlement. Vocabulary for a new term goes in the spec. A delivery-scoped
