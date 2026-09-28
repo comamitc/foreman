@@ -80,6 +80,25 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    result in the form `references/harnesses/shared.md` states. Record actual
    commands, exit statuses, output/evidence paths, and the resulting head SHA.
 5. Prepare PR text with Why, Scope, Tradeoffs, Blast Radius, and Verification.
+   Blast Radius states reversibility, rollback or mitigation, affected
+   surfaces, and human attention. It cites its basis: the diff, commands,
+   checks, or observed behavior. Reversibility uses three states: a code
+   revert undoes the change; residual effects remain; or unknown. Residual
+   effects and unknown can apply together. A residual effect is one a code
+   revert does not undo: an applied migration, changed or deleted data, a
+   sent message, or another external write. Name each known residual effect,
+   even when whether it can be undone is unknown. Write unknown when the
+   basis does not settle whether an effect exists or can be undone. A
+   rollback or mitigation is tested only when this delivery exercised it and
+   the evidence is cited; otherwise mark it untested. A change with no
+   residual effect may state its reversibility in one line. Human attention
+   names specific files, decisions, effects, or unverified items, or states
+   that nothing is needed beyond normal review. Generic advice such as
+   "review carefully" does not satisfy it. Add a compact before/after or
+   diagram only where it clarifies the change. Blast Radius is decision
+   support, not a risk score or an approval workflow. A reversible change
+   does not bypass required approval, existing checks, independent secondary
+   review, or Capstan's prohibition on merge and deploy.
    Report risks honestly and verify a clean worktree containing the intended commits.
    Finish everything the pack supports; the result cites the pack.
 
