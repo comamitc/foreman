@@ -37,14 +37,8 @@ directory. Do not use dangerous bypass flags or `unsafe_autonomy` to repair sand
 
 A bwrap loopback or uid-map error with no `command_execution` item is a host-sandbox failure, not a worker defect. Probe once. Then name the same-harness rule in `references/contract.md`: if only one harness works, disclose `independence: same-harness`. Do not use bypass flags.
 
-Observed JSONL includes `thread.started`, `item.completed`, and `turn.completed`.
-Record Codex `turn.completed` usage as its token fields. The latter reports usage
-such as input_tokens, cached_input_tokens, output_tokens. Live `--json` turn
-`01a0caf9-a2b4-7ce3-aabc-1603e76df0a5` has no dollar field in
-`turn.completed.usage`. The matching session rollout has event types `token_count`
-and `token_usage_record` and no dollar cost key. Cost stays `unknown`. A newer CLI
-that later reports a dollar field in `turn.completed` or in that session rollout
-has that field copied as `reported`. Do not pass `--output-schema`; worker results
+`turn.completed.usage` reports token fields such as `input_tokens`, `cached_input_tokens`, and `output_tokens`. [references/telemetry.md](../telemetry.md) owns usage reporting.
+Do not pass `--output-schema`; worker results
 are Markdown. A provider JSON change does not invalidate valid work.
 
 ## Nested host

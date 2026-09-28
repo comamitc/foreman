@@ -14,7 +14,7 @@ identity, spec revision, effective nonsecret configuration, budget start, the
 resolved deletion switch, and
 a chronological station/attempt table. Write
 one row per station attempt. The columns are stage, start UTC, end UTC, wall time,
-role, harness, and the usage fields that harness reported. Also record harness
+role, harness, and reported usage. Also record harness
 version, model, effort, safety mode, process exit/session, checks and exit
 results, head before/after, finding census, recovery hypotheses, label changes,
 and evidence paths/remote URLs. Say `unknown` when not reported; never estimate or use zero for missing usage. A field the harness did not report is `unknown`,
@@ -26,6 +26,8 @@ constituent turn totals. Sum token fields only within one harness and one field.
 Do not add cache reads again into a single mixed total. Do not add reasoning tokens
 again on top of output when the harness already counts them inside output. Name the
 summed fields.
+
+Reported usage is the token fields the harness reported for that attempt, under the harness's own field names. Claude: the worker JSON `usage` fields `input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, and `output_tokens`. Codex: the `turn.completed.usage` fields. Grok and Oh My Pi: the token fields in their reported usage. A coordinator-only row with no worker has `unknown` usage. A field total that includes an `unknown` row is `unknown`. Capstan captures no cost. Record no spent, reported, or estimated cost figure or price in `ledger.md`, the summary, a host status line, or a benchmark or improvement comparison, even when the harness reports one. A configured `max_cost_usd` stays in effective configuration as a setting, not a captured cost. It cannot be measured; [contract.md](contract.md) owns that budget decision.
 
 For planning, record the initial plan, single review, correction launch/outcome,
 and full finding handoff into implementing. Record any operator-authorized reopening
@@ -71,7 +73,7 @@ after the exhaustion decision when no ready label is projected. At
 terminal readiness or review exhaustion, publish a marked issue summary from
 `ledger.md`. Do not recompute it from the pile. The summary contains
 PR URL, current head/base, observed ready-gate or exhaustion facts, one station
-attempt table, two wall totals, reported usage/cost, findings addressed/refuted,
+attempt table, two wall totals, token totals per harness and per field, findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
 disclosures, and gaps. The attempt-table field rules are stated above. Worker-process
 wall is the sum of attempt rows that have a
@@ -85,7 +87,7 @@ not an unrecoverable run. A failed GitHub summary publication uses normal transi
 recovery; do not pretend it published. Remote progress evidence preserves budget
 and rerun history across local deletion.
 
-Emission follows the summary read-back. The coordinator's final message in the host session contains the stage-analysis table and the two wall totals. A URL may follow. The URL alone does not satisfy this. Trigger only at
+Emission follows the summary read-back. The coordinator's final message in the host session contains the stage-analysis table, the two wall totals, and the token totals line, copied unchanged from the published summary. A URL may follow. The URL alone does not satisfy this. Trigger only at
 verified `capstan:ready-to-deploy` or review exhaustion. The table stays terminal-only.
 The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
 No plugin, notification command, status-line API, or new marker. Workers do
@@ -205,7 +207,7 @@ replayable. A missing bundle, an off switch, or a failed capture is a named
 limitation, not a zero. A kept pile is not a benchmark case. Compare the
 baseline and the candidate on equivalent inputs. One run is not a victory.
 Report acceptance, false-ready, intervention, recurrence, wall, and reported
-cost. Unknown usage is not zero. Do not add incompatible token fields. Publish
+token usage. Unknown usage is not zero. Do not add incompatible token fields. Publish
 the exact revisions, the command, the result, and the limitations. Do not
 relabel an old evaluation as current-main proof. Prefer an executable check
 and a known fault injection. Do not reward weakening verification.
