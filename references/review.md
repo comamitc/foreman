@@ -63,7 +63,10 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    effective blockers and the repair delta, with the policy's stated exceptions.
    The pack carries every carried finding row with the
    primary's proposed disposition and candidate location, not prior plan-review
-   essays or implementing narratives. Confirm each cited line and each row's
+   essays or implementing narratives. The exception is each applicable red or
+   fault-injection observation carried under Checks as evidence already
+   recorded. [references/pack.md](pack.md) owns that carry.
+   Confirm each cited line and each row's
    original scenario against the saved diff; a citation that does not match is a
    finding. Run only the named checks and record the observed exit at HEAD. Callers
    are the ones the pack names; the diff carries the rest. A path the pack does not
@@ -83,6 +86,34 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    an existing function is unrequested scope and blocks. A pure "this could be
    shorter" note stays minor. Keep one judge. Do not add a second review
    station. Do not install a ponytail skill.
+   For each applicable new or changed check, name the observable contract, a
+   plausible defect and its failure signal, and whether a
+   mock or stub suppresses that failure. A check that
+   restates the implementation's constant, a mock setup that cannot fail, or a
+   source-text or field-presence proxy is not sufficient behavioral proof. Allow
+   a structural or source-text check when the
+   structure is itself the accepted contract, and state that justification.
+   [references/implementing.md](implementing.md) owns the exemption.
+   Do not restate it. Prefer red evidence at the old head, or a
+   cheap targeted fault injection, when either is meaningful. Do not require
+   mutation testing on every change, a new test framework, or
+   per-function suites. [references/ladder.md](ladder.md) owns that limit
+   (`references/ladder.md:29`).
+   Judge the red or fault-injection evidence the pack carries. Trace that
+   evidence against the saved diff when needed. Do not change the tree.
+   Do not produce the red evidence. A correction uses the
+   existing implementing or fix write station. On round 1, apply this rule to
+   every applicable new or changed check in the cumulative diff. On a later
+   round, apply it only to checks the repair delta adds or changes. Prior
+   effective blockers still follow the ratchet.
+   [references/review-convergence.md](review-convergence.md)
+   owns severity, confidence, partition, the ratchet, and
+   `max_review_fix_rounds`. Do not change them. Do not add a severity mapping.
+   A style preference alone is never a blocker.
+   Record the finding on the Standards axis in the existing finding format.
+   Cite an admitted acceptance criterion or a reachable defect.
+   [references/findings.md](findings.md) owns closure proof.
+   Do not restate that gate.
 4. For every actionable finding, record axis, severity, confidence, category,
    file/symbol or plan item, claim, evidence, and correction in
    [review](../templates/review.md). Blocking
