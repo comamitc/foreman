@@ -61,6 +61,7 @@ from `git worktree list --porcelain` rather than nesting worktrees in worktrees.
 Use a fresh worktree for a new issue; continue an existing matching issue
 worktree. Never switch the shared checkout or edit the integration branch there.
 Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run. For example, a repository whose resolved base is `main` fetches `origin/main`. Immediately after a successful fetch, record the SHA of that ref. Create the worktree from that SHA. Local `<base>`, an unfetched `origin/<base>`, and `origin/HEAD` are not valid parents. If the fetch fails, stop. Do not create the worktree from local `<base>`. An existing `capstan/N` worktree is not rebased or recreated. Do not fast-forward, switch, or edit the shared checkout.
+Inspect and resolve the base before that fetch. Edit product files only after the worktree exists. If the matching issue worktree already exists, continue it without rebasing or recreating it. If the matching `capstan/N` branch exists and no matching worktree is attached, do not continue a missing worktree and do not run `git worktree add -b` again. Use the existing rule in the next sentences: attach that branch without `-b`. OpenClaw stays in the original checkout. Read-only research that edits no product file does not need a new worktree.
 When absent, create it with `git worktree add -b capstan/N ./.worktrees/capstan+N <recorded-sha>`
 from the repository root. Its parent is the recorded SHA, not the ref name alone. If a matching branch
 already exists, attach that branch without `-b`. Preserve dirty work and human
@@ -80,6 +81,14 @@ Workers never push or mutate GitHub. Capstan never force-pushes, merges, deploys
 creates credentials, purchases quota, changes security settings, or performs
 destructive production actions. A required action outside these boundaries uses
 [recovery](recovery.md)'s typed handoff; authorization does not add a v1 merge mode.
+
+Completion means the requested, authorized endpoint. Capstan ends at a verified open merge-ready PR. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
+
+`~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` conflict with these rules at the pins below. The operator applies both proposed sentences outside this delivery. This delivery does not edit those host files and does not deploy.
+
+X1. Lines 33-34 of both files: "For PR/platform work, done means CI is green on the PR and the change is live on the target env." Proposed correction: "A Capstan delivery is done at the verified open merge-ready PR. Do not deploy to satisfy this bar."
+
+X2. Lines 11-14 of both files: "The first action on a code-changing task is:" `git worktree add -b <branch> ./.worktrees/<branch-with-slashes-as-plus> origin/<integration>`. Proposed correction: "For a fresh Capstan task, do not run that command first. Inspect and resolve the integration base, run git fetch origin <resolved-base>, record the SHA, then run git worktree add -b capstan/N ./.worktrees/capstan+N <recorded-sha>. If the matching issue worktree already exists, continue it without rebasing or recreating it. If only the matching capstan/N branch exists, attach it without -b. OpenClaw stays in the original checkout."
 
 ## Evidence and reconciliation
 
