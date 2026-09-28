@@ -18,7 +18,11 @@ carry reads `none` plus the reason.
    every caller pasted or pointed at for complete reading. For code review, include
    the effective policy, severity/confidence calibration, partition rules, review
    ratchet, counted round and remaining allowance from `references/review-convergence.md`.
-6. `## Checks`: exact commands with cwd and expected exit.
+6. `## Checks`: exact commands with cwd and expected exit. A code-review pack
+   also carries, under this heading, each applicable red or fault-injection
+   observation that implementing recorded, marked as carried evidence (command,
+   head, exit, and failure signal) and not as a command to run;
+   [references/review.md](review.md) owns the judgment.
 7. `## Named files`: `path:line-range` plus reason, the only paths the worker may open.
 
 Compact form, the exception for one Named files entry, one check, and no open

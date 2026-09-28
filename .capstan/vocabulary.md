@@ -91,3 +91,5 @@
 **Canonical document**: a durable product document that states user-visible or operational behavior. Rejected: a historical delivery artifact, a host transcript, or a new `docs/changes` tree.
 
 **Documentation backfill**: a delivery mode admitted only when an issue or a text invocation states that outcome. references/planning.md owns the mode. Rejected: ordinary delivery or init.
+
+**Discriminating check**: a check that fails when the defect it claims to cover is present, and passes when the defect is corrected. Rejected: a check that restates the implementation's constant, mocks away the failure it names, or reads source text or field presence as a proxy for behavior.

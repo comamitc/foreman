@@ -51,8 +51,10 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    repeating interrupted steps.
 2. Implement plan items in order. Use a failing behavior check where meaningful,
    prove it fails for the intended reason, then make the smallest change and rerun.
-   Documentation, configuration, deletion, generated, and operational changes may
-   use stronger appropriate proof instead; explain when a failing test adds no value.
+   Record the red or fault-injection observation under Acceptance proof;
+   [references/review.md](review.md) owns the discriminating-check rule.
+   Documentation, configuration, deletion, generated, operational, and trivial changes
+   may use stronger appropriate proof instead; explain when a failing test adds no value.
 3. Run each item's verification. Keep scope narrow; commit coherent changes.
    Triage reads the committed `.capstan/vocabulary.md` on `main` when it exists,
    after repository instructions and before a question. Implementation writes
