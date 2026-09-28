@@ -35,8 +35,6 @@ The new page rule does not override the agent-instruction section rule or the ba
 
 Do not create `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`. Do not write `CONTEXT.md` or a host skill. Do not add a pre-merge docs harness, an OpenSpec dependency, or a Capstan-owned docs generator. A target repository's already-declared docs check stays a declared check.
 
-The fixture cases are a new public feature with no prior page and no feature map, an extension of an existing guide, an internal refactor with docs unchanged, a restoring bug fix with docs unchanged, a bug fix that changes documented usage or limitations, and an omitted required page that review blocks and recovery repairs. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy those trees here.
-
 The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
 1. Read the brief and the pack: the current plan text, every carried finding row

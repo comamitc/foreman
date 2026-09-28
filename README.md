@@ -182,10 +182,8 @@ ready-to-deploy must not prevent delivery continuation.
 
 ## Development and provenance
 
-Acceptance is established in a separate fixture repository, never loaded at
-runtime. A releasable revision needs a live ready-to-ready-to-deploy journey with
-zero human requests, recovery exercises, and two interactive-host smoke runs.
-Help checks and document validation alone do not meet that bar.
+Acceptance is the product pipeline: planning → implementing → independent review → merged-ready PR gate.
+Reviewer evidence on the diff is the proof.
 
 Historical ideas came from ponytail, firstmate, Matt Pocock's skills, and pstack.
 This attribution is provenance only. All shipped instructions are Capstan-owned;
