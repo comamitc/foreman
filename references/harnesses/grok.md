@@ -34,7 +34,7 @@ A Grok read-only launch uses `--sandbox read-only` and `--prompt-file LAUNCH_FIL
 Grok 1.0.34 has no `--add-dir`. Do not grant the external result path. Do not switch the read station to `workspace`, `bypassPermissions`, or `unsafe_autonomy` to make that write succeed.
 
 Observed JSON fields: `text`, `stopReason`, `sessionId`, `usage`, `modelUsage`,
-`total_cost_usd`. Record Grok `total_cost_usd` when present. The probe returned text
-CAPSTAN_PROBE_OK and reported usage/cost. Official
+`total_cost_usd`. [references/telemetry.md](../telemetry.md) owns usage reporting. The probe returned text
+CAPSTAN_PROBE_OK and reported usage and cost. Official
 [permissions](https://docs.x.ai/build/features/permissions) distinguish approval
 rules from the filesystem/network sandbox; check both.

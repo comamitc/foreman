@@ -25,7 +25,7 @@ without unsafe_autonomy, including an inherited yolo default.
 Observed NDJSON includes `session`, `message_end`, `turn_end`, `tool_execution_start`,
 `tool_execution_end`, and `agent_end`. Record `tool_execution_end` as cross-check
 telemetry, not as the operation count. `turn_end` counts turns. Assistant messages
-report model/provider and usage/cost. Count each completed assistant message once;
+report model/provider and token usage. [references/telemetry.md](../telemetry.md) owns usage reporting. Count each completed assistant message once;
 later aggregate events can repeat the same messages. The probe initially produced
 thinking-only output before a final text response; inspect actual result text, not
 merely exit zero. Unknown formats retain redacted raw output and unknown usage

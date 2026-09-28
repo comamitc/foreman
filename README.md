@@ -139,8 +139,7 @@ null uses the harness default; unsupported explicit effort fails visibly.
 
 Read [contract](references/contract.md) for field rules and
 [harnesses](references/harnesses.md) for version-checked launch guidance. No parser
-is installed. A cost cap needs measurable reported cost; otherwise the coordinator
-asks for a usable budget decision rather than inventing usage.
+is installed. Capstan does not capture cost. A set `max_cost_usd` goes to the budget decision that [contract](references/contract.md) owns; the coordinator never invents prices or usage.
 
 Planning follows one fixed sequence: initial plan, independent review, one
 correction pass addressing the entire feedback set, then implementation. A review

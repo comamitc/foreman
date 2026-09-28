@@ -46,6 +46,7 @@ Observed JSON fields: `session_id`, `result`, `is_error`, `permission_denials`,
 `duration_ms`, `num_turns`, `usage`, `modelUsage`, `total_cost_usd`. A successful
 probe returned `{"type":"result","subtype":"success","result":"CAPSTAN_PROBE_OK"}`.
 Inspect permission denials even if the process exits zero.
+[references/telemetry.md](../telemetry.md) owns usage reporting.
 
 ## Claude Code host
 
