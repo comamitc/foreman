@@ -86,6 +86,10 @@ Feature-map audit. The issue or the text invocation states that the outcome is
 an audit of the configured feature map. An absent or disabled map (`features`
 null or absent) produces a no-map result. The audit does not seed a map.
 
+Verification-path adoption. The issue or the text invocation states that the
+outcome is verification-path adoption, and it names the target repository and
+one user operation. A normal feature delivery, init, or resume does not enter it.
+
 Optional map. A configured `features` path may link to a canonical page. The
 map is not a second copy of that page. No map does not block documentation
 backfill, and backfill does not seed a map.
