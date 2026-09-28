@@ -197,6 +197,63 @@ rejected or unsupported proposal does not manufacture a product change. The
 fixture cases are recurring defect, duplicate proposal, unsupported hypothesis,
 and benchmark regression.
 
+Review corrections. An explicit improvement invocation may name a bounded batch
+of review corrections by PR, review, or comment URL. Consume a correction
+only from a trusted author under [security.md](security.md). Verify each
+correction's scenario against its cited revision. An unverified correction
+is reported and changes nothing. Deduplicate against existing checks, review
+guidance, navigation pointers, lessons, and open issues. Repetition is a
+signal, not authority. A covered correction is reported as covered.
+
+Route each verified correction to the first artifact that holds: (a) a
+small admitted structural change (type, API, data model, architecture) or a
+repo-native static check that makes the failure impossible or mechanically
+detected; (b) a deterministic repository check for other machine-checkable
+behavior; (c) existing repository review guidance for judgment; (d) an existing
+navigation pointer for discovery friction; (e) the existing lesson store for
+non-obvious reasoning; (f) no-op. [planning.md](planning.md) owns the lesson
+rule. Compare a structural change with the other options on blast radius and
+upkeep. It is an option, not an automatic rewrite. Reuse means a pattern that
+meets the requirement, not a copy of a known-broken workaround. No global memory
+or store dependency. Do not create an instruction file.
+
+A proposed check catches the historical failure at the pinned revision
+where it occurred and accepts a legitimate counterexample. A weak rubric is
+rejected. An instruction that encodes one reviewer's preference as universal
+law is rejected.
+
+The proposal rule above applies to a review correction as follows. The
+correction URL and its cited revision are the run identities. The verified
+scenario is the scenario. The counterexample is a legitimate case the change
+must still accept. It is the held-out check. For (a) and (b), the hypothesis
+is that the change rejects the failure. The benchmark is that change run at
+the pinned historical revision: it rejects the failure there and accepts
+the counterexample. For (c), (d), and (e), the hypothesis names the wrong
+decision the edit prevents. The benchmark is a reviewer walkthrough of the
+cited scenario and the counterexample against the edited text: the scenario's
+decision changes and the counterexample's does not. A no-op under (f) is not
+a proposal. It is reported with the URL, revision, scenario, and why no rung
+held. A telemetry run-failure proposal keeps every requirement above.
+
+When legacy violations block immediate cleanup, a no-new-violations guard may
+use the repository's existing tooling. It lists each approved exception with
+its rationale. The guard fails on any new violation, including one that leaves
+the total count unchanged. A count-only ceiling is rejected. Do not enlarge
+a baseline to pass. Do not exempt a security or correctness obligation the
+current change must meet. Cleanup beyond scope is a separate admitted task.
+
+Keep a comment that explains a legitimate constraint or rationale. Reject a
+comment used instead of meeting an acceptance criterion. No blanket comment
+ban, universal framework, automatic gardener, scheduler, or second lint stack.
+
+Separate Capstan-process improvements from target-product learning. A
+Capstan-process improvement found in another repository is reported. It is
+not published there and not written to the Capstan package. A standards,
+navigation, lesson, or check change enters only through admitted scope, with
+evidence and normal review. The invocation does not edit the installed or
+running skill or host-global files. The endpoint is unchanged: analysis-only
+stays a report, and a published proposal stops at an open pull request.
+
 A selected bundle survives pile cleanup only when
 `evidence.retain_replay` is `true`. Do not add a database, parser, skill,
 service, or stage. Do not add a path for the bundle.

@@ -95,3 +95,7 @@
 **Discriminating check**: a check that fails when the defect it claims to cover is present, and passes when the defect is corrected. Rejected: a check that restates the implementation's constant, mocks away the failure it names, or reads source text or field presence as a proxy for behavior.
 
 **Residual effect**: a consequence of a change that reverting its code does not undo, such as an applied migration, changed or deleted data, a sent message, or another external write. The rule owner is `references/implementing.md`. Rejected: leaving the term undefined, or a numeric or tiered risk score.
+
+**Review correction**: a trusted human reviewer's request to change a Capstan-delivered pull request, cited by URL and verified against its revision. The rule owner is `references/telemetry.md`. Rejected: untrusted or unverified feedback, a scan of repository history, or repetition treated as authority.
+
+**No-new-violations guard**: a repository-native check that fails on any new violation and lists each grandfathered existing violation with its rationale. It is not a count ceiling. The rule owner is `references/telemetry.md`. Rejected: a count-only ceiling, an enlarged baseline, or a second lint stack.
