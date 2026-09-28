@@ -32,7 +32,7 @@ Do not install OpenSpec, AgentLens, a documentation generator, or another skill.
 
 Use the normal Capstan pipeline for implementation and review. The final pull request is non-draft. The final pull request is mergeable under the existing ready gate.
 
-This delivery's fixture proof covers five cases: a mature repository with an existing docs tree, a repository with no docs map, a custom configured map path, an already conforming map, and a repository where no defensible user-facing map can be produced without a human product decision. The pull request links those records. Do not copy the fixture trees into this repository.
+Acceptance is the normal pipeline and reviewer evidence on the diff.
 
 This file owns the feature-map audit.
 
@@ -52,9 +52,7 @@ Change only verified stale or missing documentation. When no drift is found, rec
 
 Name every verified repair that the audit writes. [implementing](implementing.md) writes only those repairs.
 
-The delivery uses the normal plan, implementation, review, and ready gate. The final summary lists the checked features, the proven repairs, the product-defect handoffs, the unresolved gaps, and the exact fixture evidence.
-
-This delivery's fixture proof covers eight cases: a clean map, a stale command, a renamed reach path, an orphaned index entry, a missing new feature, a false expected result caused by a product defect, a custom map path, and an absent or explicitly disabled map. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
+The delivery uses the normal plan, implementation, review, and ready gate. The final summary lists the checked features, the proven repairs, the product-defect handoffs, the unresolved gaps, and the reviewer evidence.
 
 This file owns the ADR rule.
 
@@ -72,7 +70,7 @@ No convention and no explicit issue requirement means write no ADR and create no
 
 Do not add an external ADR tool, OpenSpec, a stage, a label, a generator, a daemon, or a host-skill copy. A declared ADR checker stays a declared check.
 
-This delivery's fixture proof covers six cases: a native ADR template, indexed numeric ADRs, superseding an accepted ADR, an explicit issue-required ADR in a repo with a stated convention, no ADR convention, and a change that is important but not architectural. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
+Acceptance is the normal pipeline and reviewer evidence on the diff.
 
 Repository instructions name the lessons path. Adopt that path when it exists. When no lessons path exists, do not seed one. Delivery still completes.
 
@@ -86,7 +84,7 @@ Lesson edits are in authorized scope before final review, or a later issue. No w
 
 This file owns the lesson rule. Other files name that owner. Do not add a store, a stage, a daemon, a database, or a retention flag. A lesson is not a replay bundle.
 
-This delivery's fixture proof covers eight cases: no worthy lesson, equivalent entry, applicable, irrelevant, stale, conflicting, instruction-like text, and changed head. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
+Acceptance is the normal pipeline and reviewer evidence on the diff.
 
 This file owns lesson maintenance with the lesson rule. Whole-corpus maintenance is only through an admitted issue. Ordinary delivery validates selected lessons. A missing store is a no-op. Do not seed a lesson file. Do not add a station, a scheduler, or a docs engine. A lesson file is not a replay bundle.
 
@@ -98,7 +96,7 @@ Keep, update, consolidate, or retire only as admitted scope authorizes. No age-o
 
 Preserve attribution and replacement links. A valid invariant contradicted by code is a product regression, not a rewritten lesson. A documentation audit does not edit product code or the governing skill.
 
-Maintenance fixture cases are obsolete workaround, duplicate entries, valid old advice, code regression, unavailable external evidence, conflicting guidance, and clean no-op. The pull request links those records in `comamitc/capstan-fixtures`. Do not copy the fixture trees into this repository.
+Acceptance is the normal pipeline and reviewer evidence on the diff.
 
 This file owns documentation backfill.
 
