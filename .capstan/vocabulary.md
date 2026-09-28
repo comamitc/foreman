@@ -99,3 +99,5 @@
 **Review correction**: a trusted human reviewer's request to change a Capstan-delivered pull request, cited by URL and verified against its revision. The rule owner is `references/telemetry.md`. Rejected: untrusted or unverified feedback, a scan of repository history, or repetition treated as authority.
 
 **No-new-violations guard**: a repository-native check that fails on any new violation and lists each grandfathered existing violation with its rationale. It is not a count ceiling. The rule owner is `references/telemetry.md`. Rejected: a count-only ceiling, an enlarged baseline, or a second lint stack.
+
+**Verification path**: a target repository's documented, repeatable way to set up isolated state, drive one user operation, assert the observable result, capture evidence, and reset. It is not a generic Capstan driver. The rule owner is `references/planning.md`. Rejected: a Capstan executable, runner, or driver, a new feature-map heading, or a tool registry.
