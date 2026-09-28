@@ -165,11 +165,6 @@ coordinator-enforced Markdown procedure. It is not server-enforced attestation.
 Do not add an executable, a schema server, or an unsupported security
 guarantee.
 
-The fixture cases are partial satisfaction, failed check despite exit zero,
-stale SHA, changed criterion, supported not-applicable, and conflicting
-observations. The pull request links those records in
-`comamitc/capstan-fixtures`. Do not copy those trees here.
-
 Provenance is part of `ledger.md`. It records revision or digest, nonsecret
 configuration, spec revision, initial target SHA, pack identities, harness
 version, and reported model identity. A missing harness version or reported
@@ -223,9 +218,7 @@ benchmark. Deduplicate against open issues. An issue is published only after an
 explicit improvement invocation. Analysis-only stays a report. Compare baseline
 and candidate with a held-out check. A weaker rubric is rejected. Workers do not
 rewrite the running skill. The improvement stops at an open pull request. A
-rejected or unsupported proposal does not manufacture a product change. The
-fixture cases are recurring defect, duplicate proposal, unsupported hypothesis,
-and benchmark regression.
+rejected or unsupported proposal does not manufacture a product change.
 
 Review corrections. An explicit improvement invocation may name a bounded batch
 of review corrections by PR, review, or comment URL. Consume a correction
@@ -295,10 +288,6 @@ deterministic.
 
 Missing switch and invalid switch are not replayable.
 [contract.md](contract.md) owns that resolution.
-
-The fixture cases are resumed run, unknown model or version, failed capture,
-redaction, unselected run, selected replay surviving cleanup, missing switch,
-and invalid switch.
 
 No mid-run deletion. At ready-to-deploy, after the ready-label read-back still
 holds, after `ledger.md` is written and read back, and after no worker from

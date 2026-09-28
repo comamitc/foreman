@@ -30,4 +30,8 @@ Explicit boundaries needed to prevent scope expansion.
 
 ## Original request
 
-Preserve the original request verbatim here.
+Keep the request verbatim inside the fence. The fence below is only an example. [triage](../references/triage.md) step 4 sets its length and the final-newline case.
+
+````
+The original request.
+````
