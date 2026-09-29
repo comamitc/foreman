@@ -5,8 +5,7 @@
   "recovery": {
     "transient_retries": 3,
     "same_failure_attempts": 2,
-    "run_wall_timeout_min": 360,
-    "max_cost_usd": null
+    "run_wall_timeout_min": 360
   },
   "review_policy": {
     "block_threshold": "medium",

@@ -10,7 +10,10 @@ append rather than overwrite surviving attempts. Follow security before capture.
 
 Write the ledger row directly. [contract.md](contract.md) owns resolution of
 `evidence.delete_pile`. Record delivery
-identity, spec revision, effective nonsecret configuration, budget start, the
+identity, spec revision, effective nonsecret configuration, each ignored unknown
+or retired configuration field by name and source (file, environment, or
+invocation override) apart from effective configuration and without its value,
+budget start, the
 resolved deletion switch, and
 a chronological station/attempt table. Write
 one row per station attempt. The columns are stage, start UTC, end UTC, wall time,
@@ -27,7 +30,7 @@ Do not add cache reads again into a single mixed total. Do not add reasoning tok
 again on top of output when the harness already counts them inside output. Name the
 summed fields.
 
-Reported usage is the token fields the harness reported for that attempt, under the harness's own field names. Claude: the worker JSON `usage` fields `input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, and `output_tokens`. Codex: the `turn.completed.usage` fields. Grok and Oh My Pi: the token fields in their reported usage. A coordinator-only row with no worker has `unknown` usage. A field total that includes an `unknown` row is `unknown`. Capstan captures no cost. Record no spent, reported, or estimated cost figure or price in `ledger.md`, the summary, a host status line, or a benchmark or improvement comparison, even when the harness reports one. A configured `max_cost_usd` stays in effective configuration as a setting, not a captured cost. It cannot be measured; [contract.md](contract.md) owns that budget decision.
+Reported usage is the token fields the harness reported for that attempt, under the harness's own field names. Claude: the worker JSON `usage` fields `input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, and `output_tokens`. Codex: the `turn.completed.usage` fields. Grok and Oh My Pi: the token fields in their reported usage. A coordinator-only row with no worker has `unknown` usage. A field total that includes an `unknown` row is `unknown`. Capstan captures no cost. Record no spent, reported, or estimated cost figure or price in `ledger.md`, the summary, a host status line, or a benchmark or improvement comparison, even when the harness reports one.
 
 For planning, record the initial plan, single review, correction launch/outcome,
 and full finding handoff into implementing. Record any operator-authorized reopening
