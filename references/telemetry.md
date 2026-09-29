@@ -21,7 +21,7 @@ and evidence paths/remote URLs. Say `unknown` when not reported; never estimate 
 not zero and not an estimate. Coordinator-only stages with no process
 timer, such as triage and ready, stay in the table. Their wall is `not timed`
 unless a start and an end were both observed. Print observed timestamps, such as
-spec admission and the ready label. A supervisor record that still has the start and the exit is observed. If the exit notice lacks those clocks, read that record, then write the ledger row. Publishing `unknown` for start, end, or wall while that record still has them is a telemetry gap, not a permitted `unknown`. `unknown` remains only when that record is gone, and the summary names the gap. A missing clock does not block ready-to-deploy. Do not name a host path. Do not add an executable. Avoid adding both session totals and their
+spec admission and the ready label. A supervisor record that still has the start and the exit is observed. If the exit notice lacks those clocks, read that record, then write the ledger row. Publishing `unknown` for start, end, or wall while that record still has them is a telemetry gap, not a permitted `unknown`. `unknown` remains only when that record is gone, and the summary names the gap. A missing clock does not block ready-to-deploy. Do not name a host path. Avoid adding both session totals and their
 constituent turn totals. Sum token fields only within one harness and one field.
 Do not add cache reads again into a single mixed total. Do not add reasoning tokens
 again on top of output when the harness already counts them inside output. Name the
@@ -90,7 +90,7 @@ and rerun history across local deletion.
 Emission follows the summary read-back. The coordinator's final message in the host session contains the stage-analysis table, the two wall totals, and the token totals line, copied unchanged from the published summary. A URL may follow. The URL alone does not satisfy this. Trigger only at
 verified `capstan:ready-to-deploy` or review exhaustion. The table stays terminal-only.
 The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
-No plugin, notification command, status-line API, or new marker. Workers do
+No plugin, notification command, or status-line API. Workers do
 not post the table. Do not add a second summary comment or post the table on
 the pull request.
 
@@ -119,7 +119,7 @@ silent check exits, or no required CI check is pending. It posts the `check`
 line only, not an observation line. A change that is itself an event-table
 event posts that event's line only. An unchanged observation posts nothing.
 Lines come from observations the coordinator already makes, not from a new
-timer. This rule adds no Capstan number, config field, or timeout. Workers do
+timer. This rule adds no Capstan number or timeout. Workers do
 not post status lines. A missed status line is a `telemetry-gap` in
 `ledger.md`. It does not block a station, a label projection, or
 ready-to-deploy.
@@ -164,8 +164,7 @@ correctness.
 
 A structured export is not station-selection authority. This rule is
 coordinator-enforced Markdown procedure. It is not server-enforced attestation.
-Do not add an executable, a schema server, or an unsupported security
-guarantee.
+Do not add a schema server or an unsupported security guarantee.
 
 Provenance is part of `ledger.md`. It records revision or digest, nonsecret
 configuration, spec revision, initial target SHA, pack identities, harness
@@ -196,8 +195,8 @@ unchanged. `evidence.delete_pile: false` does not mark a run replayable.
 [modes/improvement.md](modes/improvement.md) ("This file owns the improvement invocation") owns replay selection and consumption, the improvement invocation, review corrections, the no-new-violations guard, and the comment rule. Trigger: the resolved `evidence.retain_replay` is `true`, an improvement invocation consumes replay inputs, or the admitted issue or the text invocation states an improvement invocation.
 
 A selected bundle survives pile cleanup only when
-`evidence.retain_replay` is `true`. Do not add a database, parser, skill,
-service, or stage. Do not add a path for the bundle.
+`evidence.retain_replay` is `true`. Do not add a skill or
+service. Do not add a path for the bundle.
 
 Missing switch and invalid switch are not replayable.
 [contract.md](contract.md) owns that resolution.

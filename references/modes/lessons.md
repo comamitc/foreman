@@ -12,11 +12,11 @@ The coordinator cites lesson identities in the pack. Workers do not search. Retr
 
 Lesson edits are in authorized scope before final review, or a later issue. No worker edits the running skill.
 
-This file owns the lesson rule. Other files name that owner. Do not add a store, a stage, a daemon, a database, or a retention flag. A lesson is not a replay bundle.
+This file owns the lesson rule. Other files name that owner. Do not add a retention flag. A lesson is not a replay bundle.
 
 Acceptance is the normal pipeline and reviewer evidence on the diff.
 
-This file owns lesson maintenance with the lesson rule. Whole-corpus maintenance is only through an admitted issue. Ordinary delivery validates selected lessons. A missing store is a no-op. Do not seed a lesson file. Do not add a station, a scheduler, or a docs engine. A lesson file is not a replay bundle.
+This file owns lesson maintenance with the lesson rule. Whole-corpus maintenance is only through an admitted issue. Ordinary delivery validates selected lessons. A missing store is a no-op. Do not seed a lesson file. Do not add a docs engine. A lesson file is not a replay bundle.
 
 Check exact claims against source, named guidance, and runnable evidence. Report contradiction, supersession, overlap, and uncertainty separately. Unverifiable is not false.
 

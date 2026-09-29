@@ -16,6 +16,6 @@ Record the evidence through the acceptance row that [telemetry](../telemetry.md)
 
 A change of head, spec, workload, or environment invalidates the affected proof. Reassess and rerun it. Existing retention and redaction defaults apply. Do not enable replay retention. Do not keep unrestricted traces. Do not claim long-term reproducibility the evidence does not support.
 
-Capstan adds no stage, label, schema service, universal benchmark framework, scheduler, automatic hill-climbing loop, default browser pass, or executable. Do not experiment on production traffic.
+Capstan adds no schema service, universal benchmark framework, automatic hill-climbing loop, or default browser pass. Do not experiment on production traffic.
 
 Acceptance is the normal pipeline and reviewer evidence on the diff.

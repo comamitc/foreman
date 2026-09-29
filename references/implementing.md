@@ -31,7 +31,7 @@ The pack names the agent-instructions file as a `path:line-range` covering only 
 
 Write the correction in the same commit as the behavior. Do not delete a still-true statement to avoid the update.
 
-Do not create a docs tree, a stage, a label, or a generator. A README section is allowed when the plan names it.
+Do not create a docs tree or a generator. A README section is allowed when the plan names it.
 
 The new page rule does not override the agent-instruction section rule or the ban on creating `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`.
 
@@ -69,8 +69,8 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    for a repository-scoped term creates or updates `.capstan/vocabulary.md` in
    the same commit as the behavior. Use one `**Term**:` entry per term. Include
    the meaning and the rejected alternative that the triage walk recorded.
-   Triage does not create the file. Do not edit `CONTEXT.md`. Do not add a
-   stage, a label, a config field, or an executable. Keep #20's per-issue
+   Triage does not create the file. Do not edit `CONTEXT.md`.
+   Keep #20's per-issue
    Vocabulary and Decisions sections.
    Follow [ladder](ladder.md) before introducing new code. Do not restate the
    ladder. Preserve human changes and do not silently stage unrelated files.

@@ -20,4 +20,4 @@ Acceptance is a live run in the target. Run the accepted scenario twice from cle
 
 Keep the pinned Capstan and target revisions, the relevant tool, config, and data identities, the actual invocations, the observed outcomes, and the cleanup results in existing evidence. Reference that evidence through the acceptance row that [telemetry](../telemetry.md) owns. This mode adds no row field. Existing head and spec invalidation and retention settings apply. Do not enable replay retention.
 
-Capstan adds no executable, runner, driver, stage, label, daemon, default browser dependency, external skill, or required framework.
+Capstan adds no runner, driver, default browser dependency, or required framework.

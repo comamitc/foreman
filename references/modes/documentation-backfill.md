@@ -28,6 +28,6 @@ An unchanged in-scope repository produces no diff. A second backfill of that sam
 
 Evidence follows the terminal outcome. A diff-producing backfill links its issue, its pull request, its head, and its logs. A clean no-op or a repeated backfill opens no pull request. It links the admitted issue or reconciliation record, the unchanged head, empty `git status --porcelain`, empty `git diff`, and proof that no duplicate was created.
 
-Do not add an executable, a stage, a label, a scheduled job, a daemon, a generator, OpenSpec, a host-skill copy, or a `.capstan.json` field. Admission is the outcome sentence. `features` remains the map switch only.
+Do not add a generator or OpenSpec. Admission is the outcome sentence. `features` remains the map switch only.
 
 Acceptance is the normal pipeline and reviewer evidence on the diff.

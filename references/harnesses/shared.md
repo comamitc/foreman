@@ -45,7 +45,7 @@ when a newer release changes flags.
    run. Observe the process with the host's wait mechanism.
    [references/telemetry.md](../telemetry.md) owns the host status line.
 
-A silent check is a declared check that can stay silent longer than the selected harness's command-log window. That window is the harness's own. This rule adds no Capstan number, timeout, config field, parser, or executable. The worker_timeout_min bound and timeout exit 124 above still apply to the station process. They are not this check's result.
+A silent check is a declared check that can stay silent longer than the selected harness's command-log window. That window is the harness's own. This rule adds no Capstan number or timeout. The worker_timeout_min bound and timeout exit 124 above still apply to the station process. They are not this check's result.
 
 The coordinator runs a silent check. The worker brief does not tell the worker to start it.
 
@@ -83,7 +83,7 @@ Worker claims do not meet the conditions. A process exit of 0 does not meet the 
 
 When the text is a stub result, the coordinator starts same-station recovery for a missing, weak, or malformed result. `references/recovery.md` owns that recovery. The coordinator does not change the stage label. The coordinator does not publish a plan, a review census, or a pull request from that attempt.
 
-This rule adds no parser, no executable, no marker kind, and no config field. The coordinator reads the captured text and the brief. The coordinator does not start a program to make this decision.
+The coordinator reads the captured text and the brief. The coordinator does not start a program to make this decision.
 
 ## Diagnosis and fallback
 
