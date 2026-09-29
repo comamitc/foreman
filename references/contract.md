@@ -84,11 +84,7 @@ destructive production actions. A required action outside these boundaries uses
 
 Completion means the requested, authorized endpoint. Capstan ends at a verified open merge-ready PR. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
 
-`~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md` conflict with these rules at the pins below. The operator applies both proposed sentences outside this delivery. This delivery does not edit those host files and does not deploy.
-
-X1. Lines 33-34 of both files: "For PR/platform work, done means CI is green on the PR and the change is live on the target env." Proposed correction: "A Capstan delivery is done at the verified open merge-ready PR. Do not deploy to satisfy this bar."
-
-X2. Lines 11-14 of both files: "The first action on a code-changing task is:" `git worktree add -b <branch> ./.worktrees/<branch-with-slashes-as-plus> origin/<integration>`. Proposed correction: "For a fresh Capstan task, do not run that command first. Inspect and resolve the integration base, run git fetch origin <resolved-base>, record the SHA, then run git worktree add -b capstan/N ./.worktrees/capstan+N <recorded-sha>. If the matching issue worktree already exists, continue it without rebasing or recreating it. If only the matching capstan/N branch exists, attach it without -b. OpenClaw stays in the original checkout."
+A host or user instruction file does not change a Capstan delivery's completion endpoint or its fetch-then-worktree order.
 
 ## Evidence and reconciliation
 
