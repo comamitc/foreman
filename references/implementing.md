@@ -7,13 +7,15 @@ design or closure of its findings.
 
 [contract](contract.md) owns feature-map resolution and heading shape.
 
-[planning](planning.md) owns feature-map adoption. [planning](planning.md) owns documentation backfill.
+[modes/feature-map-adoption](modes/feature-map-adoption.md) ("This file owns feature-map adoption") owns feature-map adoption.
+
+[modes/documentation-backfill](modes/documentation-backfill.md) ("This file owns documentation backfill") owns documentation backfill.
 
 [review](review.md) owns what counts as a required map update.
 
-[planning](planning.md) owns the feature-map audit.
+[modes/feature-map-audit](modes/feature-map-audit.md) ("This file owns the feature-map audit") owns the feature-map audit.
 
-[planning](planning.md) owns the ADR rule.
+[modes/adr](modes/adr.md) ("This file owns the ADR rule") owns the ADR rule.
 
 When a map is present and [review](review.md) requires a map update, the plan names the feature file and the index line. The implementing pack includes those paths as Named files. Write that update in the same commit as the behavior.
 

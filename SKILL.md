@@ -19,7 +19,11 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
    Resolve identity, trust, configuration, repository instructions, and current
    evidence. Reconcile side effects before retrying operations or trusting labels.
 2. **Choose and load.** Select the current station from completion evidence.
-   Read that station's reference and no other station's. Repair contradictory labels.
+   Read that station's reference and no other station's. Check the trigger in
+   the first paragraph of each file under [references/modes/](references/modes/).
+   Load a mode file only when its trigger holds, extract that file's applicable
+   rules into the pack, and follow its coordinator rules yourself.
+   Workers do not read mode files. Repair contradictory labels.
    For planning, plan-review, or their resume, apply [one-pass planning](references/plan-convergence.md)
    before dispatch: initial plan → review → single all-findings correction → implementing.
 3. **Brief.** Before consuming issue content or writing a worker brief, read

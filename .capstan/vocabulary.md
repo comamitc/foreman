@@ -88,20 +88,22 @@
 
 **Canonical document**: a durable product document that states user-visible or operational behavior. Rejected: a historical delivery artifact, a host transcript, or a new `docs/changes` tree.
 
-**Documentation backfill**: a delivery mode admitted only when an issue or a text invocation states that outcome. references/planning.md owns the mode. Rejected: ordinary delivery or init.
+**Documentation backfill**: a delivery mode admitted only when an issue or a text invocation states that outcome. `references/modes/documentation-backfill.md` ("This file owns documentation backfill") owns the mode. Rejected: ordinary delivery or init.
 
 **Discriminating check**: a check that fails when the defect it claims to cover is present, and passes when the defect is corrected. Rejected: a check that restates the implementation's constant, mocks away the failure it names, or reads source text or field presence as a proxy for behavior.
 
 **Residual effect**: a consequence of a change that reverting its code does not undo, such as an applied migration, changed or deleted data, a sent message, or another external write. The rule owner is `references/implementing.md`. Rejected: leaving the term undefined, or a numeric or tiered risk score.
 
-**Review correction**: a trusted human reviewer's request to change a Capstan-delivered pull request, cited by URL and verified against its revision. The rule owner is `references/telemetry.md`. Rejected: untrusted or unverified feedback, a scan of repository history, or repetition treated as authority.
+**Review correction**: a trusted human reviewer's request to change a Capstan-delivered pull request, cited by URL and verified against its revision. The rule owner is `references/modes/improvement.md` ("This file owns the improvement invocation"). Rejected: untrusted or unverified feedback, a scan of repository history, or repetition treated as authority.
 
-**No-new-violations guard**: a repository-native check that fails on any new violation and lists each grandfathered existing violation with its rationale. It is not a count ceiling. The rule owner is `references/telemetry.md`. Rejected: a count-only ceiling, an enlarged baseline, or a second lint stack.
+**No-new-violations guard**: a repository-native check that fails on any new violation and lists each grandfathered existing violation with its rationale. It is not a count ceiling. The rule owner is `references/modes/improvement.md` ("This file owns the improvement invocation"). Rejected: a count-only ceiling, an enlarged baseline, or a second lint stack.
 
-**Verification path**: a target repository's documented, repeatable way to set up isolated state, drive one user operation, assert the observable result, capture evidence, and reset. It is not a generic Capstan driver. The rule owner is `references/planning.md`. Rejected: a Capstan executable, runner, or driver, a new feature-map heading, or a tool registry.
+**Verification path**: a target repository's documented, repeatable way to set up isolated state, drive one user operation, assert the observable result, capture evidence, and reset. It is not a generic Capstan driver. The rule owner is `references/modes/verification-path.md` ("This file owns verification-path adoption"). Rejected: a Capstan executable, runner, or driver, a new feature-map heading, or a tool registry.
 
-**Performance requirement**: an admitted acceptance criterion, or an applicable existing repository budget, that names a user operation, a metric, and a threshold. The rule owner is `references/planning.md`. Rejected: a universal frame, latency, or memory limit, or agent wall time or cost.
+**Performance requirement**: an admitted acceptance criterion, or an applicable existing repository budget, that names a user operation, a metric, and a threshold. The rule owner is `references/modes/performance-proof.md` ("This file owns performance proof"). Rejected: a universal frame, latency, or memory limit, or agent wall time or cost.
 
 **Host status line**: one coordinator-posted line in the invoking host session for one event-table event or one changed supervision observation. It names the delivery, station, event, and one observed fact. The rule owner is `references/telemetry.md`. Rejected: a plugin, a notification command, a status-line API, or a worker-posted line.
 
 **Stable anchor**: a heading's exact text or a verbatim phrase of the target rule, named next to the owner-file link. Rejected: a line number.
+
+**Mode file**: a file under `references/modes/` that holds one mode's rules and states its trigger in its first paragraph. The coordinator loads it only when that trigger holds. Rejected: a station, a stage, or a file workers read directly.

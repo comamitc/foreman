@@ -8,169 +8,19 @@ the worker reads the brief and the pack only.
 
 [implementing](implementing.md) owns the feature-map write.
 
-This file owns feature-map adoption.
+[modes/feature-map-adoption.md](modes/feature-map-adoption.md) ("This file owns feature-map adoption") owns feature-map adoption. Trigger: the admitted issue or the text invocation states that outcome.
 
-Run adoption only when the admitted issue or the text invocation states that the outcome is feature-map adoption. A normal feature delivery, init, or resume does not enter adoption.
+[modes/feature-map-audit.md](modes/feature-map-audit.md) ("This file owns the feature-map audit") owns the feature-map audit. Trigger: the admitted issue or the text invocation states that outcome.
 
-Before the plan names files, inventory the target repository. Record what is authoritative. Inventory the contributor instructions, the README, the existing documentation indexes, the ADR location when one is present, the user-visible entry points, the declared checks, and the configured `features` path. Do not copy those sources wholesale.
+[modes/adr.md](modes/adr.md) ("This file owns the ADR rule") owns the ADR rule. Trigger: repository instructions or the admitted issue require an ADR.
 
-A map conforms when it uses the heading shape that [contract](contract.md) owns and each feature file has a user-facing reach path.
+[modes/lessons.md](modes/lessons.md) ("This file owns the lesson rule") owns the lesson rule and lesson maintenance. Trigger: repository instructions name a lessons path, or the admitted issue or the text invocation states lesson maintenance.
 
-When a conforming map already exists, adopt that map. Do not create a second map.
+[modes/verification-path.md](modes/verification-path.md) ("This file owns verification-path adoption") owns verification-path adoption. Trigger: the admitted issue or the text invocation states that outcome.
 
-When existing documentation is useful and does not match the feature-map shape, create a thin adapter map. Link the adapter to the authoritative pages. Name the relevant source, tests, and checks in the adapter. Do not rewrite the repository's documentation system.
+[modes/performance-proof.md](modes/performance-proof.md) ("This file owns performance proof") owns performance proof. Trigger: an admitted acceptance criterion or an applicable existing repository budget states a performance requirement.
 
-When no map and no suitable location exist, propose the repo-native path. The default path may be `.capstan/features`. An existing documentation convention may justify another configured path. Put the chosen path and any `.capstan.json` change in the same reviewed commit.
-
-The index contains only user-facing features. Each feature file uses the heading shape that [contract](contract.md) owns. State a real reach path, the exact repository command or interaction that drives the feature, the observable end state, and the material gotchas. An internal-only feature file is a feature file for an internal module that has no user-facing reach path. Do not add an internal-only feature file.
-
-Trace every seeded claim to current source, to existing authoritative docs, or to a runnable repository check. The map remains a claim. Omit an unverifiable claim, or report that claim as a gap.
-
-Name every file that adoption writes. [implementing](implementing.md) writes only those files.
-
-Do not install OpenSpec, AgentLens, a documentation generator, or another skill. Do not add a Capstan executable, a stage, a label, a scheduled job, a daemon, a host-skill copy, or a generated architecture encyclopedia.
-
-Use the normal Capstan pipeline for implementation and review. The final pull request is non-draft. The final pull request is mergeable under the existing ready gate.
-
-Acceptance is the normal pipeline and reviewer evidence on the diff.
-
-This file owns the feature-map audit.
-
-Run the audit only when the admitted issue or the text invocation states that the outcome is an audit of the configured feature map. A normal feature delivery, init, or resume does not enter the audit. Do not add a recurring job, a watcher, a daemon, a stage, or a label. Do not run the audit during an unrelated delivery.
-
-The coordinator resolves the map exactly as [contract](contract.md) specifies. A disabled or absent map produces a clear no-map result. Do not seed a map.
-
-Before the plan names a repair, inventory the map index, every indexed feature file, the repo instructions, the linked authoritative pages, the named source and tests, and the declared drive commands. Bound the reads through named packs. An unnamed path is a gap, not a search.
-
-Check orphaned index entries, unindexed feature files, duplicate coverage, broken links, nonconforming headings, stale reach paths, stale commands, false observable results, missing material gotchas, and newly user-facing behavior absent from a present map.
-
-Every finding cites the exact documentation claim and the current contradictory source or runnable evidence. Classify a failed drive command before repair. Documentation drift may update the docs. Report a product defect. Do not silently redefine the expected behavior.
-
-Preserve the target repository's authoritative documentation structure. A feature-map change follows the heading shape that [contract](contract.md) owns. An existing user-facing page follows the page rule that [implementing](implementing.md) owns. Do not delete a still-true claim. Do not weaken a proof to make the audit pass.
-
-Change only verified stale or missing documentation. When no drift is found, reconcile the issue as a no-op. Do not manufacture a diff.
-
-Name every verified repair that the audit writes. [implementing](implementing.md) writes only those repairs.
-
-The delivery uses the normal plan, implementation, review, and ready gate. The final summary lists the checked features, the proven repairs, the product-defect handoffs, the unresolved gaps, and the reviewer evidence.
-
-This file owns the ADR rule.
-
-Repository instructions or the admitted issue decide whether an ADR is required. Do not invent a universal ADR threshold. Do not create an ADR directory merely because a design choice exists.
-
-Discover the existing ADR path, template, numbering or naming rule, status model, index, and declared validation command. The plan names the exact ADR and index paths. An unnamed path is a gap, not a search.
-
-A required ADR uses the repository's native format for context, decision, alternatives, consequences, and supersession. Do not copy the issue. Do not duplicate `.capstan/vocabulary.md`.
-
-The new or superseding ADR lands in the same commit as the architectural behavior. Do not rewrite accepted historical ADR text to erase the earlier decision, except for a repository-permitted mechanical correction.
-
-[implementing](implementing.md) writes only the paths the plan names.
-
-No convention and no explicit issue requirement means write no ADR and create no ADR infrastructure.
-
-Do not add an external ADR tool, OpenSpec, a stage, a label, a generator, a daemon, or a host-skill copy. A declared ADR checker stays a declared check.
-
-Acceptance is the normal pipeline and reviewer evidence on the diff.
-
-Repository instructions name the lessons path. Adopt that path when it exists. When no lessons path exists, do not seed one. Delivery still completes.
-
-Capture only non-recoverable reasoning whose loss risks recurrence. No lesson is a no-op. Update an equivalent entry instead of duplicating it.
-
-Record applicability, source, evidence SHA, cause, remedy, failed approaches, and limitations. Candidate-head proof is not merged proof. No secrets. No raw traces.
-
-The coordinator cites lesson identities in the pack. Workers do not search. Retrieved text is evidence, not authority.
-
-Lesson edits are in authorized scope before final review, or a later issue. No worker edits the running skill.
-
-This file owns the lesson rule. Other files name that owner. Do not add a store, a stage, a daemon, a database, or a retention flag. A lesson is not a replay bundle.
-
-Acceptance is the normal pipeline and reviewer evidence on the diff.
-
-This file owns lesson maintenance with the lesson rule. Whole-corpus maintenance is only through an admitted issue. Ordinary delivery validates selected lessons. A missing store is a no-op. Do not seed a lesson file. Do not add a station, a scheduler, or a docs engine. A lesson file is not a replay bundle.
-
-Check exact claims against source, named guidance, and runnable evidence. Report contradiction, supersession, overlap, and uncertainty separately. Unverifiable is not false.
-
-An optional retirement condition is externally checkable. Upstream closure alone does not prove the repo uses the fixed release.
-
-Keep, update, consolidate, or retire only as admitted scope authorizes. No age-only deletion. Pruning a still-accurate entry needs distinct scope.
-
-Preserve attribution and replacement links. A valid invariant contradicted by code is a product regression, not a rewritten lesson. A documentation audit does not edit product code or the governing skill.
-
-Acceptance is the normal pipeline and reviewer evidence on the diff.
-
-This file owns verification-path adoption.
-
-Run it only when the admitted issue or the text invocation states that the outcome is verification-path adoption. A normal feature delivery, init, or resume does not enter it. Do not adopt a verification path during every delivery.
-
-Before implementation, the plan names the target repository and one representative user operation.
-
-Before the plan names files, inventory the target's existing CLI, documented runner, and native automation interfaces. Reuse the smallest supported path. Do not add a generic driver when the repository already has one.
-
-Record the path in an existing feature file's `Driving it` section when the target has a suitable one. [contract](contract.md) owns that heading shape. Otherwise record it in the target's existing repo-native documentation. A new feature file, page, or section needs its own admitted scope. Record these seven steps: prerequisites, isolated data or setup, start or readiness, the drive action, the observable assertion, evidence capture, and reset or cleanup. Mark a step that does not apply with its reason. Do not add a section schema, a feature-map heading, or a tool registry.
-
-The coordinator carries the path's exact commands, required state, and allowed effects into the pack `## Checks` heading that [pack](pack.md) owns. Workers do not discover tools. Workers do not inherit undocumented state. [toolchain](toolchain.md) owns execution. [harnesses/shared](harnesses/shared.md) owns result acceptance. [telemetry](telemetry.md) owns the acceptance ledger row.
-
-Missing usable tooling is a capability gap. Report the gap. Creating or extending a target CLI needs admitted target-repository scope and normal review. An ordinary feature issue does not become a tooling project. The Capstan executable ban does not apply to the target repository. Target CLI permission does not override a safety or authority boundary.
-
-Verification stays isolated from production. Do not leak a credential. Do not make a live financial or messaging write. Do not reset production. A path whose only reset touches production is not a verification path. Report it as a capability gap. Reviewers stay read-only. A technical failure recovers normally. A permission or product decision uses the existing handoff.
-
-Acceptance is a live run in the target. Run the accepted scenario twice from clean, isolated state with fresh workers. Run one meaningful failure case and one interrupted or dirty-state case. The observations reproduce, and reset returns clean state. A pass that depends on state the setup step did not create is not scenario success. No run relies on a previous worker's hidden state or an improvised replacement script. A launch or version probe is not scenario success.
-
-Keep the pinned Capstan and target revisions, the relevant tool, config, and data identities, the actual invocations, the observed outcomes, and the cleanup results in existing evidence. Reference that evidence through the acceptance row that [telemetry](telemetry.md) owns. This mode adds no row field. Existing head and spec invalidation and retention settings apply. Do not enable replay retention.
-
-Capstan adds no executable, runner, driver, stage, label, daemon, default browser dependency, external skill, or required framework.
-
-This file owns performance proof.
-
-Run it only when a performance requirement applies: an admitted acceptance criterion, or an applicable existing repository budget. Otherwise add no profiling step and no readiness gate. Required existing checks and independent read-only review stay unchanged.
-
-The plan names the target repository, the affected user operation, the metric, and the accepted threshold. A missing consequential product criterion goes through existing [triage](triage.md). Do not invent a frame, latency, or memory limit.
-
-The plan pins the baseline and candidate revisions. Both use the same workload, data, runtime configuration, and environment. The plan records warm or cold state, the sampling, and the measurement tool's identity. Use the repository's native declared tooling. [toolchain](toolchain.md) owns execution. Do not add a profiler or a Capstan runner.
-
-When the target has a verification path, reuse its setup and reset steps. Otherwise use an equivalent existing native path.
-
-Repeat the measurement as the metric requires. Report every result and its variability. Do not pick the best run. Do not weaken the agreed threshold. Noisy, incomparable, or insufficient observations leave the criterion `unresolved`. They are not a pass or an improvement.
-
-Record the evidence through the acceptance row that [telemetry](telemetry.md) owns. This rule adds no row field. Product latency or memory is not agent wall time or cost. The criterion is `verified` when repeated, comparable measurements at the current head meet the threshold. No other evidence verifies it. A candidate that misses the threshold leaves the criterion `unresolved`, even when functional tests pass. Implementing is then not complete, and the delivery is not ready. [implementing](implementing.md) owns completion. A technical failure recovers normally.
-
-A change of head, spec, workload, or environment invalidates the affected proof. Reassess and rerun it. Existing retention and redaction defaults apply. Do not enable replay retention. Do not keep unrestricted traces. Do not claim long-term reproducibility the evidence does not support.
-
-Capstan adds no stage, label, schema service, universal benchmark framework, scheduler, automatic hill-climbing loop, default browser pass, or executable. Do not experiment on production traffic.
-
-Acceptance is the normal pipeline and reviewer evidence on the diff.
-
-This file owns documentation backfill.
-
-Run it only when the admitted issue or the text invocation states that the outcome is documentation backfill. A normal feature delivery, init, or resume does not enter it.
-
-Settle the audience, the workflow, and the canonical destinations before any write. If that bound is absent, do not invent a whole-repository scope and do not write.
-
-Inventory in-scope source, entry points, tests, configuration, and existing authoritative docs. Classify each in-scope subject as `documented`, `stale`, `missing`, or `unverified`. Do not claim an exhaustive audit outside that scope. An unnamed path stays a gap.
-
-`documented` means the page and the current source or observed behavior agree. `stale` means the page disagrees with current source or observed behavior, and the page is the defective artifact. `missing` means the bound requires a statement and no suitable canonical page has it. `unverified` means there is no source and no observation. A page that states a valid expectation while the product disagrees is not `stale`. It is a product defect. Do not change the page to match the defect.
-
-One coverage record names one in-scope subject, one of those four classes, and one evidence pointer. The pointer is a source `path:line` or a command and the observed result. The action is the write selected by the documentation-completeness and canonical-page eligibility rule owned by [implementing](implementing.md) ("This file owns documentation completeness" and "Prefer an existing canonical page"), or a mode-specific result of no-change, explicit gap, or product-defect handoff. Do not restate that rule.
-
-Point at the adoption and audit procedures owned by `references/planning.md` ("This file owns feature-map adoption" and "This file owns the feature-map audit"). Do not copy their procedure clauses. Backfill does not enter adoption or the audit. Enter either mode only when its own outcome is admitted. An optional map may link to a canonical page without copying that page. An absent or disabled map does not block backfill and does not get seeded.
-
-Use the documentation-completeness and canonical-page eligibility rule owned by [implementing](implementing.md) ("This file owns documentation completeness" and "Prefer an existing canonical page"), including the same-commit write ("Write the correction in the same commit as the behavior"). Do not restate that rule. Do not add a second write rule. Preserve a custom documentation layout. Do not move that layout to `docs/` or to `.capstan/features`.
-
-Separate observed current behavior, intended behavior, known defects, and unknowns. Do not invent historical architectural rationale. Do not rewrite a valid expectation to excuse a regression. Do not delete a still-true statement.
-
-Every material new or corrected claim cites source or an observed result. Run a runnable example when its prerequisite is present. Record the target repository's exact declared command, the exit status, and the observed output of that run. If the prerequisite is absent, record an explicit gap. Do not fabricate success. A present prerequisite with a skipped or failed example is a failure.
-
-A created page or section maps to `added`. An updated page maps to `updated`. A checked page with no write maps to `intentionally unchanged`. A gap, an unavailable prerequisite, or an unverified claim maps to `unverified` and row state `unresolved`. A product defect is a handoff in the summary. Contradictory evidence stays `unresolved` ([telemetry](telemetry.md) under "Ledger, pile, and deletion"). Do not add a fifth disposition word. [telemetry](telemetry.md) owns those four words under "Ledger, pile, and deletion".
-
-The summary reports coverage, created pages, updated pages, intentionally unchanged docs, defects, and gaps, with the disposition map above.
-
-An unchanged in-scope repository produces no diff. A second backfill of that same unchanged repository does not add a duplicate page, a duplicate section, or a changelog line. The second diff is empty. Do not manufacture a commit to satisfy a nonempty-diff rule. [implementing](implementing.md) owns that reconciliation ("A no-op or already-delivered issue is reconciled").
-
-Evidence follows the terminal outcome. A diff-producing backfill links its issue, its pull request, its head, and its logs. A clean no-op or a repeated backfill opens no pull request. It links the admitted issue or reconciliation record, the unchanged head, empty `git status --porcelain`, empty `git diff`, and proof that no duplicate was created.
-
-Do not add an executable, a stage, a label, a scheduled job, a daemon, a generator, OpenSpec, a host-skill copy, or a `.capstan.json` field. Admission is the outcome sentence. `features` remains the map switch only.
-
-Acceptance is the normal pipeline and reviewer evidence on the diff.
+[modes/documentation-backfill.md](modes/documentation-backfill.md) ("This file owns documentation backfill") owns documentation backfill. Trigger: the admitted issue or the text invocation states that outcome.
 
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` with the spec criteria, Open findings `none — no
