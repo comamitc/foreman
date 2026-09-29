@@ -8,8 +8,17 @@ carry reads `none` plus the reason.
 1. Header line: delivery, station and attempt, candidate identity (spec revision,
    plan comment URL and revision, or `BASE...HEAD` SHAs).
 2. `## Acceptance criteria`: the applicable criteria quoted from the admitted spec.
-3. `## Candidate`: the current plan text verbatim, or the saved `git diff BASE...HEAD`
-   output verbatim under its exact command line.
+3. `## Candidate`: the candidate verbatim, by station.
+   - Plan-review and single correction: the current plan text in full.
+   - Implementing: the plan's identity lines (specification revision, observed
+     head / base, planning step) and its `Ordered items`, `Documentation impact`,
+     and `Final proof` sections verbatim. `Current behavior and data shape` and
+     `Simplicity decision` stay out, except the specific passage a carried item
+     cites, quoted alone. The finding handoff travels as rows under Open
+     findings; no other plan or result section travels.
+   - Code review and fix: the saved `git diff BASE...HEAD` output verbatim under
+     its exact command line. A review or fix pack that carries plan text carries
+     only the sections an implementing Candidate carries.
 4. `## Open findings`: rows in the `references/findings.md` obligation format.
    Implementing and review packs carry every planning finding with its proposed
    treatment or refutation and unfinished items; never prior essays.

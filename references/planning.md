@@ -59,6 +59,7 @@ the worker reads the brief and the pack only.
    verification. Preserve settled scope and report any omissions. A gap the
    correction returns goes forward to implementing as an unresolved obligation
    with the affected finding's acceptance condition, never to another correction.
+   [One-pass planning](plan-convergence.md) ("The correction returns only changed plan content") owns what the correction returns, the merge, and publication.
 5. Verify unchanged tree/head and write only the assigned result.
 
 The plan names declared checks. It does not resolve a runner. The coordinator

@@ -17,7 +17,7 @@ skip the correction. There is no second plan-review or planning escalation loop.
 | Initial plan, no complete review | Fresh secondary reviews once |
 | Complete review, no actionable findings | Enter implementing |
 | Complete review with findings, correction not launched | Fresh primary corrects the plan once against ALL findings |
-| Correction returned | Check coverage, publish the handoff, enter implementing |
+| Correction returned | Merge the changes, check coverage, publish the merged plan and the handoff, enter implementing |
 | Correction interrupted or incomplete | Preserve its output; hand off unfinished obligations to implementing |
 
 One correction means one pass over all N findings, not one finding per pass. Its
@@ -27,9 +27,22 @@ check, an evidence-backed proposed refutation, or an explicitly identified
 prerequisite. Update affected plan items, not just a response table. Preserve
 settled scope; keep the correction proportional to the feedback.
 
-The coordinator checks that every finding is represented in the handoff; this is
-a coverage check, not another design review. A correction is a proposed treatment,
-not verified closure. Carry the original review, corrected plan, and every finding
+The correction returns only changed plan content under `## Plan`: for each
+changed section or item, its heading or item number in the current plan, the
+action (add, replace, or delete), and the replacement text. Keys stay the
+current plan's; an added item takes the next unused item number, and nothing
+is renumbered. It returns the complete finding handoff under
+`## Revision response`. There is no other template or schema. The coordinator
+applies the changes to the current plan in the order returned and publishes
+the whole merged plan as the next revision; resume and later stations read that
+one revision.
+
+The coordinator checks coverage by action: every added or replaced section or
+item is present at its key in the merged plan, every deleted one is absent at
+its key, and every finding is represented in the handoff. This is a coverage
+check, not another design review. A correction is a proposed treatment, not
+verified closure. Carry the original review, the merged plan's carried sections
+([pack](pack.md) ("Implementing: the plan's identity lines")), and every finding
 into the implementation brief using [finding resolution](findings.md). If a finding
 was omitted or inadequately treated, retain it as unresolved with its original
 acceptance condition and an explicit implementation task; never infer closure.

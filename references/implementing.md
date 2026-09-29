@@ -39,7 +39,7 @@ Do not create `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`. Do not write `CONTEXT.m
 
 The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
-1. Read the brief and the pack: the current plan text, every carried finding row
+1. Read the brief and the pack: the plan sections [pack](pack.md) ("Implementing: the plan's identity lines") names, every carried finding row
    with its proposed disposition including unfinished correction work, the rule
    extract, the commands the plan names plus the final gates, and the plan's
    affected files and tests as Named files. A write station may read named files
