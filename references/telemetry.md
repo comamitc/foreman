@@ -16,15 +16,31 @@ invocation override) apart from effective configuration and without its value,
 budget start, the
 resolved deletion switch, and
 a chronological station/attempt table. Write
-one row per station attempt. The columns are stage, start UTC, end UTC, wall time,
-role, harness, and reported usage. Also record harness
-version, model, effort, safety mode, process exit/session, checks and exit
+one row per station attempt.
+
+This file owns the attempt table. The attempt table has these columns, in this order:
+
+`| Stage | Attempt | Start UTC | End UTC | Worker wall | Coordinator wall | Role | Harness | Reported usage |`
+
+- Stage: one stage name from the [contract](contract.md) stage table ("Stage projection"), without `capstan:`. Nothing else goes in this cell.
+- Attempt: the qualifier. `attempt N` for a station attempt; `round R, attempt N` for review and fix; `probe KIND, attempt N, RESULT` for a launch probe, where KIND is `read` or `write` and RESULT is `pass` or `fail`, in the row of the stage at which the probe ran; in pre-merge, `attempt N`, `CI wait N`, and `repair, attempt N`. N and R count from 1.
+- Start UTC, End UTC: `YYYY-MM-DDTHH:MM:SSZ`. The coordinator's observed attempt start and end (station-start/worker-start, station-end/worker-end). When the coordinator did not observe one, that cell is the supervisor record's process start or exit when a worker ran, else `unknown`.
+- Worker wall: process exit minus process start from the supervisor record. `not timed` when the row has no worker process. `unknown` only when that record is gone.
+- Coordinator wall: when the coordinator observed both Start UTC and End UTC, End UTC minus Start UTC minus the row's worker duration. For this calculation, a row with no worker process uses zero worker duration; its Worker wall cell still shows `not timed`. `not timed` when the coordinator did not observe both bounds. `unknown` when Worker wall is `unknown`.
+- Duration format, for every wall cell and wall total: `45s` below one minute, `2m18s` below one hour, `1h08m26s` otherwise. Use whole seconds. Every unit after the first has two digits.
+- Role: `coordinator`, `primary`, `secondary`, or `fallback`.
+- Harness: name and version, model, and effort, for example `claude 2.1.284 claude-opus-5-5 high`. Write `none` for a row with no worker.
+- Reported usage: space-separated `field=value` pairs under the harness's own field names (rules below), or `unknown`.
+
+Pre-merge rows separate CI wait from repair. The `attempt N` row spans the station attempt and has no worker process, so its Worker wall is `not timed` and counts as zero. Its Coordinator wall is End UTC minus Start UTC, minus the span (End UTC minus Start UTC) of each `CI wait` and `repair` row inside it. It is `unknown` when any of those rows lacks a bound. A `CI wait N` row runs from the first observation with a required check pending to the settled `check` event. It has no worker, so its Coordinator wall is its full span. A `repair, attempt N` row is the in-diff repair worker ([pre-merge](pre-merge.md)).
+
+Also record harness
+version, model, effort, safety mode, process start, exit, and session, checks and exit
 results, head before/after, finding census, recovery hypotheses, label changes,
-and evidence paths/remote URLs. A launch probe writes one row per probe attempt, with the stage at which it ran, its recipe kind (read or write), and its result (pass or fail); the fields above supply harness version, model, and wall time. A failed attempt's row carries its exit status and redacted raw error. [harnesses/shared.md](harnesses/shared.md) owns the probe. Say `unknown` when not reported; never estimate or use zero for missing usage. A field the harness did not report is `unknown`,
+and evidence paths/remote URLs. A failed attempt's row carries its exit status and redacted raw error. [harnesses/shared.md](harnesses/shared.md) owns the probe. Say `unknown` when not reported; never estimate or use zero for missing usage. A field the harness did not report is `unknown`,
 not zero and not an estimate. Coordinator-only stages with no process
-timer, such as triage and ready, stay in the table. Their wall is `not timed`
-unless a start and an end were both observed. Print observed timestamps, such as
-spec admission and the ready label. A supervisor record that still has the start and the exit is observed. If the exit notice lacks those clocks, read that record, then write the ledger row. Publishing `unknown` for start, end, or wall while that record still has them is a telemetry gap, not a permitted `unknown`. `unknown` remains only when that record is gone, and the summary names the gap. A missing clock does not block ready-to-deploy. Do not name a host path. Avoid adding both session totals and their
+timer, such as triage and ready, stay in the table. Print observed timestamps, such as
+spec admission and the ready label. A supervisor record that still has the start and the exit is observed. If the exit notice lacks those clocks, read that record, then write the ledger row. Publishing `unknown` for process start, process exit, or Worker wall while that record still has them is a telemetry gap, not a permitted `unknown`. `unknown` remains only when that record is gone, and the summary names the gap. A missing clock does not block ready-to-deploy. Do not name a host path. Avoid adding both session totals and their
 constituent turn totals. Sum token fields only within one harness and one field.
 Do not add cache reads again into a single mixed total. Do not add reasoning tokens
 again on top of output when the harness already counts them inside output. Name the
@@ -75,12 +91,11 @@ publishing the summary. At review exhaustion, do not project
 after the exhaustion decision when no ready label is projected. At
 terminal readiness or review exhaustion, publish a marked issue summary from
 `ledger.md`. Do not recompute it from the pile. The summary contains
-PR URL, current head/base, observed ready-gate or exhaustion facts, one station
-attempt table, two wall totals, token totals per harness and per field, findings addressed/refuted,
+PR URL, current head/base, observed ready-gate or exhaustion facts, the ledger's
+attempt table (copied unchanged: the same columns, order, and cell formats), two wall totals, token totals per harness and per field, findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
-disclosures, and gaps. The attempt-table field rules are stated above. Worker-process
-wall is the sum of attempt rows that have a
-process start and exit. End-to-end wall is from spec admission to the ready-label
+disclosures, and gaps. The attempt-table field rules are stated above. Both wall totals use the duration format above. Worker-process
+wall is the sum of the Worker wall cells, where a `not timed` cell adds zero. If any contributing Worker wall is `unknown`, the Worker-process wall total is `unknown`. End-to-end wall is from spec admission to the ready-label
 read-back, before summary publication, or to the review-exhausted summary
 publication. A bound that was not
 observed is `unknown`. The supervisor-record rule above is that observation. The two totals are not substitutes for each other. A telemetry
@@ -90,7 +105,7 @@ not an unrecoverable run. A failed GitHub summary publication uses normal transi
 recovery; do not pretend it published. Remote progress evidence preserves budget
 and rerun history across local deletion.
 
-Emission follows the summary read-back. The coordinator's final message in the host session contains the stage-analysis table, the two wall totals, and the token totals line, copied unchanged from the published summary. A URL may follow. The URL alone does not satisfy this. Trigger only at
+Emission follows the summary read-back. The coordinator's final message in the host session contains the stage-analysis table, the two wall totals, and the token totals line, copied unchanged from the published summary in the summary's columns, order, and formats. A URL may follow. The URL alone does not satisfy this. Trigger only at
 verified `capstan:ready-to-deploy` or review exhaustion. The table stays terminal-only.
 The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
 No plugin, notification command, or status-line API. Workers do

@@ -30,6 +30,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    For another CI provider use its documented authorized interface; do not invent
    a rerun endpoint. Observe at intervals of at most 60 seconds. The CI timeout is
    a diagnosis/re-observation boundary, not a human blocker or automatic success.
+
+   CI waits and repair workers: see [telemetry](telemetry.md) ("The attempt table has these columns, in this order").
 4. Observe review decision and required approvals. Agent census approval does not
    substitute for required GitHub human review. Missing required approval uses
    `authority-required` with one concrete requested action. Resume on observation.

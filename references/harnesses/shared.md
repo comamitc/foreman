@@ -58,9 +58,10 @@ A worker that is already running the check does not restart it, does not kill it
 The station result records the coordinator's command, that exit code, and a summary of the output. A worker sentence that the check stalled at a percent is not a check result.
 5. Capture redacted raw output plus the Markdown result. Record wall time and exit.
    Before the summary, copy the supervisor record's process start and process
-   exit into the station-end ledger row. Wall time or uptime on the exit notice
-   does not fill start or end. It does not authorize `unknown` while that record
-   still has them. [references/telemetry.md](../telemetry.md) owns the row fields,
+   exit into the station-end ledger row; Worker wall is their difference. Wall
+   time or uptime on the exit notice does not fill start, end, or Worker wall. It
+   does not authorize `unknown` while that record still has them.
+   [references/telemetry.md](../telemetry.md) owns the row fields ("The attempt table has these columns, in this order"),
    `unknown`, and the wall totals.
    Record the worker's operation count (its numbered lines under `## Checks`)
    against the brief ceiling. That list is authoritative. Record each harness
