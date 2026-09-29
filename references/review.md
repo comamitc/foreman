@@ -42,7 +42,8 @@ a new user-facing behavior is added to a present map.
 Omitting required canonical coverage blocks. An unsupported behavior claim
 blocks. Rewriting a valid documented invariant to fit a regression blocks.
 Deleting a still-true statement to avoid the update blocks. Changed-head
-invalidation follows `references/telemetry.md:129`.
+invalidation follows `references/telemetry.md`
+("A changed spec or a changed head invalidates the affected claims").
 
 Invented historical architectural rationale blocks. A claim of an exhaustive
 audit outside the admitted scope blocks. A manufactured diff, duplicate page,
@@ -98,7 +99,7 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    cheap targeted fault injection, when either is meaningful. Do not require
    mutation testing on every change, a new test framework, or
    per-function suites. [references/ladder.md](ladder.md) owns that limit
-   (`references/ladder.md:29`).
+   (`references/ladder.md` under "Check").
    Judge the red or fault-injection evidence the pack carries. Trace that
    evidence against the saved diff when needed. Do not change the tree.
    Do not produce the red evidence. A correction uses the

@@ -103,3 +103,5 @@
 **Performance requirement**: an admitted acceptance criterion, or an applicable existing repository budget, that names a user operation, a metric, and a threshold. The rule owner is `references/planning.md`. Rejected: a universal frame, latency, or memory limit, or agent wall time or cost.
 
 **Host status line**: one coordinator-posted line in the invoking host session for one event-table event or one changed supervision observation. It names the delivery, station, event, and one observed fact. The rule owner is `references/telemetry.md`. Rejected: a plugin, a notification command, a status-line API, or a worker-posted line.
+
+**Stable anchor**: a heading's exact text or a verbatim phrase of the target rule, named next to the owner-file link. Rejected: a line number.
