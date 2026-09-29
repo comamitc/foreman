@@ -274,11 +274,11 @@ No Launch, Doctor, Evidence, Cleanup, or Helpers section.
 Defaults: primary claude; secondary codex; optional fallback grok; model and effort
 null; transient_retries 3; same_failure_attempts 2;
 run_wall_timeout_min 360;
-max_cost_usd null; worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
+worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
 review_policy block_threshold medium, min_confidence 0.70,
 max_review_fix_rounds 3, surface_recurrence_rounds 3.
-Timeouts must be positive; retry counts nonnegative integers; cost positive or
-null; unsafe_autonomy boolean. Review threshold must be critical/high/medium/low,
+Timeouts must be positive; retry counts nonnegative integers;
+unsafe_autonomy boolean. Review threshold must be critical/high/medium/low,
 confidence from 0 through 1, max rounds a positive integer, and recurrence rounds
 a nonnegative integer where 0 disables that early guard. Null model/effort uses the harness default and is
 recorded as such. Null fallback disables it. Prefer a different available secondary;
@@ -290,11 +290,15 @@ drop an effort setting. Record effective nonsecret configuration in `ledger.md`.
 `recovery.plan_revision_attempts` and `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`
 are retired and handled like any unknown field: called out and ignored.
 
-Budget begins when the run is accepted and survives ordinary resume through
-remote activity/summary timestamps. Loss of local telemetry does not reset it.
-Use earliest reliable run evidence; unknown cost remains unknown. If a configured
-cost limit cannot be measured, request a budget decision before unbounded spending;
-offer the measurable wall budget. Do not invent prices or usage.
+`recovery.max_cost_usd` and `CAPSTAN_RECOVERY_MAX_COST_USD` are retired and
+handled like any unknown field: called out, ignored, and recorded in `ledger.md`,
+including as an invocation override. A set value does not trigger a budget
+decision.
+
+The only run budget is wall time (`recovery.run_wall_timeout_min`). Budget begins
+when the run is accepted and survives ordinary resume through remote
+activity/summary timestamps. Loss of local telemetry does not reset it. Use
+earliest reliable run evidence. Do not invent prices or usage.
 
 ### Init
 
@@ -309,7 +313,7 @@ named checkout. Recommend a primary and a different secondary only from CLIs tha
 answered. Do not invent a model, effort, or harness. When the observed primary
 and a different observed secondary are unambiguous, select that pair and report
 it. Do not ask. Do not prompt. Ask only when the probe is ambiguous. Ask that one
-pair and recommend an observed answer. Keep timeouts, cost, and `unsafe_autonomy`
+pair and recommend an observed answer. Keep timeouts and `unsafe_autonomy`
 at the documented defaults in this section. The invoking host does not become
 primary merely because it ran init.
 

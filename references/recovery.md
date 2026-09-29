@@ -42,10 +42,9 @@ preserve the active stage while recovering.
    with new evidence, another hypothesis, or independent diagnosis while budget
    remains. Exhausting transient retries is a diagnosis point, not permission to
    misclassify an outage as a product decision. Keep waits supervised and bounded.
-5. At total wall/cost budget, request only more time/cost, admitted scope change,
-   or cancellation. Preserve the run start across resume. If cost is unavailable,
-   report unknown and resolve an explicit cost cap before exceeding what can be
-   measured. Never request human diagnosis or repair of a technical error.
+5. At the total wall-time budget, request only more time, an admitted scope
+   change, or cancellation. Preserve the run start across resume. Never request
+   human diagnosis or repair of a technical error.
 
 Deliver corrective feedback to the current worker only if its session is still
 reachable through an installed, help-verified continuation interface. Otherwise
@@ -80,7 +79,7 @@ All other blocked overlays identify a missing human capability:
 | external-action | dashboard, email, legal/physical/unsupported-system action |
 | authority-required | required approval or action beyond v1 authority |
 | safety-boundary | explicit authority for a production-affecting/destructive step |
-| budget-approval | more time/cost, scope change, or cancel at circuit breaker |
+| budget-approval | more time, scope change, or cancel at circuit breaker |
 
 Failure to create this worktree's `index.lock` after the verified grant is
 technical recovery, not `safety-boundary`. `unsafe_autonomy` is not the remedy.

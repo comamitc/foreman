@@ -99,8 +99,7 @@ Optional `.capstan.json` in the target repository:
   "recovery": {
     "transient_retries": 3,
     "same_failure_attempts": 2,
-    "run_wall_timeout_min": 360,
-    "max_cost_usd": null
+    "run_wall_timeout_min": 360
   },
   "review_policy": {
     "block_threshold": "medium",
@@ -132,7 +131,7 @@ null uses the harness default; unsupported explicit effort fails visibly.
 
 Read [contract](references/contract.md) for field rules and
 [harnesses](references/harnesses.md) for version-checked launch guidance.
-Capstan does not capture cost. A set `max_cost_usd` goes to the budget decision that [contract](references/contract.md) owns; the coordinator never invents prices or usage.
+Capstan does not capture cost. The only run budget is wall time; [contract](references/contract.md) owns it and the retired cost fields. The coordinator never invents prices or usage.
 
 Planning follows one fixed sequence: initial plan, independent review, one
 correction pass addressing the entire feedback set, then implementation. A review
