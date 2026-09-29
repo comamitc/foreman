@@ -75,3 +75,8 @@ A body that already contains Decisions and an empty Open questions section is
 still walked. Reuse is allowed only after the walk matches that body. The match
 is that walk. It is not a byte-for-byte copy. A branch with no settlement is
 asked or defaulted. It is not admitted unchanged.
+
+With two or more issues,
+[batch invocation](modes/batch-invocation.md) ("Every issue is walked before any issue enters unattended delivery")
+sets triage order and the cycle Ask; each walk is this file's walk, including
+for a body that already contains Decisions.

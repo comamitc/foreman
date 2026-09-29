@@ -12,6 +12,13 @@ overrides stay overrides. An invocation that is an issue number, with or
 without those overrides, uses that issue when it resolves in the current
 checkout. Other prose is not this path even if it contains a digit.
 
+An invocation whose every token is an issue URL, an issue number, or an
+allowed override, separated by spaces or commas, naming two or more distinct
+issues, is a batch invocation;
+[references/modes/batch-invocation.md](modes/batch-invocation.md) ("This file owns batch invocation order")
+owns it. Any other invocation, including prose that contains issue numbers or
+issue URLs, is not a batch invocation and follows this section unchanged.
+
 Other non-empty prose with no GitHub URL creates one issue in the repository
 `gh repo view` resolves from the invoking workspace. Title is the first
 non-empty line, at most 256 characters. Body is the full text. Emit the new
