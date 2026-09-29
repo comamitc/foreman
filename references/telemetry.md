@@ -16,7 +16,7 @@ invocation override) apart from effective configuration and without its value,
 budget start, the
 resolved deletion switch, and
 a chronological station/attempt table. Write
-one row per station attempt.
+one row per station attempt and one row per probe attempt.
 
 This file owns the attempt table. The attempt table has these columns, in this order:
 
@@ -26,13 +26,13 @@ This file owns the attempt table. The attempt table has these columns, in this o
 - Attempt: the qualifier. `attempt N` for a station attempt; `round R, attempt N` for review and fix; `probe KIND, attempt N, RESULT` for a launch probe, where KIND is `read` or `write` and RESULT is `pass` or `fail`, in the row of the stage at which the probe ran; in pre-merge, `attempt N`, `CI wait N`, and `repair, attempt N`. N and R count from 1.
 - Start UTC, End UTC: `YYYY-MM-DDTHH:MM:SSZ`. The coordinator's observed attempt start and end (station-start/worker-start, station-end/worker-end). When the coordinator did not observe one, that cell is the supervisor record's process start or exit when a worker ran, else `unknown`.
 - Worker wall: process exit minus process start from the supervisor record. `not timed` when the row has no worker process. `unknown` only when that record is gone.
-- Coordinator wall: when the coordinator observed both Start UTC and End UTC, End UTC minus Start UTC minus the row's worker duration. For this calculation, a row with no worker process uses zero worker duration; its Worker wall cell still shows `not timed`. `not timed` when the coordinator did not observe both bounds. `unknown` when Worker wall is `unknown`.
+- Coordinator wall: when the coordinator observed both Start UTC and End UTC, End UTC minus Start UTC minus the row's worker duration. For this calculation, a row with no worker process uses zero worker duration; its Worker wall cell still shows `not timed`. `not timed` when the coordinator did not observe both bounds, even when Worker wall is `unknown`. `unknown` when the coordinator observed both bounds and Worker wall is `unknown`.
 - Duration format, for every wall cell and wall total: `45s` below one minute, `2m18s` below one hour, `1h08m26s` otherwise. Use whole seconds. Every unit after the first has two digits.
 - Role: `coordinator`, `primary`, `secondary`, or `fallback`.
 - Harness: name and version, model, and effort, for example `claude 2.1.284 claude-opus-5-5 high`. Write `none` for a row with no worker.
 - Reported usage: space-separated `field=value` pairs under the harness's own field names (rules below), or `unknown`.
 
-Pre-merge rows separate CI wait from repair. The `attempt N` row spans the station attempt and has no worker process, so its Worker wall is `not timed` and counts as zero. Its Coordinator wall is End UTC minus Start UTC, minus the span (End UTC minus Start UTC) of each `CI wait` and `repair` row inside it. It is `unknown` when any of those rows lacks a bound. A `CI wait N` row runs from the first observation with a required check pending to the settled `check` event. It has no worker, so its Coordinator wall is its full span. A `repair, attempt N` row is the in-diff repair worker ([pre-merge](pre-merge.md)).
+Pre-merge rows separate CI wait from repair. Each `CI wait N` row and each `repair, attempt N` row is written in addition to the pre-merge `attempt N` row. The `attempt N` row spans the station attempt and has no worker process, so its Worker wall is `not timed` and counts as zero. Its Coordinator wall is End UTC minus Start UTC, minus the span (End UTC minus Start UTC) of each `CI wait` and `repair` row inside it. It is `unknown` when any of those rows lacks a bound. A `CI wait N` row runs from the first observation with a required check pending to the settled `check` event. It has no worker, so its Coordinator wall is its full span. A `repair, attempt N` row is the in-diff repair worker ([pre-merge](pre-merge.md)).
 
 Also record harness
 version, model, effort, safety mode, process start, exit, and session, checks and exit
