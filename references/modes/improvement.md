@@ -21,7 +21,7 @@ the exact revisions, the command, the result, and the limitations. Do not
 relabel an old evaluation as current-main proof. Prefer an executable check
 and a known fault injection. Do not reward weakening verification.
 
-On demand. A named batch.
+On demand. A named batch. Ledgers written before the attempt-table shape in [telemetry](../telemetry.md) ("The attempt table has these columns, in this order") are a named limitation in on-demand analysis: they are not rewritten, and their cells are read as written, not as that shape.
 Evidence-backed causes. A ledger failure with no bundle is still a failure. An
 empty bundle batch is not "no failures." A proposal cites run identities, the
 scenario, a counterexample, a falsifiable hypothesis, and a discriminating
