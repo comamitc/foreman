@@ -64,7 +64,7 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 | Station | Reference | Owner |
 | --- | --- | --- |
 | triage | [triage](references/triage.md) | coordinator |
-| ready | contract: accept run and reconcile worktree, then planning | coordinator |
+| ready | contract: accept run, reconcile worktree, and pass the [launch probe](references/harnesses/shared.md), then planning | coordinator |
 | planning | [planning](references/planning.md) | fresh primary |
 | plan-review | [plan-review](references/plan-review.md) | fresh secondary |
 | implementing | [implementing](references/implementing.md) | fresh primary |

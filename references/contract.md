@@ -188,7 +188,7 @@ after they are in force.
 | Stage | Completion evidence | Next |
 | --- | --- | --- |
 | triage | admitted spec; no unresolved material decision | ready |
-| ready | run accepted; worktree reconciled | planning |
+| ready | run accepted; worktree reconciled; launch probe passed | planning |
 | planning (initial) | complete published plan for admitted revision | plan-review |
 | plan-review | complete census: no findings / findings | implementing / planning (single correction) |
 | planning (single correction) | corrected plan and complete finding handoff; interrupted work retained explicitly | implementing |
