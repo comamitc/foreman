@@ -17,7 +17,7 @@ one row per station attempt. The columns are stage, start UTC, end UTC, wall tim
 role, harness, and reported usage. Also record harness
 version, model, effort, safety mode, process exit/session, checks and exit
 results, head before/after, finding census, recovery hypotheses, label changes,
-and evidence paths/remote URLs. Say `unknown` when not reported; never estimate or use zero for missing usage. A field the harness did not report is `unknown`,
+and evidence paths/remote URLs. A launch probe writes one row per probe attempt, with the stage at which it ran, its recipe kind (read or write), and its result (pass or fail); the fields above supply harness version, model, and wall time. A failed attempt's row carries its exit status and redacted raw error. [harnesses/shared.md](harnesses/shared.md) owns the probe. Say `unknown` when not reported; never estimate or use zero for missing usage. A field the harness did not report is `unknown`,
 not zero and not an estimate. Coordinator-only stages with no process
 timer, such as triage and ready, stay in the table. Their wall is `not timed`
 unless a start and an end were both observed. Print observed timestamps, such as

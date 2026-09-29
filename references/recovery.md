@@ -26,6 +26,7 @@ preserve the active stage while recovering.
    | --- | --- |
    | network/rate limit/temporary GitHub failure | use resolved transient_retries (default 3), 5/15/30 second backoff then 30 seconds for additional configured retries, honoring longer server guidance within budget |
    | crash/timeout | inspect effects and live processes; fresh worker for unfinished work |
+   | failed launch probe | no station worker launches and the run does not advance until a re-probe or a recovery-selected fallback's probe passes; diagnosis only under a recipe whose probe passed in this invocation ([launch probe](harnesses/shared.md)) |
    | missing/weak/malformed result | precise corrective feedback, up to 2 corrective prompts, then a fresh worker |
    | failed behavior/test/type/lint/build | primary repairs using original command/logs, diff, spec and plan; rerun that check |
    | unknown technical failure | fresh diagnosis worker; unknown does not mean human-required |
