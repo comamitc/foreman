@@ -71,8 +71,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    `capstan:ready-to-deploy` on the issue with the existing stage rules and on
    the marked pull request with [contract.md](contract.md) "Stage projection"
    ("After a successful ready projection"), through its issue and pull-request
-   label read-backs. Read remote heads, base heads, and live pull-request state
-   again with the step 5 query. If the pull-request label is missing, re-add it
+   label read-backs and its live re-read with the step 5 query.
+   If the pull-request label is missing, re-add it
    once and read it back as that section states. If the live gate no longer
    holds, remove the pull-request label and read it back as that section states.
    `Capstan: owner/repo#N` remains the identity check. The pull-request label is

@@ -167,7 +167,10 @@ pull request with
 `gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`.
 That add has no `--remove-label`. Read the issue labels back with
 `gh issue view N --repo OWNER/REPO --json labels` and the pull-request labels
-with `gh pr view PR --repo OWNER/REPO --json labels`. If the pull-request label
+with `gh pr view PR --repo OWNER/REPO --json labels`. Then read remote heads,
+base heads, and live pull-request state again with the step 5 query in
+[pre-merge.md](pre-merge.md) ("Re-fetch base and query live PR state").
+If the pull-request label
 is absent, run the same add again on that pull request and read the pull-request
 labels again. Do not open a second pull request. On the pull request, add or
 remove only `capstan:ready-to-deploy`. Preserve unrelated pull-request labels.
