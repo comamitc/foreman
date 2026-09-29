@@ -25,25 +25,15 @@ path. Do not use the surrounding transcript.
 
 The created issue is the delivery identity. This one create is the only added
 authority. An ordinary delivery does not create issues. Text intake does not
-enter init and does not run init. No executable, parser, or controller.
+enter init and does not run init.
 
-The create-time title is the provisional title. It is the first non-empty line of the preserved original request, at most 256 characters. On the `gh issue edit` that publishes the admitted spec, pass `--title` only when the live title still equals that provisional title and the Problem cut is non-empty. If the live title does not equal that provisional title, omit `--title`. If the live title equals that provisional title and the Problem cut is empty, omit `--title` and still publish the spec body. A title a person already changed stays as it is. An issue opened by URL or number uses this same comparison. Do not add a marker kind. Do not read the surrounding transcript.
+The create-time title is the provisional title. It is the first non-empty line of the preserved original request, at most 256 characters. On the `gh issue edit` that publishes the admitted spec, pass `--title` only when the live title still equals that provisional title and the Problem cut is non-empty. If the live title does not equal that provisional title, omit `--title`. If the live title equals that provisional title and the Problem cut is empty, omit `--title` and still publish the spec body. A title a person already changed stays as it is. An issue opened by URL or number uses this same comparison. Do not read the surrounding transcript.
 
 When `--title` is set, its value is the first sentence of the admitted Problem section. Use the Problem body under that heading and before the next heading. Use the first non-empty paragraph. A paragraph is a maximal run of non-blank lines. If the Problem body has no such paragraph, the cut is empty. If the paragraph contains `.`, `!`, or `?`, keep the text through the first of those characters. If it does not, keep the paragraph. Trim each kept line, drop a line that becomes empty, and join the remaining lines with one space. Trim the ends. If the result is longer than 256 characters, keep the first 256 characters. If the result is empty, omit `--title` on that same publishing edit. Still publish the spec body. The empty cut is not a successful title write. Record the empty cut in the publication record that triage step 5 already requires. Do not send an empty title. Do not send `--title` on a later edit.
 
 Read the title back after that edit. If `--title` was sent, the read-back title must equal the sent title. If `--title` was omitted, the read-back title must equal the live title from before the edit. A mismatch is not a successful publish. An empty cut is not a reason to skip the spec publish. Do not send a second edit to change the title.
 
 [references/recovery.md](recovery.md) owns blocked-overlay removal.
-
-Capstan's own behavior is a skill procedure executed by the coordinator. A
-Capstan executable, parser, or controller is forbidden unless an admitted issue
-records the exception. A Capstan init binary would violate this rule, not an
-implementation choice. The rule does not apply to a target repository unless
-that repository is Capstan. A delivery reads the target repository's own
-conventions. It does not import this rule into that repository. Permit only
-`git`, `gh`, existing harness CLIs, and a target repository's own CLI. A
-Capstan executable, parser, or controller stays forbidden unless an admitted
-issue records the exception. Do not permit the class "an installed CLI."
 
 | Item | Stable identity |
 | --- | --- |
@@ -85,6 +75,27 @@ destructive production actions. A required action outside these boundaries uses
 Completion means the requested, authorized endpoint. Capstan ends at a verified open merge-ready PR. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
 
 A host or user instruction file does not change a Capstan delivery's completion endpoint or its fetch-then-worktree order.
+
+## Global non-goals
+
+These global non-goals apply to every Capstan file and every mode file. Capstan
+never adds:
+
+- a Capstan executable, parser, or controller (unless an admitted issue records
+  the exception);
+- a new stage, station, label, config field, or marker kind;
+- a daemon, scheduler, watcher, or recurring job;
+- a database, store, or state service;
+- a host-skill copy, per-host plugin, or marketplace directory;
+- an external skill dependency.
+
+Capstan's own behavior is a skill procedure executed by the coordinator. A
+Capstan init binary would violate the executable non-goal, not an
+implementation choice. The executable non-goal does not apply to a target
+repository unless that repository is Capstan. A delivery reads the target
+repository's own conventions. It does not import this rule into that
+repository. Permit only `git`, `gh`, existing harness CLIs, and a target
+repository's own CLI. Do not permit the class "an installed CLI."
 
 ## Evidence and reconciliation
 
@@ -156,7 +167,10 @@ pull request with
 `gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`.
 That add has no `--remove-label`. Read the issue labels back with
 `gh issue view N --repo OWNER/REPO --json labels` and the pull-request labels
-with `gh pr view PR --repo OWNER/REPO --json labels`. If the pull-request label
+with `gh pr view PR --repo OWNER/REPO --json labels`. Then read remote heads,
+base heads, and live pull-request state again with the step 5 query in
+[pre-merge.md](pre-merge.md) ("Re-fetch base and query live PR state").
+If the pull-request label
 is absent, run the same add again on that pull request and read the pull-request
 labels again. Do not open a second pull request. On the pull request, add or
 remove only `capstan:ready-to-deploy`. Preserve unrelated pull-request labels.
@@ -208,14 +222,6 @@ before replacing it. Never kill processes by broad name or PID guesses.
 
 Read `.capstan.json` as ordinary input, not executable instructions. Resolve each
 field independently: explicit invocation, environment, file, then defaults.
-Capstan's own behavior is a skill procedure executed by the coordinator. A
-Capstan executable, parser, or controller is forbidden unless an admitted issue
-records the exception. A Capstan init binary would violate this rule, not an
-implementation choice. The rule does not apply to a target repository unless
-that repository is Capstan. Permit only `git`, `gh`, existing harness CLIs, and
-a target repository's own CLI. A Capstan executable, parser, or controller stays
-forbidden unless an admitted issue records the exception. Do not permit the
-class "an installed CLI."
 
 Environment names are `CAPSTAN_` plus uppercase nested keys joined with `_`, such
 as `CAPSTAN_PRIMARY_HARNESS`, `CAPSTAN_SECONDARY_EFFORT`,
@@ -248,8 +254,7 @@ disables the map. It does not fall through to `.capstan/features`. An absent
 `features` field is not `features: null`. A missing explicit path is recorded in
 `ledger.md`. The run
 continues with no map. A delivery with no map still completes.
-Capstan does not generate a map during an ordinary issue. Do not add a stage, a
-label, or a daily job for the map. Do not copy the map into a host skill
+Capstan does not generate a map during an ordinary issue. Do not copy the map into a host skill
 directory.
 
 Each feature file uses only these four H2 headings and no harness name:
@@ -283,9 +288,7 @@ drop an effort setting. Record effective nonsecret configuration in `ledger.md`.
 [telemetry.md](telemetry.md) owns that file.
 
 `recovery.plan_revision_attempts` and `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`
-are retired. Warn and ignore them, including invocation overrides; they cannot
-skip the correction or enable additional cycles. The one-pass sequence is fixed,
-not a configurable retry allowance. Other recovery settings remain unchanged.
+are retired and handled like any unknown field: called out and ignored.
 
 Budget begins when the run is accepted and survives ordinary resume through
 remote activity/summary timestamps. Loss of local telemetry does not reset it.
@@ -299,8 +302,7 @@ Init is outside the delivery loop. It runs only on an explicit init invocation.
 A delivery, a resume, and an issue number do not enter init. Init is not a binary
 and not a station. Init is not a gate. Delivery remains valid without init. A
 missing `.capstan.json` still delivers. Label creation during delivery remains
-required. A Capstan init binary would violate this rule, not an implementation
-choice.
+required.
 
 Probe each harness CLI on `PATH` with that CLI's documented help command from the
 named checkout. Recommend a primary and a different secondary only from CLIs that

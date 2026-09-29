@@ -16,7 +16,7 @@ The new or superseding ADR lands in the same commit as the architectural behavio
 
 No convention and no explicit issue requirement means write no ADR and create no ADR infrastructure.
 
-Do not add an external ADR tool, OpenSpec, a stage, a label, a generator, a daemon, or a host-skill copy. A declared ADR checker stays a declared check.
+Do not add an external ADR tool, OpenSpec, or a generator. A declared ADR checker stays a declared check.
 
 Acceptance is the normal pipeline and reviewer evidence on the diff.
 

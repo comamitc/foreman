@@ -107,3 +107,5 @@
 **Stable anchor**: a heading's exact text or a verbatim phrase of the target rule, named next to the owner-file link. Rejected: a line number.
 
 **Mode file**: a file under `references/modes/` that holds one mode's rules and states its trigger in its first paragraph. The coordinator loads it only when that trigger holds. Rejected: a station, a stage, or a file workers read directly.
+
+**Global non-goals**: the one contract section that lists the generic things Capstan never adds. It applies to every Capstan file and mode file. Rejected: per-paragraph non-goal tails.

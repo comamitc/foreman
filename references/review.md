@@ -74,8 +74,7 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    Simplicity ([ladder](ladder.md)). Do not merge away disagreement. Do not
    restate the ladder. A new dependency, a new file, or a reimplementation of
    an existing function is unrequested scope and blocks. A pure "this could be
-   shorter" note stays minor. Keep one judge. Do not add a second review
-   station. Do not install a ponytail skill.
+   shorter" note stays minor. Keep one judge. Do not install a ponytail skill.
    For each applicable new or changed check, name the observable contract, a
    plausible defect and its failure signal, and whether a
    mock or stub suppresses that failure. A check that

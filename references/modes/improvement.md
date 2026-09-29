@@ -21,7 +21,7 @@ the exact revisions, the command, the result, and the limitations. Do not
 relabel an old evaluation as current-main proof. Prefer an executable check
 and a known fault injection. Do not reward weakening verification.
 
-On demand. No daemon, scheduler, external skill, or database. A named batch.
+On demand. A named batch.
 Evidence-backed causes. A ledger failure with no bundle is still a failure. An
 empty bundle batch is not "no failures." A proposal cites run identities, the
 scenario, a counterexample, a falsifiable hypothesis, and a discriminating
@@ -50,7 +50,7 @@ non-obvious reasoning; (f) no-op.
 Compare a structural change with the other options on blast radius and
 upkeep. It is an option, not an automatic rewrite. Reuse means a pattern that
 meets the requirement, not a copy of a known-broken workaround. No global memory
-or store dependency. Do not create an instruction file.
+dependency. Do not create an instruction file.
 
 A proposed check catches the historical failure at the pinned revision
 where it occurred and accepts a legitimate counterexample. A weak rubric is
@@ -79,7 +79,7 @@ current change must meet. Cleanup beyond scope is a separate admitted task.
 
 Keep a comment that explains a legitimate constraint or rationale. Reject a
 comment used instead of meeting an acceptance criterion. No blanket comment
-ban, universal framework, automatic gardener, scheduler, or second lint stack.
+ban, universal framework, automatic gardener, or second lint stack.
 
 Separate Capstan-process improvements from target-product learning. A
 Capstan-process improvement found in another repository is reported. It is

@@ -20,7 +20,7 @@ Trace every seeded claim to current source, to existing authoritative docs, or t
 
 Name every file that adoption writes. [implementing](../implementing.md) writes only those files.
 
-Do not install OpenSpec, AgentLens, a documentation generator, or another skill. Do not add a Capstan executable, a stage, a label, a scheduled job, a daemon, a host-skill copy, or a generated architecture encyclopedia.
+Do not install OpenSpec, AgentLens, a documentation generator, or another skill. Do not add a generated architecture encyclopedia.
 
 Use the normal Capstan pipeline for implementation and review. The final pull request is non-draft. The final pull request is mergeable under the existing ready gate.
 

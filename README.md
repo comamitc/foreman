@@ -7,15 +7,9 @@ deploys.
 
 The product is Markdown. Capstan's own behavior is a skill procedure executed
 by the coordinator. A Capstan executable, parser, or controller is forbidden
-unless an admitted issue records the exception. A Capstan init binary would
-violate this rule, not an implementation choice. The rule does not apply to a
-target repository unless that repository is Capstan. There is no installer,
-state database, wrapper, or external skill dependency. The coordinator reads
-GitHub/git facts. Permit only `git`, `gh`, existing harness CLIs, and a target
-repository's own CLI. A Capstan executable, parser, or controller stays
-forbidden unless an admitted issue records the exception. Do not permit the
-class "an installed CLI." Local evidence and labels help resume; they cannot
-overrule current facts.
+unless an admitted issue records the exception. There is no installer or
+wrapper. The coordinator reads GitHub/git facts. Local evidence and labels help
+resume; they cannot overrule current facts.
 
 ## Install and invoke
 
@@ -44,8 +38,7 @@ alternatives and explicit invocation forms are:
 | Oh My Pi | `~/.agents/skills/capstan/` | `/skill:capstan https://github.com/OWNER/REPO/issues/N` |
 
 Install is this directory symlinked or copied into the host skill path already
-listed. Capstan does not ship a marketplace manifest, a converter, or a per-host
-copy of the skill.
+listed. Capstan does not ship a marketplace manifest or a converter.
 
 Restart the host or use its documented reload after installation. Confirm Capstan
 appears in its explicit skill menu. Frontmatter disables model invocation; Codex
@@ -58,7 +51,7 @@ references: [Codex](https://learn.chatgpt.com/docs/build-skills),
 
 ### Compatibility with host instructions
 
-The completion endpoint is a verified open merge-ready PR. Capstan does not deploy. A fresh task inspects and resolves the base, fetches that branch, records the SHA, and creates the worktree before product edits. [contract](references/contract.md) owns that order, the host exceptions, and the rule that a host or user instruction file does not change a Capstan delivery's completion endpoint or its fetch-then-worktree order. This section adds no installer, no parser, and no precedence system.
+The completion endpoint is a verified open merge-ready PR. Capstan does not deploy. A fresh task inspects and resolves the base, fetches that branch, records the SHA, and creates the worktree before product edits. [contract](references/contract.md) owns that order, the host exceptions, and the rule that a host or user instruction file does not change a Capstan delivery's completion endpoint or its fetch-then-worktree order. This section adds no installer and no precedence system.
 
 The same invocation resumes. Issue-title changes do not change branch `capstan/N`,
 worktree `.worktrees/capstan+N`, or marked PR lookup. You may specify overrides in
@@ -138,8 +131,8 @@ null uses the harness default; unsupported explicit effort fails visibly.
 [contract](references/contract.md) owns feature-map resolution and heading shape.
 
 Read [contract](references/contract.md) for field rules and
-[harnesses](references/harnesses.md) for version-checked launch guidance. No parser
-is installed. Capstan does not capture cost. A set `max_cost_usd` goes to the budget decision that [contract](references/contract.md) owns; the coordinator never invents prices or usage.
+[harnesses](references/harnesses.md) for version-checked launch guidance.
+Capstan does not capture cost. A set `max_cost_usd` goes to the budget decision that [contract](references/contract.md) owns; the coordinator never invents prices or usage.
 
 Planning follows one fixed sequence: initial plan, independent review, one
 correction pass addressing the entire feedback set, then implementation. A review
@@ -164,11 +157,6 @@ and the repair delta. Complete review censuses are capped by
 Capstan adds `capstan:blocked` with reason `review-exhausted`; it never marks the PR
 ready or silently discards them. See
 [code-review convergence](references/review-convergence.md).
-
-The former `recovery.plan_revision_attempts` setting and
-`CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS` override are retired: warn and ignore
-them. Existing runs reuse their plans and findings without a fresh correction
-allowance. The single-pass planning rule and total run budget remain unchanged.
 
 ## Init
 

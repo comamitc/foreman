@@ -58,11 +58,11 @@
    edits rather than overwriting them. Publish the spec with its hidden marker,
    read it back, and record its GitHub body revision/time for later plan evidence.
    Keep the existing issue-body spec marker `<!-- capstan:spec owner/repo#N -->`.
-   Do not remove it. Do not delete `spec`. Do not add a marker kind.
+   Do not remove it. Do not delete `spec`.
    On that same publish edit, apply the publication title rule in `references/contract.md`. Do not restate it here.
 6. Do not invoke the grilling skill, `pipeline grill`, `grill-with-docs`, or any
-   host grill command. Do not add a taxonomy module, an envelope, a new marker
-   kind, a `CONTEXT.md` pull request, a stage, a label, or an executable.
+   host grill command. Do not add a taxonomy module, an envelope, or a
+   `CONTEXT.md` pull request.
 
 Ready is illegal while any branch is unvisited. An empty Open questions section
 does not satisfy this. Do not set ready until every branch is visited and every
