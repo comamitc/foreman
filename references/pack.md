@@ -24,7 +24,7 @@ carry reads `none` plus the reason.
    head, exit, and failure signal) and not as a command to run;
    [references/review.md](review.md) owns the judgment.
    In verification-path adoption, it also carries the path's required state
-   and allowed effects; [references/planning.md](planning.md) owns that mode.
+   and allowed effects; [references/modes/verification-path.md](modes/verification-path.md) ("This file owns verification-path adoption") owns that mode.
 7. `## Named files`: `path:line-range` plus reason, the only paths the worker may open.
 
 Compact form, the exception for one Named files entry, one check, and no open

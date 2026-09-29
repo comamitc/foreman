@@ -10,27 +10,16 @@ else.
 
 [references/implementing.md](implementing.md) owns the feature-map write.
 
-[references/planning.md](planning.md) owns feature-map adoption. [planning](planning.md) owns documentation backfill.
+[modes/feature-map-adoption.md](modes/feature-map-adoption.md) ("This file owns feature-map adoption") owns feature-map adoption. Trigger: the admitted issue or the text invocation states that outcome.
+[modes/documentation-backfill.md](modes/documentation-backfill.md) ("This file owns documentation backfill") owns documentation backfill. Trigger: the admitted issue or the text invocation states that outcome.
 
-[references/planning.md](planning.md) owns the feature-map audit.
+[modes/feature-map-audit.md](modes/feature-map-audit.md) ("This file owns the feature-map audit") owns the feature-map audit. Trigger: the admitted issue or the text invocation states that outcome.
 
 Block a second map. Block an internal-only feature file. Block an unverifiable claim.
 
-Deleting a still-true claim to make the audit pass blocks. Weakening a proof to make the audit pass blocks.
+[modes/adr.md](modes/adr.md) ("This file owns the ADR rule") owns the ADR rule. Trigger: repository instructions or the admitted issue require an ADR.
 
-[references/planning.md](planning.md) owns the ADR rule.
-
-Block a missing required ADR. Block a broken supersession link. Block invented rationale. Block a contradiction with the diff.
-
-The ADR is a claim. Code and checks are proof.
-
-[references/planning.md](planning.md) owns the lesson rule.
-
-Block treating a lesson as authority.
-
-Block rewriting a valid invariant to fit a regression.
-
-Block age-only deletion.
+[modes/lessons.md](modes/lessons.md) ("This file owns the lesson rule") owns the lesson rule and lesson maintenance. Trigger: repository instructions name a lessons path, or the admitted issue or the text invocation states lesson maintenance.
 
 Review treats the map as a claim. The diff and the live command remain the
 proof. Removing a proof to pass blocks. Omitting a required map update blocks.

@@ -260,11 +260,11 @@ No Launch, Doctor, Evidence, Cleanup, or Helpers section.
 
 [references/implementing.md](implementing.md) owns the feature-map write.
 
-[references/planning.md](planning.md) owns feature-map adoption.
+[references/modes/feature-map-adoption.md](modes/feature-map-adoption.md) ("This file owns feature-map adoption") owns feature-map adoption.
 
-[references/planning.md](planning.md) owns the feature-map audit.
+[references/modes/feature-map-audit.md](modes/feature-map-audit.md) ("This file owns the feature-map audit") owns the feature-map audit.
 
-[references/planning.md](planning.md) owns the ADR rule.
+[references/modes/adr.md](modes/adr.md) ("This file owns the ADR rule") owns the ADR rule.
 
 Defaults: primary claude; secondary codex; optional fallback grok; model and effort
 null; transient_retries 3; same_failure_attempts 2;
