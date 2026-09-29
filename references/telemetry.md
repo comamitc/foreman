@@ -107,6 +107,7 @@ and rerun history across local deletion.
 
 Emission follows the summary read-back. The coordinator's final message in the host session contains the stage-analysis table, the two wall totals, and the token totals line, copied unchanged from the published summary in the summary's columns, order, and formats. A URL may follow. The URL alone does not satisfy this. Trigger only at
 verified `capstan:ready-to-deploy` or review exhaustion. The table stays terminal-only.
+In a batch invocation, each issue's summary also publishes at a human-capability blocked overlay, and the final message waits for batch end; [batch invocation](modes/batch-invocation.md) ("Emit the final message once, after the last issue's summary read-back") owns both.
 The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
 No plugin, notification command, or status-line API. Workers do
 not post the table. Do not add a second summary comment or post the table on

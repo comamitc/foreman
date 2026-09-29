@@ -60,7 +60,7 @@
 
 **Stage analysis**: the station-attempt table and two wall totals defined by #29. Rejected: a second host-specific wording.
 
-**Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, and not another GitHub URL. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
+**Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, not another GitHub URL, and not a batch invocation's issue list. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
 
 **Provisional title**: the issue title set to the first non-empty line of a text invocation, kept only while the live title still equals that line. Rejected: a title taken from the surrounding transcript, or a title a person already changed.
 
@@ -111,3 +111,5 @@
 **Mode file**: a file under `references/modes/` that holds one mode's rules and states its trigger in its first paragraph. The coordinator loads it only when that trigger holds. Rejected: a station, a stage, or a file workers read directly.
 
 **Global non-goals**: the one contract section that lists the generic things Capstan never adds. It applies to every Capstan file and mode file. Rejected: per-paragraph non-goal tails.
+
+**Batch invocation**: one invocation that names two or more issues in one repository and delivers them sequentially in dependency order. The rule owner is `references/modes/batch-invocation.md` ("This file owns batch invocation order"). Rejected: parallel delivery; stacked PRs.
