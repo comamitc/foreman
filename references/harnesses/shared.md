@@ -102,6 +102,7 @@ Launch each probe with steps 1–4 above and the exact recipe the station would 
 
 Read-probe prompt: `Launch probe. Run no command. Reply with exactly CAPSTAN_PROBE_OK.`
 Write-probe prompt: `Launch probe. Run exactly one command: git add --refresh -- . If it exits 0, reply with exactly CAPSTAN_PROBE_OK. Otherwise reply with its exit code and stderr. Run nothing else.`
+For a Claude write probe, [references/harnesses/claude.md](claude.md) ("The coordinator grants host-directed files") owns the prompt, pass signal, and redaction that a host grant adds.
 
 `git add --refresh -- .` creates the worktree's `index.lock`, which a commit needs, and fails with `Unable to create '…/index.lock'` when the grant cannot write it. It stages nothing.
 
