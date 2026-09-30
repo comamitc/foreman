@@ -31,6 +31,30 @@ and candidate with a held-out check. A weaker rubric is rejected. Workers do not
 rewrite the running skill. The improvement stops at an open pull request. A
 rejected or unsupported proposal does not manufacture a product change.
 
+Resource comparison. A comparison that weighs resource use changes one lever
+per candidate. Its baseline is the last kept configuration, not an original
+baseline that later kept changes superseded. Pin the cohort's members, the
+input and target revisions, the Capstan revision, the harness and version, the
+reported model and effort, and the environment. Report materially different
+task classes and station roles apart. Name the selection bias and the missing
+evidence. Count failed attempts, retries, corrections, and probes, so that
+abandoning a hard task cannot look efficient. Count each delivery once, by its
+final outcome, and report accepted, blocked, failed, and cancelled outcomes
+apart. Report resource use across all attempts beside the count of verified
+deliveries. For each verified delivery, cite the ledger's ready-label
+read-back and live-gate verification; a delivery without both is not counted
+as verified. Name the highest-resource cases and state the sample size and its
+limits, not averages alone. Read usage from the ledger notes in each harness's
+own fields, semantics, and unknowns ([telemetry](../telemetry.md), "The ledger
+notes keep the raw usage"). The count-once Tokens figure may appear beside
+them; telemetry owns what it is not ("Tokens is a count-once volume and
+readability measure") and when a total is incomplete ("When coordinator usage
+is unavailable"). Define the quality and latency acceptance criteria before
+comparing. Repeat an uncertain trial and keep the same held-out check for
+every candidate. When the evidence does not justify adoption, the result is
+inconclusive or no-change. A resource reduction that fails a quality criterion
+is rejected.
+
 Review corrections. An explicit improvement invocation may name a bounded batch
 of review corrections by PR, review, or comment URL. Consume a correction
 only from a trusted author under [security.md](../security.md). Verify each
