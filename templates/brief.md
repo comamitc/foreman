@@ -4,7 +4,7 @@
 - Station / role / attempt kind:
 - Base / branch / worktree / current head:
 - Cumulative diff command:
-- Pack (required and only reading):
+- Pack (required task reading):
 - Declared-check invocation (one plain command, tool path, provenance; [references/harnesses/claude.md](../references/harnesses/claude.md) owns the write-station shell grant; no `&&`, no semicolon, no `git -C`, no heredoc):
 - Turn ceiling (operations; read stations):
 - Result path (outside product tree):
@@ -35,14 +35,16 @@ The station's checkable criterion and required observable proof.
 
 ## Worker constraints
 
-Read the brief and the pack, nothing else. No repository tour: a path not in the
-pack is a reported gap, not a search. Read stations open a named file only to
-confirm a cited line; write stations read named files fully. An operation is one
-tool call: one read call or one shell command, however many files it names.
-Number each under `## Checks`. Several tool calls in one turn count separately;
+Your task reading is the brief and the pack. Host instructions your harness already loads still apply; they do not widen the task beyond the pack.
+No repository tour: a path not in the pack is a reported gap, not a search.
+Read stations open a named file only to confirm a cited line; write stations
+read named files fully. An operation is one tool call: one read call or one
+shell command, however many files it names. Number each under `## Checks`.
+List each host-instruction read there as an unnumbered "Host-instruction read:" line ([references/harnesses/shared.md](../references/harnesses/shared.md) "A host-instruction read is not an operation").
+Several tool calls in one turn count separately;
 one call that names several files counts once. Result delivery counts one.
 The numbered list is the operation count.
-[references/harnesses/shared.md](../references/harnesses/shared.md) owns the ceiling.
+[references/harnesses/shared.md](../references/harnesses/shared.md) owns the ceiling and host instructions.
 At the ceiling, stop and list unchecked items as gaps.
 Inspect current files and side effects before repeating actions. Use the simplicity
 ladder: need, existing code, standard library, platform, installed dependency, one

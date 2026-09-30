@@ -11,14 +11,20 @@ when a newer release changes flags.
    flags intentionally; explicit unsupported effort is a visible configuration
    failure, not silently omitted. Record actual reported model or `default/unknown`.
 2. Prepare owner-only brief, pack, and result paths outside the product tree. The
-   brief names the pack as the worker's required and only reading and, at read
-   stations, the numeric turn ceiling; the pack is sized to the unit. An operation
-   is one tool call: one read call or one shell command, however many files it
-   names. Several tool calls in one assistant turn count separately. The ceiling
-   is an upper bound, not an expected count: Named files entries plus Checks plus
-   5 (brief, pack, head and status before and after, result delivery). Before the
-   read-station launch, observe how many lines one host read returns. If that
-   page does not cover the pack, add one operation per page and name that count
+   brief names the pack as the worker's required task reading and, at read
+   stations, the numeric turn ceiling; the pack is sized to the unit.
+   A worker inherits its host's instructions: the files its harness loads from the operator's host configuration and the files they direct it to read.
+   A brief never forbids reading them and never contradicts them.
+   A brief contradicts host instructions when the worker cannot follow both at its station: a brief sentence forbids what a host instruction requires there, or requires what a host instruction forbids.
+   A host instruction that differs from a Capstan delivery's completion endpoint or fetch-then-worktree order is not a brief defect: [references/contract.md](../contract.md) ("A host or user instruction file does not change") fixes both, and the brief states them as fixed.
+   A conflict between a brief and host instructions is a brief defect: under [references/recovery.md](../recovery.md) ("## Observe, diagnose, retry"), amend the brief and relaunch the unfinished portion in the same station.
+   An operation is one tool call: one read call or one shell command, however many
+   files it names. Several tool calls in one assistant turn count separately. The
+   ceiling is an upper bound, not an expected count: Named files entries plus
+   Checks plus 5 (brief, pack, head and status before and after, result delivery).
+   A host-instruction read is not an operation: the worker lists it under `## Checks` as an unnumbered "Host-instruction read:" line, outside the ceiling.
+   Before the read-station launch, observe how many lines one host read returns. If
+   that page does not cover the pack, add one operation per page and name that count
    in the brief. Do not discover the count after the review starts. One command
    that reads several named files is one operation and finishes under that bound.
    The worker's numbered list under `## Checks` is the operation count. The short

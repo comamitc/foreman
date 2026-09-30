@@ -32,8 +32,8 @@ Before step 1, if the whole invocation, trimmed, is exactly `status`, load only 
    [security](references/security.md). Use [brief](templates/brief.md) with the
    admitted spec, numbered station steps, a checkable completion criterion, and
    one pack per launch, sized to the unit (compact for a one-file, one-check unit)
-   and named in the brief as the worker's only reading. Extract the applicable
-   rules into the pack; never paste a conventions file.
+   and named in the brief as the worker's task reading; [references/harnesses/shared.md](references/harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+   Extract the applicable rules into the pack; never paste a conventions file.
 4. **Delegate.** Triage is interactive coordinator work. Before you dispatch a
    write station (implementing or fix) or a review station (plan-review or
    review), load [ladder](references/ladder.md). For each other judgment
@@ -41,8 +41,8 @@ Before step 1, if the whole invocation, trimmed, is exactly `status`, load only 
    [harnesses](references/harnesses.md). Pre-merge observation and GitHub actions
    stay with you; delegate its technical repairs. Write briefs, packs, and results
    outside the product worktree. Read stations get a numeric turn ceiling in the
-   brief; write stations read named files only. Supervise the process until exit
-   or recorded handoff.
+   brief; write stations read only the task files the pack names; [references/harnesses/shared.md](references/harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+   Supervise the process until exit or recorded handoff.
    [references/telemetry.md](references/telemetry.md) owns the host status line.
 5. **Verify.** Inspect actual results, commands, commits, diff, and GitHub.
    [references/harnesses/shared.md](references/harnesses/shared.md) owns result acceptance.
