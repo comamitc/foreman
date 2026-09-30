@@ -88,7 +88,9 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    per-function suites. [references/ladder.md](ladder.md) owns that limit
    (`references/ladder.md` under "Check").
    Judge the red or fault-injection evidence the pack carries. Trace that
-   evidence against the saved diff when needed. Do not change the tree.
+   evidence against the saved diff when needed.
+   When the pack carries a changed evidence check, judge whether the change weakened it; [references/pack.md](pack.md) ("An evidence check is bitten before the brief that depends on it launches") owns the rule.
+   Do not change the tree.
    Do not produce the red evidence. A correction uses the
    existing implementing or fix write station. On round 1, apply this rule to
    every applicable new or changed check in the cumulative diff. On a later
