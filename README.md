@@ -58,6 +58,7 @@ worktree `.worktrees/capstan+N`, or marked PR lookup. You may specify overrides 
 the invocation, for example: “primary codex, secondary claude, wall budget 90 minutes.”
 Only one coordinator should work on an issue at a time. These delivery forms do not
 enter init.
+The invocation `status` alone, for example `/capstan status`, prints a read-only report of this repository's open issues that carry a Capstan stage label or the `capstan:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
 
 ### Text invocation
 
