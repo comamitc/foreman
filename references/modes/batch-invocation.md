@@ -39,5 +39,5 @@ This file owns batch invocation order.
     - Do not project `capstan:ready-to-deploy` for a blocked issue.
     - An issue that never started has a table of the stages it ran; bounds that were not observed are `unknown`.
     - The batch ends when every issue has a stop.
-    - Emit the final message once, after the last issue's summary read-back. It lists issues in delivery order. Each issue has its outcome, stage-analysis table, wall totals and token totals line, copied from its own read-back per [telemetry](../telemetry.md) "Emission follows the summary read-back".
+    - Emit the final message once, after the last issue's summary read-back. It lists issues in delivery order. Each issue has its outcome and its attempt table with the Total row and the date line, copied from its own read-back per [telemetry](../telemetry.md) "Emission follows the summary read-back".
     - No issue appears without a table.

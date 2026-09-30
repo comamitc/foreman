@@ -28,7 +28,7 @@ Every `gh api` read in this procedure is a GET with the query in the URL and inc
      - Closed and merged PRs are never shown.
    - **Last activity.** The maximum of two sources:
      - The first source is the latest `updated_at` among marked issue comments of kind plan, plan-review, blocker, activity or summary. It also includes marked `review` comments on the marked PR, read with `gh api --paginate "repos/R/issues/PR/comments?per_page=100"` under the same selection rule.
-     - The second source is the latest End UTC in `<evidence root>/ledger.md`: the last column-4 value that is not `unknown`.
+     - The second source is the latest End instant in `<evidence root>/ledger.md`: the greatest column-4 (End) cell that is not `unknown`, the Total row included, each reconstructed per [telemetry](../telemetry.md) "Reconstruct each time cell as a UTC instant". It is compared with the first source's `updated_at` as a UTC instant.
      - If neither source has a value, the cell is `unknown`. A missing ledger is not an error.
    - **Resume.** The invoking host's explicit form from README "Install and invoke", with the issue URL.
 5. **Live gate** (only for `ready-to-deploy`):
