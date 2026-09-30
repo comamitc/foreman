@@ -60,12 +60,11 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    original scenario against the saved diff; a citation that does not match is a
    finding. Run only the named checks and record the observed exit at HEAD. Callers
    are the ones the pack names; the diff carries the rest. A path the pack does not
-   name is a gap under Risks and unresolved items, not a search. Count each tool
-   call, one read call or one shell command, however many files it names, as a
-   numbered line under
-   `## Checks`; stop when the pack has
-   been checked or at the ceiling in the brief header, listing unchecked rows as
-   gaps. A compact pack's single named file and check are the whole read allowance.
+   name is a gap under Risks and unresolved items, not a search.
+   Count each tool call, one read call or one shell command, however many files it names, as a numbered line under `## Checks`, except a host-instruction read ([references/harnesses/shared.md](harnesses/shared.md) "A host-instruction read is not an operation");
+   stop when the pack has been checked or at the ceiling in the brief header,
+   listing unchecked rows as gaps. A compact pack's single named file and check
+   are the whole read allowance.
 2. State a risk assessment. Allocate depth to actual uncertainty and impact.
    For high-risk changes, inspect every applicable failure surface; for low-risk
    changes, cover all applicable axes without inventing hypothetical problems.

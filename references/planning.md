@@ -31,9 +31,8 @@ the worker reads the brief and the pack only.
    a cited line. A path the pack does not name is a gap under Risks and unresolved
    items, not a search. Record the initial head and worktree status. Count each
    tool call, one read call or one shell command, however many files it names,
-   as a numbered line under
-   `## Checks`; at the ceiling in
-   the brief header, stop and list unchecked items as gaps. The ceiling applies to
+   as a numbered line under `## Checks`, except a host-instruction read ([references/harnesses/shared.md](harnesses/shared.md) "A host-instruction read is not an operation");
+   at the ceiling in the brief header, stop and list unchecked items as gaps. The ceiling applies to
    both planning steps. The pack is sized to the unit: a one-file, one-check unit
    gets the compact form, whose single named file and check are the whole allowance.
 2. Name input/output and data shapes before implementation mechanics. Apply

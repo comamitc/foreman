@@ -24,9 +24,11 @@ carry reads `none` plus the reason.
    treatment or refutation and unfinished items; never prior essays.
 5. `## Rules that apply`: sentences from repository instructions quoted with
    `path:line`. Never a whole file; never `CLAUDE.md`, the operating contract, or
-   every caller pasted or pointed at for complete reading. For code review, include
-   the effective policy, severity/confidence calibration, partition rules, review
-   ratchet, counted round and remaining allowance from `references/review-convergence.md`.
+   every caller pasted or pointed at for complete reading.
+   This is a content rule, not a reading ban; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+   For code review, include the effective policy, severity/confidence
+   calibration, partition rules, review ratchet, counted round and remaining
+   allowance from `references/review-convergence.md`.
 6. `## Checks`: exact commands with cwd and expected exit. A code-review pack
    also carries, under this heading, each applicable red or fault-injection
    observation that implementing recorded, marked as carried evidence (command,
@@ -34,7 +36,7 @@ carry reads `none` plus the reason.
    [references/review.md](review.md) owns the judgment.
    In verification-path adoption, it also carries the path's required state
    and allowed effects; [references/modes/verification-path.md](modes/verification-path.md) ("This file owns verification-path adoption") owns that mode.
-7. `## Named files`: `path:line-range` plus reason, the only paths the worker may open.
+7. `## Named files`: `path:line-range` plus reason, the only task files the worker may open; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
 
 Compact form, the exception for one Named files entry, one check, and no open
 finding rows: nothing is written as `none`, no heading beyond Candidate appears,
