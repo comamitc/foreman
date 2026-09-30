@@ -19,6 +19,11 @@ issues, is a batch invocation;
 owns it. Any other invocation, including prose that contains issue numbers or
 issue URLs, is not a batch invocation and follows this section unchanged.
 
+An invocation that is exactly `status` is the status invocation;
+[references/modes/status.md](modes/status.md) ("This file owns the status invocation")
+owns it. It creates no issue and does not enter the coordinator loop. `status`
+with any other text is text intake.
+
 Other non-empty prose with no GitHub URL creates one issue in the repository
 `gh repo view` resolves from the invoking workspace. Title is the first
 non-empty line, at most 256 characters. Body is the full text. Emit the new
