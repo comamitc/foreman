@@ -40,6 +40,10 @@ the worker reads the brief and the pack only.
 3. Produce [plan](../templates/plan.md). Map every acceptance criterion to ordered
    items with an observable outcome, affected area, verification command/seam,
    failure signal, and risk. Name final repository checks and real user-surface proof.
+   Size proof to the change; [references/ladder.md](ladder.md) ("## Check") owns the limit.
+   A Markdown-only change uses the simplest observable text checks that discriminate a real defect.
+   A multi-stage proof pipeline needs a stated reason in the plan.
+   A stated reason does not waive the simplest-check sentence for a Markdown-only change.
    Scale the plan to the change: a small CLI option needs a short behavior map,
    not repeated explanations of the same command in several sections.
    Fill Documentation impact. Map each changed public or operational behavior

@@ -12,7 +12,7 @@
 
 **Ceiling comment**: one line naming a known limit and the condition that would justify replacing it. Rejected: a new abstraction for that limit.
 
-**Declared check**: a verification command the plan or the repository conventions already name. Rejected: a command Capstan invents from a file extension.
+**Declared check**: a verification command the plan or the repository conventions already name. Rejected: a command Capstan invents from a file extension; an evidence check the coordinator writes from plan text, even when the plan quotes its command.
 
 **Toolchain**: the resolved invocation for a declared check, plus the task environment when the repo's own tool requires one. Rejected: a global package manager assumed to be on `PATH`.
 
@@ -117,3 +117,5 @@
 **Status invocation**: the explicit invocation `status`. It prints a read-only report of open issues that carry a Capstan stage label or the `capstan:blocked` overlay, and mutates nothing. The rule owner is `references/modes/status.md` ("This file owns the status invocation"). Rejected: a host status line (one event line during a run); a delivery.
 
 **Host instructions**: instruction files a worker's harness loads from the operator's host configuration whatever the brief says, such as `~/.codex/AGENTS.md` or `~/.claude/CLAUDE.md`, and files they direct the worker to read. A brief does not forbid or contradict them. Rejected: a contributor instruction file; pack content.
+
+**Evidence check**: a script or multi-step command the coordinator writes for a pack's `## Checks` from plan text, kept outside the repository; it stays an evidence check when the plan quotes its command. It is bitten against known-good text and a planted defect before a worker depends on it. The rule owner is `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches"). Rejected: a declared check; a Capstan test runner.

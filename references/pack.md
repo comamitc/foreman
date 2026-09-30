@@ -64,6 +64,19 @@ one-pass planning precedence:
 | initial planning, plan-review | amend the pack; relaunch the unfinished portion of the same step |
 | single correction | pass consumed; amend the implementing pack and carry the gap as an unresolved obligation |
 | implementing, review, fix, pre-merge repair | amend the pack; relaunch the unfinished portion in the same station |
+| any station reporting a defective evidence check | repair the check as the coordinator, record old and new in ledger.md, and repeat the bite; then continue by that station's row above, so after single correction the pass stays consumed and the repaired check is carried in the implementing pack |
+
+An evidence check is bitten before the brief that depends on it launches, except for the deferred assertions named below.
+A command the coordinator writes from plan text for a pack's `## Checks` is an evidence check even when the plan quotes it; a declared check is not an evidence check, and [references/toolchain.md](toolchain.md) owns its preflight.
+The coordinator runs the evidence check against at least one known-good case, which it passes, and at least one planted defect, which it fails.
+Plant at least one defect per evidence check and one per carried finding the check claims to close.
+When no known-good candidate exists yet, the coordinator either bites the check on a synthetic fixture or names the assertions that cannot run until the candidate exists.
+A synthetic fixture is a scratch copy with a representative edit built from the plan's text; it stays outside the product worktree, is a scratch git clone with a commit when the check inspects commits or diffs, and is never given to a worker.
+Named deferred assertions are the only exception to the pre-launch bite; the coordinator bites them at the closure proof gate, before review starts.
+The coordinator records a notes line in `ledger.md` naming each check's command, the known-good outcome, and each planted defect's outcome and exit.
+Evidence scripts stay under the delivery's evidence root, outside the repository.
+When a worker reports a defective evidence check, the worker does not repair it; the coordinator repairs it, records the old and new check in `ledger.md`, and repeats the bite.
+The next review pack carries the change, and the reviewer judges whether it weakened the check.
 
 For an implementing/fix brief carrying effective blocking findings, require one
 red/green/bite closure row per finding using `references/findings.md`. Name the
