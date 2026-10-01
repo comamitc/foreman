@@ -352,6 +352,27 @@ G8() {
   } >"$T/g/g8.md"
   g_case G8 "$T/g/g8.md" "Host grant: $T/home/out.md"
 }
+G9() { # a fence inside a blockquote, a list item, or a nested blockquote grants nothing
+  local f rc
+  for f in sec1 sec2 sec3 sec4 sec5 quoted after; do printf '%s\n' "$f" >"$T/home/$f.md"; done
+  {
+    printf '# Notes\n\nSee %s~/plain.md%s.\n\n' "$bt" "$bt"
+    printf '> ~~~\n> Read %s~/sec1.md%s.\n> ~~~\n\n' "$bt" "$bt"
+    printf -- '- item\n\n    ~~~\n    %s~/sec2.md%s\n    ~~~\n\n' "$bt" "$bt"
+    printf '> > ~~~\n> > %s~/sec3.md%s\n> > ~~~\n\n' "$bt" "$bt"
+    printf '> Quoted %s~/quoted.md%s.\n\n' "$bt" "$bt"
+    printf '> ~~~\n> %s~/sec4.md%s\n\nAfter %s~/after.md%s.\n\n' "$bt" "$bt" "$bt" "$bt"
+    printf '    ```\n\n```\n%s~/sec5.md%s\n```\n' "$bt" "$bt"
+  } >"$T/g/g9.md"
+  g_case G9 "$T/g/g9.md" "Host grant: $T/home/plain.md, $T/home/quoted.md, $T/home/after.md" || return 1
+  (cd "$T/b" && bash "$LAUNCH_SH" write --kind claude-write --out "$T/k/G9.sh" --worktree "$T/wt" \
+    --launch-file "$LF" --host-source "$T/g/g9.md") >"$T/log/G9.out" 2>"$T/log/G9.err"
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "write exited $rc: $(first "$T/log/G9.err")"; return 1; }
+  grep -qxF "'Read(/$T/home/plain.md)'" "$T/k/G9.sh" && grep -qxF "'Read(/$T/home/quoted.md)'" "$T/k/G9.sh" \
+    || { echo "run script lacks the plain.md or quoted.md Read entry"; return 1; }
+  ! grep -q 'sec[1-5]' "$T/k/G9.sh" || { echo "run script grants a fenced path: $(grep 'sec[1-5]' "$T/k/G9.sh" | head -n 1)"; return 1; }
+}
 
 # ---- AC 3: check (C1-C7) ----
 
@@ -474,7 +495,7 @@ O3() {
   no_tmp "$T/o3" || { echo "a .launch.* file was left"; return 1; }
 }
 
-for c in K1 K2 K3 K4 K5 K6 K7 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 C1 C2 C3 C3b C4 C5 C6 C7 S1 S2 O1 O2 O3; do
+for c in K1 K2 K3 K4 K5 K6 K7 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 S1 S2 O1 O2 O3; do
   t "$c" "$c"
 done
 [ "$fails" -eq 0 ] || exit 1

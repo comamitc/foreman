@@ -46,6 +46,9 @@ mode_of() { local m; m=$(ls -ld -- "$1" 2>/dev/null) && printf '%s' "${m:0:10}";
 # Prints each inline code span of a Markdown file whose whole content is a path
 # starting with ~/ or /, in source order. Fenced blocks are skipped: a fence is
 # closed only by the same character, at least as long, with nothing after it.
+# A fence inside a blockquote or list item is a fence too: each line is first
+# matched against the open containers (tabs expanded to 4 columns), and a fence
+# also ends where its container ends.
 SPAN_AWK='
 function opens(s,   i, n, c) {
   i = 1; while (i <= 3 && substr(s, i, 1) == " ") i++
@@ -83,8 +86,60 @@ function scan(s,   i, j, n, m, len, span) {
   }
 }
 function flush() { if (blk != "") scan(blk); blk = "" }
-infence { if (closes($0)) infence = 0; next }
-opens($0) { flush(); infence = 1; next }
+function untab(s,   o, c, i) {
+  o = ""
+  for (i = 1; i <= length(s); i++) {
+    c = substr(s, i, 1)
+    if (c != "\t") o = o c
+    else do { o = o " " } while (length(o) % 4)
+  }
+  return o
+}
+function sp(s,   n) { n = 0; while (substr(s, n + 1, 1) == " ") n++; return n }
+# rest(s): matches s against the open containers (ct[i] "q" for a blockquote,
+# "l" for a list item with content column cw[i]); sets km to the number
+# matched and returns what follows them.
+function rest(s,   n) {
+  for (km = 0; km < nc; km++) {
+    n = sp(s)
+    if (ct[km + 1] == "q") {
+      if (n > 3 || substr(s, n + 1, 1) != ">") break
+      s = substr(s, n + 2); if (substr(s, 1, 1) == " ") s = substr(s, 2)
+    } else if (s !~ /^ *$/) {
+      if (n < cw[km + 1]) break
+      s = substr(s, cw[km + 1] + 1)
+    }
+  }
+  return s
+}
+# starts(s): opens each blockquote or list item that starts s; returns the rest.
+function starts(s,   n, m, k, t, c) {
+  while (1) {
+    n = sp(s)
+    if (n > 3) return s
+    t = substr(s, n + 1)
+    if (substr(t, 1, 1) == ">") {
+      ct[++nc] = "q"; s = substr(t, 2); if (substr(s, 1, 1) == " ") s = substr(s, 2)
+      continue
+    }
+    if (!match(t, /^([-+*]|[0-9]+[.)])/)) return s
+    m = RLENGTH; c = substr(t, m + 1, 1)
+    if (c != " " && c != "") return s
+    k = sp(substr(t, m + 1))
+    if (k > 4 || substr(t, m + k + 1) == "") k = 1
+    ct[++nc] = "l"; cw[nc] = n + m + k; s = substr(s, n + m + k + 1)
+  }
+}
+{
+  s = rest(untab($0))
+  if (infence) {
+    if (km == nc) { if (closes(s)) infence = 0; next }
+    infence = 0
+  }
+  k = nc; nc = km; s = starts(s)
+  if (opens(s)) { flush(); infence = 1; next }
+  if (nc == km && km < k && blk != "" && s !~ /^ *$/) nc = k # lazy paragraph line
+}
 /^[ \t]*$/ { flush(); next }
 { blk = (blk == "" ? $0 : blk "\n" $0) }
 END { flush() }
