@@ -18,6 +18,8 @@ codex exec -C WORKTREE -s workspace-write -c approval_policy='"never"' \
   --add-dir RESULT_DIR --json --output-last-message RESULT - < LAUNCH_FILE
 ```
 
+The coordinator writes this launch and its `-s read-only` form with `scripts/launch.sh write` (kinds `codex-write`, `codex-read`, `codex-read-probe`). This recipe stays the specification. The nested host below stays prose.
+
 `references/harnesses/codex.md` owns the stdin rule. Other files name this owner and do not restate this procedure.
 
 When the supervisor cannot pass stdin, the Codex launch uses a shell redirect of the launch file. The recipe above is that redirect: `- < LAUNCH_FILE`.

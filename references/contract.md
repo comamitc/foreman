@@ -94,7 +94,7 @@ These global non-goals apply to every Capstan file and every mode file. Capstan
 never adds:
 
 - a Capstan executable, parser, or controller (unless an admitted issue records
-  the exception);
+  the exception; #181 records it for `scripts/launch.sh` and its test script);
 - a new stage, station, label, config field, or marker kind;
 - a daemon, scheduler, watcher, or recurring job;
 - a database, store, or state service;
@@ -106,7 +106,8 @@ Capstan init binary would violate the executable non-goal, not an
 implementation choice. The executable non-goal does not apply to a target
 repository unless that repository is Capstan. A delivery reads the target
 repository's own conventions. It does not import this rule into that
-repository. Permit only `git`, `gh`, existing harness CLIs, and a target
+repository. Permit only `git`, `gh`, existing harness CLIs, the coordinator's
+launch builder `scripts/launch.sh` (workers never run it), and a target
 repository's own CLI. Do not permit the class "an installed CLI."
 
 ## Evidence and reconciliation
