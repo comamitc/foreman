@@ -121,3 +121,5 @@
 **Evidence check**: a script or multi-step command the coordinator writes for a pack's `## Checks` from plan text, kept outside the repository; it stays an evidence check when the plan quotes its command. It is bitten against known-good text and a planted defect before a worker depends on it. The rule owner is `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches"). Rejected: a declared check; a Capstan test runner.
 
 **Verified delivery**: a delivery that reached `capstan:ready-to-deploy` with its live gate verified. The rule owner is `references/modes/improvement.md` ("Resource comparison."). Rejected: a merged PR, a draft, or an attempt that stopped blocked.
+
+**Launch builder**: `scripts/launch.sh`. It writes and checks the run script for one Claude or Codex worker launch from structured inputs. Rejected: a builder that launches, supervises, or redacts workers.

@@ -7,8 +7,9 @@ deploys.
 
 The product is Markdown. Capstan's own behavior is a skill procedure executed
 by the coordinator. A Capstan executable, parser, or controller is forbidden
-unless an admitted issue records the exception. There is no installer or
-wrapper. The coordinator reads GitHub/git facts. Local evidence and labels help
+unless an admitted issue records the exception. Issue #181 records one: the
+launch builder `scripts/launch.sh` and its test script `scripts/test-launch.sh`,
+run with `bash` by the coordinator. There is no installer or wrapper. The coordinator reads GitHub/git facts. Local evidence and labels help
 resume; they cannot overrule current facts.
 
 ## Install and invoke
