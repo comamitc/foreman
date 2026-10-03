@@ -73,7 +73,7 @@ the worker reads the brief and the pack only.
 The plan names declared checks. It does not resolve a runner. The coordinator
 runs [toolchain](toolchain.md) before the implementing worker launches.
 
-The planning result names [telemetry.md](telemetry.md) as the owner of the ledger row.
+The planning result names [telemetry.md](telemetry.md) as the owner of the ledger row and the policy row.
 
 Use [templates/result.md](../templates/result.md) for planning result headings. Complete when every acceptance criterion is covered, every item
 has observable verification and a failure signal, every prior finding has a
