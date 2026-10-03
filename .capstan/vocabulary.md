@@ -130,4 +130,12 @@
 
 **Test tier**: the level at which a check exercises the change, highest first: end-to-end through the real entry point with real dependencies; integration at an API or data boundary against a real service; unit. The rule owner is `references/ladder.md` ("## Check"). Rejected: a tier the repository could reach only by adding infrastructure, a coverage target, or a mutation score.
 
+**Module**: anything with an interface and an implementation, at any scale: a function, a file, a package. The rule owner is `references/ladder.md` ("## Module"). Rejected: a file or directory boundary alone; a layer named by the state it holds, such as a model or a store.
+
+**Interface**: everything a caller must know to use a module correctly: signature, invariants, ordering, error modes, configuration. The rule owner is `references/ladder.md` ("## Module"). Rejected: the type signature alone.
+
+**Seam**: the place where a module's interface lives, where behavior can be substituted without editing the caller. The rule owner is `references/ladder.md` ("## Module"). Rejected: an injection point or abstract interface added where nothing varies.
+
+**Deep module**: a module with a small interface and substantial behavior behind it. The rule owner is `references/ladder.md` ("## Module"). Rejected: a shallow module whose interface is about as large as its behavior; a pass-through module.
+
 **Ledger digest**: the SHA-256 of the final `ledger.md` bytes, published as `Ledger sha256: <hex>` in the marked summary. It is tamper-evident, not tamper-proof. The rule owner is `references/telemetry.md`. Rejected: signing or attestation.
