@@ -28,6 +28,20 @@ A bug fix goes in the shared function after the callers are traced. One guard th
 
 Non-trivial logic leaves one runnable check that fails if the logic breaks. A one-liner does not grow a framework, a fixture, or a per-function suite. An existing repository test convention still applies when that repository already has one. Do not invent a second test stack. Capstan has no test runner. Do not add one.
 
+Test tiers, highest first:
+
+1. end-to-end through the real entry point with real dependencies
+2. integration at an API or data boundary against a real service
+3. unit
+
+The required check for non-trivial logic sits at the highest tier the target repository can already run. A tier can already run when a declared check or an existing repository test path already exercises it. Do not build a new tier, test stack, runner, or framework to reach a higher one. A lower tier needs a one-line reason in the plan.
+
+A mock or stub of code the target repository owns does not satisfy the required check. A mock at a true external boundary remains allowed at the integration tier.
+
+A real-dependency tier stays isolated from production: no live financial or messaging write and no production reset. Where only production can serve the dependency, the check drops to the next tier and the plan states that reason.
+
+When the repository has no runnable end-to-end path, the plan records that gap and names the tier it used. The tier rule does not change the Markdown-only rule in [references/planning.md](planning.md) ("A Markdown-only change uses the simplest observable text checks") or the exemption in [references/implementing.md](implementing.md) ("Documentation, configuration, deletion, generated, operational, and trivial changes").
+
 ## Coordinator evidence
 
 Coordinator evidence stays complete. Do not shorten briefs, censuses, `run.md`, or the requested PR sections to look lazy. The ladder governs the product diff, not those artifacts.
