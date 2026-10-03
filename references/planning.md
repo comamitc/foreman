@@ -37,6 +37,9 @@ the worker reads the brief and the pack only.
    gets the compact form, whose single named file and check are the whole allowance.
 2. Name input/output and data shapes before implementation mechanics. Apply
    [ladder](ladder.md). Do not restate the ladder.
+   For each behavior it changes, the plan names the module that owns it and
+   that module's interface in the existing "Current behavior and data shape"
+   section, before implementation mechanics.
 3. Produce [plan](../templates/plan.md). Map every acceptance criterion to ordered
    items with an observable outcome, affected area, verification command/seam,
    failure signal, and risk. Name final repository checks and real user-surface proof.
