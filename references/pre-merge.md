@@ -91,14 +91,9 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    `Capstan: owner/repo#N` remains the identity check. The pull-request label is
    not a substitute for that marker, branch `capstan/N`, or the worktree.
 
-   [telemetry.md](telemetry.md) owns the attempt-table field rules and the
-   end-to-end wall. That wall ends at the ready-label read-back. Publish the
-   marked summary after that read-back. Read the summary back. Emission follows
-   the summary read-back.
-
-   After that read-back still holds, follow [telemetry.md](telemetry.md) for the
-   ledger and for deletion. If the ready label was removed, do not delete the
-   pile or the worktree. Stop without merging or deploying.
+   [telemetry.md](telemetry.md) owns the attempt-table field rules, the
+   end-to-end wall, and the end-of-run order. After the ready-label read-back,
+   follow that order. Stop without merging or deploying.
 
 Technical repair workers use [templates/result.md](../templates/result.md), including
 `## Resulting head` and `## Original failure verification`. Failed attempts use shared recovery.

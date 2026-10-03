@@ -129,3 +129,5 @@
 **Mandatory rule**: a quoted repository rule whose sentence contains one of the words `references/telemetry.md` lists. The rule owner is `references/telemetry.md`. Rejected: a risk score.
 
 **Test tier**: the level at which a check exercises the change, highest first: end-to-end through the real entry point with real dependencies; integration at an API or data boundary against a real service; unit. The rule owner is `references/ladder.md` ("## Check"). Rejected: a tier the repository could reach only by adding infrastructure, a coverage target, or a mutation score.
+
+**Ledger digest**: the SHA-256 of the final `ledger.md` bytes, published as `Ledger sha256: <hex>` in the marked summary. It is tamper-evident, not tamper-proof. The rule owner is `references/telemetry.md`. Rejected: signing or attestation.
