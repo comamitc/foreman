@@ -123,3 +123,5 @@
 **Verified delivery**: a delivery that reached `capstan:ready-to-deploy` with its live gate verified. The rule owner is `references/modes/improvement.md` ("Resource comparison."). Rejected: a merged PR, a draft, or an attempt that stopped blocked.
 
 **Launch builder**: `scripts/launch.sh`. It writes and checks the run script for one Claude or Codex worker launch from structured inputs. Rejected: a builder that launches, supervises, or redacts workers.
+
+**Test tier**: the level at which a check exercises the change, highest first: end-to-end through the real entry point with real dependencies; integration at an API or data boundary against a real service; unit. The rule owner is `references/ladder.md` ("## Check"). Rejected: a tier the repository could reach only by adding infrastructure, a coverage target, or a mutation score.

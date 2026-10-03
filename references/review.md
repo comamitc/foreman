@@ -87,6 +87,17 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    mutation testing on every change, a new test framework, or
    per-function suites. [references/ladder.md](ladder.md) owns that limit
    (`references/ladder.md` under "Check").
+   Judge the required check's test tier against that rule on the Standards
+   axis. "## Rules that apply" in the review pack is the only channel for a
+   target repository test-tier rule. When it quotes none, a lower tier without
+   a stated reason, or a mock or stub of an owned collaborator offered as the
+   required check, is recorded on the Standards axis with its claim stating
+   that it is out of scope for this change;
+   [references/review-convergence.md](review-convergence.md) ("Out-of-scope and
+   pre-existing observations are advisory regardless of their raw severity")
+   owns that partition. When it quotes one, the finding is in scope and uses
+   the existing severity and confidence calibration in
+   [references/review-convergence.md](review-convergence.md).
    Judge the red or fault-injection evidence the pack carries. Trace that
    evidence against the saved diff when needed.
    When the pack carries a changed evidence check, judge whether the change weakened it; [references/pack.md](pack.md) ("An evidence check is bitten before the brief that depends on it launches") owns the rule.
