@@ -74,6 +74,18 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    restate the ladder. A new dependency, a new file, or a reimplementation of
    an existing function is unrequested scope and blocks. A pure "this could be
    shorter" note stays minor. Keep one judge. Do not install a ponytail skill.
+   On the Simplicity axis, a pass-through module, or one behavior split by
+   state across modules, that the diff adds or reshapes is a finding in the
+   existing finding format; [references/ladder.md](ladder.md) ("## Module")
+   owns the rule. An existing module the diff edits without reshaping is not
+   a finding. "## Rules that apply" in the review pack is the only channel for
+   a target repository design rule. When it quotes none, the module finding's
+   claim states that it is out of scope for this change;
+   [references/review-convergence.md](review-convergence.md) ("Out-of-scope and
+   pre-existing observations are advisory regardless of their raw severity")
+   owns that partition. When it quotes one, the finding is in scope and uses
+   the existing severity and confidence calibration in
+   [references/review-convergence.md](review-convergence.md).
    For each applicable new or changed check, name the observable contract, a
    plausible defect and its failure signal, and whether a
    mock or stub suppresses that failure. A check that

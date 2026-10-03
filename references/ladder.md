@@ -24,6 +24,12 @@ Do not cut trust-boundary validation, handling that prevents data loss, security
 
 A bug fix goes in the shared function after the callers are traced. One guard there beats a guard on only the path the ticket names. A deliberate ceiling is a one-line comment that names the ceiling and the upgrade path, not a new abstraction.
 
+## Module
+
+This section applies only to a module the change adds or reshapes. An existing module keeps its shape unless restructuring is the admitted task. Add a new module only when a behavior needs one.
+
+Divide modules by the behavior they provide to callers, not by the state they hold. One module owns a behavior end to end. Prefer narrow, deep modules: a small interface with substantial behavior behind it. Apply the deletion test: if deleting a module would make no complexity reappear in its callers, it is a pass-through and is not added. Add a seam only where something actually varies: two adapters, or an external system.
+
 ## Check
 
 Non-trivial logic leaves one runnable check that fails if the logic breaks. A one-liner does not grow a framework, a fixture, or a per-function suite. An existing repository test convention still applies when that repository already has one. Do not invent a second test stack. Capstan has no test runner. Do not add one.

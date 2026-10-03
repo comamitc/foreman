@@ -19,6 +19,12 @@ This is the single review of the initial plan, not a review of its correction.
    single named file and check are the whole read allowance.
 2. Examine every acceptance criterion and plan item on all applicable axes.
    Judge simplicity by [ladder](ladder.md). Do not restate the ladder.
+   On the Simplicity axis, judge module shape by the module finding in
+   [references/review.md](review.md) step 3. When "## Rules that apply" quotes
+   no repository design rule, the finding's claim states that it is out of
+   scope for this change, and that finding alone does not make the verdict
+   revise. When it quotes one, the finding is in scope with its existing
+   severity and confidence.
 
    | Axis | Question |
    | --- | --- |
