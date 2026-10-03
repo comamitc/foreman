@@ -15,7 +15,7 @@ Why this is the smallest sufficient approach after checking reuse/native options
 
 ## Ordered items
 
-An Ordered items row for non-trivial logic names the test tier of its check inside its "Verification command and failure signal" cell; a Markdown-only or exempt row names the Markdown-only rule or the implementing exemption in that cell instead of a tier. [references/ladder.md](../references/ladder.md) ("## Check") owns the tiers, and [references/implementing.md](../references/implementing.md) step 2 owns the exemption.
+An Ordered items row for non-trivial logic names, inside its "Verification command and failure signal" cell, the acceptance criterion its check is derived from, the seam (the owning module's interface) it drives through, and its test tier; a Markdown-only or exempt row names the Markdown-only rule or the implementing exemption in that cell instead of a seam or tier. [references/ladder.md](../references/ladder.md) ("## Check") owns the derivation, the seam, and the tiers, and [references/implementing.md](../references/implementing.md) step 2 owns the exemption.
 
 | Item | Acceptance criterion | Observable outcome / affected area | Verification command and failure signal | Risk |
 | --- | --- | --- | --- | --- |

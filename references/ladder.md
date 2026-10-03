@@ -42,6 +42,8 @@ Test tiers, highest first:
 
 The required check for non-trivial logic sits at the highest tier the target repository can already run. A tier can already run when a declared check or an existing repository test path already exercises it. Do not build a new tier, test stack, runner, or framework to reach a higher one. A lower tier needs a one-line reason in the plan.
 
+The required check is derived from an admitted acceptance criterion and drives through the interface of the module that owns the behavior, at the tier the rule above selects. A test of private internals does not satisfy the required check.
+
 A mock or stub of code the target repository owns does not satisfy the required check. A mock at a true external boundary remains allowed at the integration tier.
 
 A real-dependency tier stays isolated from production: no live financial or messaging write and no production reset. Where only production can serve the dependency, the check drops to the next tier and the plan states that reason.
