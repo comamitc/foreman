@@ -104,6 +104,11 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    Cite an admitted acceptance criterion or a reachable defect.
    [references/findings.md](findings.md) owns closure proof.
    Do not restate that gate.
+   On the Standards axis, independently assess each applicable policy row the
+   pack carries under `## Rules that apply` or on a compact `Rule:` line;
+   [telemetry.md](telemetry.md) owns the policy row. An applicable rule with no
+   evidence is a finding in the existing finding format;
+   [references/review-convergence.md](review-convergence.md) partitions it.
 4. For every actionable finding, record axis, severity, confidence, category,
    file/symbol or plan item, claim, evidence, and correction in
    [review](../templates/review.md). Blocking

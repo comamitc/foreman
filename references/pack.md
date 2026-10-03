@@ -26,6 +26,8 @@ carry reads `none` plus the reason.
    `path:line`. Never a whole file; never `CLAUDE.md`, the operating contract, or
    every caller pasted or pointed at for complete reading.
    This is a content rule, not a reading ban; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+   Each quoted repository rule carries its policy row from `ledger.md` as
+   carried evidence, not a verdict; [references/telemetry.md](telemetry.md) owns the policy row.
    For code review, include the effective policy, severity/confidence
    calibration, partition rules, review ratchet, counted round and remaining
    allowance from `references/review-convergence.md`.
@@ -41,6 +43,8 @@ carry reads `none` plus the reason.
 Compact form, the exception for one Named files entry, one check, and no open
 finding rows: nothing is written as `none`, no heading beyond Candidate appears,
 and the read-station ceiling is 7 (1 + 1 + 5), an upper bound.
+A compact `Rule:` line carries its policy row from `ledger.md` as carried
+evidence, not a verdict; [references/telemetry.md](telemetry.md) owns the policy row.
 
 ```
 # Pack — owner/repo#N, implementing attempt 1, candidate: plan comment URL, revision R

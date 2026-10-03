@@ -69,7 +69,18 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    census and do not replace round 1. Do not set `unsafe_autonomy`. Do not redo
    the git-metadata grant. Do not merge.
 7. [telemetry.md](telemetry.md) owns the
-   attempt-table field rules and emission. Project
+   attempt-table field rules and emission. Withhold `capstan:ready-to-deploy`
+   while an applicable policy row for a mandatory rule is not `verified`;
+   [telemetry.md](telemetry.md) owns the policy row and the mandatory-rule test.
+   A non-mandatory row that is not `verified` is disclosed in the summary and
+   does not withhold ready. An advisory partition of a missing-evidence finding
+   does not set the row to `verified` and does not clear the withhold. Route the
+   withhold by the step 3 failure table: evidence or a repair an agent can
+   supply is the `in-diff` row, and a rule that needs what only a person can
+   supply is the `human capability` row, with the policy row as the blocker
+   evidence. A repair that changes the head returns through step 2. The
+   withhold is not review exhaustion. It ends only when that mandatory row is
+   `verified` at the current head. Project
    `capstan:ready-to-deploy` on the issue with the existing stage rules and on
    the marked pull request with [contract.md](contract.md) "Stage projection"
    ("After a successful ready projection"), through its issue and pull-request

@@ -108,7 +108,7 @@ terminal readiness or review exhaustion, publish a marked issue summary from
 PR URL, current head/base, observed ready-gate or exhaustion facts, the ledger's
 attempt table with its Total row and the date line (copied unchanged: the same columns, order, and cell formats), findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
-disclosures, and gaps. The attempt-table field rules are stated above. Both wall totals use the duration format above. End-to-end wall is from spec admission to the ready-label
+disclosures, applicable policy rows whose state is not `verified`, and gaps. The attempt-table field rules are stated above. Both wall totals use the duration format above. End-to-end wall is from spec admission to the ready-label
 read-back, before summary publication, or to the review-exhausted summary
 publication. A bound that was not
 observed is `unknown`. The supervisor-record rule above is that observation. The two totals are not substitutes for each other. A telemetry
@@ -187,6 +187,18 @@ or `unverified`, then the canonical path. Missing, contradictory, or unresolved
 evidence stays `unverified`. `unverified` uses row state `unresolved`. The other
 three use `verified` only after the named check passes. `intentionally unchanged`
 is not `not-applicable`. A result word cannot replace the row.
+
+This file owns the policy row. A policy row is a ledger row in `ledger.md` for
+each repository-instruction sentence quoted under `## Rules that apply`, or on a
+compact `Rule:` line, in any pack of the delivery. The row is keyed by the
+quoted `path:line` at the resolved base SHA. The row states applicability,
+`applies` or `not-applicable` with a reason; how the rule was satisfied; the
+evidence command, artifact, or review-census entry and the head it applies to;
+and `verified`, `unresolved`, or `not-applicable`. Capstan's own policy text in
+a pack gets no row. A rule is mandatory when its quoted sentence contains
+`must`, `must not`, `shall`, `required`, `never`, `do not`, or `don't`, case-insensitive, as whole words.
+The lifecycle paragraph that follows applies to policy rows; for a policy row,
+planning also maps applicability.
 
 Planning maps intended checks. Implementation records observed evidence. Review
 independently assesses required claims. A planned check is not a passed check.
