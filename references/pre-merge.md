@@ -35,6 +35,28 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
 4. Observe review decision and required approvals. Agent census approval does not
    substitute for required GitHub human review. Missing required approval uses
    `authority-required` with one concrete requested action. Resume on observation.
+
+   Residual-effect approval: when `review_policy.residual_effect_approval`
+   resolves to `true` ([contract.md](contract.md) "Configuration"), read the
+   published PR with
+   `gh api repos/OWNER/REPO/pulls/PR --jq '{body, author: .user.login, head: .head.sha}'`.
+   If its Blast Radius reversibility states residual effects or `unknown`, the
+   gate applies. A missing reversibility statement counts as `unknown`. Read
+   every page of reviews with
+   `gh api repos/OWNER/REPO/pulls/PR/reviews --paginate --jq '.[] | {id, state, commit_id, submitted_at, login: .user.login, type: .user.type}'`.
+   Order them by `submitted_at`, ties by `id`. For each reviewer `login`, the
+   effective review is the latest review whose `state` is `APPROVED` or
+   `CHANGES_REQUESTED`. A `DISMISSED` review does not count. A later
+   `COMMENTED` review does not revoke an earlier approval. An effective review
+   counts only when its `state` is `APPROVED`, its `commit_id` equals the PR
+   `head`, its `type` is `User` (a human GitHub account, not a bot), and its
+   `login` is not the PR `author`. A head change invalidates an earlier
+   approval for this gate. A bot or agent approval does not satisfy it. Until a
+   counting approval exists, use `authority-required` with the one requested
+   action "approve PR #N at head SHA" and do not project
+   `capstan:ready-to-deploy`. Resume when the approval is observed. Step 5
+   evaluates this gate again at every live observation. When the field resolves
+   to `false`, skip this paragraph and the step 5 re-check.
 5. Re-fetch base and query live PR state:
 
    ```sh
@@ -43,11 +65,25 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
 
    Complete only if the PR is open/non-draft; local reviewed head equals remote
    branch and PR head; resolved base is current and integrated; no conflicts;
-   required checks pass; required approvals exist; and GitHub reports no condition
-   preventing immediate merge. Require affirmative `MERGEABLE` and `CLEAN`.
+   required checks pass; required approvals exist; the residual-effect re-check
+   below holds when it applies; and GitHub reports no condition preventing
+   immediate merge. Require affirmative `MERGEABLE` and `CLEAN`.
    Withhold readiness for BLOCKED, BEHIND, DIRTY, UNKNOWN, DRAFT, UNSTABLE, pending,
    or an unrecognized status until its actual impediment is resolved. Never bypass
    rules, enable auto-merge, enqueue, or merge to obtain a passing state.
+
+   Residual-effect re-check: when `review_policy.residual_effect_approval`
+   resolves to `true`, every observation with this query, including the final
+   completion test and the post-projection live re-read in
+   [contract.md](contract.md) "Stage projection", evaluates the step 4
+   residual-effect approval again from fresh reads of the PR body and the full
+   review list. Do not reuse an earlier read. The re-check holds only when the
+   fresh PR `head` equals this query's `headRefOid` and, when the gate applies,
+   a counting approval names that `headRefOid`. On an unchanged head, a
+   dismissed or superseded approval, or a Blast Radius that now states residual
+   effects or `unknown`, fails the re-check. A failed re-check means the live
+   gate no longer holds: remove the pull-request label and read it back as
+   step 7 and that section state, and step 4's blocker applies again.
 6. Trace each bot claim before telemetry. A comment or review from Bugbot, an
    agentic security review, or any other non-human author is a bot claim, not a
    finding. Trace each claim against the current head and the admitted spec. A

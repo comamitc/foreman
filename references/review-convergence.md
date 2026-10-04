@@ -14,6 +14,7 @@ Resolve `review_policy` through the normal configuration precedence. Defaults:
 | `min_confidence` | `0.70` | Lowest confidence eligible to block |
 | `max_review_fix_rounds` | `3` | Maximum published code-review censuses in one delivery |
 | `surface_recurrence_rounds` | `3` | Consecutive rounds on one file/category surface that trigger convergence diagnosis |
+| `residual_effect_approval` | `false` | Opt-in ready gate; [pre-merge](pre-merge.md) step 4 owns it |
 
 Severity order is `low < medium < high < critical`. A finding is an **effective
 blocker** only when all of these are true:

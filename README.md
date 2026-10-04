@@ -107,7 +107,8 @@ Optional `.capstan.json` in the target repository:
     "block_threshold": "medium",
     "min_confidence": 0.7,
     "max_review_fix_rounds": 3,
-    "surface_recurrence_rounds": 3
+    "surface_recurrence_rounds": 3,
+    "residual_effect_approval": false
   },
   "worker_timeout_min": 60,
   "ci_timeout_min": 45,
@@ -128,6 +129,12 @@ other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
 `fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
 [contract](references/contract.md) owns `evidence.delete_pile`. [telemetry](references/telemetry.md) owns the ledger and deletion.
+
+`review_policy.residual_effect_approval` opts in to the residual-effect
+approval; [pre-merge](references/pre-merge.md) owns it. GitHub forbids approving
+one's own PR, so a solo repository that opts in needs a second human account.
+GitHub reports an account type, not who operates the account, so automation
+acting through a human account looks like a person to this gate.
 
 [contract](references/contract.md) owns feature-map resolution and heading shape.
 

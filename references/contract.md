@@ -95,7 +95,9 @@ never adds:
 
 - a Capstan executable, parser, or controller (unless an admitted issue records
   the exception; #181 records it for `scripts/launch.sh` and its test script);
-- a new stage, station, label, config field, or marker kind;
+- a new stage, station, label, config field, or marker kind (unless an admitted
+  issue records the exception; #185 records it for the config field
+  `review_policy.residual_effect_approval`);
 - a daemon, scheduler, watcher, or recurring job;
 - a database, store, or state service;
 - a host-skill copy, per-host plugin, or marketplace directory;
@@ -182,15 +184,16 @@ pull request with
 That add has no `--remove-label`. Read the issue labels back with
 `gh issue view N --repo OWNER/REPO --json labels` and the pull-request labels
 with `gh pr view PR --repo OWNER/REPO --json labels`. Then read remote heads,
-base heads, and live pull-request state again with the step 5 query in
-[pre-merge.md](pre-merge.md) ("Re-fetch base and query live PR state").
+base heads, and live pull-request state again with the step 5 query and its
+residual-effect re-check in [pre-merge.md](pre-merge.md) ("Re-fetch base and
+query live PR state"), which owns that re-check.
 If the pull-request label
 is absent, run the same add again on that pull request and read the pull-request
 labels again. Do not open a second pull request. On the pull request, add or
 remove only `capstan:ready-to-deploy`. Preserve unrelated pull-request labels.
 Do not copy `capstan:planning`, `capstan:review`, or `capstan:fix` onto the pull
 request. If a later observation shows the pull request is no longer immediately
-mergeable, run
+mergeable, or the pre-merge residual-effect re-check fails, run
 `gh pr edit PR --repo OWNER/REPO --remove-label capstan:ready-to-deploy`
 and read the removal back with `gh pr view PR --repo OWNER/REPO --json labels`.
 Success is a read-back that does not contain the label. If the label remains,
@@ -261,6 +264,13 @@ an invalid or missing value to `true`. Record the resolved value in `ledger.md`.
 `evidence.retain_replay` is not a cleanup flag. [telemetry.md](telemetry.md)
 owns retention and provenance. This file owns `evidence.retain_replay`.
 
+`review_policy.residual_effect_approval` is a boolean. The default is `false`.
+Precedence is invocation, then `CAPSTAN_REVIEW_POLICY_RESIDUAL_EFFECT_APPROVAL`,
+then `.capstan.json`, then the default. An invalid value is called out and falls
+through to the next valid source, per the rule above. Record the resolved value
+in `ledger.md`. When it resolves to `false`, every station behaves as before.
+[pre-merge.md](pre-merge.md) step 4 owns the residual-effect approval it enables.
+
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
 `.capstan/features` when that directory contains `README.md`. `features: null`
@@ -290,9 +300,11 @@ null; transient_retries 3; same_failure_attempts 2;
 run_wall_timeout_min 360;
 worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
 review_policy block_threshold medium, min_confidence 0.70,
-max_review_fix_rounds 3, surface_recurrence_rounds 3.
+max_review_fix_rounds 3, surface_recurrence_rounds 3,
+residual_effect_approval false.
 Timeouts must be positive; retry counts nonnegative integers;
-unsafe_autonomy boolean. Review threshold must be critical/high/medium/low,
+unsafe_autonomy boolean; residual_effect_approval boolean. Review threshold
+must be critical/high/medium/low,
 confidence from 0 through 1, max rounds a positive integer, and recurrence rounds
 a nonnegative integer where 0 disables that early guard. Null model/effort uses the harness default and is
 recorded as such. Null fallback disables it. Prefer a different available secondary;
