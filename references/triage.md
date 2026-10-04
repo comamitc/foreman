@@ -80,3 +80,5 @@ With two or more issues,
 [batch invocation](modes/batch-invocation.md) ("Every issue is walked before any issue enters unattended delivery")
 sets triage order and the cycle Ask; each walk is this file's walk, including
 for a body that already contains Decisions.
+
+A correction outcome adds its class Ask round, issue filing, and filing-only end to this walk; [correction](modes/correction.md) ("This file owns correction") owns all three.

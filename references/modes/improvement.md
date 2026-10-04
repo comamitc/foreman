@@ -70,6 +70,7 @@ detected; (b) a deterministic repository check for other machine-checkable
 behavior; (c) existing repository review guidance for judgment; (d) an existing
 navigation pointer for discovery friction; (e) the existing lesson store for
 non-obvious reasoning; (f) no-op.
+In a correction run, [ladder](../ladder.md) ("This section owns the enforcement order") orders each correction class; this routing does not apply to those classes.
 [lessons.md](lessons.md) ("This file owns the lesson rule") owns the lesson rule.
 Compare a structural change with the other options on blast radius and
 upkeep. It is an option, not an automatic rewrite. Reuse means a pattern that

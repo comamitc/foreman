@@ -80,6 +80,7 @@ Stop only at verified `capstan:ready-to-deploy`, a verified review-exhausted
 blocked overlay, a typed human capability or budget decision from recovery, or
 user cancellation. Pending infrastructure and
 activity markers call for bounded waiting and observation, not abandonment.
+A correction invoker's answer that picks nothing to fix now is user cancellation after filing; [correction](references/modes/correction.md) ("Filing-only end") owns that end.
 On resume, [references/recovery.md](references/recovery.md) owns blocked-overlay
 removal. A formerly ready PR must satisfy the live gate again.
 
