@@ -32,7 +32,7 @@ This file owns the attempt table. The attempt table has these columns, in this o
 - Tokens: one integer with thousands separators, counted once by the rule below, including cached reads. `—` for a row with no worker. `unknown` for a worker row whose usage was not reported, never zero or an estimate.
 
 The last row is the Total row: `| **Total** | — | START | END | WORKER | COORD | — | TOKENS |`.
-- Start is spec admission. End is the ready-label read-back, or the review-exhausted summary publication.
+- Start is spec admission. End is the ready-label read-back, or the review-exhaustion decision.
 - Worker is the Worker-process wall: the sum of the Worker cells. Coord is the sum of the Coord cells. Tokens is one total across all harnesses.
 - Each total is `unknown` when any cell it sums is `unknown`. A `—` or `not timed` cell adds zero.
 
@@ -60,7 +60,7 @@ The ledger notes keep the raw usage. In `ledger.md`, after the date line, write 
 - A row with a worker: `- STAGE ATTEMPT: HARNESS VERSION MODEL EFFORT; field=value ...`. MODEL is the full model ID. A version, model, or effort the harness did not report is `unknown`.
 - A row with no worker: `- STAGE ATTEMPT: coordinator`. It carries no version, model, effort, or usage.
 
-Fields use the harness's own names and values, as reported. List only reported fields; when the harness reported no usage, write `usage=unknown`. A field is listed once. On a failed attempt, `exit=N error=REDACTED;` follows EFFORT. The summary and the final message do not copy the notes. Capstan captures no cost. Record no spent, reported, or estimated cost figure or price in `ledger.md`, the summary, a host status line, or a benchmark or improvement comparison, even when the harness reports one.
+Fields use the harness's own names and values, as reported. List only reported fields; when the harness reported no usage, write `usage=unknown`. A field is listed once. On a failed attempt, `exit=N error=REDACTED;` follows EFFORT. The summary and the final message do not copy the notes. The one exception is the verbatim `ledger.md` block the end-of-run order publishes in the summary; the summary's ordinary narrative still does not copy them. Capstan captures no cost. Record no spent, reported, or estimated cost figure or price in `ledger.md`, the summary, a host status line, or a benchmark or improvement comparison, even when the harness reports one.
 
 For planning, record the initial plan, single review, correction launch/outcome,
 and full finding handoff into implementing. Record any operator-authorized reopening
@@ -96,23 +96,71 @@ such as time, kind, station, attempt, head, outcome, and evidence. Existing `jq 
 with `--arg` or another installed JSON emitter can append correctly escaped lines.
 Do not concatenate unescaped worker text into JSON. No validator, parser, helper,
 or event is needed to choose a station. On failed append or malformed event, note
-the gap in `ledger.md`. A remote comment may still publish the gap. `run.md` is
-not the record. Continue.
+the gap in `ledger.md` before the end-of-run order; after that, per its event
+cutoff. A remote comment may still publish the gap. `run.md` is not the record.
+Continue.
 
-At terminal readiness, project the ready label and read it back before
-publishing the summary. At review exhaustion, do not project
-`capstan:ready-to-deploy`. Publish the marked summary after that read-back, or
-after the exhaustion decision when no ready label is projected. At
-terminal readiness or review exhaustion, publish a marked issue summary from
-`ledger.md`. Do not recompute it from the pile. The summary contains
+At terminal readiness, project the ready label and read it back. At review
+exhaustion, do not project `capstan:ready-to-deploy`; the order starts after the
+review-exhaustion decision. Then follow this end-of-run order:
+
+1. Write the final `ledger.md` and read it back.
+2. At ready-to-deploy only, apply the deletion rule under "Ledger, pile, and deletion", write its records into `ledger.md`, and read it back.
+3. Compute the ledger digest with `sha256sum ledger.md` or `shasum -a 256 ledger.md` and take the hex field. Nothing is written into `ledger.md` after this step.
+4. Compose the summary from `ledger.md`, inspect it for credentials per [security.md](security.md) rule 7, and publish a marked issue summary.
+5. Read the summary back.
+
+Event cutoff: append the `run-end` event before step 1. From step 1 on, record
+no event in `events.jsonl` or any other evidence file; the only ledger write
+after step 1 is step 2's deletion records. An event from step 1 on, such as a
+`telemetry-gap`, a `recovery` for a failed summary publication, or a
+`label-change`, goes into the summary's gaps when it occurs before step 4
+composes the summary, and otherwise into the final message. A missed final
+message has no later record; the published summary stands. Host status lines
+continue.
+
+Any other marked summary, such as a batch human-capability summary, uses steps
+1 and 3–5 and the event cutoff. Do not recompute the summary from the pile. The summary contains
 PR URL, current head/base, observed ready-gate or exhaustion facts, the ledger's
 attempt table with its Total row and the date line (copied unchanged: the same columns, order, and cell formats), findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
-disclosures, applicable policy rows whose state is not `verified`, and gaps. The attempt-table field rules are stated above. Both wall totals use the duration format above. End-to-end wall is from spec admission to the ready-label
-read-back, before summary publication, or to the review-exhausted summary
-publication. A bound that was not
+disclosures, applicable policy rows whose state is not `verified`, and gaps. It
+also contains the line `Ledger sha256: <hex>`, or `Ledger sha256: unknown` when
+the digest fails. Last, it contains the final `ledger.md` verbatim:
+
+~~~
+<details>
+<summary>ledger.md</summary>
+
+````
+<ledger.md bytes>
+````
+
+</details>
+~~~
+
+The fence is backticks, one longer than the longest backtick run in `ledger.md`
+and at least three. The final `ledger.md` ends with a newline. The block ends the
+comment: nothing follows `</details>`, not even a newline. Before publishing,
+write the whole candidate comment, block included, to FILE and measure it in
+bash or zsh with `SUMMARY_BODY="$(<FILE)" gh api rate_limit --jq '$ENV.SUMMARY_BODY | length'`.
+The `--jq` filter runs locally on the variable; the body is not sent. The count
+is in Unicode code points. Include the block only when the count is at most
+65,536, GitHub's comment limit, and the block passes the credential inspection.
+A failed command or a count of 0 means the size is unknown. Otherwise put
+`Ledger not published: <reason>.` in place of the block, where the reason is
+`the comment would exceed 65,536 characters`,
+`the comment size could not be measured`, or `credential inspection failed`. If
+GitHub still rejects the comment as too long, publish it once more without the
+block, with the first reason.
+
+The attempt-table field rules are stated above. Both wall totals use the duration format above. End-to-end wall is from spec admission to the ready-label
+read-back, before summary publication, or to the review-exhaustion decision. A bound that was not
 observed is `unknown`. The supervisor-record rule above is that observation. The two totals are not substitutes for each other. A telemetry
-gap in this table does not block ready-to-deploy. Include recovered
+gap in this table does not block ready-to-deploy. A digest failure or an
+unpublished ledger is a telemetry gap. It does not block ready-to-deploy. It is
+reported per the event cutoff, not in `ledger.md`. The summary comment and its
+read-back are the record of publication. Include recovered
 counts only when evidence supports them. Lost local data yields unknown details,
 not an unrecoverable run. A failed GitHub summary publication uses normal transient
 recovery; do not pretend it published. Remote progress evidence preserves budget
@@ -153,14 +201,15 @@ event posts that event's line only. An unchanged observation posts nothing.
 Lines come from observations the coordinator already makes, not from a new
 timer. This rule adds no Capstan number or timeout. Workers do
 not post status lines. A missed status line is a `telemetry-gap` in
-`ledger.md`. It does not block a station, a label projection, or
-ready-to-deploy.
+`ledger.md` before the end-of-run order; after that, per its event cutoff. It
+does not block a station, a label projection, or ready-to-deploy.
 
 Same-figures rule: copy the published summary's figures. Do not recompute.
 `unknown` stays `unknown`.
 
-Gap rule: a missed host message is a telemetry gap in `ledger.md`. It does not
-skip the GitHub summary and does not withhold ready.
+Gap rule: a missed host message is a telemetry gap in `ledger.md` before the
+end-of-run order; after that, per its event cutoff. It does not skip the GitHub
+summary and does not withhold ready.
 
 ## Ledger, pile, and deletion
 
@@ -170,6 +219,8 @@ resolution of `evidence.delete_pile` and owns `evidence.retain_replay`.
 `ledger.md` is the retained local record of totals and check outcomes. Always
 write it, whether or not deletion is enabled. The attempt-table field rules
 above are the ledger row. The switch cannot suppress `ledger.md`.
+
+Ledger digest check: in the directory holding `ledger.md`, run `printf '%s  ledger.md\n' HEX | sha256sum -c -` or `printf '%s  ledger.md\n' HEX | shasum -a 256 -c -`, where HEX is the published `Ledger sha256:` value. It prints `ledger.md: OK` and exits 0 on a match, and prints `ledger.md: FAILED` and exits 1 otherwise. To check the published bytes instead, first recover them into an empty directory with `gh api repos/OWNER/REPO/issues/comments/ID --jq '.body | (split("\n\n</details>") | .[-2] | split("\n") | last) as $f | split("<summary>ledger.md</summary>\n\n" + $f + "\n") | last | split("\n" + $f + "\n") | first' > ledger.md`, then run the same command. The filter reads the fence from the comment's end and the last opening, so delimiter text inside the ledger or earlier in the summary does not cut the bytes short. A body with CRLF line endings fails recovery and the check. The digest is tamper-evident, not tamper-proof: a mismatch shows that the ledger or the published bytes changed after publication, and nothing prevents the change. Someone who can edit the comment can change both. It is not signing, attestation, or server enforcement.
 
 This file owns the acceptance ledger row. Other files name this owner. Other
 files do not restate the row fields. The row is a ledger row in `ledger.md`.
@@ -247,12 +298,13 @@ Missing switch and invalid switch are not replayable.
 
 No mid-run deletion. At ready-to-deploy, after the ready-label read-back still
 holds, after `ledger.md` is written and read back, and after no worker from
-this run is active, delete the named pile paths only when the resolved switch
-is `true` and every required ledger field is present. A successful read-back
-is not completeness. A missing required field keeps the pile and the worktree,
-and the gap is recorded, even when the switch is `true`. When the switch is
-`false`, the pile stays and the ledger says deletion was skipped. Name each
-deleted path. Do not recurse over the evidence root,
+this run is active, and before the ledger digest, delete the named pile paths
+only when the resolved switch is `true` and every required ledger field is
+present. A successful read-back is not completeness. A missing required field
+keeps the pile and the worktree, and the gap is recorded, even when the switch
+is `true`. When the switch is `false`, the pile stays and the ledger says
+deletion was skipped. Name each deleted path in `ledger.md` and read it back
+before the digest. Do not recurse over the evidence root,
 `$HOME/.local/state/capstan`, or any other issue directory. If the ready label
 was removed because the live gate no longer holds, do not delete.
 

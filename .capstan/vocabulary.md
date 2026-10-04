@@ -137,3 +137,5 @@
 **Seam**: the place where a module's interface lives, where behavior can be substituted without editing the caller. The rule owner is `references/ladder.md` ("## Module"). Rejected: an injection point or abstract interface added where nothing varies.
 
 **Deep module**: a module with a small interface and substantial behavior behind it. The rule owner is `references/ladder.md` ("## Module"). Rejected: a shallow module whose interface is about as large as its behavior; a pass-through module.
+
+**Ledger digest**: the SHA-256 of the final `ledger.md` bytes, published as `Ledger sha256: <hex>` in the marked summary. It is tamper-evident, not tamper-proof. The rule owner is `references/telemetry.md`. Rejected: signing or attestation.
