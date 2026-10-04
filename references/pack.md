@@ -9,6 +9,7 @@ carry reads `none` plus the reason.
    plan comment URL and revision, or `BASE...HEAD` SHAs).
 2. `## Acceptance criteria`: the applicable criteria quoted from the admitted spec.
 3. `## Candidate`: the candidate verbatim, by station.
+   - Initial planning: [planning](planning.md) ("runs the history sweep once") owns its history lines.
    - Plan-review and single correction: the current plan text in full.
    - Implementing: the plan's identity lines (specification revision, observed
      head / base, planning step) and its `Ordered items`, `Documentation impact`,
