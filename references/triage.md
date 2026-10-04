@@ -35,6 +35,32 @@
    run. The question recommends the issue's answer and names what the removal
    deletes. This rule does not ask the invoker for every decision. Ready is
    illegal until that Ask is answered.
+   Prototype: when a node's answer is a fact observable by running something
+   (behavior, output, timing, a tool's actual flags), settle it as Evidence by
+   running a prototype instead of asking. The coordinator runs it. First fetch
+   and record the resolved base's SHA for this run as [contract](contract.md)
+   ("record the SHA of that ref") describes. Clone the repository with
+   `git clone --no-checkout <origin-url>` into a new directory under the
+   evidence root's existing owner-only `checks/` directory, outside the product
+   worktree and the shared checkout. In the clone, run
+   `git checkout --detach <recorded-sha>` and confirm `git rev-parse HEAD`
+   prints that SHA before running anything. Capture the prototype's output
+   there as [security](security.md) items 6–7 require. Never commit or push
+   from the clone. Triage still edits no repository file. A prototype runs only
+   `git`, read-only `gh` calls, and the target repository's own commands,
+   within the permit list in [contract](contract.md) ("Do not permit the class
+   "an installed CLI.""). It installs nothing, writes nothing to production or
+   to GitHub, does not merge or deploy, and creates no credential. Do not run a
+   prototype that needs any of these; settle the node another way. If the SHA
+   cannot be established, or the fetch, clone, checkout, setup, or run fails,
+   the fact stays unsettled: keep only a redacted diagnostic as
+   [security](security.md) item 6 requires, and settle the node another way
+   without widening these bounds. The node's Decisions entry records the
+   verified SHA, the exact command, the observed output (an excerpt is allowed,
+   after that credential inspection), and the conclusion. A node that changes
+   scope, safety, or an irreversible outcome stays Ask even when a prototype
+   informs it; the question carries the observation as evidence. The removal
+   rule above is unchanged.
 3. Maintain a frontier of unresolved product decisions. Ask numbered rounds only
    for consequential choices that evidence cannot settle. Recommend an answer and
    explain its effect. An ask is one numbered round of the current frontier. Each
