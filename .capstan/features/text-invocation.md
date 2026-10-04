@@ -1,0 +1,23 @@
+# Text invocation
+
+## Sub-features
+- Issue creation from the text, which is kept as the original request.
+- Provisional title: the created issue's title may change when the spec is published; [contract](../../references/contract.md) ("The create-time title is the provisional title") owns when.
+- An outcome stated in the text selects a mode, such as [feature-map adoption](feature-map-adoption.md); the [index](README.md) lists them.
+
+## How to get to it (user POV)
+Install Capstan as [README](../../README.md) ("Install and invoke") describes, and invoke it from a workspace whose repository `gh repo view` resolves.
+[contract](../../references/contract.md) ("## Identity and authority") owns text intake.
+
+## Driving it
+Invocation: invoke Capstan with non-empty prose that contains no GitHub URL.
+End state: Capstan prints the new issue URL in the host session, then runs the normal [issue delivery](issue-delivery.md) for that issue.
+The created issue is the delivery identity.
+
+## Gotchas
+- `status` with any other text enters text intake.
+- If `gh repo view` cannot resolve a repository, no issue is created and Capstan asks for `owner/repo`.
+- A GitHub URL that is not an issue URL, or empty text, creates no issue.
+- Capstan does not read a filesystem path or use the surrounding transcript.
+- A title a person already changed stays as it is.
+- Text intake does not run init.
