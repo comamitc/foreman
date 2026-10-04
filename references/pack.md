@@ -25,6 +25,9 @@ carry reads `none` plus the reason.
 5. `## Rules that apply`: sentences from repository instructions quoted with
    `path:line`. Never a whole file; never `CLAUDE.md`, the operating contract, or
    every caller pasted or pointed at for complete reading.
+   Repository instructions include the standards file whose rule table names
+   each rule's enforcer. Quote each of its rules that applies;
+   [correction](modes/correction.md) ("This file owns correction") places that file.
    This is a content rule, not a reading ban; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
    Each quoted repository rule carries its policy row from `ledger.md` as
    carried evidence, not a verdict; [references/telemetry.md](telemetry.md) owns the policy row.

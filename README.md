@@ -85,6 +85,13 @@ Verification-path adoption. The issue or the text invocation states that the
 outcome is verification-path adoption, and it names the target repository and
 one user operation. A normal feature delivery, init, or resume does not enter it.
 
+Correction. The issue or the text invocation states that the outcome is
+correction. It reads this repository's earlier deliveries, asks which recurring
+mistake and friction classes to fix now or file as issues, and enforces the
+picked ones. A normal delivery, init, or resume does not enter it.
+[correction](references/modes/correction.md) ("This file owns correction") owns
+the mode.
+
 Optional map. A configured `features` path may link to a canonical page. The
 map is not a second copy of that page. No map does not block documentation
 backfill, and backfill does not seed a map.

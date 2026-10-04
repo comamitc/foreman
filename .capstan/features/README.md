@@ -12,3 +12,4 @@ User-facing Capstan features, one file each. [contract](../../references/contrac
 - [Documentation backfill](documentation-backfill.md): an issue or text that states documentation backfill and names the audience and the workflow.
 - [Verification-path adoption](verification-path-adoption.md): an issue or text that states verification-path adoption and names the target repository and one user operation.
 - [Lesson maintenance](lesson-maintenance.md): an issue or text that states lesson maintenance.
+- [Correction](correction.md): an issue or text that states the correction outcome.

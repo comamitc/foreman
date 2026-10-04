@@ -50,6 +50,20 @@ A real-dependency tier stays isolated from production: no live financial or mess
 
 When the repository has no runnable end-to-end path, the plan records that gap and names the tier it used. The tier rule does not change the Markdown-only rule in [references/planning.md](planning.md) ("A Markdown-only change uses the simplest observable text checks") or the exemption in [references/implementing.md](implementing.md) ("Documentation, configuration, deletion, generated, operational, and trivial changes").
 
+## Enforcement
+
+This section owns the enforcement order. It applies to each mistake class or friction class a plan fixes; [correction](modes/correction.md) ("This file owns correction") names it. Pick the highest level that works, and state why each higher level did not.
+
+Levels, highest first:
+
+1. architecture: one owner, one supported way, unreachable internals, one source of truth
+2. types
+3. a lint or CI check whose error names the fix
+4. a behavioral test
+5. standards or docs text, last
+
+These levels are not the rungs above. When [improvement](modes/improvement.md) also loads in a correction run, this order governs every correction class; improvement's routing ("Route each verified correction to the first artifact that holds") stays with the review corrections an explicit improvement invocation names, and its replay rules are unchanged.
+
 ## Coordinator evidence
 
 Coordinator evidence stays complete. Do not shorten briefs, censuses, `run.md`, or the requested PR sections to look lazy. The ladder governs the product diff, not those artifacts.
