@@ -39,7 +39,11 @@ the worker reads the brief and the pack only.
    [ladder](ladder.md). Do not restate the ladder.
    For each behavior it changes, the plan names the module that owns it and
    that module's interface in the existing "Current behavior and data shape"
-   section, before implementation mechanics.
+   section, before implementation mechanics. When the change adds or reshapes
+   a module, that section writes the caller's usage first, then names at least
+   two structurally distinct designs, chooses one, and gives the reason.
+   [references/ladder.md](ladder.md) ("## Module") owns the red flags and the
+   reader assumption.
 3. Produce [plan](../templates/plan.md). Map every acceptance criterion to ordered
    items with an observable outcome, affected area, verification command/seam,
    failure signal, and risk. Name final repository checks and real user-surface proof.

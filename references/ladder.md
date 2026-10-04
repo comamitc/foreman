@@ -30,6 +30,17 @@ This section applies only to a module the change adds or reshapes. An existing m
 
 Divide modules by the behavior they provide to callers, not by the state they hold. One module owns a behavior end to end. Prefer narrow, deep modules: a small interface with substantial behavior behind it. Apply the deletion test: if deleting a module would make no complexity reappear in its callers, it is a pass-through and is not added. Add a seam only where something actually varies: two adapters, or an external system.
 
+Assume the next contributor is an agent that sees only the files it opened, copies the nearest example, and takes the shortest path that compiles, so a change that looks right from one file must be right for the whole repository.
+
+Red flags:
+
+- Information leakage: one internal decision appears in more than one module, so changing it means finding every copy.
+- Temporal decomposition: modules split by execution order instead of by the knowledge they own, so one piece of knowledge spreads across steps.
+- Split ownership: more than one module writes the same state, so no single module can keep it consistent.
+- Two supported ways to do one task, so callers pick different ones and the two drift apart.
+- Internals reachable from outside the module, so callers depend on them and the interface stops being the contract.
+- Hand-synced lists: the same items listed in more than one place, so adding one means editing every list.
+
 ## Check
 
 Non-trivial logic leaves one runnable check that fails if the logic breaks. A one-liner does not grow a framework, a fixture, or a per-function suite. An existing repository test convention still applies when that repository already has one. Do not invent a second test stack. Capstan has no test runner. Do not add one.
@@ -56,7 +67,7 @@ This section owns the enforcement order. It applies to each mistake class or fri
 
 Levels, highest first:
 
-1. architecture: one owner, one supported way, unreachable internals, one source of truth
+1. architecture: a module shape that makes the mistake impossible; "## Module" owns that shape
 2. types
 3. a lint or CI check whose error names the fix
 4. a behavioral test
