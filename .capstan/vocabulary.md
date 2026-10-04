@@ -139,3 +139,5 @@
 **Deep module**: a module with a small interface and substantial behavior behind it. The rule owner is `references/ladder.md` ("## Module"). Rejected: a shallow module whose interface is about as large as its behavior; a pass-through module.
 
 **Ledger digest**: the SHA-256 of the final `ledger.md` bytes, published as `Ledger sha256: <hex>` in the marked summary. It is tamper-evident, not tamper-proof. The rule owner is `references/telemetry.md`. Rejected: signing or attestation.
+
+**Residual-effect approval**: the opt-in pre-merge gate that withholds `capstan:ready-to-deploy` until a human GitHub approval on the current head, when the PR's Blast Radius names residual effects or unknown reversibility. The field is `review_policy.residual_effect_approval`, default `false`. The rule owner is `references/pre-merge.md` (step 4). Rejected: a risk score or risk tier.

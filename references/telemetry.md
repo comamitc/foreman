@@ -72,6 +72,15 @@ A closure-gate check outcome is a ledger row before the next review and before
 publication: exact head, command, exit, and pass or fail. A proof script path
 may be named. The script body is not the record.
 
+For pre-merge, when `review_policy.residual_effect_approval` resolves to
+`true`, record the residual-effect approval in `ledger.md` at each observation
+of [pre-merge](pre-merge.md) step 4 and step 5, before the end-of-run order:
+whether the gate applied; the residual effects or `unknown` reversibility that
+triggered it, where a missing statement is `unknown`; and the counting approver
+login, review `id`, and head SHA, or `no approval yet at <head SHA>` while the
+blocker stands. Pre-merge owns the gate. This record is the summary source for
+it.
+
 Publish these with marked plan/review/activity artifacts for reconstruction after
 local loss. Finding censuses retain origin links and separate verified closure,
 unresolved/reopened, and genuinely new findings; counts alone are not progress.
@@ -124,7 +133,11 @@ Any other marked summary, such as a batch human-capability summary, uses steps
 PR URL, current head/base, observed ready-gate or exhaustion facts, the ledger's
 attempt table with its Total row and the date line (copied unchanged: the same columns, order, and cell formats), findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
-disclosures, applicable policy rows whose state is not `verified`, and gaps. It
+disclosures, applicable policy rows whose state is not `verified`, the line
+`Residual-effect approval:` from the latest ledger residual-effect approval
+record when one exists, stating whether the gate applied, which residual
+effects or `unknown` reversibility triggered it, and who approved at which
+head, or `no approval yet at <head SHA>` in a blocked summary, and gaps. It
 also contains the line `Ledger sha256: <hex>`, or `Ledger sha256: unknown` when
 the digest fails. Last, it contains the final `ledger.md` verbatim:
 

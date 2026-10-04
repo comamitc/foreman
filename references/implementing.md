@@ -107,8 +107,12 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    names specific files, decisions, effects, or unverified items, or states
    that nothing is needed beyond normal review. Generic advice such as
    "review carefully" does not satisfy it. Add a compact before/after or
-   diagram only where it clarifies the change. Blast Radius is decision
-   support, not a risk score or an approval workflow. A reversible change
+   diagram only where it clarifies the change. When
+   `review_policy.residual_effect_approval` is `false`, Blast Radius is
+   decision support, not a risk score or an approval workflow. When it is
+   `true`, residual effects or unknown reversibility route readiness through
+   the residual-effect approval in [pre-merge.md](pre-merge.md) step 4. A
+   reversible change
    does not bypass required approval, existing checks, independent secondary
    review, or Capstan's prohibition on merge and deploy.
    Report risks honestly and verify a clean worktree containing the intended commits.
