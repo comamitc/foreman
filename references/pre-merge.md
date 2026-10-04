@@ -79,11 +79,13 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    residual-effect approval again from fresh reads of the PR body and the full
    review list. Do not reuse an earlier read. The re-check holds only when the
    fresh PR `head` equals this query's `headRefOid` and, when the gate applies,
-   a counting approval names that `headRefOid`. On an unchanged head, a
-   dismissed or superseded approval, or a Blast Radius that now states residual
-   effects or `unknown`, fails the re-check. A failed re-check means the live
-   gate no longer holds: remove the pull-request label and read it back as
-   step 7 and that section state, and step 4's blocker applies again.
+   a counting approval names that `headRefOid`. The re-check fails when the
+   fresh `head` differs from this query's `headRefOid`, or when the gate
+   applies and no counting approval names that `headRefOid`. A dismissed or
+   superseded approval, or a Blast Radius that now states residual effects or
+   `unknown`, fails it only through that rule. A failed re-check means the
+   live gate no longer holds: remove the pull-request label and read it back
+   as step 7 and that section state, and step 4's blocker applies again.
 6. Trace each bot claim before telemetry. A comment or review from Bugbot, an
    agentic security review, or any other non-human author is a bot claim, not a
    finding. Trace each claim against the current head and the admitted spec. A
