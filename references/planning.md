@@ -47,11 +47,12 @@ the worker reads the brief and the pack only.
    A Markdown-only change uses the simplest observable text checks that discriminate a real defect.
    A multi-stage proof pipeline needs a stated reason in the plan.
    A stated reason does not waive the simplest-check sentence for a Markdown-only change.
-   An Ordered items row for non-trivial logic names the test tier of its check
-   inside its "Verification command and failure signal" cell; a Markdown-only or
-   exempt row names the Markdown-only rule or the implementing exemption in that
-   cell instead of a tier. [references/implementing.md](implementing.md) step 2
-   owns the exemption.
+   An Ordered items row for non-trivial logic names, inside its "Verification
+   command and failure signal" cell, the acceptance criterion its check is
+   derived from, the seam (the owning module's interface) it drives through,
+   and its test tier; a Markdown-only or exempt row names the Markdown-only
+   rule or the implementing exemption in that cell instead of a seam or tier.
+   [references/implementing.md](implementing.md) step 2 owns the exemption.
    Scale the plan to the change: a small CLI option needs a short behavior map,
    not repeated explanations of the same command in several sections.
    Fill Documentation impact. Map each changed public or operational behavior

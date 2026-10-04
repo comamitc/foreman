@@ -110,8 +110,19 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    owns that partition. When it quotes one, the finding is in scope and uses
    the existing severity and confidence calibration in
    [references/review-convergence.md](review-convergence.md).
+   On the Standards axis, a new or changed required check that reaches past
+   the owning module's interface is a finding in the existing finding format;
+   [references/ladder.md](ladder.md) ("## Check") owns the placement rule.
+   When "## Rules that apply" quotes no repository test rule, its claim states
+   that it is out of scope for this change under the same partition as the
+   test tier. When it quotes one, the finding is in scope and uses the
+   existing severity and confidence calibration in
+   [references/review-convergence.md](review-convergence.md).
    Judge the red or fault-injection evidence the pack carries. Trace that
-   evidence against the saved diff when needed.
+   evidence against the saved diff when needed. A new or changed required
+   check with no observed failing run, outside the implementing exemption, is
+   not sufficient behavioral proof under the discriminating-check rule above
+   and uses the existing calibration.
    When the pack carries a changed evidence check, judge whether the change weakened it; [references/pack.md](pack.md) ("An evidence check is bitten before the brief that depends on it launches") owns the rule.
    Do not change the tree.
    Do not produce the red evidence. A correction uses the

@@ -51,12 +51,22 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    implementation tasks/checks or evidence-backed refutations. Complete this
    mapping before affected code is written. Reconcile existing work before
    repeating interrupted steps.
-2. Implement plan items in order. Use a failing behavior check where meaningful,
-   prove it fails for the intended reason, then make the smallest change and rerun.
+2. Implement plan items in order. Show each required check failing for the
+   intended reason without the change, or with the defect restored, before
+   trusting it, and passing with the change.
    Record the red or fault-injection observation under Acceptance proof;
    [references/review.md](review.md) owns the discriminating-check rule.
+   [references/ladder.md](ladder.md) ("## Check") owns the check's derivation,
+   its placement at the owning module's interface, its tier, and the owned-mock rule.
    Documentation, configuration, deletion, generated, operational, and trivial changes
    may use stronger appropriate proof instead; explain when a failing test adds no value.
+   In any repository, when the change breaks an existing test that reaches past
+   a module's interface, rewrite that test at the interface instead of patching
+   it. Before removing the old test, show the rewritten test failing on a defect
+   the old test caught, and record that run under Acceptance proof; the
+   controlled reversible fault under "**Bite:**" in
+   [references/findings.md](findings.md) is the proof shape. Leave other
+   existing tests alone unless test cleanup is the admitted task.
 3. Run each item's verification. Keep scope narrow; commit coherent changes.
    Triage reads the committed `.capstan/vocabulary.md` on `main` when it exists,
    after repository instructions and before a question. Implementation writes
