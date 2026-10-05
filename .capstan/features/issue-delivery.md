@@ -31,3 +31,4 @@ Repository check: `bash scripts/test-launch.sh` is the test script for the launc
 - Removing or replacing a user-visible surface is asked in the run even when the issue states it; [triage](../../references/triage.md) ("removes or replaces an existing user-visible surface") owns that rule.
 - With residual-effect approval on, GitHub forbids approving your own PR, so a solo repository needs a second human account.
 - Triage runs a prototype instead of asking when running something answers a node; [triage](../../references/triage.md) ("settle it as Evidence by running a prototype") owns that rule.
+- The initial plan carries the touched files' recent history as evidence; [planning](../../references/planning.md) ("runs the history sweep once") owns that rule.
