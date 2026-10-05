@@ -4,14 +4,9 @@ Run it only when the admitted issue or the text invocation states that the outco
 
 This file owns correction. Correction turns recurring mistakes and friction in this repository's earlier deliveries into enforcement in this repository.
 
-Evidence. Earlier deliveries are this repository's issues whose body carries the marked `spec`. List open and closed issues with `gh`, every page, and keep those whose body contains the exact spec marker; do not rely on search to find the marker. The invocation may bound them by issue numbers or a date range; otherwise read all of them. That set is the window. Read it in two kinds:
+Evidence. [telemetry](../telemetry.md) ("This section owns earlier deliveries") defines earlier deliveries, their mistake and friction kinds and where each is read, and when a class counts. Correction reads every kind. The invocation may bound earlier deliveries by issue numbers or a date range; otherwise read all of them. That set is the window.
 
-- Mistakes: actionable findings in marked `plan-review` comments and marked `review` censuses, fix rounds in the attempt table, reverts of a delivery's commits on the integration base, and PR review comments from trusted authors under [security](../security.md).
-- Friction: pack gaps naming the same file or fact a worker could not reach; repeated permission denials for the same command; read stations hitting their operation ceiling; recovery attempts; evidence checks reported defective. Read them from the `ledger.md` each marked summary publishes verbatim, the local `ledger.md` when its evidence root survives, and the marked station artifacts.
-
-A source the window does not retain is a named limitation, not zero.
-
-Classes. Group each kind into classes. A class counts once it occurred in two or more deliveries. Each class cites every occurrence by issue, census or ledger URL, and head SHA. A one-off finding is reported and is not a class.
+Classes. Group each kind into classes by that definition. Correction also cites each occurrence's head SHA. A one-off finding is reported and is not a class.
 
 Guardrails. Before proposing any check, inventory the repository's existing guardrails: CI workflows, declared check commands, and pre-commit hooks. Record whether each runs, with a run URL or the observed command and exit. An existing check that is unwired, skipped, or broken is the finding, and its fix wires or repairs it. A repository with no guardrail running its lint, typecheck, or test command is itself a finding. A guardrail finding cites the inventory and needs no second delivery.
 

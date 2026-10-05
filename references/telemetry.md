@@ -111,7 +111,9 @@ Continue.
 
 At terminal readiness, project the ready label and read it back. At review
 exhaustion, do not project `capstan:ready-to-deploy`; the order starts after the
-review-exhaustion decision. Then follow this end-of-run order:
+review-exhaustion decision. Then run the recurrence comparison under "Earlier
+deliveries and recurrence" and write its lines into `ledger.md`. Then follow
+this end-of-run order:
 
 1. Write the final `ledger.md` and read it back.
 2. At ready-to-deploy only, apply the deletion rule under "Ledger, pile, and deletion", write its records into `ledger.md`, and read it back.
@@ -133,7 +135,8 @@ Any other marked summary, such as a batch human-capability summary, uses steps
 PR URL, current head/base, observed ready-gate or exhaustion facts, the ledger's
 attempt table with its Total row and the date line (copied unchanged: the same columns, order, and cell formats), findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
-disclosures, applicable policy rows whose state is not `verified`, the line
+disclosures, applicable policy rows whose state is not `verified`, the ledger's
+`Recurrence:` lines, the line
 `Residual-effect approval:` from the latest ledger residual-effect approval
 record when one exists, stating whether the gate applied, which residual
 effects or `unknown` reversibility triggered it, and who approved at which
@@ -223,6 +226,28 @@ Same-figures rule: copy the published summary's figures. Do not recompute.
 Gap rule: a missed host message is a telemetry gap in `ledger.md` before the
 end-of-run order; after that, per its event cutoff. It does not skip the GitHub
 summary and does not withhold ready.
+
+## Earlier deliveries and recurrence
+
+This section owns earlier deliveries, their mistake and friction kinds, classes, the recurrence comparison, and the `Recurrence:` line.
+
+Earlier deliveries are this repository's issues whose body carries the marked `spec`. List open and closed issues with `gh`, every page, and keep those whose body contains the exact spec marker; do not rely on search to find the marker. Each earlier delivery is read in two kinds:
+
+- Mistakes: actionable findings in marked `plan-review` comments and marked `review` censuses, fix rounds in the attempt table, reverts of a delivery's commits on the integration base, and PR review comments from trusted authors under [security](security.md).
+- Friction: (1) pack gaps naming the same file or fact a worker could not reach; (2) repeated permission denials for the same command; (3) read stations hitting their operation ceiling; (4) recovery attempts; (5) evidence checks reported defective. Read them from the `ledger.md` each marked summary publishes verbatim, the local `ledger.md` when its evidence root survives, and the marked station artifacts.
+
+A class is a group of occurrences of one kind that name the same defect. Finding categories are free text: group findings by the defect class they name, whatever the wording; exact category matching is not required. A class counts once it occurred in two or more deliveries, and it cites every occurrence by issue, census, or ledger URL. A source an earlier delivery does not retain is a named limitation, not zero.
+
+Recurrence comparison. At terminal readiness after the ready-label read-back, or at the review-exhaustion decision, and before end-of-run step 1, compare this delivery with the 20 most recent earlier deliveries other than this one, newest first by issue number:
+
+- classes of this delivery's plan-review and code-review findings, against those deliveries' marked `plan-review` and `review` censuses;
+- this delivery's friction of kinds 1–3 from its `ledger.md`, against those deliveries' marked summaries, including their ledger blocks when present.
+
+Read each earlier delivery's marked `plan-review` comments and marked summaries on its issue, and its marked `review` censuses on its marked pull request, with `gh` only, and apply trust per [security.md](security.md) item 1. Listing earlier deliveries still pages every issue; only these marked-comment reads are bounded to 20 deliveries. For friction, the comparison reads each marked summary's published `ledger.md` block when present, and also its recovery history and gaps, which correction does not read. For each class or signal of this delivery that occurred in two or more earlier deliveries, write one notes line in `ledger.md`:
+
+`Recurrence: <class or signal> — #A <occurrence URL>, #B <occurrence URL>[, …]; suggest a correction issue (correction mode, [modes/correction.md](modes/correction.md)).`
+
+When none recurs, write `Recurrence comparison: no recurrence; scope: <K> earlier deliveries #X–#Y; <sources read>.` A failed, truncated, or partial read is a telemetry gap: write `Recurrence comparison: gap: <source>: <redacted error>` in `ledger.md` and continue. A gap does not block and is not zero. Do not invent a result. A recurrence line is disclosure only: it does not block ready, open an issue, change a blocking/advisory partition, or change the review-exhaustion decision. "Any other marked summary" does not run the comparison. The within-delivery `surface_recurrence_rounds` diagnosis under [review convergence](review-convergence.md) is separate and unchanged.
 
 ## Ledger, pile, and deletion
 
