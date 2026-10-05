@@ -122,6 +122,8 @@
 
 **Guardrails invocation**: the explicit read-only invocation `guardrails`, optionally followed by paths. It inventories the repository's CI workflows, declared checks, and hooks with whether each runs, grades its tests against Capstan's check rules, and prints one ranked report. The rule owner is `references/modes/guardrails.md` ("This file owns the guardrails invocation"). Rejected: running the checks, a coverage percentage, or a Capstan test runner.
 
+**Learn invocation**: the explicit read-only invocation `learn`, optionally followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs. It reads every Capstan run on this machine across repositories and prints ranked Capstan-process proposals, with target-product learnings apart. The rule owner is `references/modes/learn.md` ("This file owns the learn invocation"). Rejected: filing issues, publishing anywhere, or a replay benchmark.
+
 **Host instructions**: instruction files a worker's harness loads from the operator's host configuration whatever the brief says, such as `~/.codex/AGENTS.md` or `~/.claude/CLAUDE.md`, and files they direct the worker to read. A brief does not forbid or contradict them. Rejected: a contributor instruction file; pack content.
 
 **Evidence check**: a script or multi-step command the coordinator writes for a pack's `## Checks` from plan text, kept outside the repository; it stays an evidence check when the plan quotes its command. It is bitten against known-good text and a planted defect before a worker depends on it. The rule owner is `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches"). Rejected: a declared check; a Capstan test runner.
