@@ -62,6 +62,7 @@ enter init.
 The invocation `status` alone, for example `/capstan status`, prints a read-only report of this repository's open issues that carry a Capstan stage label or the `capstan:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
 The invocation `architect`, alone or followed by paths in this repository, for example `/capstan architect` or `/capstan architect src`, prints a read-only report that grades the repository, or those paths, against rules Capstan ships, and changes nothing. [architect](references/modes/architect.md) owns its argument grammar.
 The invocation `guardrails`, alone or followed by paths in this repository, for example `/capstan guardrails` or `/capstan guardrails tests`, prints a read-only report that inventories this repository's guardrails with whether each runs and grades its test files, or those under the paths, against Capstan's check rules, and changes nothing. [guardrails](references/modes/guardrails.md) owns its argument grammar.
+The invocation `learn`, alone or followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs, for example `/capstan learn` or `/capstan learn since 2026-10-04`, prints a read-only report from every Capstan run on this machine that groups mistakes and friction into classes across repositories and ranks Capstan-process proposals, with target-product learnings apart, and changes nothing. It runs from any workspace. [learn](references/modes/learn.md) owns its argument grammar.
 
 ### Text invocation
 
