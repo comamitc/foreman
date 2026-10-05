@@ -37,9 +37,8 @@ Every `gh api` read in this procedure is a GET with the query in the URL and inc
    - With no marked PR, the report says "no open marked PR".
    - Labels are not changed.
 6. **Contradictory labels.** List the labels as they are, append `(contradictory)`, and do not repair.
-7. **No mutation.** The procedure only reads. It changes no labels, comments, issues, worktrees, branches, evidence files, ledgers or processes. It starts no worker and runs no launch probe.
-8. **No loop.** It does not run the coordinator loop, triage, init or side-effect reconciliation. It publishes no summary, stage analysis or host status line. It prints once and stops.
-9. **Incomplete retrieval.**
+7. **Read-only.** This procedure is a read-only invocation. [contract](../contract.md) "## Read-only invocations" owns the rules it follows; rule 8 is the stricter rule this file states for an incomplete read.
+8. **Incomplete retrieval.**
    - This rule applies to any read in rules 3–5 except the ledger, when the read exits non-zero, returns output that is not JSON or TSV, or stops before its last page.
    - It stops the report with `Capstan status — R: retrieval incomplete (<read>: <error, redacted>); no report.`
    - No partial table is printed.

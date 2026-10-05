@@ -19,10 +19,7 @@ issues, is a batch invocation;
 owns it. Any other invocation, including prose that contains issue numbers or
 issue URLs, is not a batch invocation and follows this section unchanged.
 
-An invocation that is exactly `status` is the status invocation;
-[references/modes/status.md](modes/status.md) ("This file owns the status invocation")
-owns it. It creates no issue and does not enter the coordinator loop. `status`
-with any other text is text intake.
+"## Read-only invocations" owns read-only invocations and their dispatch.
 
 Other non-empty prose with no GitHub URL creates one issue in the repository
 `gh repo view` resolves from the invoking workspace. Title is the first
@@ -89,6 +86,35 @@ destructive production actions. A required action outside these boundaries uses
 Completion means the requested, authorized endpoint. Capstan ends at a verified open merge-ready PR. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
 
 A host or user instruction file does not change a Capstan delivery's completion endpoint or its fetch-then-worktree order.
+
+## Read-only invocations
+
+This section owns read-only invocations: their dispatch, the keyword table, the rules every read-only invocation follows, and the report finding shape.
+
+Trim the invocation and split it on whitespace into tokens. An invocation whose first token equals a keyword in the table below, byte for byte, and whose remaining tokens all match the argument grammar its row points to, is a read-only invocation. Load only the mode file that row names and follow it. Any other invocation, including prose that starts with a keyword, is not a read-only invocation and follows "## Identity and authority" unchanged.
+
+| Keyword | Mode file | Argument grammar owner |
+|---|---|---|
+| `status` | [references/modes/status.md](modes/status.md) ("This file owns the status invocation") | [status](modes/status.md) ("The trimmed invocation equals `status`, byte for byte, in lowercase") |
+
+This table is the only list of read-only keywords. A keyword is one lowercase word that is not an issue number or an allowed override. A new read-only mode adds its row here and owns its argument grammar in its mode file.
+
+Every read-only invocation follows these rules. A mode file may state a stricter rule, never a weaker one.
+
+- It creates or changes no label, comment, issue, PR, branch, worktree, evidence file, ledger, or process.
+- It runs no coordinator loop, triage, init, side-effect reconciliation, worker, or launch probe. It publishes no summary, stage analysis, or host status line.
+- It prints its report once, then stops.
+- An unreadable or partial source is a named gap in the report, never zero or an empty result. No result is invented.
+
+A read-only report other than `status` states each finding with:
+
+1. **Rule:** the Capstan rule applied, as its file and quoted heading.
+2. **Evidence:** `path:line`, or a URL plus its commit SHA.
+3. **Consequence:** what it leads an agent contributor to do.
+4. **Fix:** the recommended fix and its level in [ladder](ladder.md) "## Enforcement".
+5. **Issue body:** a ready-to-paste issue body for that fix.
+
+Findings are ranked by severity, highest first. The report states its coverage limits: what it sampled and which sources it did not read.
 
 ## Global non-goals
 

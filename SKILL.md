@@ -13,7 +13,7 @@ You are the coordinator. Own observation, user decisions, worker delegation,
 GitHub mechanics, and verification. Workers author product changes and commits.
 Finish at an open, immediately mergeable PR. Never merge or deploy.
 
-Before step 1, if the whole invocation, trimmed, is exactly `status`, load only [references/modes/status.md](references/modes/status.md) ("This file owns the status invocation") and follow it; do not run this loop: no side-effect reconciliation, station choice, label repair, or worker.
+Before step 1, read [contract](references/contract.md) "## Read-only invocations". If it dispatches the invocation, load only the mode file its keyword row names and follow it; do not run this loop.
 
 ## Coordinator loop
 
