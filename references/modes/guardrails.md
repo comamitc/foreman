@@ -1,0 +1,69 @@
+# Guardrails invocation
+
+Load this file only when the trimmed invocation's first token is exactly `guardrails`, in lowercase, and every remaining token matches "## Argument grammar" below. It inventories the invoking repository's guardrails with whether each runs, grades its test files, or those under the named paths, against Capstan's check rules, and prints one ranked report. It runs no test suite and writes nothing. `guardrails` followed by any other token is text intake.
+
+This file owns the guardrails invocation.
+
+## Argument grammar
+
+The invocation is `guardrails` followed by zero or more path tokens. [architect](architect.md) "## Argument grammar" owns the path-token grammar ("A path token is relative to the invoking workspace's git work tree") and the unknown path ("names nothing in the work tree is an unknown path"); this file names them and does not restate them. Any other token makes the invocation text intake, as [contract](../contract.md) "## Read-only invocations" states. Procedure step 3 reports an unknown path and grades nothing.
+
+## Scope
+
+The scope root is the invoking workspace's git work tree, read from local files. `gh repo view` names the report's repository and the repository whose run history Procedure step 5 reads; grading does not need it.
+
+The guardrail inventory and the behavior list always cover the whole work tree. Path tokens narrow only the graded subjects: the graded test files and the behaviors in scope. With no path token, every test file in the work tree is graded and every listed behavior is in scope; otherwise, the test files in the union of those files and directories are graded, and Procedure step 7 selects the behaviors in scope. `.` names the whole work tree, so `guardrails .` grades the same scope as `guardrails` alone. Paths narrow the subject of findings, not the rows: every row in "## Finding sources" is graded for every scope, and grading reads repository context outside the scope where a row needs it, such as the CI configuration, the runner and manifest files, the hooks directory, and the root contributor instruction files and README. A row that cannot apply to the scope is listed under the report's `Not applicable:` line with its reason.
+
+## Procedure
+
+The coordinator does every read and all grading in the invoking session. [contract](../contract.md) "## Read-only invocations" owns the rules this procedure follows. This file's stricter rule: the procedure runs only file reads, file-metadata reads (whether a file exists and whether it has the executable bit), `git` read commands, `gh repo view`, `gh run list`, and `gh run view`. It runs no test suite, build, lint, typecheck, hook, or workflow, and no `gh` command that writes, reruns, cancels, or dispatches. It never runs a hook file or a hook's declared command.
+
+1. **Parse.** Split the trimmed invocation into tokens. Every token after `guardrails` is a path token.
+2. **Repository.** Run `git rev-parse --show-toplevel` in the invoking workspace. If it fails, print `Capstan guardrails: no repository resolved.` and stop. Below, `W` is its output. Read the HEAD SHA with `git -C W rev-parse HEAD` and the work-tree state with `git -C W status --porcelain`. Run `gh repo view --json nameWithOwner --jq .nameWithOwner` in `W`; a failure leaves the report with no repository name and no run history, and is not an error.
+3. **Paths.** A path token whose `W/<token>` does not exist is an unknown path. If any exists, print `Capstan guardrails: unknown path <token>[, <token>…]; nothing graded.` listing each, and stop.
+4. **Files.** List the work tree's files with `git -C W ls-files --cached --others --exclude-standard`: tracked files and untracked files that are not ignored. List the ignored files with `git -C W ls-files --others --ignored --exclude-standard --directory`; they are not read, and the report names them under `Not read:`. The test files are the listed files that the repository's runner configuration or test convention marks as tests. The graded test files are the test files under the path tokens, or every test file when there is none.
+5. **Guardrail inventory.** Across the whole work tree, whatever the scope, inventory every guardrail [correction](correction.md) "Guardrails." defines ("inventory the repository's existing guardrails"). Read the CI configuration files, the root manifest and runner files, the root contributor instruction files and README, and the tracked hook configuration. Record for each guardrail whether it runs:
+   - A CI workflow, when step 2 resolved a repository name: `gh run list --commit <HEAD SHA> --workflow <file> --limit 1 --json databaseId,status,conclusion,url,headSha`; when that lists no run, the same command without `--commit`; then `gh run view <databaseId> --json jobs,url,headSha` for each job's conclusion. Record the run URL, its head SHA, and each job's conclusion.
+   - A declared check command: the CI job step that invokes it, with that job's run evidence, or, when no CI job invokes it, its declared command and that reason.
+   - A pre-commit hook: read `git -C W config --get core.hooksPath` (an unset value is not an error) and `git -C W rev-parse --git-common-dir`. The effective hooks directory is the `core.hooksPath` value when set, otherwise `hooks` under the common directory; a relative path is taken relative to `W`. Read, without running it, whether `<effective hooks directory>/pre-commit` exists and has the executable bit, and read it as text for its declared command. When `core.hooksPath` is set, read the common directory's `hooks/pre-commit` the same way; Git does not run it, so it is recorded as unwired. A tracked hook configuration whose hook is not an existing, executable `pre-commit` in the effective hooks directory is recorded as unwired in this clone. Each hook records the reason no run evidence exists: Git keeps no record of hook runs. A hook file or hooks directory that cannot be read is a gap.
+
+   Record, as an observation, each set of CI jobs that run the same command on the same trigger. An observation names no rule and is not a finding: it gets no Rule, severity, or rank.
+
+   This file's stricter rule over [correction](correction.md) "Guardrails." ("with a run URL or the observed command and exit"): the procedure observes no command's exit, so a guardrail without a run URL records its declared command and the reason no run evidence exists. Unavailable run history, including every CI workflow when step 2 resolved no repository name or a `gh` read failed, is a gap the report names; it is never recorded as passing.
+6. **Tiers and reads.** Classify each graded test file by the tiers [ladder](../ladder.md) "## Check" ("Test tiers, highest first:") names, from its path, its name, the runner configuration, and what it imports or starts. A file the evidence does not place is not classified. Read the graded test files in full when they are few; otherwise read a sample in full and record how it was chosen. Record every source read in full, sampled, or not read, marking each untracked one, and every unreadable or partial source.
+7. **Behaviors.** Across the whole work tree, whatever the scope, list the repository's user-facing behaviors without consulting its tests: each user-facing entry point as [architect](architect.md) "## Feature map" describes one ("such as a command, binary, route, or invocation the README or a manifest declares"), read from the README, the root manifest files, and the entry-point files they name, each with its `path:line`. A behavior is in scope when its entry point is declared or implemented under a path token, or a graded test file drives it; with no path token, every listed behavior is. For each behavior in scope, record the work tree's test files that step 6's evidence places at the end-to-end tier and that drive it, and any verification path the repository records for it, or that none was found. A behavior that no source this step read declares is not discovered; the report's `Gaps:` line names those sources.
+8. **Grade.** Apply every row of "## Finding sources", as "## Scope" states. Record each finding with the fields the report needs, and each row that does not apply with its reason. Evidence is `path:line` relative to `W`, or a run URL plus its head SHA.
+9. **Rank.** Give each finding a severity from [review-convergence](../review-convergence.md) "Use this calibration in every code-review brief". Order findings by severity, highest first, then by row order in "## Finding sources".
+10. **Print.** Print the report under "## Report" once, then stop.
+
+## Finding sources
+
+Grade only these rows. Each row's owner states the rule; this file names it and does not restate it. A finding's Rule is its row's owner file and quoted anchor. A row's Graded cell names its subjects only. Grading invents no other finding source.
+
+| Row | Owner and anchor | Graded |
+|---|---|---|
+| Guardrail not running | [correction](correction.md) "Guardrails." ("An existing check that is unwired, skipped, or broken is the finding") | each guardrail Procedure step 5 inventories |
+| No guardrail for lint, typecheck, or test | [correction](correction.md) "Guardrails." ("A repository with no guardrail running its lint, typecheck, or test command is itself a finding") | each of the repository's lint, typecheck, and test commands |
+| Owned mock | [ladder](../ladder.md) "## Check" ("A mock or stub of code the target repository owns does not satisfy the required check.") | each graded test file read in full |
+| Private internals | [ladder](../ladder.md) "## Check" ("A test of private internals does not satisfy the required check.") | each graded test file read in full |
+| Second test stack | [ladder](../ladder.md) "## Check" ("Do not invent a second test stack.") | the runners and frameworks the graded test files use, against the repository's declared runner |
+| Production reach | [ladder](../ladder.md) "## Check" ("A real-dependency tier stays isolated from production") | each graded test file read in full, and the configuration it reads |
+| No end-to-end path | [verification-path adoption](verification-path.md) ("This file owns verification-path adoption") | each behavior in scope that Procedure step 7 lists |
+| Count-only ceiling | [improvement](improvement.md) ("A count-only ceiling is rejected.") | each guardrail that gates on a violation count or baseline |
+
+A No end-to-end path finding's Fix is a ready-to-paste Capstan text invocation, in the host's explicit form from [README](../../README.md) "Install and invoke", stating that the outcome is verification-path adoption and naming this repository and one user operation of that behavior. [verification-path adoption](verification-path.md) owns that run.
+
+## Report
+
+- The first line is `Capstan guardrails — W @ <HEAD SHA>`, then ` (<nameWithOwner>)` when step 2 resolved one.
+- Then `Scope: whole work tree` or `Scope: ` and the path tokens; `Work tree: uncommitted changes present.` when `git status --porcelain` printed anything; and `Run history: <nameWithOwner>` or `Run history: none resolved.`.
+- Then `Guardrails:` and one line per inventoried guardrail: its kind, its path, and `runs`, `unwired`, `skipped`, `failing`, or `no run evidence`, with its run URL and head SHA, or its declared command and the reason no run evidence exists. A hook's line also says whether its file exists and has the executable bit. With none, `Guardrails: none found.`
+- Then `Observations:` and one line per set of CI jobs that run the same command on the same trigger, naming each job by `path:line`, the command, and the trigger. With none, `Observations: none.`
+- Then `Tiers: end-to-end <n>, integration <n>, unit <n>, not classified <n>`, counting graded test files.
+- Then one blank line and the findings in rank order. Each starts `N. [<severity>] <title>` and holds the five fields [contract](../contract.md) "## Read-only invocations" names, in its order. The Issue body is a fenced block.
+- With no finding, the line `No findings.`
+- The last block starts `Coverage:` and holds `Read in full:`; `Sampled:` with how each sample was chosen; `Not read:` with each source in the scope not read, the ignored files from Procedure step 4 included; `Not applicable:` with each row in "## Finding sources" that does not apply to the scope and its reason, or `none`; and `Gaps:` with each unreadable or partial source, each guardrail with no run evidence, and `behavior discovery:` with the sources Procedure step 7 read, since a behavior none of them declares is not discovered. An untracked file is marked `(untracked)` wherever it is listed.
+
+## Review
+
+A finding whose Rule is not a row in "## Finding sources" blocks. A finding-source rule, the guardrail inventory definition, or the path-token grammar restated in this file instead of named by owner and anchor blocks, including a Graded cell that repeats its owner's rule. An observation given a Rule, a severity, or a place among the findings blocks. A guardrail inventory narrowed by path tokens blocks. A hook inventory that does not read the effective hooks directory blocks. A guardrail without run evidence recorded as running or passing, or missing from `Gaps:`, blocks. A No end-to-end path row graded only over behaviors the test files exercise, or a `Gaps:` line without `behavior discovery:`, blocks. A report with no `Guardrails:` block, `Observations:` line, `Tiers:` line, or `Coverage:` block blocks. A row in "## Finding sources" skipped for a scope without a `Not applicable:` reason blocks. An inventory that drops untracked, non-ignored files without listing them in Coverage blocks. A guardrails run that runs a test suite, build, lint, typecheck, hook, or workflow, runs a `gh` command that writes, reruns, cancels, or dispatches, or changes a file, label, issue, comment, branch, or worktree blocks.

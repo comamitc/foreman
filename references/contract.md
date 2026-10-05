@@ -97,6 +97,7 @@ Trim the invocation and split it on whitespace into tokens. An invocation whose 
 |---|---|---|
 | `status` | [references/modes/status.md](modes/status.md) ("This file owns the status invocation") | [status](modes/status.md) ("The trimmed invocation equals `status`, byte for byte, in lowercase") |
 | `architect` | [references/modes/architect.md](modes/architect.md) ("This file owns the architect invocation") | [architect](modes/architect.md) ("A path token is relative to the invoking workspace's git work tree") |
+| `guardrails` | [references/modes/guardrails.md](modes/guardrails.md) ("This file owns the guardrails invocation") | [guardrails](modes/guardrails.md) ("The invocation is `guardrails` followed by zero or more path tokens") |
 
 This table is the only list of read-only keywords. A keyword is one lowercase word that is not an issue number or an allowed override. A new read-only mode adds its row here and owns its argument grammar in its mode file.
 

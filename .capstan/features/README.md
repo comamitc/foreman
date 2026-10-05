@@ -7,6 +7,7 @@ User-facing Capstan features, one file each. [contract](../../references/contrac
 - [Batch invocation](batch-invocation.md): invoke Capstan with two or more issues; it delivers them one at a time in dependency order.
 - [Status](status.md): invoke Capstan with exactly `status`; it prints a read-only report.
 - [Architect](architect.md): invoke Capstan with `architect`, optionally followed by paths; it prints a read-only graded report.
+- [Guardrails](guardrails.md): invoke Capstan with `guardrails`, optionally followed by paths; it prints a read-only report of guardrails and graded tests.
 - [Improvement invocation](improvement-invocation.md): an issue or text that states the improvement outcome.
 - [Feature-map adoption](feature-map-adoption.md): an issue or text that states the feature-map adoption outcome.
 - [Feature-map audit](feature-map-audit.md): an issue or text that states an audit of the configured feature map.
