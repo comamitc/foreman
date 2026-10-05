@@ -78,8 +78,9 @@ not enter documentation backfill. It does not require a feature map. It is not
 lesson maintenance.
 
 Feature-map audit. The issue or the text invocation states that the outcome is
-an audit of the configured feature map. An absent or disabled map (`features`
-null or absent) produces a no-map result. The audit does not seed a map.
+an audit of the configured feature map. A no-map result comes from a disabled
+map (`features: null`) or when no map resolves. [contract](references/contract.md)
+owns map resolution. The audit does not seed a map.
 
 Verification-path adoption. The issue or the text invocation states that the
 outcome is verification-path adoption, and it names the target repository and
@@ -121,7 +122,8 @@ Optional `.capstan.json` in the target repository:
   "ci_timeout_min": 45,
   "unsafe_autonomy": false,
   "evidence": {
-    "delete_pile": false
+    "delete_pile": false,
+    "retain_replay": false
   },
   "features": null
 }
@@ -135,7 +137,7 @@ block only when they meet both the configured severity and confidence floors;
 other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
 `fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
-[contract](references/contract.md) owns `evidence.delete_pile`. [telemetry](references/telemetry.md) owns the ledger and deletion.
+[contract](references/contract.md) owns `evidence.delete_pile` and `evidence.retain_replay`. [telemetry](references/telemetry.md) owns the ledger and deletion.
 
 `review_policy.residual_effect_approval` opts in to the residual-effect
 approval; [pre-merge](references/pre-merge.md) owns it. GitHub forbids approving
