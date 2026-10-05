@@ -63,4 +63,4 @@ Resolve the map as [contract](../contract.md) ("`features` is the optional featu
 
 ## Review
 
-A finding whose Rule is not a row in "## Rubric" or the feature-map audit anchor blocks. A rubric rule restated in this file instead of named by owner and anchor blocks. A report with no `Coverage:` block blocks. A rubric row or feature-map case skipped for a scope without a `Not applicable:` reason blocks. An inventory that drops untracked, non-ignored files in the scope without listing them in Coverage blocks. An architect run that changes a file, label, issue, comment, branch, or worktree blocks.
+A finding whose Rule is not a row in "## Rubric", the feature-map adoption owner for the no-map case, or the feature-map audit anchor blocks. A rubric rule restated in this file instead of named by owner and anchor blocks. A report with no `Coverage:` block blocks. A rubric row or feature-map case skipped for a scope without a `Not applicable:` reason blocks. An inventory that drops untracked, non-ignored files in the scope without listing them in Coverage blocks. An architect run that changes a file, label, issue, comment, branch, or worktree blocks.
