@@ -60,6 +60,7 @@ the invocation, for example: “primary codex, secondary claude, wall budget 90 
 Only one coordinator should work on an issue at a time. These delivery forms do not
 enter init.
 The invocation `status` alone, for example `/capstan status`, prints a read-only report of this repository's open issues that carry a Capstan stage label or the `capstan:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
+The invocation `architect`, alone or followed by paths in this repository, for example `/capstan architect` or `/capstan architect src`, prints a read-only report that grades the repository, or those paths, against rules Capstan ships, and changes nothing. [architect](references/modes/architect.md) owns its argument grammar.
 
 ### Text invocation
 

@@ -118,6 +118,8 @@
 
 **Read-only invocation**: an explicit invocation that a row in the keyword table of `references/contract.md` ("## Read-only invocations") names. It prints one report and mutates nothing. The rule owner is `references/contract.md` ("## Read-only invocations"). Rejected: a delivery, a text invocation, or a host status line.
 
+**Architect invocation**: the explicit read-only invocation `architect`, optionally followed by paths. It grades the repository's agent-readiness against Capstan-owned rules and prints one ranked report. The rule owner is `references/modes/architect.md` ("This file owns the architect invocation"). Rejected: a delivery, a feature-map audit, or rules from outside Capstan.
+
 **Host instructions**: instruction files a worker's harness loads from the operator's host configuration whatever the brief says, such as `~/.codex/AGENTS.md` or `~/.claude/CLAUDE.md`, and files they direct the worker to read. A brief does not forbid or contradict them. Rejected: a contributor instruction file; pack content.
 
 **Evidence check**: a script or multi-step command the coordinator writes for a pack's `## Checks` from plan text, kept outside the repository; it stays an evidence check when the plan quotes its command. It is bitten against known-good text and a planted defect before a worker depends on it. The rule owner is `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches"). Rejected: a declared check; a Capstan test runner.
