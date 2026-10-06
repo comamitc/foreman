@@ -114,6 +114,8 @@
 
 **Batch invocation**: one invocation that names two or more issues in one repository and delivers them sequentially in dependency order. The rule owner is `references/modes/batch-invocation.md` ("This file owns batch invocation order"). Rejected: parallel delivery; stacked PRs.
 
+**Start condition**: what must hold before a delivery starts. The rule owner is `references/contract.md` ("## Start condition"). Rejected: a batch ordering edge.
+
 **Status invocation**: the explicit invocation `status`. It prints a read-only report of open issues that carry a Capstan stage label or the `capstan:blocked` overlay, and mutates nothing. The rule owner is `references/modes/status.md` ("This file owns the status invocation"). Rejected: a host status line (one event line during a run); a delivery.
 
 **Read-only invocation**: an explicit invocation that a row in the keyword table of `references/contract.md` ("## Read-only invocations") names. It prints one report and mutates nothing. The rule owner is `references/contract.md` ("## Read-only invocations"). Rejected: a delivery, a text invocation, or a host status line.

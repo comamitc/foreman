@@ -102,6 +102,8 @@ still walked. Reuse is allowed only after the walk matches that body. The match
 is that walk. It is not a byte-for-byte copy. A branch with no settlement is
 asked or defaulted. It is not admitted unchanged.
 
+A Decisions entry `Depends on #M` is walked like any other node. [contract](contract.md) ("## Start condition") owns resolving M and the Ask for an M that does not resolve.
+
 With two or more issues,
 [batch invocation](modes/batch-invocation.md) ("Every issue is walked before any issue enters unattended delivery")
 sets triage order and the cycle Ask; each walk is this file's walk, including

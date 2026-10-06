@@ -12,8 +12,8 @@ This file owns batch invocation order.
    - Boundary: if any token is not an entry or an allowed override, the invocation is not a batch list. This file does not apply, and [contract](../contract.md) "## Identity and authority" governs the invocation unchanged. This includes prose that contains issue numbers or issue URLs.
    - If the entries resolve to more than one repository, start nothing and ask for one repository.
    - Fewer than two distinct issues is not a batch.
-2. **Dependency sources.** The only source is an admitted spec's Decisions entry `Depends on #M`, where M is in the set. The invocation has no dependency syntax. Dependencies are never inferred from prose.
-   - A cycle is one triage Ask round under [triage](../triage.md) ("An ask is one numbered round of the current frontier."). The round names the cycle and recommends which `Depends on` edge to drop.
+2. **Dependency sources.** [contract](../contract.md) "## Start condition" owns the `Depends on #M` entry: its source, its scope, its resolution, and whether a delivery starts. The invocation has no dependency syntax. This file adds only ordering: an M in the set is an ordering edge for rule 5, and an M outside the set adds no edge.
+   - A cycle among in-set edges is one triage Ask round under [triage](../triage.md) ("An ask is one numbered round of the current frontier."). The round names the cycle and recommends which `Depends on` edge to drop.
    - The answer is recorded as a Decision in the affected spec and republished under triage step 5.
 3. **Triage first.** Every issue is walked before any issue enters unattended delivery.
    - Walk each issue in list order under [triage](../triage.md) ("A body that already contains Decisions and an empty Open questions section is still walked"), with all Ask rounds, cycle rounds included.
@@ -22,12 +22,10 @@ This file owns batch invocation order.
    - No issue enters unattended delivery until every issue's walk is recorded and every issue is ready.
 4. **Per-issue identity.** Each issue keeps its own identity, branch `capstan/N`, worktree, labels, ledger, spec, PR and ready gate. Its PR targets the resolved integration branch.
 5. **Delivery order.** Topological order, ties broken by list order.
-6. **Start condition.** A dependent starts only when its prerequisite's PR has merged into the integration base.
-   - If the prerequisite is ready-to-deploy but unmerged, the dependent does not start.
-   - It gets the `authority-required` blocker ([recovery](../recovery.md) "| authority-required |") with the action "merge #M, then re-invoke". The blocker is published with [blocker](../../templates/blocker.md) "# Delivery blocked".
-   - Keep the stage.
-7. **Blocked prerequisite.** If a prerequisite ends with a `capstan:blocked` overlay, the dependent does not start.
-   - It gets the same `authority-required` blocker with the action "merge #M, then re-invoke". Merging is beyond v1 authority, and the prerequisite's own blocker names what that issue needs.
+6. **Start condition.** Each issue starts only as [contract](../contract.md) "## Start condition" allows. Check it when that issue's turn comes in delivery order.
+   - An issue that does not start stops at its blocker, and unrelated issues continue. Rule 7 adds what a dependent of a blocked in-set prerequisite records.
+7. **Blocked prerequisite.** This rule applies only when rule 6 stops a dependent because its condition under [contract](../contract.md) "## Start condition" is unfulfilled and the in-set prerequisite ended with a `capstan:blocked` overlay. The overlay explains the stop; it does not decide merge status.
+   - Merging is beyond v1 authority, and the prerequisite's own blocker names what that issue needs.
    - The dependent's blocker handoff and its ledger record why: "prerequisite #M ended <overlay reason>".
    - This carries on to that dependent's own dependents: each is blocked on its direct prerequisite, the same way.
    - Unrelated issues continue.
