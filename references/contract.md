@@ -99,6 +99,7 @@ Trim the invocation and split it on whitespace into tokens. An invocation whose 
 | `architect` | [references/modes/architect.md](modes/architect.md) ("This file owns the architect invocation") | [architect](modes/architect.md) ("A path token is relative to the invoking workspace's git work tree") |
 | `guardrails` | [references/modes/guardrails.md](modes/guardrails.md) ("This file owns the guardrails invocation") | [guardrails](modes/guardrails.md) ("The invocation is `guardrails` followed by zero or more path tokens") |
 | `learn` | [references/modes/learn.md](modes/learn.md) ("This file owns the learn invocation") | [learn](modes/learn.md) ("The invocation is `learn` followed by zero or more `repo OWNER/REPO` pairs") |
+| `help` | [references/modes/help.md](modes/help.md) ("This file owns the help invocation") | [help](modes/help.md) ("The invocation is `help` followed by zero or more tokens of any kind") |
 
 This table is the only list of read-only keywords. A keyword is one lowercase word that is not an issue number or an allowed override. A new read-only mode adds its row here and owns its argument grammar in its mode file.
 
@@ -111,7 +112,7 @@ Every read-only invocation follows these rules. A mode file may state a stricter
 - It prints its report once, then stops.
 - An unreadable or partial source is a named gap in the report, never zero or an empty result. No result is invented.
 
-A read-only report other than `status` states each finding with:
+A read-only report other than `status` or `help` states each finding with:
 
 1. **Rule:** the Capstan rule applied, as its file and quoted heading.
 2. **Evidence:** `path:line`, or a URL plus its commit SHA.

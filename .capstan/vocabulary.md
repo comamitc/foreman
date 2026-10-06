@@ -60,7 +60,7 @@
 
 **Stage analysis**: the station-attempt table and two wall totals defined by #29. Rejected: a second host-specific wording.
 
-**Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, not another GitHub URL, and not a batch invocation's issue list, not the status invocation, not the init invocation. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
+**Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, not another GitHub URL, and not a batch invocation's issue list, not the status invocation, not the init invocation, not a help invocation. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
 
 **Provisional title**: the issue title set to the first non-empty line of a text invocation, kept only while the live title still equals that line. Rejected: a title taken from the surrounding transcript, or a title a person already changed.
 
@@ -123,6 +123,8 @@
 **Guardrails invocation**: the explicit read-only invocation `guardrails`, optionally followed by paths. It inventories the repository's CI workflows, declared checks, and hooks with whether each runs, grades its tests against Capstan's check rules, and prints one ranked report. The rule owner is `references/modes/guardrails.md` ("This file owns the guardrails invocation"). Rejected: running the checks, a coverage percentage, or a Capstan test runner.
 
 **Learn invocation**: the explicit read-only invocation `learn`, optionally followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs. It reads every Capstan run on this machine across repositories and prints ranked Capstan-process proposals, with target-product learnings apart. The rule owner is `references/modes/learn.md` ("This file owns the learn invocation"). Rejected: filing issues, publishing anywhere, or a replay benchmark.
+
+**Help invocation**: the explicit read-only invocation `help`, optionally followed by a question. It answers from the installed package and cites the owning file. The rule owner is `references/modes/help.md` ("This file owns the help invocation"). Rejected: starting the work a question asks for, filing an issue, or a GitHub-hosted guide.
 
 **Host instructions**: instruction files a worker's harness loads from the operator's host configuration whatever the brief says, such as `~/.codex/AGENTS.md` or `~/.claude/CLAUDE.md`, and files they direct the worker to read. A brief does not forbid or contradict them. Rejected: a contributor instruction file; pack content.
 
