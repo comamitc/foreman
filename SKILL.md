@@ -15,6 +15,8 @@ Finish at an open, immediately mergeable PR. Never merge or deploy.
 
 Before step 1, read [contract](references/contract.md) "## Read-only invocations". If it dispatches the invocation, load only the mode file its keyword row names and follow it; do not run this loop.
 
+Before step 1, also read [contract](references/contract.md) "### Init". If the invocation is the init invocation that section owns, run init as that section defines it; do not run this loop.
+
 ## Coordinator loop
 
 1. **Observe.** Read [contract](references/contract.md) on every invocation.

@@ -19,7 +19,7 @@ issues, is a batch invocation;
 owns it. Any other invocation, including prose that contains issue numbers or
 issue URLs, is not a batch invocation and follows this section unchanged.
 
-"## Read-only invocations" owns read-only invocations and their dispatch.
+"## Read-only invocations" owns read-only invocations and their dispatch. "### Init" owns the init invocation, and text intake does not take it.
 
 Other non-empty prose with no GitHub URL creates one issue in the repository
 `gh repo view` resolves from the invoking workspace. Title is the first
@@ -101,6 +101,8 @@ Trim the invocation and split it on whitespace into tokens. An invocation whose 
 | `learn` | [references/modes/learn.md](modes/learn.md) ("This file owns the learn invocation") | [learn](modes/learn.md) ("The invocation is `learn` followed by zero or more `repo OWNER/REPO` pairs") |
 
 This table is the only list of read-only keywords. A keyword is one lowercase word that is not an issue number or an allowed override. A new read-only mode adds its row here and owns its argument grammar in its mode file.
+
+`init` is not a read-only keyword and has no row in this table. The read-only rules below do not apply to init. "### Init" owns the init invocation.
 
 Every read-only invocation follows these rules. A mode file may state a stricter rule, never a weaker one.
 
@@ -364,6 +366,13 @@ A delivery, a resume, and an issue number do not enter init. Init is not a binar
 and not a station. Init is not a gate. Delivery remains valid without init. A
 missing `.capstan.json` still delivers. Label creation during delivery remains
 required.
+
+This section owns the init invocation. An invocation that, trimmed and split on
+whitespace as "## Read-only invocations" does, is the single token `init`, byte
+for byte in lowercase, is the init invocation. `init` with any other token,
+including an allowed override or an issue number, is not the init invocation
+and follows "## Identity and authority" unchanged. The named checkout is the
+invoking workspace's git work tree.
 
 Probe each harness CLI on `PATH` with that CLI's documented help command from the
 named checkout. Recommend a primary and a different secondary only from CLIs that
