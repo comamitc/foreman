@@ -2,7 +2,7 @@
 
 ## Sub-features
 - One invocation that names two or more issues in one repository.
-- Dependency order from each admitted spec's Decisions entry `Depends on #M`.
+- Dependency order among the issues in the batch.
 - Triage of every issue before any issue enters unattended delivery.
 - Per-issue branch, worktree, labels, ledger, spec, PR, and ready gate.
 
@@ -16,6 +16,6 @@ End state: the issues are delivered one at a time in dependency order. Each stop
 
 ## Gotchas
 - Prose that mentions issues is not a batch; [contract](../../references/contract.md) ("## Identity and authority") governs it.
-- Dependencies are never inferred from prose; the invocation has no dependency syntax.
-- A dependent starts only after its prerequisite's PR has merged into the integration base; otherwise it gets a blocker with the action "merge #M, then re-invoke".
+- [contract](../../references/contract.md) ("## Start condition") owns the dependency source; [batch invocation](../../references/modes/batch-invocation.md) ("The invocation has no dependency syntax") owns the invocation form.
+- [contract](../../references/contract.md) ("## Start condition") owns when a dependent starts and the blocker it gets when it does not.
 - Issues from more than one repository start nothing.

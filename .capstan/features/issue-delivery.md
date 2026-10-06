@@ -18,7 +18,7 @@ Prerequisites are git, authenticated `gh` with repository write access, and conf
 ## Driving it
 Invocation: invoke Capstan with the issue URL `https://github.com/OWNER/REPO/issues/N`, or with `N` from a checkout of that repository.
 End state: an open PR from branch `capstan/N` whose body has the line `Capstan: OWNER/REPO#N`, and the issue labeled `capstan:ready-to-deploy`, meaning GitHub says the PR can merge immediately.
-Other stops: `capstan:blocked` with reason `review-exhausted` when effective review blockers remain at the round ceiling; one typed human action for missing credentials, permissions, purchase decisions, required approvals, consequential product choices, or budget decisions; or user cancellation.
+Other stops: `capstan:blocked` with reason `review-exhausted` when effective review blockers remain at the round ceiling; one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; or user cancellation.
 The work happens in the worktree `.worktrees/capstan+N` of the target repository.
 Repository check: `bash scripts/test-launch.sh` is the test script for the launch builder `scripts/launch.sh` that the coordinator runs.
 
@@ -33,3 +33,4 @@ Repository check: `bash scripts/test-launch.sh` is the test script for the launc
 - Triage runs a prototype instead of asking when running something answers a node; [triage](../../references/triage.md) ("settle it as Evidence by running a prototype") owns that rule.
 - The initial plan carries the touched files' recent history as evidence; [planning](../../references/planning.md) ("runs the history sweep once") owns that rule.
 - A delivery's summary discloses finding classes and friction that recurred in two or more earlier deliveries and suggests the correction mode; [telemetry](../../references/telemetry.md) ("This section owns earlier deliveries") owns that rule.
+- A spec dependency can stop a delivery before it starts; [contract](../../references/contract.md) ("## Start condition") owns that rule.

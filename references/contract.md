@@ -199,6 +199,26 @@ Use body files with `gh issue edit/comment`, `gh pr create/edit/comment`, or
 `gh api ... -F body=@FILE`; never interpolate issue text into shell command code.
 Read back the body/comment after writing. Markers locate claims, not proof.
 
+## Start condition
+
+This section owns the start condition for every delivery, single or batch.
+
+A Decisions entry `Depends on #M` in the admitted spec is a start condition. Only that entry counts. Dependencies are never inferred from prose, links, or file overlap. M resolves in the delivery's own repository only.
+
+Triage resolves M when it visits that entry: `gh api repos/OWNER/REPO/issues/M` returns an issue, or a pull request when the response has a `pull_request` field. An M that resolves to neither is an Ask under [triage](triage.md) ("An ask is one numbered round of the current frontier."). The round names the entry and recommends correcting or removing it. It is never ignored.
+
+The condition holds only when a pull request that is #M, or that closes issue #M, has merged and its merge commit is an ancestor of the fetched resolved integration base. Observe it with read-only calls:
+
+1. For an issue, list the pull requests that close it with `gh issue view M --repo OWNER/REPO --json closedByPullRequestsReferences`. Issue closed state alone does not count.
+2. For pull request #M, or each closing pull request P, read `gh pr view P --repo OWNER/REPO --json state,mergeCommit`. Only state `MERGED` with a merge commit counts.
+3. Run `git fetch origin <resolved-base>` and record the SHA as "## Identity and authority" requires ("record the SHA of that ref"). The merge commit counts only when `git merge-base --is-ancestor <merge-commit> <recorded-sha>` exits 0. Any other exit means it does not count. A pull request merged into another branch does not count unless its merge commit is an ancestor of the recorded SHA.
+
+The coordinator checks every entry at the ready station, after the admitted spec is published and before it creates or attaches the worktree or launches any worker. A delivery already past ready is not re-gated. A failed fetch or query is not an observation; recover it under [recovery](recovery.md) and do not start.
+
+If an entry does not hold, the dependent does not start: no worker launches and no worktree changes. It gets the `authority-required` blocker ([recovery](recovery.md) "| authority-required |") with the action "merge #M, then re-invoke" for each such #M. Publish it with [blocker](../templates/blocker.md) "# Delivery blocked". Keep the stage label. On a later invocation, [recovery](recovery.md) "## Blocked overlays" governs overlay removal; the condition it observes is this section's condition.
+
+Inside a batch, [batch invocation](modes/batch-invocation.md) ("This file owns batch invocation order") owns ordering for an M in the set.
+
 ## Stage projection
 
 Exactly one stage label should exist, with optional `capstan:blocked` overlay.
@@ -239,7 +259,7 @@ after they are in force.
 | Stage | Completion evidence | Next |
 | --- | --- | --- |
 | triage | admitted spec; no unresolved material decision | ready |
-| ready | run accepted; worktree reconciled; launch probe passed | planning |
+| ready | run accepted; start condition holds ("## Start condition"); worktree reconciled; launch probe passed | planning |
 | planning (initial) | complete published plan for admitted revision | plan-review |
 | plan-review | complete census: no findings / findings | implementing / planning (single correction) |
 | planning (single correction) | corrected plan and complete finding handoff; interrupted work retained explicitly | implementing |
