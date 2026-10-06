@@ -154,19 +154,21 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    that leaves every requirement, decision, and acceptance criterion as it was
    is not that change: the republished spec records the answer, and nothing is
    re-planned or re-reviewed. Route by what changed. An added or changed
-   acceptance criterion or decision reopens planning for that obligation.
-   (a) When it needs a code change, implementing or fix follows, and the new
-   head gets the fresh cumulative review [contract.md](contract.md) requires
+   requirement, decision, or acceptance criterion reopens planning for that
+   obligation. (a) When it needs a code change, implementing or fix follows,
+   and the new head gets the fresh cumulative review
+   [contract.md](contract.md) requires
    ("A new head requires fresh cumulative review"). (b) When the planner shows
    that the head already satisfies it with no code change, review re-runs at
-   the same head. (c) A withdrawn requirement re-reviews only the judgments
-   that depended on it ([contract.md](contract.md) "Spec changes invalidate
-   only dependent judgments"). In (a) and (b) the review carries the changed
-   criterion or decision as an open obligation row whose acceptance condition
-   is the changed text, under [review-convergence.md](review-convergence.md)
-   ("an admitted spec or policy change that changes the partition"), so the
-   ratchet's first case ("a prior blocker that remains unresolved or has
-   reopened") lets it block until the head meets it.
+   the same head. (c) A withdrawn requirement, decision, or acceptance
+   criterion re-reviews only the judgments that depended on it
+   ([contract.md](contract.md) "Spec changes invalidate only dependent
+   judgments"). In (a) and (b) the review carries the added or changed
+   requirement, decision, or acceptance criterion as an open obligation row
+   whose acceptance condition is the changed text;
+   [review-convergence.md](review-convergence.md)
+   ("an obligation admitted since the preceding reviewed head") owns when it
+   can block.
 
    A kept comment that does not change scope, such as an acknowledgement or a
    question the admitted spec already answers, is recorded in `ledger.md` with
