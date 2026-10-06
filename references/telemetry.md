@@ -142,7 +142,12 @@ record when one exists, stating whether the gate applied, which residual
 effects or `unknown` reversibility triggered it, and who approved at which
 head, or `no approval yet at <head SHA>` in a blocked summary, and gaps. It
 also contains the line `Ledger sha256: <hex>`, or `Ledger sha256: unknown` when
-the digest fails. Last, it contains the final `ledger.md` verbatim:
+the digest fails. At `capstan:ready-to-deploy`, a summary whose admitted spec
+has a `## Post-merge checks` section contains that section copied verbatim,
+heading included; the final `ledger.md` records it verbatim, so step 4 composes
+it from the ledger.
+A summary for a spec without that section has no such heading.
+Last, it contains the final `ledger.md` verbatim:
 
 ~~~
 <details>
