@@ -11,6 +11,12 @@ The smallest complete promised result.
 
 1. An independently observable behavior and its pass/fail condition.
 
+## Post-merge checks
+
+Optional operator checklist. [triage](../references/triage.md) ("Visit every stated outcome as a node") owns which outcomes go here and when the section is omitted.
+
+- [ ] One operator step after merge and what it observes.
+
 ## Decisions
 
 Settled product choices and the evidence or user answer supporting each.
