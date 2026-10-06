@@ -102,7 +102,9 @@ still walked. Reuse is allowed only after the walk matches that body. The match
 is that walk. It is not a byte-for-byte copy. A branch with no settlement is
 asked or defaulted. It is not admitted unchanged.
 
-A Decisions entry `Depends on #M` is walked like any other node. [contract](contract.md) ("## Start condition") owns resolving M and the Ask for an M that does not resolve.
+Visit every acceptance criterion as a node and ask whether it is verifiable in this repository. A criterion is verifiable in this repository when its pass or fail can be observed by changing and running only this repository. A criterion that needs a change or a run in another repository is not; a criterion that only mentions another repository can still be. A criterion that is not verifiable in this repository is an Ask. Evidence and Default are illegal for that criterion. The Ask recommends narrowing the spec to this repository's half and names the other half as a companion issue: its repository `owner/repo`, a one-line outcome, and the dependency direction, meaning which delivery must land first. When the invoker accepts, the admitted spec keeps only the narrowed criteria and adds the Decisions entry `Companion: owner/repo#M`, or `Companion: owner/repo (to be filed)` when the invoker will file it later; the entry carries the one-line outcome and the dependency direction. Capstan files, comments, labels, and writes nothing in the companion's repository; the invoker files the companion issue. Cross-repository scope never becomes an acceptance criterion of this delivery.
+
+A Decisions entry `Depends on #M` or `Depends on owner/repo#M` is walked like any other node. [contract](contract.md) ("## Start condition") owns resolving M and the Ask for an M that does not resolve.
 
 With two or more issues,
 [batch invocation](modes/batch-invocation.md) ("Every issue is walked before any issue enters unattended delivery")

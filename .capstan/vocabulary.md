@@ -116,6 +116,8 @@
 
 **Start condition**: what must hold before a delivery starts. The rule owner is `references/contract.md` ("## Start condition"). Rejected: a batch ordering edge.
 
+**Companion issue**: the issue in another repository that carries the half of a request this repository cannot verify. The rule owner is `references/triage.md` ("A criterion that is not verifiable in this repository is an Ask").
+
 **Status invocation**: the explicit invocation `status`. It prints a read-only report of open issues that carry a Capstan stage label or the `capstan:blocked` overlay, and mutates nothing. The rule owner is `references/modes/status.md` ("This file owns the status invocation"). Rejected: a host status line (one event line during a run); a delivery.
 
 **Read-only invocation**: an explicit invocation that a row in the keyword table of `references/contract.md` ("## Read-only invocations") names. It prints one report and mutates nothing. The rule owner is `references/contract.md` ("## Read-only invocations"). Rejected: a delivery, a text invocation, or a host status line.
