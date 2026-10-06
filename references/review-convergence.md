@@ -56,7 +56,10 @@ A later finding may block only when it meets the effective policy and is either:
 
 - a prior blocker that remains unresolved or has reopened; or
 - a distinct failure scenario introduced or materially exposed by changes since
-  the preceding reviewed head.
+  the preceding reviewed head; or
+- an obligation admitted since the preceding reviewed head: an added or changed
+  requirement, decision, or acceptance criterion that the head does not meet. It
+  is reviewed as an open obligation row, and the round ceiling still applies.
 
 A newly noticed concern in unchanged code is advisory as `late-discovered`, even
 when it was in the original cumulative diff. Exception: a supported `critical`
