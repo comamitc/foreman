@@ -12,7 +12,7 @@ This file owns batch invocation order.
    - Boundary: if any token is not an entry or an allowed override, the invocation is not a batch list. This file does not apply, and [contract](../contract.md) "## Identity and authority" governs the invocation unchanged. This includes prose that contains issue numbers or issue URLs.
    - If the entries resolve to more than one repository, start nothing and ask for one repository.
    - Fewer than two distinct issues is not a batch.
-2. **Dependency sources.** [contract](../contract.md) "## Start condition" owns the `Depends on #M` entry: its source, its scope, its resolution, and whether a delivery starts. The invocation has no dependency syntax. This file adds only ordering: an M in the set is an ordering edge for rule 5, and an M outside the set adds no edge.
+2. **Dependency sources.** [contract](../contract.md) "## Start condition" owns the `Depends on #M` and `Depends on owner/repo#M` entries: their source, their scope, their resolution, and whether a delivery starts. The invocation has no dependency syntax. This file adds only ordering: an M in the set is an ordering edge for rule 5, and an M outside the set, including every entry in another repository, adds no edge.
    - A cycle among in-set edges is one triage Ask round under [triage](../triage.md) ("An ask is one numbered round of the current frontier."). The round names the cycle and recommends which `Depends on` edge to drop.
    - The answer is recorded as a Decision in the affected spec and republished under triage step 5.
 3. **Triage first.** Every issue is walked before any issue enters unattended delivery.

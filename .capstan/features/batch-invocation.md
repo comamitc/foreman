@@ -18,4 +18,5 @@ End state: the issues are delivered one at a time in dependency order. Each stop
 - Prose that mentions issues is not a batch; [contract](../../references/contract.md) ("## Identity and authority") governs it.
 - [contract](../../references/contract.md) ("## Start condition") owns the dependency source; [batch invocation](../../references/modes/batch-invocation.md) ("The invocation has no dependency syntax") owns the invocation form.
 - [contract](../../references/contract.md) ("## Start condition") owns when a dependent starts and the blocker it gets when it does not.
+- Dependencies in another repository: [batch invocation](../../references/modes/batch-invocation.md) ("including every entry in another repository") owns their ordering.
 - Issues from more than one repository start nothing.
