@@ -36,3 +36,4 @@ Repository check: `bash scripts/test-launch.sh` is the test script for the launc
 - A spec dependency can stop a delivery before it starts; [contract](../../references/contract.md) ("## Start condition") owns that rule.
 - Cross-repository requests: [triage](../../references/triage.md) ("A criterion that is not verifiable in this repository is an Ask") owns the criterion rule; [contract](../../references/contract.md) ("## Start condition") owns dependencies.
 - Post-merge checks: [triage](../../references/triage.md) ("Visit every stated outcome as a node") owns the classification; [telemetry](../../references/telemetry.md) ("`## Post-merge checks` section contains that section copied verbatim") owns the ready-to-deploy summary heading.
+- Trusted comments after the spec: [pre-merge](../../references/pre-merge.md) ("Newer trusted comments") owns the check.

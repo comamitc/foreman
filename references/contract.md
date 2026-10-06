@@ -270,6 +270,8 @@ after they are in force.
 
 Use `capstan:` before each stage name. Failed attempts preserve the active label.
 The two planning rows share `capstan:planning`; evidence distinguishes them.
+The stage move made by the newer-trusted-comments check:
+[pre-merge.md](pre-merge.md) ("Newer trusted comments") owns it.
 Apply [one-pass planning](plan-convergence.md) before dispatch or resume; its
 interrupted-correction handoff takes precedence over generic station retry rules.
 A blocker adds only `capstan:blocked`. Remove a human-capability blocker when its

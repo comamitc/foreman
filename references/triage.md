@@ -108,6 +108,8 @@ Visit every acceptance criterion as a node and ask whether it is verifiable in t
 
 A Decisions entry `Depends on #M` or `Depends on owner/repo#M` is walked like any other node. [contract](contract.md) ("## Start condition") owns resolving M and the Ask for an M that does not resolve.
 
+Trusted comments posted after the admitted spec: [pre-merge](pre-merge.md) ("Newer trusted comments") owns their check.
+
 With two or more issues,
 [batch invocation](modes/batch-invocation.md) ("Every issue is walked before any issue enters unattended delivery")
 sets triage order and the cycle Ask; each walk is this file's walk, including
