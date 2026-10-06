@@ -20,7 +20,7 @@
 
 **Provenance**: which precedence step supplied the invocation. Rejected: a model judgment with no recorded step.
 
-**Init**: the explicit setup procedure that writes an absent `.capstan.json` and ensures the Capstan label set. Rejected: a Capstan binary or a delivery station.
+**Init**: the explicit setup procedure that writes an absent `.capstan.json` and ensures the Capstan label set. The init invocation is exactly `init`. The rule owner is `references/contract.md` ("### Init"). Rejected: a Capstan binary, a delivery station, or a read-only invocation.
 
 **Observed harness**: a harness CLI that answered its documented help command on `PATH` during this init. Rejected: a harness named without that answer.
 
@@ -60,7 +60,7 @@
 
 **Stage analysis**: the station-attempt table and two wall totals defined by #29. Rejected: a second host-specific wording.
 
-**Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, not another GitHub URL, and not a batch invocation's issue list, not the status invocation. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
+**Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, not another GitHub URL, and not a batch invocation's issue list, not the status invocation, not the init invocation. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
 
 **Provisional title**: the issue title set to the first non-empty line of a text invocation, kept only while the live title still equals that line. Rejected: a title taken from the surrounding transcript, or a title a person already changed.
 
