@@ -5,4 +5,7 @@ exactly one selected host adapter: [Claude](harnesses/claude.md),
 [Codex](harnesses/codex.md), [Grok](harnesses/grok.md), or
 [OMP](harnesses/omp.md). Do not load the other host files.
 
+The harness CLIs are `claude`, `codex`, `grok`, and `omp`, the commands the adapters' launch recipes run.
+A help invocation may read this file only for these names; it loads no host adapter or shared file and spawns nothing.
+
 `references/harnesses/shared.md` owns the silent-check rule.
