@@ -70,7 +70,7 @@ commands instead. The single correction and resume do not repeat the sweep.
    observed`, and Named files the affected functions and callers as excerpts.
    Trace existing behavior from those excerpts and cite concrete patterns rather
    than assuming a framework or file structure. Open a named file only to confirm
-   a cited line. A path the pack does not name is a gap under Risks and unresolved
+   a citation's anchor under [references/pack.md](pack.md) ("Citation rule"). A path the pack does not name is a gap under Risks and unresolved
    items, not a search. Record the initial head and worktree status. Count each
    tool call, one read call or one shell command, however many files it names,
    as a numbered line under `## Checks`, except a host-instruction read ([references/harnesses/shared.md](harnesses/shared.md) "A host-instruction read is not an operation");
@@ -101,6 +101,7 @@ commands instead. The single correction and resume do not repeat the sweep.
    The script captures each command's exit status before testing that command's output, so a read or command error is never read as a pass.
    A negative search passes only on the search tool's "no match" exit, exit 1 for `grep` and `git grep`, and a count such as `grep -c` reads that exit as zero matches; any other non-zero exit fails the group.
    This rule covers only check scripts the plan writes; it does not change the repository's declared test command or the Markdown-only rule above.
+   Every citation of repository text in the plan follows [references/pack.md](pack.md) ("Citation rule"), which owns it.
    An Ordered items row for non-trivial logic names, inside its "Verification
    command and failure signal" cell, the acceptance criterion its check is
    derived from, the seam (the owning module's interface) it drives through,

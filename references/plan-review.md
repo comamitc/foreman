@@ -9,8 +9,8 @@ This is the single review of the initial plan, not a review of its correction.
    current plan text only (never a rejected plan), Open findings `none — single
    review of the initial plan`, the rule extract, the commands the plan names, the evidence-check bite outcomes and any repair as carried evidence, which [references/pack.md](pack.md) ("An evidence check the initial plan writes") owns, and
    the plan's own citations as Named files. Record the candidate plan/spec revision
-   and the initial tree. Open a named file only to confirm a cited line; a citation
-   that does not match the file is a Standards or Correctness finding with the pack
+   and the initial tree. Open a named file only to confirm a citation's anchor; a citation
+   that does not meet [references/pack.md](pack.md) ("Citation rule") is a Standards or Correctness finding with the pack
    row as evidence. A path the pack does not name is a gap under Risks and
    unresolved items, not a search. Run only the named commands.
    Count each tool call, one read call or one shell command, however many files it names, as a numbered line under `## Checks`, except a host-instruction read ([references/harnesses/shared.md](harnesses/shared.md) "A host-instruction read is not an operation");

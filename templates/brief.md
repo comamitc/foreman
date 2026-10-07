@@ -37,7 +37,7 @@ The station's checkable criterion and required observable proof.
 
 Your task reading is the brief and the pack. Host instructions your harness already loads still apply; they do not widen the task beyond the pack.
 No repository tour: a path not in the pack is a reported gap, not a search.
-Read stations open a named file only to confirm a cited line; write stations
+Read stations open a named file only to confirm a citation's anchor under [references/pack.md](../references/pack.md) ("Citation rule"); write stations
 read named files fully. An operation is one tool call: one read call or one
 shell command, however many files it names. Number each under `## Checks`.
 List each host-instruction read there as an unnumbered "Host-instruction read:" line ([references/harnesses/shared.md](../references/harnesses/shared.md) "A host-instruction read is not an operation").

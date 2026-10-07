@@ -43,7 +43,16 @@ carry reads `none` plus the reason.
    In verification-path adoption, it also carries the path's required state
    and allowed effects; [references/modes/verification-path.md](modes/verification-path.md) ("This file owns verification-path adoption") owns that mode.
    A code-review pack also carries, under this heading, real-run evidence that passed the "Real-run evidence checklist" below, marked as carried evidence and not as a verdict.
-7. `## Named files`: `path:line-range` plus reason, the only task files the worker may open; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+7. `## Named files`: `path:line-range` plus its anchor and reason, the only task files the worker may open; "Citation rule" below owns the entry's form; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+
+Citation rule: every citation of repository text in a plan or a pack names its target by a stable anchor, as [.capstan/vocabulary.md](../.capstan/vocabulary.md) ("Stable anchor") defines it: a heading's exact text or a verbatim phrase.
+A `path:line` or `path:line-range` may accompany the anchor as a locating hint; when the hint and the anchor disagree, the anchor governs.
+A `## Named files` entry keeps its `path:line-range`, which bounds the worker's reads, and adds the anchor of what the range covers, written `path:line-range ("anchor") — reason`.
+For that entry, the range is a hint for locating the anchor and bounding the read, and the anchor identifies what is meant; the coordinator writes a range that contains the anchor, and a worker that does not find the anchor inside the range reports a pack gap and does not read past it.
+A quoted sentence under `## Rules that apply`, or on a compact `Rule:` line, already carries its anchor as the quote.
+A citation whose anchor matches its target is valid even when its line hint has moved, and a hint that disagrees with its anchor is not a finding.
+A citation with no anchor, or whose anchor does not match its target, does not meet this rule.
+This rule covers citations in plans and packs only; it does not change the evidence field of a read-only report, which [references/contract.md](contract.md) ("**Evidence:**") owns, the policy-row key, which [references/telemetry.md](telemetry.md) ("This file owns the policy row") owns, or citations in worker results and run reports, including the Citations item of the "Real-run evidence checklist" below.
 
 Real-run evidence checklist: real-run evidence is evidence the coordinator itself produces by running an invocation or a launch for an acceptance criterion; worker output and declared checks are not real-run evidence.
 Before writing a code-review pack that carries real-run evidence, the coordinator checks that evidence against these four items:
@@ -71,7 +80,7 @@ evidence, not a verdict; [references/telemetry.md](telemetry.md) owns the policy
 Criterion: AC 2 — "<quoted criterion>"
 Rule: `CONTRIBUTING.md:14` — "<quoted sentence>"
 Check: `make test` in WORKTREE, expected exit 0
-Named file: `src/cli.py:40-58` — the option parser this item edits
+Named file: `src/cli.py:40-58` ("<anchor>") — the option parser this item edits
 ```
 
 The launch gate: if Candidate, Checks, or Open findings cannot be filled with
