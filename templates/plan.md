@@ -34,6 +34,8 @@ An Ordered items row for non-trivial logic names, inside its "Verification comma
 
 Repository checks and real user-surface demonstration.
 
+[references/planning.md](../references/planning.md) step 3 ("A check script the plan writes") owns how a planned check script is built.
+
 ## Revision response
 
 For every prior actionable finding: origin, original failure scenario, acceptance
