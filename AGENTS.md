@@ -7,3 +7,4 @@ This file is contributor context.
 - This directory is the skill package.
 - Do not add a per-host plugin or marketplace directory.
 - Do not duplicate `SKILL.md` into a host folder.
+- Authoring rules and their enforcers: [CONTRIBUTING.md](CONTRIBUTING.md) ("## Rules").
