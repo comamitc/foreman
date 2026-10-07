@@ -32,6 +32,7 @@ Repository check: `bash scripts/test-launch.sh` is the test script for the launc
 - With residual-effect approval on, GitHub forbids approving your own PR, so a solo repository needs a second human account.
 - Triage runs a prototype instead of asking when running something answers a node; [triage](../../references/triage.md) ("settle it as Evidence by running a prototype") owns that rule.
 - The initial plan carries the touched files' recent history as evidence; [planning](../../references/planning.md) ("runs the history sweep once") owns that rule.
+- Check scripts that a plan writes are built to one rule; [planning](../../references/planning.md) ("A check script the plan writes") owns that rule.
 - A delivery's summary discloses finding classes and friction that recurred in two or more earlier deliveries and suggests the correction mode; [telemetry](../../references/telemetry.md) ("This section owns earlier deliveries") owns that rule.
 - A spec dependency can stop a delivery before it starts; [contract](../../references/contract.md) ("## Start condition") owns that rule.
 - Cross-repository requests: [triage](../../references/triage.md) ("A criterion that is not verifiable in this repository is an Ask") owns the criterion rule; [contract](../../references/contract.md) ("## Start condition") owns dependencies.

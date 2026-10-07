@@ -95,6 +95,12 @@ commands instead. The single correction and resume do not repeat the sweep.
    A Markdown-only change uses the simplest observable text checks that discriminate a real defect.
    A multi-stage proof pipeline needs a stated reason in the plan.
    A stated reason does not waive the simplest-check sentence for a Markdown-only change.
+   A check script the plan writes runs under `bash` and first changes to an overridable root, for example `cd "${CHECK_ROOT:-<worktree>}" || exit 2`, so the coordinator can bite it against other trees; [references/pack.md](pack.md) ("An evidence check is bitten before the brief that depends on it launches") owns the bite.
+   It uses only options the installed tools support; for example, `git grep` has no `-x`.
+   Each check group names the planted defect it rejects and a legitimate variant it still accepts, and says whether it rejects the base or is a gate.
+   The script captures each command's exit status before testing that command's output, so a read or command error is never read as a pass.
+   A negative search passes only on the search tool's "no match" exit, exit 1 for `grep` and `git grep`, and a count such as `grep -c` reads that exit as zero matches; any other non-zero exit fails the group.
+   This rule covers only check scripts the plan writes; it does not change the repository's declared test command or the Markdown-only rule above.
    An Ordered items row for non-trivial logic names, inside its "Verification
    command and failure signal" cell, the acceptance criterion its check is
    derived from, the seam (the owning module's interface) it drives through,
