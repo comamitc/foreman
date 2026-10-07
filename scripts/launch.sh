@@ -10,7 +10,14 @@
 #       [--host-source FILE] [--result FILE]
 #     K: claude-write, claude-read, claude-write-probe, codex-write, codex-read,
 #     codex-read-probe. Prints the Host grant: line for claude-write*.
-#   launch.sh check RUN_SCRIPT
+#     codex-read and codex-read-probe start in the --result directory, create
+#     its tmp/ directory owner-only as TMPDIR, and refuse --add-dir. They refuse
+#     a --result directory that is, holds, or sits inside --worktree, or that is
+#     $HOME or above it, compared by canonical path, or that is not owned by
+#     the user or is writable by group or others.
+#   launch.sh check RUN_SCRIPT [--worktree DIR]
+#     --worktree is required for codex-read and codex-read-probe: their run
+#     script does not name the worktree, and check applies the --result rule above.
 #   launch.sh grant --source FILE --worktree DIR
 #
 # Exit: 0 ok; 1 check violation (for write, no script was written); 2 usage or
@@ -40,6 +47,22 @@ need_plain() { case $2 in *"'"* | *$'\n'*) die "$1 cannot hold a quote or newlin
 is_abs_dir() { case $1 in /*) [ -d "$1" ] ;; *) return 1 ;; esac; }
 safe_path() { [[ $1 =~ $SAFE_RE ]] || return 1; case "$1/" in */./* | */../*) return 1 ;; esac; }
 mode_of() { local m; m=$(ls -ld -- "$1" 2>/dev/null) && printf '%s' "${m:0:10}"; }
+
+# root_bad RESULT_DIR WORKTREE: prints why RESULT_DIR cannot be the one writable
+# root of a codex read kind, by canonical path; prints nothing when it can.
+root_bad() {
+  local rd rw hm
+  rd=$(realpath -e -- "$1" 2>/dev/null) || { printf 'result directory does not resolve: %s' "$1"; return 0; }
+  rw=$(realpath -e -- "$2" 2>/dev/null) || { printf 'worktree does not resolve: %s' "$2"; return 0; }
+  hm=$(realpath -e -- "${HOME:-}" 2>/dev/null) || { printf 'HOME does not resolve: %s' "${HOME-}"; return 0; }
+  case ${rd%/}/ in "${rw%/}"/*) printf 'result directory %s is inside the worktree %s' "$rd" "$rw"; return 0 ;; esac
+  case ${rw%/}/ in "${rd%/}"/*) printf 'result directory %s contains the worktree %s' "$rd" "$rw"; return 0 ;; esac
+  case ${hm%/}/ in "${rd%/}"/*) printf 'result directory %s is HOME or an ancestor of it' "$rd"; return 0 ;; esac
+  # A shared directory such as /tmp, /var/tmp, or /dev/shm cannot be the one root.
+  [ -O "$rd" ] || { printf 'result directory %s is not owned by the current user' "$rd"; return 0; }
+  case $(mode_of "$rd") in ?????w???? | ????????w?) printf 'result directory %s is writable by group or others' "$rd" ;; esac
+  return 0
+}
 
 # ---- grant: the host-grant rule of references/harnesses/claude.md ----
 
@@ -283,19 +306,30 @@ walk_claude() {
 }
 
 walk_codex() {
-  local i=1 n=${#W[@]} w val want policy=
-  [ "${W[0]}" = codex ] || v "first word is not codex: ${W[0]}"
-  CTX[0]=cmd
-  if [ "${W[1]-}" = exec ]; then CTX[1]=cmd i=2; else v "missing subcommand: exec"; fi
-  want=read-only
-  [ "$KIND" != codex-write ] || want=workspace-write
+  local i=1 n=${#W[@]} w val policy= rk= excl= cdir= olm= tdir= rdir why
+  [ "$KIND" = codex-write ] || rk=1
+  if [ -n "$rk" ]; then
+    # The run script does not name the worktree; check is given it.
+    [ -n "$CWT" ] || die "check: --worktree is required for $KIND"
+    # The read recipe runs under env, so TMPDIR is a checked argv word.
+    [ "${W[0]}" = env ] || v "first word is not env: ${W[0]}"
+    CTX[0]=cmd
+    case ${W[1]-} in TMPDIR=/*) CTX[1]=env tdir=${W[1]#TMPDIR=} ;; *) v "missing TMPDIR=ABSOLUTE_PATH after env: ${W[1]-}" ;; esac
+    [ "${W[2]-}" = codex ] || v "word after TMPDIR is not codex: ${W[2]-}"
+    CTX[2]=cmd i=3
+  else
+    [ "${W[0]}" = codex ] || v "first word is not codex: ${W[0]}"
+    CTX[0]=cmd
+  fi
+  if [ "${W[i]-}" = exec ]; then CTX[i]=cmd i=$((i + 1)); else v "missing subcommand: exec"; fi
   while [ "$i" -lt "$n" ]; do
     w=${W[i]}
     case $w in
-      --json)
+      --json | --skip-git-repo-check)
         CTX[i]=flag
         case $SEEN in *" $w "*) v "duplicate flag: $w" ;; esac
         SEEN="$SEEN$w "
+        [ "$w" = --json ] || [ -n "$rk" ] || v "flag not in the $KIND recipe: $w"
         i=$((i + 1)) ;;
       -C | -s | -c | --model | --add-dir | --output-last-message)
         CTX[i]=flag
@@ -305,13 +339,16 @@ walk_codex() {
         case $val in '' | -*) v "missing value for $w"; i=$((i + 1)); continue ;; esac
         CTX[i + 1]=$w
         case $w in
-          -s) [ "$val" = "$want" ] || v "-s must be $want for $KIND: $val" ;;
+          -s) [ "$val" = workspace-write ] || v "-s must be workspace-write for $KIND: $val" ;;
           -c)
             if [ "$val" = 'approval_policy="never"' ]; then policy=1
+            elif [ -n "$rk" ] && [ "$val" = sandbox_workspace_write.exclude_slash_tmp=true ]; then excl=1
             elif ! [[ $val =~ $EFFORT_RE ]]; then v "-c value not allowed: $val"; fi ;;
           -C | --output-last-message)
             case $val in /*) ;; *) v "$w must be an absolute path: $val" ;; esac
+            if [ "$w" = -C ]; then cdir=$val; else olm=$val; fi
             [ "$w" != -C ] || [ "$val" = "$CDT" ] || v "-C differs from the cd target: $val" ;;
+          --add-dir) [ -z "$rk" ] || v "flag not in the $KIND recipe: $w" ;;
         esac
         i=$((i + 2)) ;;
       -)
@@ -327,6 +364,17 @@ walk_codex() {
     case $SEEN in *" $w "*) ;; *) v "missing flag: $w" ;; esac
   done
   [ -n "$policy" ] || v 'missing flag: -c approval_policy="never"'
+  [ -n "$rk" ] || return 0
+  case $SEEN in *" --skip-git-repo-check "*) ;; *) v "missing flag: --skip-git-repo-check" ;; esac
+  [ -n "$excl" ] || v "missing flag: -c sandbox_workspace_write.exclude_slash_tmp=true"
+  [ -n "$olm" ] || return 0
+  rdir=$(dirname -- "$olm")
+  [ -z "$cdir" ] || [ "$cdir" = "$rdir" ] || v "-C must be the result directory for $KIND: $cdir"
+  [ -z "$tdir" ] || [ "$tdir" = "$rdir/tmp" ] || v "TMPDIR must be $rdir/tmp for $KIND: $tdir"
+  [ -z "$tdir" ] || { [ -d "$tdir" ] && ! [ -L "$tdir" ] && [ -O "$tdir" ] && [ "$(mode_of "$tdir")" = drwx------ ]; } \
+    || v "TMPDIR is not an owner-only directory: $tdir"
+  why=$(root_bad "$rdir" "$CWT")
+  [ -z "$why" ] || v "$why"
 }
 
 # check_file RUN_SCRIPT: report each violation; VIOL holds the count.
@@ -385,7 +433,7 @@ check_file() {
 
 # ---- subcommands ----
 
-render() { # KIND WORKTREE LAUNCH_FILE WORD...
+render() { # KIND START_DIR LAUNCH_FILE WORD...
   local k=$1 w=$2 l=$3
   shift 3
   printf '#!/usr/bin/env bash\n# Capstan launch (%s). Written by scripts/launch.sh; verify with scripts/launch.sh check.\nset -eu\nargv=(\n' "$k"
@@ -394,7 +442,7 @@ render() { # KIND WORKTREE LAUNCH_FILE WORD...
 }
 
 cmd_write() {
-  local kind= wt= lf= out= model= effort= hs= result= a val dir tmp d
+  local kind= wt= lf= out= model= effort= hs= result= a val dir tmp d cdir tdir= why
   local -a adds=() allows=() A=()
   while [ $# -gt 0 ]; do
     a=$1
@@ -448,6 +496,20 @@ cmd_write() {
       [ "${#allows[@]}" -eq 0 ] || die "--allow is not accepted for $kind" ;;
     *) [ -z "$result" ] || die "--result is only for codex kinds, not $kind" ;;
   esac
+  cdir=$wt
+  case $kind in
+    codex-read*)
+      # workspace-write makes every --add-dir writable; the result directory is the one root.
+      [ "${#adds[@]}" -eq 0 ] || die "--add-dir is not accepted for $kind"
+      cdir=$(dirname -- "$result")
+      [ -d "$cdir" ] || die "--result directory does not exist: $cdir"
+      why=$(root_bad "$cdir" "$wt")
+      [ -z "$why" ] || die "--result is refused for $kind: $why"
+      tdir=$cdir/tmp
+      if [ -L "$tdir" ] || { [ -e "$tdir" ] && ! [ -d "$tdir" ]; }; then die "not a directory: $tdir"; fi
+      [ -d "$tdir" ] || (umask 077 && mkdir -- "$tdir") || die "cannot create $tdir"
+      [ -O "$tdir" ] && [ "$(mode_of "$tdir")" = drwx------ ] || die "not an owner-only directory: $tdir" ;;
+  esac
 
   GRANT_READS=()
   case $kind in claude-write*) grant "$hs" "$wt" ;; esac
@@ -470,8 +532,8 @@ cmd_write() {
         A+=(--disallowedTools "${CLAUDE_WRITE_DENY[@]}")
       fi ;;
     codex-*)
-      A=(codex exec -C "$wt" -s)
-      if [ "$kind" = codex-write ]; then A+=(workspace-write); else A+=(read-only); fi
+      A=(codex exec -C "$cdir" -s workspace-write)
+      [ "$kind" = codex-write ] || A=(env "TMPDIR=$tdir" "${A[@]}" --skip-git-repo-check -c sandbox_workspace_write.exclude_slash_tmp=true)
       A+=(-c 'approval_policy="never"')
       [ -z "$model" ] || A+=(--model "$model")
       [ -z "$effort" ] || A+=(-c "model_reasoning_effort=\"$effort\"")
@@ -480,10 +542,11 @@ cmd_write() {
   esac
 
   tmp=$(umask 077 && mktemp "$dir/.launch.XXXXXX") || die "cannot create a temp file in $dir"
-  if ! render "$kind" "$wt" "$lf" "${A[@]}" >"$tmp" || ! chmod 700 "$tmp"; then
+  if ! render "$kind" "$cdir" "$lf" "${A[@]}" >"$tmp" || ! chmod 700 "$tmp"; then
     rm -f -- "$tmp"
     die "cannot write $tmp"
   fi
+  CWT=$wt
   check_file "$tmp"
   if [ "$VIOL" -ne 0 ]; then
     rm -f -- "$tmp"
@@ -505,10 +568,26 @@ cmd_write() {
 }
 
 cmd_check() {
-  [ $# -eq 1 ] || die "usage: launch.sh check RUN_SCRIPT"
-  need_abs RUN_SCRIPT "$1"
-  [ -f "$1" ] && [ -r "$1" ] || die "check: cannot read run script: $1"
-  check_file "$1"
+  local rs=
+  while [ $# -gt 0 ]; do
+    case $1 in
+      --worktree)
+        [ $# -ge 2 ] || die "check: --worktree needs a value"
+        [ -z "$CWT" ] || die "check: --worktree given twice"
+        need_abs --worktree "$2"
+        [ -d "$2" ] || die "--worktree is not a directory: $2"
+        CWT=$2
+        shift 2 ;;
+      *)
+        [ -z "$rs" ] || die "usage: launch.sh check RUN_SCRIPT [--worktree DIR]"
+        rs=$1
+        shift ;;
+    esac
+  done
+  [ -n "$rs" ] || die "usage: launch.sh check RUN_SCRIPT [--worktree DIR]"
+  need_abs RUN_SCRIPT "$rs"
+  [ -f "$rs" ] && [ -r "$rs" ] || die "check: cannot read run script: $rs"
+  check_file "$rs"
   [ "$VIOL" -eq 0 ] || exit 1
   exit 0
 }
@@ -531,7 +610,7 @@ cmd_grant() {
   exit 0
 }
 
-SEEN_W=
+SEEN_W= CWT=
 case ${1-} in
   write) shift; cmd_write "$@" ;;
   check) shift; cmd_check "$@" ;;
