@@ -26,6 +26,7 @@ This is the single review of the initial plan, not a review of its correction.
    scope for this change, and that finding alone does not make the verdict
    revise. When it quotes one, the finding is in scope with its existing
    severity and confidence.
+   A design comparison that does not meet [references/planning.md](planning.md) ("Those designs are compared at equal reuse") is a Simplicity finding, in scope or out of scope as the module finding above is.
    A repaired evidence check: [references/pack.md](pack.md) ("An evidence check the initial plan writes") owns the rule.
 
    | Axis | Question |

@@ -33,6 +33,7 @@ Repository check: `bash scripts/test-launch.sh` is the test script for the launc
 - Triage runs a prototype instead of asking when running something answers a node; [triage](../../references/triage.md) ("settle it as Evidence by running a prototype") owns that rule.
 - The initial plan carries the touched files' recent history as evidence; [planning](../../references/planning.md) ("runs the history sweep once") owns that rule.
 - Check scripts that a plan writes are built to one rule; [planning](../../references/planning.md) ("A check script the plan writes") owns that rule.
+- Design comparisons in plans: [planning](../../references/planning.md) ("Those designs are compared at equal reuse") owns that rule.
 - Bite timing for evidence checks the initial plan writes: [pack](../../references/pack.md) ("An evidence check the initial plan writes") owns that rule.
 - Real-run evidence checklist: [pack](../../references/pack.md) ("Real-run evidence checklist") owns that rule.
 - Citations in plans and packs: [pack](../../references/pack.md) ("Citation rule") owns that rule.

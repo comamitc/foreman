@@ -84,6 +84,15 @@ commands instead. The single correction and resume do not repeat the sweep.
    section, before implementation mechanics. When the change adds or reshapes
    a module, that section writes the caller's usage first, then names at least
    two structurally distinct designs, chooses one, and gives the reason.
+   Those designs are compared at equal reuse: each may reuse every existing
+   module, step, or shared piece the chosen design reuses, and none is
+   described with duplication or extra steps it would not need.
+   A red flag claimed against a design names where it occurs in that design's
+   interface or ownership; a red flag that holds only because the design was
+   given duplication or steps it would not need is not a reason.
+   The reason for the chosen design rests on a difference that remains once
+   both designs have equal reuse, such as ownership, interface size, or what
+   callers must know.
    For each history item that shows a reverted or rejected approach, that
    section states how the plan differs or why the item does not apply.
    [references/ladder.md](ladder.md) ("## Module") owns the red flags and the
