@@ -13,15 +13,21 @@ LAUNCH_SH=${LAUNCH_SH:-$here/launch.sh}
 case $LAUNCH_SH in /*) ;; *) LAUNCH_SH=$PWD/$LAUNCH_SH ;; esac
 [ -f "$LAUNCH_SH" ] || setup "no builder at $LAUNCH_SH"
 
+# Fixture directories must not be group- or other-writable unless a case makes them so.
+umask 022
 T=$(mktemp -d) && T=$(realpath "$T") || setup "mktemp -d failed"
-trap 'chmod -R u+rwx "$T" 2>/dev/null; rm -rf "$T"' EXIT
+# P is a private result directory directly beneath /tmp (S9).
+P=
+trap 'chmod -R u+rwx "$T" 2>/dev/null; rm -rf "$T" ${P:+"$P"}' EXIT
+P=$(mktemp -d /tmp/launch-test.XXXXXX) || setup "mktemp -d /tmp/launch-test.XXXXXX failed"
 export HOME=$T/home
 mkdir -p "$T/home/real" "$T/home/adir" "$T/wt" "$T/res" "$T/brief" "$T/b" "$T/r" \
   "$T/bin" "$T/log" "$T/exp" "$T/k" "$T/c" "$T/g" "$T/outdir" "$T/s1" "$T/s2" "$T/s3" "$T/s4" "$T/s5" \
   "$T/s6/h" "$T/s6o" "$T/c13" "$T/c14wt/in" "$T/c15/wt" "$T/c16wt/in" "$T/c17/h" "$T/wt/s5" "$T/o2" "$T/o3" \
-  || setup "cannot create fixture directories"
+  "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/c19" || setup "cannot create fixture directories"
+chmod 1777 "$T/s7" "$T/c19" || setup "cannot chmod the shared fixture directories"
 ln -s "$T/wt" "$T/s5l" && ln -s "$T/s6/h" "$T/s6l" && ln -s "$T/c16wt" "$T/c16l" && ln -s "$T/c17/h" "$T/c17l" \
-  || setup "cannot create fixture links"
+  && ln -s "$T/s7" "$T/s7l" && ln -s "$T/c19" "$T/c19l" || setup "cannot create fixture links"
 
 LF=$T/brief/launch.md
 printf 'launch prompt %s.%s\n' "$$" "$RANDOM" >"$LF" || setup "cannot write the launch file"
@@ -489,7 +495,7 @@ C13() { # a TMPDIR directory loosened after write
   grep -qF -- "TMPDIR is not an owner-only directory: $T/c13/tmp" "$T/log/C13.chk" || { echo "stderr lacks: TMPDIR is not an owner-only directory"; return 1; }
 }
 
-# ---- #225 PR1/PR2: check refuses a root at, in, around, or aliasing the worktree, or at or above HOME (C14-C18) ----
+# ---- #225 PR1/PR2/R1: check refuses a root at, in, around, or aliasing the worktree, at or above HOME, or shared (C14-C19) ----
 
 c_roots() { # NAME KIND DIR WORKTREE HOME MESSAGE: move -C, cd, the result and TMPDIR of a KIND build into DIR; check wants exit 1 and MESSAGE
   local rc
@@ -539,6 +545,14 @@ C18() { # check without --worktree for a read kind is a usage error
   rc=$?
   [ "$rc" -eq 2 ] || { echo "check exited $rc, not 2"; return 1; }
   grep -qF -- "--worktree is required for codex-read" "$T/log/C18.chk" || { echo "stderr lacks: --worktree is required for codex-read"; return 1; }
+}
+C19() { # the moved result directory is a shared (1777) directory or a symlink to it, both read kinds
+  local k d
+  for k in codex-read codex-read-probe; do
+    for d in "$T/c19" "$T/c19l"; do
+      c_roots "C19-$k-${d##*/}" "$k" "$d" "$T/wt" "$HOME" "result directory $T/c19 is writable by group or others" || return 1
+    done
+  done
 }
 
 # ---- AC 4: self-check and rejected inputs (S1, S2) ----
@@ -613,6 +627,52 @@ S6() { # write refuses a result directory that is HOME, above HOME, or a symlink
     done
   done
 }
+S7() { # write refuses a shared (1777) result directory or a symlink to it, both read kinds
+  local rc k res
+  for k in codex-read codex-read-probe; do
+    for res in "$T/s7/result.md" "$T/s7l/result.md"; do
+      (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s7o/run.sh" --worktree "$T/wt" \
+        --launch-file "$LF" --result "$res") >/dev/null 2>"$T/log/S7.err"
+      rc=$?
+      [ "$rc" -eq 2 ] || { echo "$k --result $res: write exited $rc, not 2"; return 1; }
+      grep -qF -- "result directory $T/s7 is writable by group or others" "$T/log/S7.err" \
+        || { echo "$k --result $res: stderr lacks: result directory $T/s7 is writable by group or others"; return 1; }
+      [ ! -e "$T/s7o/run.sh" ] && [ ! -e "$T/s7/tmp" ] || { echo "$k --result $res: OUT or tmp was written"; return 1; }
+      no_tmp "$T/s7o" || { echo "$k --result $res: a .launch.* file was left"; return 1; }
+    done
+  done
+}
+S8() { # write refuses --result /tmp/NAME.md and leaves /tmp/tmp as it was, both read kinds
+  # The worktree and HOME are this script's directory, so that neither the worktree
+  # nor the HOME rule refuses /tmp first; the fixtures under $T may sit beneath /tmp.
+  local rc k before after
+  case $(realpath "$here")/ in "$(realpath /tmp)"/*) echo "this case needs the repository outside /tmp: $here"; return 1 ;; esac
+  for k in codex-read codex-read-probe; do
+    before=0 after=0
+    [ ! -e /tmp/tmp ] || before=1
+    (cd "$T/b" && HOME=$here bash "$LAUNCH_SH" write --kind "$k" --out "$T/s8/run.sh" --worktree "$here" \
+      --launch-file "$LF" --result "/tmp/launch-test-$$.md") >/dev/null 2>"$T/log/S8.err"
+    rc=$?
+    [ ! -e /tmp/tmp ] || after=1
+    [ "$rc" -eq 2 ] || { echo "$k: write exited $rc, not 2"; return 1; }
+    grep -qF -- "is not owned by the current user" "$T/log/S8.err" || { echo "$k: stderr lacks: is not owned by the current user"; return 1; }
+    [ "$before" = "$after" ] || { echo "$k: /tmp/tmp was created"; return 1; }
+    [ ! -e "$T/s8/run.sh" ] || { echo "$k: OUT was written"; return 1; }
+  done
+}
+S9() { # a private directory beneath /tmp still builds and checks, both read kinds
+  local rc k
+  for k in codex-read codex-read-probe; do
+    (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s9/$k.sh" --worktree "$T/wt" \
+      --launch-file "$LF" --result "$P/result.md") >/dev/null 2>"$T/log/S9.err"
+    rc=$?
+    [ "$rc" -eq 0 ] || { echo "$k: write exited $rc: $(first "$T/log/S9.err")"; return 1; }
+    [ "$(mode "$P/tmp")" = drwx------ ] || { echo "$k: tmp mode is $(mode "$P/tmp"), not drwx------"; return 1; }
+    (cd "$T/r" && bash "$LAUNCH_SH" check "$T/s9/$k.sh" --worktree "$T/wt") 2>"$T/log/S9.chk"
+    rc=$?
+    [ "$rc" -eq 0 ] || { echo "$k: check exited $rc: $(first "$T/log/S9.chk")"; return 1; }
+  done
+}
 
 # ---- F5: destination (O1-O3) ----
 
@@ -652,7 +712,7 @@ O3() {
 }
 
 for c in K1 K2 K3 K4 K5 K6 K7 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
-  C14 C15 C16 C17 C18 S1 S2 S3 S4 S5 S6 O1 O2 O3; do
+  C14 C15 C16 C17 C18 C19 S1 S2 S3 S4 S5 S6 S7 S8 S9 O1 O2 O3; do
   t "$c" "$c"
 done
 [ "$fails" -eq 0 ] || exit 1

@@ -13,7 +13,8 @@
 #     codex-read and codex-read-probe start in the --result directory, create
 #     its tmp/ directory owner-only as TMPDIR, and refuse --add-dir. They refuse
 #     a --result directory that is, holds, or sits inside --worktree, or that is
-#     $HOME or above it, compared by canonical path.
+#     $HOME or above it, compared by canonical path, or that is not owned by
+#     the user or is writable by group or others.
 #   launch.sh check RUN_SCRIPT [--worktree DIR]
 #     --worktree is required for codex-read and codex-read-probe: their run
 #     script does not name the worktree, and check applies the --result rule above.
@@ -56,7 +57,10 @@ root_bad() {
   hm=$(realpath -e -- "${HOME:-}" 2>/dev/null) || { printf 'HOME does not resolve: %s' "${HOME-}"; return 0; }
   case ${rd%/}/ in "${rw%/}"/*) printf 'result directory %s is inside the worktree %s' "$rd" "$rw"; return 0 ;; esac
   case ${rw%/}/ in "${rd%/}"/*) printf 'result directory %s contains the worktree %s' "$rd" "$rw"; return 0 ;; esac
-  case ${hm%/}/ in "${rd%/}"/*) printf 'result directory %s is HOME or an ancestor of it' "$rd" ;; esac
+  case ${hm%/}/ in "${rd%/}"/*) printf 'result directory %s is HOME or an ancestor of it' "$rd"; return 0 ;; esac
+  # A shared directory such as /tmp, /var/tmp, or /dev/shm cannot be the one root.
+  [ -O "$rd" ] || { printf 'result directory %s is not owned by the current user' "$rd"; return 0; }
+  case $(mode_of "$rd") in ?????w???? | ????????w?) printf 'result directory %s is writable by group or others' "$rd" ;; esac
   return 0
 }
 
