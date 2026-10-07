@@ -76,6 +76,11 @@ one-pass planning precedence:
 
 An evidence check is bitten before the brief that depends on it launches, except for the deferred assertions named below.
 A command the coordinator writes from plan text for a pack's `## Checks` is an evidence check even when the plan quotes it; a declared check is not an evidence check, and [references/toolchain.md](toolchain.md) owns its preflight.
+An evidence check the initial plan writes is bitten after the coordinator publishes that plan and before the plan-review brief launches, by the method below.
+When that bite shows a defective check, the coordinator repairs it before plan review, records the old and new check in `ledger.md`, and repeats the bite; later packs carry the repaired check until the single correction changes it.
+A check that passes that bite goes to plan review unchanged, and no repair is recorded.
+The plan-review pack carries the bite outcomes and any repair as carried evidence, and the plan reviewer judges whether a repair weakened the check.
+A check that the single correction changes, or that a worker reports defective, is bitten again before the brief that depends on it launches.
 The coordinator runs the evidence check against at least one known-good case, which it passes, and at least one planted defect, which it fails.
 Plant at least one defect per evidence check and one per carried finding the check claims to close.
 When no known-good candidate exists yet, the coordinator either bites the check on a synthetic fixture or names the assertions that cannot run until the candidate exists.

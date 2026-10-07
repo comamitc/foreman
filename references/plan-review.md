@@ -7,7 +7,7 @@ This is the single review of the initial plan, not a review of its correction.
 
 1. Read the brief and the pack. The pack carries the applicable criteria, the
    current plan text only (never a rejected plan), Open findings `none — single
-   review of the initial plan`, the rule extract, the commands the plan names, and
+   review of the initial plan`, the rule extract, the commands the plan names, the evidence-check bite outcomes and any repair as carried evidence, which [references/pack.md](pack.md) ("An evidence check the initial plan writes") owns, and
    the plan's own citations as Named files. Record the candidate plan/spec revision
    and the initial tree. Open a named file only to confirm a cited line; a citation
    that does not match the file is a Standards or Correctness finding with the pack
@@ -26,6 +26,7 @@ This is the single review of the initial plan, not a review of its correction.
    scope for this change, and that finding alone does not make the verdict
    revise. When it quotes one, the finding is in scope with its existing
    severity and confidence.
+   A repaired evidence check: [references/pack.md](pack.md) ("An evidence check the initial plan writes") owns the rule.
 
    | Axis | Question |
    | --- | --- |
