@@ -58,8 +58,8 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    essays or implementing narratives. The exception is each applicable red or
    fault-injection observation carried under Checks as evidence already
    recorded. [references/pack.md](pack.md) owns that carry.
-   Confirm each cited line and each row's
-   original scenario against the saved diff; a citation that does not match is a
+   Confirm each citation's anchor under [references/pack.md](pack.md) ("Citation rule") and each row's
+   original scenario against the saved diff; a citation that does not meet that rule is a
    finding. Run only the named checks and record the observed exit at HEAD. Callers
    are the ones the pack names; the diff carries the rest. A path the pack does not
    name is a gap under Risks and unresolved items, not a search.
