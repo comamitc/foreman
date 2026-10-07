@@ -55,6 +55,14 @@ for carried effective blockers. At read stations preserve head and tree.
 Write only to authorized paths. Do not push, mutate GitHub, open PRs, change labels,
 merge, deploy, force-push, or invoke external skills. Return raw errors redacted.
 
+At write stations, run each shell command as one plain command; [references/harnesses/claude.md](../references/harnesses/claude.md) ("This file owns the write-station grant") owns the write-station grant.
+Do not use these denied shapes: `&&`, `||`, `;`, a pipe, an appended `echo` of the exit status, `git -C`, a heredoc, and shell probes such as `cat`, `ls`, or `stat` where the Read tool or a named check serves.
+The tool reports a non-zero exit itself, so no status `echo` is needed.
+Make your own product edits with the edit tool, not with `sed -i`, a heredoc, or a compound such as `grep … && sed -i …`.
+A plain command the grant permits, or a check the brief or the pack declares, still runs as its own command, for example `git status --porcelain` or `bash scripts/test-launch.sh`. It runs as written even when its own content uses a shape listed above, such as a declared check that edits a fixture with `sed -i`.
+At write stations, do not read or edit an evidence check named under the pack's `## Checks`. When your station steps tell you to run it, run it as written.
+Report a suspected defect in an evidence check in your result; [references/pack.md](../references/pack.md) ("When a worker reports a defective evidence check") owns what follows.
+
 The coordinator runs [references/toolchain.md](../references/toolchain.md) before launch.
 The declared-check invocation in the brief header is that result. It names the
 command, the tool path, and the provenance. [references/harnesses/shared.md](../references/harnesses/shared.md)
