@@ -41,7 +41,7 @@ when a newer release changes flags.
    secrets. Exclude unrelated plugins/skills/tools where the host supports it.
    Permission approval and filesystem sandboxing are distinct; disclose limitations.
 4. Start a new process without continue/resume flags for each station. Run from the
-   issue worktree. [references/harnesses/claude.md](claude.md) owns the Claude
+   issue worktree, or from the working directory the station's recipe names: [references/harnesses/codex.md](codex.md) ("The read recipe, for kinds") owns the Codex read recipe. [references/harnesses/claude.md](claude.md) owns the Claude
    write-station grant. Record owned
    process/session and supervise output. On POSIX, an installed `timeout --signal=TERM --kill-after=10s 60m`
    can bound a process; verify its help or use the coordinator's process manager.
