@@ -16,16 +16,15 @@ case $LAUNCH_SH in /*) ;; *) LAUNCH_SH=$PWD/$LAUNCH_SH ;; esac
 # Fixture directories must not be group- or other-writable unless a case makes them so.
 umask 022
 T=$(mktemp -d) && T=$(realpath "$T") || setup "mktemp -d failed"
-# P is a private result directory directly beneath /tmp (S9).
-P=
-trap 'chmod -R u+rwx "$T" 2>/dev/null; rm -rf "$T" ${P:+"$P"}' EXIT
-P=$(mktemp -d /tmp/launch-test.XXXXXX) || setup "mktemp -d /tmp/launch-test.XXXXXX failed"
+trap 'chmod -R u+rwx "$T" 2>/dev/null; rm -rf "$T"' EXIT
 export HOME=$T/home
 mkdir -p "$T/home/real" "$T/home/adir" "$T/wt" "$T/res" "$T/brief" "$T/b" "$T/r" \
   "$T/bin" "$T/log" "$T/exp" "$T/k" "$T/c" "$T/g" "$T/outdir" "$T/s1" "$T/s2" "$T/s3" "$T/s4" "$T/s5" \
   "$T/s6/h" "$T/s6o" "$T/c13" "$T/c14wt/in" "$T/c15/wt" "$T/c16wt/in" "$T/c17/h" "$T/wt/s5" "$T/o2" "$T/o3" \
-  "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/c19" || setup "cannot create fixture directories"
-chmod 1777 "$T/s7" "$T/c19" || setup "cannot chmod the shared fixture directories"
+  "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" || setup "cannot create fixture directories"
+chmod 1777 "$T/s7" "$T/c19" "$T/s9sh" || setup "cannot chmod the shared fixture directories"
+# A private result directory beneath a shared temp-style directory (S9).
+mkdir -m 700 "$T/s9sh/p" || setup "cannot create the private fixture directory"
 ln -s "$T/wt" "$T/s5l" && ln -s "$T/s6/h" "$T/s6l" && ln -s "$T/c16wt" "$T/c16l" && ln -s "$T/c17/h" "$T/c17l" \
   && ln -s "$T/s7" "$T/s7l" && ln -s "$T/c19" "$T/c19l" || setup "cannot create fixture links"
 
@@ -660,14 +659,14 @@ S8() { # write refuses --result /tmp/NAME.md and leaves /tmp/tmp as it was, both
     [ ! -e "$T/s8/run.sh" ] || { echo "$k: OUT was written"; return 1; }
   done
 }
-S9() { # a private directory beneath /tmp still builds and checks, both read kinds
+S9() { # a private directory beneath a shared (1777) directory still builds and checks, both read kinds
   local rc k
   for k in codex-read codex-read-probe; do
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s9/$k.sh" --worktree "$T/wt" \
-      --launch-file "$LF" --result "$P/result.md") >/dev/null 2>"$T/log/S9.err"
+      --launch-file "$LF" --result "$T/s9sh/p/result.md") >/dev/null 2>"$T/log/S9.err"
     rc=$?
     [ "$rc" -eq 0 ] || { echo "$k: write exited $rc: $(first "$T/log/S9.err")"; return 1; }
-    [ "$(mode "$P/tmp")" = drwx------ ] || { echo "$k: tmp mode is $(mode "$P/tmp"), not drwx------"; return 1; }
+    [ "$(mode "$T/s9sh/p/tmp")" = drwx------ ] || { echo "$k: tmp mode is $(mode "$T/s9sh/p/tmp"), not drwx------"; return 1; }
     (cd "$T/r" && bash "$LAUNCH_SH" check "$T/s9/$k.sh" --worktree "$T/wt") 2>"$T/log/S9.chk"
     rc=$?
     [ "$rc" -eq 0 ] || { echo "$k: check exited $rc: $(first "$T/log/S9.chk")"; return 1; }
