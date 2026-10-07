@@ -34,6 +34,7 @@ Repository check: `bash scripts/test-launch.sh` is the test script for the launc
 - The initial plan carries the touched files' recent history as evidence; [planning](../../references/planning.md) ("runs the history sweep once") owns that rule.
 - Check scripts that a plan writes are built to one rule; [planning](../../references/planning.md) ("A check script the plan writes") owns that rule.
 - Bite timing for evidence checks the initial plan writes: [pack](../../references/pack.md) ("An evidence check the initial plan writes") owns that rule.
+- Real-run evidence checklist: [pack](../../references/pack.md) ("Real-run evidence checklist") owns that rule.
 - A delivery's summary discloses finding classes and friction that recurred in two or more earlier deliveries and suggests the correction mode; [telemetry](../../references/telemetry.md) ("This section owns earlier deliveries") owns that rule.
 - A spec dependency can stop a delivery before it starts; [contract](../../references/contract.md) ("## Start condition") owns that rule.
 - Cross-repository requests: [triage](../../references/triage.md) ("A criterion that is not verifiable in this repository is an Ask") owns the criterion rule; [contract](../../references/contract.md) ("## Start condition") owns dependencies.

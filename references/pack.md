@@ -42,7 +42,21 @@ carry reads `none` plus the reason.
    [references/review.md](review.md) owns the judgment.
    In verification-path adoption, it also carries the path's required state
    and allowed effects; [references/modes/verification-path.md](modes/verification-path.md) ("This file owns verification-path adoption") owns that mode.
+   A code-review pack also carries, under this heading, real-run evidence that passed the "Real-run evidence checklist" below, marked as carried evidence and not as a verdict.
 7. `## Named files`: `path:line-range` plus reason, the only task files the worker may open; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+
+Real-run evidence checklist: real-run evidence is evidence the coordinator itself produces by running an invocation or a launch for an acceptance criterion; worker output and declared checks are not real-run evidence.
+Before writing a code-review pack that carries real-run evidence, the coordinator checks that evidence against these four items:
+- Transcript: every command the run executed, with its exit status. A command the harness log does not show counts as missing.
+- State: the before and after state of each repository or tree the run reads or changes, where its criterion depends on it being unchanged.
+- Citations: every claim the run's report must cite carries a `path:line`, or a URL plus its commit SHA, and every `path:line` in the report matches the cited file, as the coordinator confirmed by opening that file.
+- Coverage: where the output has a coverage section, every item the run inventoried has exactly one disposition there, and a partial read is labeled partial, never listed as read in full.
+
+An item that does not apply to the run is marked not applicable in the carried evidence, with its reason, such as Coverage for a run with no coverage section, or Citations for a launch that writes no report.
+A failed item is completed or corrected before the pack is written; when only the run can supply the missing record, such as a missing command or after state, the coordinator repeats the run and checks the new evidence.
+The coordinator records a notes line in `ledger.md` naming each failed item, what was completed or corrected, and whether the run was repeated.
+Evidence that meets every item goes into the pack unchanged, and no correction is recorded.
+The checklist checks the evidence a run recorded; it does not replace the bite of an evidence check below.
 
 Compact form, the exception for one Named files entry, one check, and no open
 finding rows: nothing is written as `none`, no heading beyond Candidate appears,
