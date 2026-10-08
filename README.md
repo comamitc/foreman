@@ -221,6 +221,7 @@ ready-to-deploy must not prevent delivery continuation.
 
 Acceptance is the product pipeline: planning → implementing → independent review → merged-ready PR gate.
 Reviewer evidence on the diff is the proof.
+CI runs the declared check, `bash scripts/test-launch.sh`, from [.github/workflows/check.yml](.github/workflows/check.yml).
 
 Historical ideas came from ponytail, firstmate, Matt Pocock's skills, and pstack.
 This attribution is provenance only. All shipped instructions are Capstan-owned;

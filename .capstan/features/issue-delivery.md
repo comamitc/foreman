@@ -20,7 +20,7 @@ Invocation: invoke Capstan with the issue URL `https://github.com/OWNER/REPO/iss
 End state: an open PR from branch `capstan/N` whose body has the line `Capstan: OWNER/REPO#N`, and the issue labeled `capstan:ready-to-deploy`, meaning GitHub says the PR can merge immediately.
 Other stops: `capstan:blocked` with reason `review-exhausted` when effective review blockers remain at the round ceiling; one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; or user cancellation.
 The work happens in the worktree `.worktrees/capstan+N` of the target repository.
-Repository check: `bash scripts/test-launch.sh` is the test script for the launch builder `scripts/launch.sh` that the coordinator runs.
+Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch builder `scripts/launch.sh`; CI runs that check from [.github/workflows/check.yml](../../.github/workflows/check.yml).
 
 ## Gotchas
 - Capstan never merges or deploys; `capstan:ready-to-deploy` is the live gate, not a deploy step.
