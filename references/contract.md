@@ -265,7 +265,7 @@ after they are in force.
 | plan-review | complete census: no findings / findings | implementing / planning (single correction) |
 | planning (single correction) | corrected plan and complete finding handoff; interrupted work retained explicitly | implementing |
 | implementing | verified commits/checks/outcome; closure proof gate passed for carried effective blockers; [references/publication.md](publication.md) | review |
-| review | exact-head policy partition: effective blockers / none / round ceiling | fix / pre-merge / blocked review-exhausted |
+| review | exact-head policy partition: effective blockers / none / round ceiling; [references/review-convergence.md](review-convergence.md) ("## Coordinator-evidence findings") owns the partition and route of a coordinator-evidence finding | fix / pre-merge / blocked review-exhausted |
 | fix | effective blocking census resolved or refuted; closure proof gate passed; verified resulting head (unchanged is valid after refutation) | review |
 | pre-merge | strict live ready gate in pre-merge reference | ready-to-deploy |
 

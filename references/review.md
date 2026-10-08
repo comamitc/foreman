@@ -169,7 +169,9 @@ coordinator independently partitions findings under the effective policy. [refer
 owns census placement. Effective blockers
 enter fix while the round allowance remains; zero effective blockers enters
 pre-merge; a final allowed review with blockers adds the review-exhausted blocked
-overlay. Any later head change requires the confirmation behavior in code-review
+overlay. Each of these routes is subject to
+[references/review-convergence.md](review-convergence.md) ("## Coordinator-evidence findings")
+for a coordinator-evidence finding. Any later head change requires the confirmation behavior in code-review
 convergence before readiness.
 
 [references/publication.md](publication.md) owns publication.

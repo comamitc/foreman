@@ -174,11 +174,11 @@ original lineage and triggers independent diagnosis plus a different repair
 hypothesis; only a distinct failure scenario is new.
 
 Code re-review is a ratchet, not a fresh unlimited scan: it verifies prior blockers
-and the repair delta. Complete review censuses are capped by
+and the repair delta. Counted review censuses are capped by
 `review_policy.max_review_fix_rounds`. If effective blockers remain at the ceiling,
 Capstan adds `capstan:blocked` with reason `review-exhausted`; it never marks the PR
 ready or silently discards them. See
-[code-review convergence](references/review-convergence.md).
+[code-review convergence](references/review-convergence.md) ("## Bounded rounds and recurrence").
 
 ## Init
 

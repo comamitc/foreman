@@ -12,7 +12,7 @@ Resolve `review_policy` through the normal configuration precedence. Defaults:
 | --- | --- | --- |
 | `block_threshold` | `medium` | Lowest severity eligible to block |
 | `min_confidence` | `0.70` | Lowest confidence eligible to block |
-| `max_review_fix_rounds` | `3` | Maximum published code-review censuses in one delivery |
+| `max_review_fix_rounds` | `3` | Maximum counted code-review censuses in one delivery; also the starting evidence-only allowance ("## Coordinator-evidence findings") |
 | `surface_recurrence_rounds` | `3` | Consecutive rounds on one file/category surface that trigger convergence diagnosis |
 | `residual_effect_approval` | `false` | Opt-in ready gate; [pre-merge](pre-merge.md) step 4 owns it |
 
@@ -81,13 +81,74 @@ effective head and policy, then reads it back before repartitioning. Never infer
 disposition from approval, silence, labels, or ambiguous prose. A disposition for
 one lineage does not cover a renamed distinct scenario.
 
+## Coordinator-evidence findings
+
+A **coordinator-evidence finding** is a code-review finding located in an evidence
+check ([pack](pack.md) "A command the coordinator writes from plan text for a
+pack's `## Checks` is an evidence check") or in real-run evidence ([pack](pack.md)
+"Real-run evidence checklist"), and it shows no defect in the product diff. A
+finding that also shows a product-diff defect is a product finding.
+
+A finding is at **blocking grade** when its severity is at or above
+`block_threshold` and its confidence is at or above `min_confidence`. The
+**evidence-only allowance** is `max_review_fix_rounds` minus the number of earlier
+evidence-only censuses in this delivery, counted from the marked censuses as
+rounds are counted below. A complete census is an **evidence-only census** when
+the evidence-only allowance is above zero, at least one of its blocking-grade
+findings is a coordinator-evidence finding, and none of its product findings is
+an effective blocker. A census whose only blocking-grade findings are
+coordinator-evidence findings is therefore an evidence-only census while the
+evidence-only allowance remains.
+An evidence-only census does not consume a round, and it does not advance to
+pre-merge. One delivery has at most `max_review_fix_rounds` evidence-only
+censuses.
+
+A coordinator-evidence finding is never sent to fix, because fix is a product
+write station and the evidence lives outside the product tree. The coordinator
+repairs each blocking-grade coordinator-evidence finding of a census before the
+next review, by the repair that [pack](pack.md) owns for that kind of evidence:
+the row "| any station reporting a defective evidence check" for an evidence
+check, and the "Real-run evidence checklist" for real-run evidence. A
+coordinator repair is not a station and moves no stage label. While the
+evidence-only allowance remains, a coordinator-evidence finding is never an
+effective blocker of the product.
+
+Once the evidence-only allowance is zero, a census that holds a blocking-grade
+coordinator-evidence finding is not an evidence-only census, and it consumes a
+round. Each of its coordinator-evidence findings is partitioned as an ordinary
+finding, and one at blocking grade is an effective blocker even where the list
+above or the review ratchet would leave it advisory, because the pre-merge
+requirement below admits no open one. While the round allowance remains, the
+coordinator repairs it as above, and the next review is counted. At the round
+ceiling, "Bounded rounds and recurrence" below applies, and it gives
+`review-exhausted`.
+
+A census with both product effective blockers and a blocking-grade
+coordinator-evidence finding is not an evidence-only census, and it consumes a
+round. Its product effective blockers go to fix. The coordinator repairs its
+coordinator-evidence findings before the next review, and that review verifies
+both.
+
+After a coordinator repair, the next review is a confirmation review, a complete
+census under the review ratchet. It verifies each repair against the finding's
+acceptance condition. It judges a changed evidence check for weakening under
+[review](review.md) ("When the pack carries a changed evidence check"). A
+coordinator-evidence finding in that confirmation review is routed to the
+coordinator again under this section. A pre-merge advance needs a review in which
+no coordinator-evidence finding at blocking grade is open.
+
+The census records each coordinator-evidence finding with its partition reason,
+and states whether the census is counted, the remaining round allowance, and the
+remaining evidence-only allowance.
+
 ## Bounded rounds and recurrence
 
 Count marked, complete code-review censuses for this delivery from GitHub evidence,
 including reviews recovered after lost local state. A malformed review does not
 consume a round. A census taken before the checks in the gate owned by
-[implementing.md](implementing.md) have exited 0 does not consume a round. A
-review of a new head after implementation or fix does. Resume,
+[implementing.md](implementing.md) have exited 0 does not consume a round. An
+evidence-only census ("## Coordinator-evidence findings" above) does not consume a
+round. A review of a new head after implementation or fix does. Resume,
 worker replacement, renamed finding IDs, and changed counts do not reset it.
 
 For a delivery already in progress when this policy is installed, retain all legacy
@@ -102,7 +163,7 @@ a materially different repair hypothesis. When new-key blockers occupy the same
 file/category surface for `surface_recurrence_rounds` consecutive reviews, perform
 the same diagnosis before spending any remaining round.
 
-After publishing `max_review_fix_rounds` complete censuses:
+After publishing `max_review_fix_rounds` counted censuses:
 
 - zero effective blockers advances to pre-merge, regardless of advisories;
 - remaining effective blockers add `capstan:blocked` with blocker kind

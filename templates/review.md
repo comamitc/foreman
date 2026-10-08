@@ -47,7 +47,9 @@ review. Claims of “addressed” are not verification.
 ## Policy partition
 
 Effective policy; effective blockers; advisories with partition reasons; trusted
-dispositions; counted round and remaining allowance. The coordinator verifies this
+dispositions; counted round and remaining allowance. Coordinator-evidence findings:
+[code-review convergence](../references/review-convergence.md) ("## Coordinator-evidence findings")
+owns what this section records for them. The coordinator verifies this
 partition rather than accepting the reviewer's verdict as routing authority. Use
 “not applicable” for plan review.
 
