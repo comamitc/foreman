@@ -117,9 +117,15 @@ Once the evidence-only allowance is zero, a census that holds a blocking-grade
 coordinator-evidence finding is not an evidence-only census, and it consumes a
 round. Each of its coordinator-evidence findings is partitioned as an ordinary
 finding, under the effective-blocker list and the review ratchet above. While
-the round allowance remains, the coordinator repairs each one that partition
-makes an effective blocker as above, and the next review is counted. At the
-round ceiling, "Bounded rounds and recurrence" below applies, and it gives
+the round allowance remains, the coordinator repairs each blocking-grade
+coordinator-evidence finding as above, whether partition makes it an effective
+blocker or leaves it advisory, and the next review is counted. At the round
+ceiling, "Bounded rounds and recurrence" below applies to an effective one, and
+it gives `review-exhausted`. At the round ceiling, the coordinator also repairs
+each blocking-grade coordinator-evidence finding that partition leaves advisory,
+and one confirmation review of those repairs follows without consuming a round.
+If that confirmation review finds a coordinator-evidence finding at blocking
+grade still open, the run adds `capstan:blocked` with blocker kind
 `review-exhausted`.
 
 A census with both product effective blockers and a blocking-grade
@@ -134,8 +140,7 @@ acceptance condition. It judges a changed evidence check for weakening under
 [review](review.md) ("When the pack carries a changed evidence check"). A
 coordinator-evidence finding in that confirmation review is routed to the
 coordinator again under this section. A pre-merge advance needs a review in
-which no coordinator-evidence finding is an open effective blocker and, while
-the evidence-only allowance remains, none at blocking grade is open.
+which no coordinator-evidence finding at blocking grade is open.
 
 The census records each coordinator-evidence finding with its partition reason,
 and states whether the census is counted, the remaining round allowance, and the
@@ -165,7 +170,8 @@ the same diagnosis before spending any remaining round.
 
 After publishing `max_review_fix_rounds` counted censuses:
 
-- zero effective blockers advances to pre-merge, regardless of advisories;
+- zero effective blockers advances to pre-merge, regardless of advisories,
+  subject to the pre-merge requirement in "## Coordinator-evidence findings" above;
 - remaining effective blockers add `capstan:blocked` with blocker kind
   `review-exhausted` and end ordinary automation.
 
