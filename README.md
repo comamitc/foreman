@@ -209,7 +209,7 @@ Owner-only briefs, results, worker/check logs, and optional events.jsonl
 record observed commands and usage. Secrets are redacted before persistence or
 publication. [references/telemetry.md](references/telemetry.md) owns the ledger,
 the ledger digest and its check, the pile, deletion, and missing-usage rules.
-[references/contract.md](references/contract.md) owns `evidence.delete_pile`.
+[references/contract.md](references/contract.md) owns `evidence.delete_pile` and `evidence.retain_replay`.
 
 To clean raw logs manually before ready-to-deploy, first resolve the exact
 delivery directory, inspect its contents, and confirm no worker is active.
