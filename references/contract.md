@@ -108,6 +108,7 @@ This table is the only list of read-only keywords. A keyword is one lowercase wo
 Every read-only invocation follows these rules. A mode file may state a stricter rule, never a weaker one.
 
 - It creates or changes no label, comment, issue, PR, branch, worktree, evidence file, ledger, or process.
+- It takes no repository lock: a git command that may refresh the index runs with optional locks disabled (`GIT_OPTIONAL_LOCKS=0`, or `git --no-optional-locks`).
 - It runs no coordinator loop, triage, init, side-effect reconciliation, worker, or launch probe. It publishes no summary, stage analysis, or host status line.
 - It prints its report once, then stops.
 - An unreadable or partial source is a named gap in the report, never zero or an empty result. No result is invented.
