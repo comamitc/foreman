@@ -116,11 +116,10 @@ effective blocker of the product.
 Once the evidence-only allowance is zero, a census that holds a blocking-grade
 coordinator-evidence finding is not an evidence-only census, and it consumes a
 round. Each of its coordinator-evidence findings is partitioned as an ordinary
-finding, and one at blocking grade is an effective blocker even where the list
-above or the review ratchet would leave it advisory, because the pre-merge
-requirement below admits no open one. While the round allowance remains, the
-coordinator repairs it as above, and the next review is counted. At the round
-ceiling, "Bounded rounds and recurrence" below applies, and it gives
+finding, under the effective-blocker list and the review ratchet above. While
+the round allowance remains, the coordinator repairs each one that partition
+makes an effective blocker as above, and the next review is counted. At the
+round ceiling, "Bounded rounds and recurrence" below applies, and it gives
 `review-exhausted`.
 
 A census with both product effective blockers and a blocking-grade
@@ -134,8 +133,9 @@ census under the review ratchet. It verifies each repair against the finding's
 acceptance condition. It judges a changed evidence check for weakening under
 [review](review.md) ("When the pack carries a changed evidence check"). A
 coordinator-evidence finding in that confirmation review is routed to the
-coordinator again under this section. A pre-merge advance needs a review in which
-no coordinator-evidence finding at blocking grade is open.
+coordinator again under this section. A pre-merge advance needs a review in
+which no coordinator-evidence finding is an open effective blocker and, while
+the evidence-only allowance remains, none at blocking grade is open.
 
 The census records each coordinator-evidence finding with its partition reason,
 and states whether the census is counted, the remaining round allowance, and the
