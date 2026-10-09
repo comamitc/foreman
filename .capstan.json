@@ -1,5 +1,5 @@
 {
-  "primary": {"harness": "claude", "model": "claude-opus-5-5", "effort": "high"},
+  "primary": {"harness": "claude", "model": "claude-opus-5-5", "effort": "medium"},
   "secondary": {"harness": "codex", "model": "gpt-6.1-sol", "effort": "medium"},
   "fallback": {"harness": "grok", "model": null, "effort": null},
   "recovery": {
