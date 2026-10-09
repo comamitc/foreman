@@ -36,6 +36,7 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Design comparisons in plans: [planning](../../references/planning.md) ("Those designs are compared at equal reuse") owns that rule.
 - Bite timing for evidence checks the initial plan writes: [pack](../../references/pack.md) ("An evidence check the initial plan writes") owns that rule.
 - Real-run evidence checklist: [pack](../../references/pack.md) ("Real-run evidence checklist") owns that rule.
+- Review findings in the coordinator's own evidence: [code-review convergence](../../references/review-convergence.md) ("## Coordinator-evidence findings") owns that rule.
 - Citations in plans and packs: [pack](../../references/pack.md) ("Citation rule") owns that rule.
 - A delivery's summary discloses finding classes and friction that recurred in two or more earlier deliveries and suggests the correction mode; [telemetry](../../references/telemetry.md) ("This section owns earlier deliveries") owns that rule.
 - A spec dependency can stop a delivery before it starts; [contract](../../references/contract.md) ("## Start condition") owns that rule.
