@@ -20,17 +20,23 @@ codex exec -C WORKTREE -s workspace-write -c approval_policy='"never"' \
 
 The coordinator writes this launch with `scripts/launch.sh write` (kind `codex-write`). This recipe stays the specification. The nested host below stays prose.
 
-The read recipe, for kinds `codex-read` and `codex-read-probe`, starts in the result directory:
+The read recipe, for kinds `codex-read` and `codex-read-probe`, starts in `RESULT_DIR/work`, a private directory beneath the result directory:
 
 ```sh
-env TMPDIR=RESULT_DIR/tmp codex exec -C RESULT_DIR -s workspace-write --skip-git-repo-check \
+env TMPDIR=RESULT_DIR/work/tmp codex exec -C RESULT_DIR/work -s workspace-write --skip-git-repo-check \
   -c 'sandbox_workspace_write.exclude_slash_tmp=true' -c approval_policy='"never"' \
   --json --output-last-message RESULT - < LAUNCH_FILE
 ```
 
-`RESULT_DIR` is the directory of `RESULT`. It is the only writable root: `/tmp` is excluded and the worktree is not a root, so a write to the product worktree fails. By canonical path, `RESULT_DIR` is not the worktree, not inside it, does not contain it, and is not `$HOME` or an ancestor of it. It is owned by the user and not writable by group or others, so `/tmp` itself is refused while a private directory beneath it is accepted. `TMPDIR` is `RESULT_DIR/tmp`, which `scripts/launch.sh write` creates owner-only (`drwx------`). The read recipe takes no `--add-dir`: under `workspace-write` an added directory is writable, so `write` refuses it. `--skip-git-repo-check` is required because `RESULT_DIR` is not a trusted git directory; without it the launch refuses ("Not inside a trusted directory"). The reviewer starts in `RESULT_DIR` and changes into the worktree to run the pack's checks. Codex does not load the worktree's `AGENTS.md` from there; the pack stays the task reading. The coordinator writes this launch with `scripts/launch.sh write` and checks it with `scripts/launch.sh check RUN_SCRIPT --worktree WORKTREE`; `check` needs the worktree because this run script does not name it. Both kinds produce the same launch. This recipe stays the specification.
+`RESULT_DIR` is the directory of `RESULT`. `RESULT_DIR/work` is the only writable root: `/tmp` is excluded, and neither the worktree nor `RESULT_DIR` is a root, so a write to the product worktree or to `RESULT` fails. By canonical path, `RESULT_DIR` is not the worktree, not inside it, does not contain it, and is not `$HOME` or an ancestor of it. It is owned by the user and not writable by group or others, so `/tmp` itself is refused while a private directory beneath it is accepted. `RESULT` is not a symlink and does not resolve into `RESULT_DIR/work`; `write` and `check` refuse either. `scripts/launch.sh write` creates `RESULT_DIR/work` and `TMPDIR`, which is `RESULT_DIR/work/tmp`, owner-only (`drwx------`). The read recipe takes no `--add-dir`: under `workspace-write` an added directory is writable, so `write` refuses it. `--skip-git-repo-check` is required because `RESULT_DIR/work` is not a trusted git directory; without it the launch refuses ("Not inside a trusted directory"). The reviewer starts in `RESULT_DIR/work` and changes into the worktree to run the pack's checks. Codex does not load the worktree's `AGENTS.md` from there; the pack stays the task reading. The coordinator writes this launch with `scripts/launch.sh write` and checks it with `scripts/launch.sh check RUN_SCRIPT --worktree WORKTREE`; `check` needs the worktree because this run script does not name it. Both kinds produce the same launch. This recipe stays the specification.
 
-Evidence, codex-cli 0.159.0, 2026-10-07, scratch clone at `6bf87ae`: with this recipe, `mktemp -d` exited 0, `touch CLONE/WRITE_PROBE` exited 1, `cd CLONE && bash scripts/test-launch.sh` exited 0, and the clone's `git status --porcelain` stayed empty. `-C CLONE -s read-only --add-dir RESULT_DIR` with the same `TMPDIR` failed: `mktemp -d` exited 1 and `test-launch` exited 2, because `read-only` ignores `--add-dir` for writes.
+Evidence, codex-cli 0.159.0, 2026-10-07, scratch clone at `6bf87ae`: with this recipe as it then stood (`-C RESULT_DIR`, `TMPDIR=RESULT_DIR/tmp`), `mktemp -d` exited 0, `touch CLONE/WRITE_PROBE` exited 1, `cd CLONE && bash scripts/test-launch.sh` exited 0, and the clone's `git status --porcelain` stayed empty. `-C CLONE -s read-only --add-dir RESULT_DIR` with the same `TMPDIR` failed: `mktemp -d` exited 1 and `test-launch` exited 2, because `read-only` ignores `--add-dir` for writes.
+
+`references/harnesses/codex.md` owns the Codex read-station result rule. Other files name this owner and do not restate this procedure.
+
+A Codex read-station launch prompt tells the worker to return the station Markdown in its final message and to write no result file. `--output-last-message RESULT` is the only writer of `RESULT`; the read recipe keeps `RESULT` outside the worker's only writable root, so a worker write to it fails. The coordinator persists and verifies that file under the result acceptance that [references/harnesses/shared.md](shared.md) owns ("This is the only statement of the rule.").
+
+Evidence, codex-cli 0.159.0, 2026-10-11, with `-C DIR/work`, `TMPDIR=DIR/work/tmp` and `--output-last-message DIR/result.md`: the worker's `touch DIR/result.md` was refused before execution, with no `command_execution` item, `touch DIR/work/ok.txt` exited 0, and after exit `DIR/result.md` held exactly the final message.
 
 `references/harnesses/codex.md` owns the stdin rule. Other files name this owner and do not restate this procedure.
 

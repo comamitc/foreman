@@ -30,10 +30,12 @@ when a newer release changes flags.
    The worker's numbered list under `## Checks` is the operation count. The short
    launch prompt says: read this absolute brief, perform it, and write the result to
    this absolute path. `references/harnesses/codex.md` owns the stdin rule.
-   `references/harnesses/grok.md` owns the read-only result rule. This file names
-   those owners and does not restate those procedures. Where
-   `references/harnesses/grok.md` applies, use that owner's prompt instead of the
-   write sentence in this paragraph. Put the launch prompt in an evidence file or
+   `references/harnesses/grok.md` owns the read-only result rule.
+   `references/harnesses/codex.md` owns the Codex read-station result rule. This
+   file names those owners and does not restate those procedures. Where
+   `references/harnesses/grok.md` or the Codex read-station result rule applies,
+   use that owner's prompt instead of the write sentence in this paragraph. Put
+   the launch prompt in an evidence file or
    stdin; do not expand the entire brief into argv. Read security before
    persistence/capture.
 3. Use existing CLI controls for the narrowest unattended access the station needs.

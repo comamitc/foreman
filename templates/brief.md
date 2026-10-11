@@ -9,7 +9,8 @@
 - Turn ceiling (operations; read stations):
 - Result path (outside product tree):
 - Allowed writes: none to product at read stations; issue worktree at write stations;
-  assigned result path in either case.
+  assigned result path in either case, except at a Codex read station, where
+  [references/harnesses/codex.md](../references/harnesses/codex.md) ("owns the Codex read-station result rule") governs the result.
 - Affected feature files: only the feature files this issue can affect. Do not
   name an unaffected feature file. Do not tell the worker to read the other
   feature files.
