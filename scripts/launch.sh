@@ -10,8 +10,11 @@
 #       [--host-source FILE] [--result FILE]
 #     K: claude-write, claude-read, claude-write-probe, codex-write, codex-read,
 #     codex-read-probe. Prints the Host grant: line for claude-write*.
-#     codex-read and codex-read-probe start in the --result directory, create
-#     its tmp/ directory owner-only as TMPDIR, and refuse --add-dir. They refuse
+#     codex-read and codex-read-probe start in work/ beneath the --result
+#     directory, create work/ and work/tmp/ owner-only with work/tmp as TMPDIR,
+#     and refuse --add-dir and a --result that is a symlink or resolves into
+#     work/. references/harnesses/codex.md ("owns the Codex read-station result
+#     rule") governs the result file. They refuse
 #     a --result directory that is, holds, or sits inside --worktree, or that is
 #     $HOME or above it, compared by canonical path, or that is not owned by
 #     the user or is writable by group or others.
@@ -48,8 +51,9 @@ is_abs_dir() { case $1 in /*) [ -d "$1" ] ;; *) return 1 ;; esac; }
 safe_path() { [[ $1 =~ $SAFE_RE ]] || return 1; case "$1/" in */./* | */../*) return 1 ;; esac; }
 mode_of() { local m; m=$(ls -ld -- "$1" 2>/dev/null) && printf '%s' "${m:0:10}"; }
 
-# root_bad RESULT_DIR WORKTREE: prints why RESULT_DIR cannot be the one writable
-# root of a codex read kind, by canonical path; prints nothing when it can.
+# root_bad RESULT_DIR WORKTREE: prints why RESULT_DIR cannot be the parent of a
+# codex read kind's private writable root, RESULT_DIR/work, by canonical path;
+# prints nothing when it can. Its location and permissions bound that root.
 root_bad() {
   local rd rw hm
   rd=$(realpath -e -- "$1" 2>/dev/null) || { printf 'result directory does not resolve: %s' "$1"; return 0; }
@@ -58,7 +62,7 @@ root_bad() {
   case ${rd%/}/ in "${rw%/}"/*) printf 'result directory %s is inside the worktree %s' "$rd" "$rw"; return 0 ;; esac
   case ${rw%/}/ in "${rd%/}"/*) printf 'result directory %s contains the worktree %s' "$rd" "$rw"; return 0 ;; esac
   case ${hm%/}/ in "${rd%/}"/*) printf 'result directory %s is HOME or an ancestor of it' "$rd"; return 0 ;; esac
-  # A shared directory such as /tmp, /var/tmp, or /dev/shm cannot be the one root.
+  # A shared directory such as /tmp, /var/tmp, or /dev/shm cannot be the parent of that root.
   [ -O "$rd" ] || { printf 'result directory %s is not owned by the current user' "$rd"; return 0; }
   case $(mode_of "$rd") in ?????w???? | ????????w?) printf 'result directory %s is writable by group or others' "$rd" ;; esac
   return 0
@@ -306,7 +310,7 @@ walk_claude() {
 }
 
 walk_codex() {
-  local i=1 n=${#W[@]} w val policy= rk= excl= cdir= olm= tdir= rdir why
+  local i=1 n=${#W[@]} w val policy= rk= excl= cdir= olm= tdir= rdir rres rroot why
   [ "$KIND" = codex-write ] || rk=1
   if [ -n "$rk" ]; then
     # The run script does not name the worktree; check is given it.
@@ -369,8 +373,16 @@ walk_codex() {
   [ -n "$excl" ] || v "missing flag: -c sandbox_workspace_write.exclude_slash_tmp=true"
   [ -n "$olm" ] || return 0
   rdir=$(dirname -- "$olm")
-  [ -z "$cdir" ] || [ "$cdir" = "$rdir" ] || v "-C must be the result directory for $KIND: $cdir"
-  [ -z "$tdir" ] || [ "$tdir" = "$rdir/tmp" ] || v "TMPDIR must be $rdir/tmp for $KIND: $tdir"
+  [ ! -L "$olm" ] || v "--output-last-message is a symlink: $olm"
+  if rres=$(realpath -m -- "$olm") && rroot=$(realpath -m -- "$rdir/work"); then
+    case $rres/ in "${rroot%/}"/*) v "--output-last-message resolves into the writable root: $olm" ;; esac
+  else
+    v "--output-last-message does not resolve: $olm"
+  fi
+  [ -z "$cdir" ] || [ "$cdir" = "$rdir/work" ] || v "-C must be $rdir/work for $KIND: $cdir"
+  [ -z "$cdir" ] || { [ -d "$cdir" ] && ! [ -L "$cdir" ] && [ -O "$cdir" ] && [ "$(mode_of "$cdir")" = drwx------ ]; } \
+    || v "-C is not an owner-only directory: $cdir"
+  [ -z "$tdir" ] || [ "$tdir" = "$rdir/work/tmp" ] || v "TMPDIR must be $rdir/work/tmp for $KIND: $tdir"
   [ -z "$tdir" ] || { [ -d "$tdir" ] && ! [ -L "$tdir" ] && [ -O "$tdir" ] && [ "$(mode_of "$tdir")" = drwx------ ]; } \
     || v "TMPDIR is not an owner-only directory: $tdir"
   why=$(root_bad "$rdir" "$CWT")
@@ -442,7 +454,7 @@ render() { # KIND START_DIR LAUNCH_FILE WORD...
 }
 
 cmd_write() {
-  local kind= wt= lf= out= model= effort= hs= result= a val dir tmp d cdir tdir= why
+  local kind= wt= lf= out= model= effort= hs= result= a val dir tmp d cdir rdir rres rroot tdir= why
   local -a adds=() allows=() A=()
   while [ $# -gt 0 ]; do
     a=$1
@@ -499,16 +511,22 @@ cmd_write() {
   cdir=$wt
   case $kind in
     codex-read*)
-      # workspace-write makes every --add-dir writable; the result directory is the one root.
+      # workspace-write makes every --add-dir writable. work/ beneath the result directory is
+      # the one writable root; the header names the owner of the result rule.
       [ "${#adds[@]}" -eq 0 ] || die "--add-dir is not accepted for $kind"
-      cdir=$(dirname -- "$result")
-      [ -d "$cdir" ] || die "--result directory does not exist: $cdir"
-      why=$(root_bad "$cdir" "$wt")
+      rdir=$(dirname -- "$result")
+      [ -d "$rdir" ] || die "--result directory does not exist: $rdir"
+      why=$(root_bad "$rdir" "$wt")
       [ -z "$why" ] || die "--result is refused for $kind: $why"
-      tdir=$cdir/tmp
-      if [ -L "$tdir" ] || { [ -e "$tdir" ] && ! [ -d "$tdir" ]; }; then die "not a directory: $tdir"; fi
-      [ -d "$tdir" ] || (umask 077 && mkdir -- "$tdir") || die "cannot create $tdir"
-      [ -O "$tdir" ] && [ "$(mode_of "$tdir")" = drwx------ ] || die "not an owner-only directory: $tdir" ;;
+      if [ -L "$result" ]; then die "--result is a symlink: $result"; fi
+      rres=$(realpath -m -- "$result") && rroot=$(realpath -m -- "$rdir/work") || die "--result does not resolve: $result"
+      case $rres/ in "${rroot%/}"/*) die "--result resolves into the writable root: $result" ;; esac
+      cdir=$rdir/work tdir=$rdir/work/tmp
+      for d in "$cdir" "$tdir"; do
+        if [ -L "$d" ] || { [ -e "$d" ] && ! [ -d "$d" ]; }; then die "not a directory: $d"; fi
+        [ -d "$d" ] || (umask 077 && mkdir -- "$d") || die "cannot create $d"
+        [ -O "$d" ] && [ "$(mode_of "$d")" = drwx------ ] || die "not an owner-only directory: $d"
+      done ;;
   esac
 
   GRANT_READS=()

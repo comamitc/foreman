@@ -21,7 +21,7 @@ export HOME=$T/home
 mkdir -p "$T/home/real" "$T/home/adir" "$T/wt" "$T/res" "$T/brief" "$T/b" "$T/r" \
   "$T/bin" "$T/log" "$T/exp" "$T/k" "$T/c" "$T/g" "$T/outdir" "$T/s1" "$T/s2" "$T/s3" "$T/s4" "$T/s5" \
   "$T/s6/h" "$T/s6o" "$T/c13" "$T/c14wt/in" "$T/c15/wt" "$T/c16wt/in" "$T/c17/h" "$T/wt/s5" "$T/o2" "$T/o3" \
-  "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" || setup "cannot create fixture directories"
+  "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" "$T/c21" "$T/c22" "$T/s10" "$T/s11" "$T/w1" || setup "cannot create fixture directories"
 chmod 1777 "$T/s7" "$T/c19" "$T/s9sh" || setup "cannot chmod the shared fixture directories"
 # A private result directory beneath a shared temp-style directory (S9).
 mkdir -m 700 "$T/s9sh/p" || setup "cannot create the private fixture directory"
@@ -216,11 +216,11 @@ stdin=$LAUNCH_CONTENT
 EOF
 
 cat >"$T/exp/K5" <<EOF
-cwd=$T/res
-tmpdir=$T/res/tmp
+cwd=$T/res/work
+tmpdir=$T/res/work/tmp
 arg=exec
 arg=-C
-arg=$T/res
+arg=$T/res/work
 arg=-s
 arg=workspace-write
 arg=--skip-git-repo-check
@@ -257,7 +257,8 @@ k_case() { # NAME KIND EXPECTED [ARGS...]: build from $T/b, run from $T/r, diff,
   [ "$rc" -eq 0 ] || { echo "check exited $rc: $(first "$T/log/$name.chk")"; return 1; }
   case $kind in
     claude-write*) [ "$(cat "$T/log/$name.out")" = "$LEDGER" ] || { echo "ledger is: $(first "$T/log/$name.out")"; return 1; } ;;
-    codex-read*) [ "$(mode "$T/res/tmp")" = drwx------ ] || { echo "tmp mode is $(mode "$T/res/tmp"), not drwx------"; return 1; } ;;
+    codex-read*) [ "$(mode "$T/res/work")" = drwx------ ] && [ "$(mode "$T/res/work/tmp")" = drwx------ ] \
+      || { echo "work or tmp mode is not drwx------"; return 1; } ;;
   esac
 }
 K1() { k_case K1 claude-write "$T/exp/K1" "${ADDS[@]}" --allow "$ALLOW" --host-source "$T/home/src.md"; }
@@ -269,6 +270,28 @@ K6() { k_case K6 codex-read-probe "$T/exp/K5" --result "$T/res/result.md"; }
 K7() {
   [ -s "$T/log/K5.run" ] && [ -s "$T/log/K6.run" ] || { echo "K5 or K6 produced no output"; return 1; }
   cmp -s "$T/log/K5.run" "$T/log/K6.run" || { echo "codex-read-probe output differs from codex-read"; return 1; }
+}
+
+# ---- #253 AC 2-3: the result lies outside the worker's only writable root (W1) ----
+
+W1() { # build and run both read kinds; the result is not in the start directory, -C, or TMPDIR
+  local k rc d cwd tdir cv res
+  for k in codex-read codex-read-probe; do
+    (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/w1/$k.sh" --worktree "$T/wt" \
+      --launch-file "$LF" --result "$T/w1/result.md") >/dev/null 2>"$T/log/W1.err"
+    rc=$?
+    [ "$rc" -eq 0 ] || { echo "$k: write exited $rc: $(first "$T/log/W1.err")"; return 1; }
+    (cd "$T/r" && PATH="$T/bin:$PATH" "$T/w1/$k.sh") >"$T/log/W1.run" 2>&1
+    rc=$?
+    [ "$rc" -eq 0 ] || { echo "$k: run script exited $rc"; return 1; }
+    cwd=$(sed -n 's/^cwd=//p' "$T/log/W1.run") tdir=$(sed -n 's/^tmpdir=//p' "$T/log/W1.run")
+    cv=$(sed -n '/^arg=-C$/{n;s/^arg=//p;}' "$T/log/W1.run")
+    res=$(sed -n '/^arg=--output-last-message$/{n;s/^arg=//p;}' "$T/log/W1.run")
+    [ "$res" = "$T/w1/result.md" ] || { echo "$k: --output-last-message is $res"; return 1; }
+    for d in "$cwd" "$cv" "$tdir"; do
+      case $res/ in "${d%/}"/*) echo "$k: the result $res is inside the writable root $d"; return 1 ;; esac
+    done
+  done
 }
 
 # ---- F1: relative paths (P1, P2) ----
@@ -461,8 +484,9 @@ C7() {
 
 C8() { # -C is the worktree (cd moved with it)
   c_build C8 codex-read || return 1
-  sed -e "s|^'$T/res'\$|'$T/wt'|" -e "s|^cd -- '$T/res'\$|cd -- '$T/wt'|" "$T/c/C8.base" >"$T/c/C8.sh"
-  c_expect C8 "$T/r" "-C must be the result directory for codex-read: $T/wt"
+  sed -e "s|^'$T/res/work'\$|'$T/wt'|" -e "s|^cd -- '$T/res/work'\$|cd -- '$T/wt'|" "$T/c/C8.base" >"$T/c/C8.sh"
+  [ "$(grep -cxF -e "'$T/wt'" -e "cd -- '$T/wt'" "$T/c/C8.sh")" = 2 ] || { echo "the two start-directory edits did not both apply"; return 1; }
+  c_expect C8 "$T/r" "-C must be $T/res/work for codex-read: $T/wt"
 }
 C9() { # -s read-only, on the probe kind
   c_build C9 codex-read-probe || return 1
@@ -476,8 +500,8 @@ C10() { # exclude_slash_tmp=true omitted (its -c and value deleted)
 }
 C11() { # TMPDIR outside the result directory
   c_build C11 codex-read || return 1
-  sed "s|^'TMPDIR=$T/res/tmp'\$|'TMPDIR=$T/brief'|" "$T/c/C11.base" >"$T/c/C11.sh"
-  c_expect C11 "$T/r" "TMPDIR must be $T/res/tmp for codex-read: $T/brief"
+  sed "s|^'TMPDIR=$T/res/work/tmp'\$|'TMPDIR=$T/brief'|" "$T/c/C11.base" >"$T/c/C11.sh"
+  c_expect C11 "$T/r" "TMPDIR must be $T/res/work/tmp for codex-read: $T/brief"
 }
 C12() { # --add-dir in a read-kind script
   c_build C12 codex-read || return 1
@@ -487,22 +511,22 @@ C12() { # --add-dir in a read-kind script
 C13() { # a TMPDIR directory loosened after write
   local rc
   c_build C13 codex-read "$T/c13/result.md" || return 1
-  chmod 755 "$T/c13/tmp" || { echo "cannot chmod $T/c13/tmp"; return 1; }
+  chmod 755 "$T/c13/work/tmp" || { echo "cannot chmod $T/c13/work/tmp"; return 1; }
   (cd "$T/r" && bash "$LAUNCH_SH" check "$T/c/C13.base" --worktree "$T/wt") 2>"$T/log/C13.chk"
   rc=$?
   [ "$rc" -eq 1 ] || { echo "check exited $rc, not 1"; return 1; }
-  grep -qF -- "TMPDIR is not an owner-only directory: $T/c13/tmp" "$T/log/C13.chk" || { echo "stderr lacks: TMPDIR is not an owner-only directory"; return 1; }
+  grep -qF -- "TMPDIR is not an owner-only directory: $T/c13/work/tmp" "$T/log/C13.chk" || { echo "stderr lacks: TMPDIR is not an owner-only directory"; return 1; }
 }
 
 # ---- #225 PR1/PR2/R1: check refuses a root at, in, around, or aliasing the worktree, at or above HOME, or shared (C14-C19) ----
 
 c_roots() { # NAME KIND DIR WORKTREE HOME MESSAGE: move -C, cd, the result and TMPDIR of a KIND build into DIR; check wants exit 1 and MESSAGE
-  local rc
+  local rc d
   c_build "$1" "$2" || return 1
-  [ -d "$3/tmp" ] || mkdir -m 700 -- "$3/tmp" || { echo "cannot create $3/tmp"; return 1; }
-  sed -e "s|^'$T/res'\$|'$3'|" -e "s|^cd -- '$T/res'\$|cd -- '$3'|" -e "s|^'$T/res/result.md'\$|'$3/result.md'|" \
-    -e "s|^'TMPDIR=$T/res/tmp'\$|'TMPDIR=$3/tmp'|" "$T/c/$1.base" >"$T/c/$1.sh"
-  [ "$(grep -cxF -e "'$3'" -e "cd -- '$3'" -e "'$3/result.md'" -e "'TMPDIR=$3/tmp'" "$T/c/$1.sh")" = 4 ] \
+  for d in "$3/work" "$3/work/tmp"; do [ -d "$d" ] || mkdir -m 700 -- "$d" || { echo "cannot create $d"; return 1; }; done
+  sed -e "s|^'$T/res/work'\$|'$3/work'|" -e "s|^cd -- '$T/res/work'\$|cd -- '$3/work'|" -e "s|^'$T/res/result.md'\$|'$3/result.md'|" \
+    -e "s|^'TMPDIR=$T/res/work/tmp'\$|'TMPDIR=$3/work/tmp'|" "$T/c/$1.base" >"$T/c/$1.sh"
+  [ "$(grep -cxF -e "'$3/work'" -e "cd -- '$3/work'" -e "'$3/result.md'" -e "'TMPDIR=$3/work/tmp'" "$T/c/$1.sh")" = 4 ] \
     || { echo "the four path edits did not all apply"; return 1; }
   (cd "$T/r" && HOME=$5 bash "$LAUNCH_SH" check "$T/c/$1.sh" --worktree "$4") 2>"$T/log/$1.chk"
   rc=$?
@@ -554,6 +578,41 @@ C19() { # the moved result directory is a shared (1777) directory or a symlink t
   done
 }
 
+# ---- #253 AC 2-3: check refuses a read script whose writable root holds or aliases the result (C20-C23) ----
+
+C20() { # the two-writer recipe: -C, cd and TMPDIR moved back to the result directory, both read kinds
+  local k
+  for k in codex-read codex-read-probe; do
+    c_build "C20-$k" "$k" || return 1
+    sed -e "s|^'$T/res/work'\$|'$T/res'|" -e "s|^cd -- '$T/res/work'\$|cd -- '$T/res'|" \
+      -e "s|^'TMPDIR=$T/res/work/tmp'\$|'TMPDIR=$T/res/tmp'|" "$T/c/C20-$k.base" >"$T/c/C20-$k.sh"
+    c_expect "C20-$k" "$T/r" "-C must be $T/res/work for $k: $T/res" || return 1
+  done
+}
+C21() { # a work directory loosened after write
+  local rc
+  c_build C21 codex-read "$T/c21/result.md" || return 1
+  chmod 755 "$T/c21/work" || { echo "cannot chmod $T/c21/work"; return 1; }
+  (cd "$T/r" && bash "$LAUNCH_SH" check "$T/c/C21.base" --worktree "$T/wt") 2>"$T/log/C21.chk"
+  rc=$?
+  [ "$rc" -eq 1 ] || { echo "check exited $rc, not 1"; return 1; }
+  grep -qF -- "-C is not an owner-only directory: $T/c21/work" "$T/log/C21.chk" || { echo "stderr lacks: -C is not an owner-only directory"; return 1; }
+}
+C22() { # a result that became a symlink into the writable root after write
+  local rc
+  c_build C22 codex-read "$T/c22/result.md" || return 1
+  ln -s "$T/c22/work/result.md" "$T/c22/result.md" || { echo "cannot create the result link"; return 1; }
+  (cd "$T/r" && bash "$LAUNCH_SH" check "$T/c/C22.base" --worktree "$T/wt") 2>"$T/log/C22.chk"
+  rc=$?
+  [ "$rc" -eq 1 ] || { echo "check exited $rc, not 1"; return 1; }
+  grep -qF -- "--output-last-message is a symlink: $T/c22/result.md" "$T/log/C22.chk" || { echo "stderr lacks: --output-last-message is a symlink"; return 1; }
+}
+C23() { # the result moved onto the writable root itself
+  c_build C23 codex-read || return 1
+  sed "s|^'$T/res/result.md'\$|'$T/res/work'|" "$T/c/C23.base" >"$T/c/C23.sh"
+  c_expect C23 "$T/r" "--output-last-message resolves into the writable root: $T/res/work"
+}
+
 # ---- AC 4: self-check and rejected inputs (S1, S2) ----
 
 S1() {
@@ -580,18 +639,21 @@ S3() { # write --add-dir for a read kind: exit 2, no script, no tmp
   rc=$?
   [ "$rc" -eq 2 ] || { echo "write exited $rc, not 2"; return 1; }
   grep -qF -- "--add-dir is not accepted for codex-read" "$T/log/S3.err" || { echo "stderr lacks: --add-dir is not accepted for codex-read"; return 1; }
-  [ ! -e "$T/s3/run.sh" ] && [ ! -e "$T/s3/tmp" ] || { echo "OUT or tmp was written"; return 1; }
+  [ ! -e "$T/s3/run.sh" ] && [ ! -e "$T/s3/work" ] || { echo "OUT or work was written"; return 1; }
   no_tmp "$T/s3" || { echo "a .launch.* file was left"; return 1; }
 }
-S4() { # an existing tmp/ that is not owner-only is refused
-  local rc
-  mkdir -m 755 "$T/s4/tmp" || { echo "cannot create $T/s4/tmp"; return 1; }
-  (cd "$T/b" && bash "$LAUNCH_SH" write --kind codex-read --out "$T/s4/run.sh" --worktree "$T/wt" \
-    --launch-file "$LF" --result "$T/s4/result.md") >/dev/null 2>"$T/log/S4.err"
-  rc=$?
-  [ "$rc" -eq 2 ] || { echo "write exited $rc, not 2"; return 1; }
-  grep -qF -- "not an owner-only directory: $T/s4/tmp" "$T/log/S4.err" || { echo "stderr lacks: not an owner-only directory"; return 1; }
-  [ ! -e "$T/s4/run.sh" ] || { echo "OUT was written"; return 1; }
+S4() { # an existing work/ or work/tmp/ that is not owner-only is refused
+  local rc d
+  mkdir -m 755 "$T/s4/work" && mkdir -m 755 "$T/s4/work/tmp" || { echo "cannot create $T/s4/work/tmp"; return 1; }
+  for d in "$T/s4/work" "$T/s4/work/tmp"; do
+    (cd "$T/b" && bash "$LAUNCH_SH" write --kind codex-read --out "$T/s4/run.sh" --worktree "$T/wt" \
+      --launch-file "$LF" --result "$T/s4/result.md") >/dev/null 2>"$T/log/S4.err"
+    rc=$?
+    [ "$rc" -eq 2 ] || { echo "write exited $rc, not 2"; return 1; }
+    grep -qF -- "not an owner-only directory: $d" "$T/log/S4.err" || { echo "stderr lacks: not an owner-only directory: $d"; return 1; }
+    [ ! -e "$T/s4/run.sh" ] || { echo "OUT was written"; return 1; }
+    chmod 700 "$d" || { echo "cannot chmod $d"; return 1; }
+  done
 }
 S5() { # write refuses a result directory at, inside, aliasing, or holding the worktree, both read kinds
   local rc k res msg
@@ -602,7 +664,7 @@ S5() { # write refuses a result directory at, inside, aliasing, or holding the w
       rc=$?
       [ "$rc" -eq 2 ] || { echo "$k --result $res: write exited $rc, not 2"; return 1; }
       grep -qF -- "$msg" "$T/log/S5.err" || { echo "$k --result $res: stderr lacks: $msg"; return 1; }
-      [ ! -e "$T/s5/run.sh" ] && [ ! -e "${res%/*}/tmp" ] || { echo "$k --result $res: OUT or tmp was written"; return 1; }
+      [ ! -e "$T/s5/run.sh" ] && [ ! -e "${res%/*}/work" ] || { echo "$k --result $res: OUT or work was written"; return 1; }
     done <<EOF
 $T/wt/result.md|result directory $T/wt is inside the worktree $T/wt
 $T/wt/s5/result.md|result directory $T/wt/s5 is inside the worktree $T/wt
@@ -621,7 +683,7 @@ S6() { # write refuses a result directory that is HOME, above HOME, or a symlink
       rc=$?
       [ "$rc" -eq 2 ] || { echo "$k --result $res: write exited $rc, not 2"; return 1; }
       grep -qF -- "is HOME or an ancestor of it" "$T/log/S6.err" || { echo "$k --result $res: stderr lacks: is HOME or an ancestor of it"; return 1; }
-      [ ! -e "$T/s6o/run.sh" ] && [ ! -e "${res%/*}/tmp" ] || { echo "$k --result $res: OUT or tmp was written"; return 1; }
+      [ ! -e "$T/s6o/run.sh" ] && [ ! -e "${res%/*}/work" ] || { echo "$k --result $res: OUT or work was written"; return 1; }
       no_tmp "$T/s6o" || { echo "$k --result $res: a .launch.* file was left"; return 1; }
     done
   done
@@ -636,26 +698,26 @@ S7() { # write refuses a shared (1777) result directory or a symlink to it, both
       [ "$rc" -eq 2 ] || { echo "$k --result $res: write exited $rc, not 2"; return 1; }
       grep -qF -- "result directory $T/s7 is writable by group or others" "$T/log/S7.err" \
         || { echo "$k --result $res: stderr lacks: result directory $T/s7 is writable by group or others"; return 1; }
-      [ ! -e "$T/s7o/run.sh" ] && [ ! -e "$T/s7/tmp" ] || { echo "$k --result $res: OUT or tmp was written"; return 1; }
+      [ ! -e "$T/s7o/run.sh" ] && [ ! -e "$T/s7/work" ] || { echo "$k --result $res: OUT or work was written"; return 1; }
       no_tmp "$T/s7o" || { echo "$k --result $res: a .launch.* file was left"; return 1; }
     done
   done
 }
-S8() { # write refuses --result /tmp/NAME.md and leaves /tmp/tmp as it was, both read kinds
+S8() { # write refuses --result /tmp/NAME.md and leaves /tmp/work as it was, both read kinds
   # The worktree and HOME are this script's directory, so that neither the worktree
   # nor the HOME rule refuses /tmp first; the fixtures under $T may sit beneath /tmp.
   local rc k before after
   case $(realpath "$here")/ in "$(realpath /tmp)"/*) echo "this case needs the repository outside /tmp: $here"; return 1 ;; esac
   for k in codex-read codex-read-probe; do
     before=0 after=0
-    [ ! -e /tmp/tmp ] || before=1
+    [ ! -e /tmp/work ] || before=1
     (cd "$T/b" && HOME=$here bash "$LAUNCH_SH" write --kind "$k" --out "$T/s8/run.sh" --worktree "$here" \
       --launch-file "$LF" --result "/tmp/launch-test-$$.md") >/dev/null 2>"$T/log/S8.err"
     rc=$?
-    [ ! -e /tmp/tmp ] || after=1
+    [ ! -e /tmp/work ] || after=1
     [ "$rc" -eq 2 ] || { echo "$k: write exited $rc, not 2"; return 1; }
     grep -qF -- "is not owned by the current user" "$T/log/S8.err" || { echo "$k: stderr lacks: is not owned by the current user"; return 1; }
-    [ "$before" = "$after" ] || { echo "$k: /tmp/tmp was created"; return 1; }
+    [ "$before" = "$after" ] || { echo "$k: /tmp/work was created"; return 1; }
     [ ! -e "$T/s8/run.sh" ] || { echo "$k: OUT was written"; return 1; }
   done
 }
@@ -666,10 +728,33 @@ S9() { # a private directory beneath a shared (1777) directory still builds and 
       --launch-file "$LF" --result "$T/s9sh/p/result.md") >/dev/null 2>"$T/log/S9.err"
     rc=$?
     [ "$rc" -eq 0 ] || { echo "$k: write exited $rc: $(first "$T/log/S9.err")"; return 1; }
-    [ "$(mode "$T/s9sh/p/tmp")" = drwx------ ] || { echo "$k: tmp mode is $(mode "$T/s9sh/p/tmp"), not drwx------"; return 1; }
+    [ "$(mode "$T/s9sh/p/work/tmp")" = drwx------ ] || { echo "$k: tmp mode is $(mode "$T/s9sh/p/work/tmp"), not drwx------"; return 1; }
     (cd "$T/r" && bash "$LAUNCH_SH" check "$T/s9/$k.sh" --worktree "$T/wt") 2>"$T/log/S9.chk"
     rc=$?
     [ "$rc" -eq 0 ] || { echo "$k: check exited $rc: $(first "$T/log/S9.chk")"; return 1; }
+  done
+}
+S10() { # write refuses a --result that resolves into the writable root, both read kinds
+  local rc k
+  for k in codex-read codex-read-probe; do
+    (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s10/$k.sh" --worktree "$T/wt" \
+      --launch-file "$LF" --result "$T/s10/work") >/dev/null 2>"$T/log/S10.err"
+    rc=$?
+    [ "$rc" -eq 2 ] || { echo "$k: write exited $rc, not 2"; return 1; }
+    grep -qF -- "--result resolves into the writable root: $T/s10/work" "$T/log/S10.err" || { echo "$k: stderr lacks: --result resolves into the writable root"; return 1; }
+    [ ! -e "$T/s10/$k.sh" ] && [ ! -e "$T/s10/work" ] || { echo "$k: OUT or work was written"; return 1; }
+  done
+}
+S11() { # write refuses a --result that is a symlink into the writable root, both read kinds
+  local rc k
+  ln -s "$T/s11/work/result.md" "$T/s11/result.md" || { echo "cannot create the result link"; return 1; }
+  for k in codex-read codex-read-probe; do
+    (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s11/$k.sh" --worktree "$T/wt" \
+      --launch-file "$LF" --result "$T/s11/result.md") >/dev/null 2>"$T/log/S11.err"
+    rc=$?
+    [ "$rc" -eq 2 ] || { echo "$k: write exited $rc, not 2"; return 1; }
+    grep -qF -- "--result is a symlink: $T/s11/result.md" "$T/log/S11.err" || { echo "$k: stderr lacks: --result is a symlink"; return 1; }
+    [ ! -e "$T/s11/$k.sh" ] && [ ! -e "$T/s11/work" ] || { echo "$k: OUT or work was written"; return 1; }
   done
 }
 
@@ -710,8 +795,8 @@ O3() {
   no_tmp "$T/o3" || { echo "a .launch.* file was left"; return 1; }
 }
 
-for c in K1 K2 K3 K4 K5 K6 K7 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
-  C14 C15 C16 C17 C18 C19 S1 S2 S3 S4 S5 S6 S7 S8 S9 O1 O2 O3; do
+for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
+  C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3; do
   t "$c" "$c"
 done
 [ "$fails" -eq 0 ] || exit 1
