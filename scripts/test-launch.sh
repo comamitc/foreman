@@ -1131,9 +1131,63 @@ PC7() { # a failed redaction stage keeps the harness status, writes capture-erro
   done
 }
 
+# PC8: Claude tool arguments under kept metadata names (name, id, type), of every
+# value type, nested, and in containers named input, tool_input and wire_tool_inputs.
+cat >"$T/pc/pc8.stdout" <<EOF
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu8","name":"Probe","input":{"name":"ARGNAME-$P","id":"ARGID-$P","type":"ARGTYPE-$P","count":7$P,"flag":true,"none":null,"nested":{"name":"DEEP-$P","list":[1,"x"]},"file_path":"/f.md"}}]}}
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu9","name":"Bash","input":{"command":"git add --refresh -- .","timeout":1200$P,"run_in_background":false}}]}}
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu10","name":"Read","input":{"file_path":"/h/x.md","limit":4$P}}]}}
+{"type":"system","subtype":"hook","tool_name":"Probe","tool_input":{"name":"HOOKNAME-$P","n":5$P},"wire_tool_inputs":[{"id":"WIRE-$P"}]}
+{"type":"result","subtype":"success","is_error":false,"result":"CAPSTAN_PROBE_OK","permission_denials":[{"tool_name":"Bash","tool_use_id":"tu11","tool_input":{"command":"git push","timeout":9}}]}
+EOF
+: >"$T/pc/pc8.stderr"
+cat >"$T/exp/PC8.stdout" <<'EOF'
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu8","name":"Probe","input":{"name":"[removed]","id":"[removed]","type":"[removed]","count":"[removed]","flag":"[removed]","none":"[removed]","nested":{"name":"[removed]","list":["[removed]","[removed]"]},"file_path":"/f.md"}}]}}
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu9","name":"Bash","input":{"command":"git add --refresh -- .","timeout":"[removed]","run_in_background":"[removed]"}}]}}
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu10","name":"Read","input":{"file_path":"/h/x.md","limit":"[removed]"}}]}}
+{"type":"system","subtype":"hook","tool_name":"Probe","tool_input":{"name":"[removed]","n":"[removed]"},"wire_tool_inputs":[{"id":"[removed]"}]}
+{"type":"result","subtype":"success","is_error":false,"result":"CAPSTAN_PROBE_OK","permission_denials":[{"tool_name":"Bash","tool_use_id":"tu11","tool_input":{"command":"git push","timeout":"[removed]"}}]}
+EOF
+: >"$T/exp/PC8.stderr"
+
+# PC9: a one-character credential and one inside a kept value, against JSON escapes;
+# @u stands for the JSON escape backslash-u.
+sed 's/@u/\\u/g' >"$T/pc/pc9.stdout" <<'EOF'
+{"type":"thread.started","thread_id":"th-1"}
+{"type":"item.completed","item":{"id":"i1","type":"agent_message","text":"line1\nline2 \"q\" \\n @u006e@u0041 \/"}}
+{"type":"item.completed","item":{"id":"i2","type":"command_execution","command":"git add --refresh -- .","exit_code":0}}
+EOF
+sed 's/@u/\\u/g' >"$T/pc/pc9.stderr" <<'EOF'
+{"type":"error","message":"a\\nb @u006e"}
+EOF
+sed 's/@u/\\u/g' >"$T/exp/PC9.stdout" <<'EOF'
+{"type":"thread.started","thread_id":"th-1"}
+{"type":"item.completed","item":{"id":"i1","type":"age[redacted]t_message","text":"li[redacted]e1\nli[redacted]e2 \"q\" \\[redacted] [redacted]@u0041 \/"}}
+{"type":"item.completed","item":{"id":"i2","type":"com[redacted]utio[redacted]","comma[redacted]d":"git add --refresh -- .","exit_code":0}}
+EOF
+printf '%s\n' '{"type":"error","message":"a\\[redacted]b [redacted]"}' >"$T/exp/PC9.stderr"
+
+PC8() { # Claude: every tool argument is removed whatever its name or value type, except a Bash command and a file_path
+  local cap=$T/pc/cap8 rc
+  pc_build PC8 claude-write-probe "$cap" || return 1
+  pc_run bash "$T/pc/PC8.sh" STUB_STREAM="$T/pc/pc8.stdout" STUB_ERR="$T/pc/pc8.stderr"
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "run script exited $rc"; return 1; }
+  pc_golden PC8 "$cap" || return 1
+  pc_leak "$cap" "ARGNAME-$P" "ARGID-$P" "ARGTYPE-$P" "DEEP-$P" "HOOKNAME-$P" "WIRE-$P" "7$P" "1200$P" "4$P" "5$P"
+}
+PC9() { # Codex: short and embedded credentials are removed and every object line stays the same valid JSON
+  local cap=$T/pc/cap9 rc
+  pc_build PC9 codex-read-probe "$cap" --redact-env DBCRED || return 1
+  pc_run bash "$T/pc/PC9.sh" STUB_STREAM="$T/pc/pc9.stdout" STUB_ERR="$T/pc/pc9.stderr" TESTTOKEN=n DBCRED=mand_exec
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "run script exited $rc"; return 1; }
+  pc_golden PC9 "$cap"
+}
+
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
 for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
-  C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7; do
+  C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9; do
   t "$c" "$c"
 done
 [ "$fails" -eq 0 ] || exit 1

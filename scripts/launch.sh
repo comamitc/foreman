@@ -278,18 +278,64 @@ function esc(s,   o, i, c) {
   }
   return o
 }
-function rep(s, x,   o, i) {
+function rep(s, x, y,   o, i) {
   o = ""
-  while ((i = index(s, x)) > 0) { o = o substr(s, 1, i - 1) "[redacted]"; s = substr(s, i + length(x)) }
+  while ((i = index(s, x)) > 0) { o = o substr(s, 1, i - 1) y; s = substr(s, i + length(x)) }
   return o s
 }
-# Inside a JSON string a raw value holding a backslash can only match across an escape.
-function cred(s, json,   j) {
-  for (j = 1; j <= NC; j++) {
-    s = rep(s, CE[j])
-    if (!json || !index(CR[j], "\\")) s = rep(s, CR[j])
-  }
+# cred(s): text that is not a JSON string, with each credential raw and JSON-escaped.
+function cred(s,   j) {
+  for (j = 1; j <= NC; j++) s = rep(rep(s, CE[j], "[redacted]"), CR[j], "[redacted]")
   return s
+}
+function hex(x,   i, c, v) {
+  v = 0
+  for (i = 1; i <= 4; i++) {
+    if (!(c = index("0123456789abcdef", tolower(substr(x, i, 1))))) return -1
+    v = v * 16 + c - 1
+  }
+  return v
+}
+# jcred(b): b is the body of a JSON string. Each credential is matched against
+# the decoded value, one character or escape per unit (JU, with JD one character
+# per unit), and its units are replaced whole, so no escape is split and the
+# string stays valid JSON. A string with no match keeps its original text.
+function jcred(b,   d, j, n, i, c, h, k, m, l, p, o) {
+  if (!index(b, "\\")) {
+    for (j = 1; j <= NC; j++) b = rep(b, CR[j], "\001")
+    return rep(b, "\001", "[redacted]")
+  }
+  if (!index(b, "\\u")) {
+    d = b
+    gsub(/\\\\/, "\001", d); gsub(/\\"/, "\"", d); gsub(/\\\//, "/", d); gsub(/\\n/, "\n", d)
+    gsub(/\\t/, "\t", d); gsub(/\\r/, "\r", d); gsub(/\\b/, "\b", d); gsub(/\\f/, "\f", d)
+    d = rep(d, "\001", "\\")
+    for (j = 1; j <= NC && !index(d, CR[j]); j++) ;
+    if (j > NC) return b
+  }
+  n = 0; JD = ""
+  for (i = 1; i <= length(b); ) {
+    c = substr(b, i, 1)
+    if (c != "\\") { JU[++n] = c; JD = JD c; i++; continue }
+    c = substr(b, i + 1, 1)
+    if (c == "u") { JU[++n] = substr(b, i, 6); h = hex(substr(b, i + 2, 4)); JD = JD ((h > 0 && h < 128) ? CHR[h] : "\001"); i += 6 }
+    else { JU[++n] = substr(b, i, 2); JD = JD ((c in UNESC) ? UNESC[c] : c); i += 2 }
+  }
+  for (j = 1; j <= NC; j++) {
+    if (!index(JD, CR[j])) continue
+    k = 0; m = 0; o = ""; l = length(CR[j])
+    while ((p = index(JD, CR[j])) > 0) {
+      for (i = 1; i < p; i++) JV[++k] = JU[++m]
+      JV[++k] = "[redacted]"; m += l
+      o = o substr(JD, 1, p - 1) "\002"; JD = substr(JD, p + l)
+    }
+    while (m < n) JV[++k] = JU[++m]
+    JD = o JD; n = k
+    for (i = 1; i <= n; i++) JU[i] = JV[i]
+  }
+  o = ""
+  for (i = 1; i <= n; i++) o = o JU[i]
+  return o
 }
 function swap(s, x, y,   a, n, i, o) {
   n = split(s, a, x); o = a[1]
@@ -330,10 +376,11 @@ function lex(s,   q, k, o, n, i, j, c, w) {
 }
 # The parser records, for each value token, its enclosing object (VPAR) and key
 # (VKEY; an array element takes its array key) and where the value ends (VEND);
-# for each object its parent (OPAR) and members (MEM[object, key] = value token).
+# for each object its parent (OPAR), its key there (OKEY) and members
+# (MEM[object, key] = value token).
 function pval(par, key,   s, ok) {
   s = P
-  if (TK[P] == "{") ok = pobj(par)
+  if (TK[P] == "{") { OKEY[P] = key; ok = pobj(par) }
   else if (TK[P] == "[") ok = parr(par, key)
   else if (TK[P] == "s" || TK[P] == "b") { VPAR[P] = par; VKEY[P] = key; P++; ok = 1 }
   else ok = 0
@@ -365,16 +412,26 @@ function parr(par, key) {
   }
 }
 function mget(o, k) { return ((o, k) in MEM) ? TT[MEM[o, k]] : "" }
-function keep(i,   k, o) {
+# argof(i): 1 when value token i lies in the arguments of a tool: a member of a
+# tool_use object other than its type, id and name, or anything under an
+# ARGK key. ATOOL is then the name of that tool.
+function argof(i,   k, o) {
   k = VKEY[i]
-  if (k in KEEP) return 1
-  if (k == "result") return TT[i] == "\"CAPSTAN_PROBE_OK\""
-  if (k != "command") return 0
   for (o = VPAR[i]; o; o = OPAR[o]) {
-    if ((o, "name") in MEM) return mget(o, "name") == "\"Bash\""
-    if ((o, "tool_name") in MEM) return mget(o, "tool_name") == "\"Bash\""
+    if ((k in ARGK) || (mget(o, "type") == "\"tool_use\"" && !(k in TUMETA))) {
+      ATOOL = mget(o, "name")
+      if (ATOOL == "") ATOOL = mget(o, "tool_name")
+      return 1
+    }
+    k = OKEY[o]
   }
   return 0
+}
+function keep(i,   k) {
+  k = VKEY[i]
+  if (argof(i)) return TK[i] == "s" && (k == "file_path" || (k == "command" && ATOOL == "\"Bash\""))
+  if (k in KEEP) return 1
+  return k == "result" && TT[i] == "\"CAPSTAN_PROBE_OK\""
 }
 function hostpass(   i, ok) {
   for (i = 1; i <= NT; i++)
@@ -387,7 +444,7 @@ function hostpass(   i, ok) {
     }
   if (ok && ((1, "tool_use_result") in MEM)) REPL[MEM[1, "tool_use_result"]] = HFC
   for (i = 1; i <= NT; i++)
-    if (TK[i] == "s" && !(i in ISKEY) && !keep(i)) TT[i] = "\"[removed]\""
+    if (((TK[i] == "s" && !(i in ISKEY)) || (TK[i] == "b" && argof(i))) && !keep(i)) { TT[i] = "\"[removed]\""; TK[i] = "s" }
 }
 function emit(   i, o, t) {
   o = ""
@@ -395,7 +452,7 @@ function emit(   i, o, t) {
     o = o TW[i]
     if (i in REPL) { o = o REPL[i]; i = VEND[i]; continue }
     t = TT[i]
-    if (TK[i] == "s") t = "\"" cred(substr(t, 2, length(t) - 2), 1) "\""
+    if (TK[i] == "s") t = "\"" jcred(substr(t, 2, length(t) - 2)) "\""
     else if (TK[i] == "b" && (t in BARECR)) t = "\"[redacted]\""
     o = o t
   }
@@ -407,7 +464,13 @@ BEGIN {
   HFC = "\"[host file content removed]\""
   split("type subtype id name tool_name tool_use_id role model session_id uuid stop_reason file_path", a, " ")
   for (i in a) KEEP[a[i]] = 1
+  split("input tool_input wire_tool_inputs", a, " ")
+  for (i in a) ARGK[a[i]] = 1
+  split("type id name", a, " ")
+  for (i in a) TUMETA[a[i]] = 1
   for (i = 1; i < 32; i++) ORD[sprintf("%c", i)] = i
+  for (i = 1; i < 128; i++) CHR[i] = sprintf("%c", i)
+  UNESC["n"] = "\n"; UNESC["t"] = "\t"; UNESC["r"] = "\r"; UNESC["b"] = "\b"; UNESC["f"] = "\f"
   split(names, a, " ")
   for (i in a) WANT[a[i]] = 1
   NC = 0
@@ -419,9 +482,9 @@ BEGIN {
   }
 }
 {
-  split("", OPAR); split("", VPAR); split("", VKEY); split("", VEND); split("", ISKEY); split("", MEM); split("", REPL)
+  split("", OPAR); split("", OKEY); split("", VPAR); split("", VKEY); split("", VEND); split("", ISKEY); split("", MEM); split("", REPL)
   P = 1
-  if (!lex($0) || TK[1] != "{" || !pobj(0) || P != NT + 1) { print (host ? "[removed]" : cred($0, 0)); next }
+  if (!lex($0) || TK[1] != "{" || !pobj(0) || P != NT + 1) { print (host ? "[removed]" : cred($0)); next }
   if (host) hostpass()
   print emit()
 }
