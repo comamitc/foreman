@@ -993,7 +993,7 @@ pc_leak() { # CAPTURE_DIR [TEXT...]: no credential value and no TEXT appears und
 }
 
 PC1() { # both probe kinds x exits 0 and 3 x bash, sh and zsh: same exit, same exit file, same captures
-  local k sh rc got cap f
+  local k sh rc got cap f why
   for k in claude-write-probe codex-read-probe; do
     cap=$T/pc/cap1-$k
     pc_build "PC1-$k" "$k" "$cap" || return 1
@@ -1003,7 +1003,7 @@ PC1() { # both probe kinds x exits 0 and 3 x bash, sh and zsh: same exit, same e
         got=$?
         [ "$got" -eq "$rc" ] || { echo "$k $sh rc=$rc script exit=$got"; return 1; }
         [ "$(cat "$cap/exit" 2>/dev/null)" = "$rc" ] || { echo "$k $sh rc=$rc exit file=$(cat "$cap/exit" 2>/dev/null)"; return 1; }
-        pc_golden "PC1-$k" "$cap" || { echo "$k $sh rc=$rc"; return 1; }
+        why=$(pc_golden "PC1-$k" "$cap") || { echo "$k $sh rc=$rc: $why"; return 1; }
         for f in exit stderr stdout; do
           [ "$(mode "$cap/$f")" = -rw------- ] || { echo "$k $sh: $f mode is $(mode "$cap/$f")"; return 1; }
         done
@@ -1041,21 +1041,25 @@ PC4() { # check accepts both generated probe scripts and rejects each tampered c
   for n in 1 2 3 4 6 7 8; do c_build "PC4-$n" claude-write-probe || return 1; done
   c_build PC4-5 claude-write || return 1
   sed 's#} 3>&1 | awk -v names="$redact_env" "$red" >"$cap/stdout"$#} 3>\&1 >"$cap/stdout"#' "$T/c/PC4-1.base" >"$T/c/PC4-1.sh"
-  c_expect PC4-1 "$T/r" "capture block differs from the claude-write-probe block" || { echo "copy 1: $(first "$T/log/PC4-1.chk")"; return 1; }
+  pc4 1 "capture block differs from the claude-write-probe block" || return 1
   mkdir -m 700 "$T/wt/pc4cap" && sed "s|^cap='.*'\$|cap='$T/wt/pc4cap'|" "$T/c/PC4-2.base" >"$T/c/PC4-2.sh"
-  c_expect PC4-2 "$T/r" "cap is inside the worktree: $T/wt/pc4cap" || { echo "copy 2"; return 1; }
+  pc4 2 "cap is inside the worktree: $T/wt/pc4cap" || return 1
   mkdir -m 755 "$T/pc/m755" && sed "s|^cap='.*'\$|cap='$T/pc/m755'|" "$T/c/PC4-3.base" >"$T/c/PC4-3.sh"
-  c_expect PC4-3 "$T/r" "cap is not an owner-only directory: $T/pc/m755" || { echo "copy 3"; return 1; }
+  pc4 3 "cap is not an owner-only directory: $T/pc/m755" || return 1
   { sed '/^redact_env=/q' "$T/c/PC4-4.base"; printf '%s\n' 'exec "${argv[@]}" <"$lf"'; } >"$T/c/PC4-4.sh"
-  c_expect PC4-4 "$T/r" "exec line in a claude-write-probe run script" || { echo "copy 4"; return 1; }
+  pc4 4 "exec line in a claude-write-probe run script" || return 1
   { cat "$T/c/PC4-5.base"; sed -n '/^umask 077$/,$p' "$T/c/PC4-1.base"; } >"$T/c/PC4-5.sh"
-  c_expect PC4-5 "$T/r" "text after the exec line of a claude-write run script" || { echo "copy 5"; return 1; }
+  pc4 5 "text after the exec line of a claude-write run script" || return 1
   sed 's/"\[redacted\]"/"[redactex]"/' "$T/c/PC4-6.base" >"$T/c/PC4-6.sh"
-  c_expect PC4-6 "$T/r" "capture block differs from the claude-write-probe block" || { echo "copy 6"; return 1; }
+  pc4 6 "capture block differs from the claude-write-probe block" || return 1
   : >"$T/cap/PC4-7/stdout" && sed "s|^lf='.*'\$|lf='$T/cap/PC4-7/stdout'|" "$T/c/PC4-7.base" >"$T/c/PC4-7.sh"
-  c_expect PC4-7 "$T/r" "cap $T/cap/PC4-7/stdout is the launch file" || { echo "copy 7"; return 1; }
+  pc4 7 "cap $T/cap/PC4-7/stdout is the launch file" || return 1
   sed "s|^redact_env='.*'\$|redact_env='A-B'|" "$T/c/PC4-8.base" >"$T/c/PC4-8.sh"
-  c_expect PC4-8 "$T/r" "redact_env is not a list of environment variable names: A-B" || { echo "copy 8"; return 1; }
+  pc4 8 "redact_env is not a list of environment variable names: A-B"
+}
+pc4() { # N MESSAGE: check rejects tampered copy N with MESSAGE
+  local why
+  why=$(c_expect "PC4-$1" "$T/r" "$2") || { echo "check accepted tampered copy $1 or named another defect: $why"; return 1; }
 }
 pc5() { # LABEL MESSAGE OUT ARGS...: write exits 2 with MESSAGE, writes no OUT, and leaves no .launch.* file
   local label=$1 msg=$2 out=$3 rc
