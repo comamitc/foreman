@@ -29,7 +29,7 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
 4. Write the result; never push or publish it yourself. For every finding, include
    the complete red/green/bite row required by [finding resolution](findings.md).
 
-Use [templates/result.md](../templates/result.md) for common and fix result headings. Complete when every effective blocking finding has a complete proposed
+Use [templates/result.md](../templates/result.md) for common result headings and its "## Implementing" section. Complete when every effective blocking finding has a complete proposed
 closure row, checks pass, and the worktree is clean. The coordinator then applies
 the closure proof gate independently. An incomplete or non-discriminating row stays
 in fix recovery; it is not pushed for a secondary reviewer to rediscover. Only
