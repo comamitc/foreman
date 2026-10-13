@@ -46,3 +46,4 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Codex read launches: [Codex adapter](../../references/harnesses/codex.md) ("The read recipe, for kinds") owns the recipe, and ("owns the Codex read-station result rule") owns the read-station result rule.
 - Write-station shell commands and evidence-check runs: [brief template](../../templates/brief.md) ("## Worker constraints") owns that rule.
 - Denied spec publish: [triage](../../references/triage.md) ("A denied spec publish is a host permission refusal") owns that rule.
+- Probe capture: [shared harness](../../references/harnesses/shared.md) ("## Launch probe") owns how a probe run script captures its run.

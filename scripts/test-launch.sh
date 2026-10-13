@@ -21,7 +21,8 @@ export HOME=$T/home
 mkdir -p "$T/home/real" "$T/home/adir" "$T/wt" "$T/res" "$T/brief" "$T/b" "$T/r" \
   "$T/bin" "$T/log" "$T/exp" "$T/k" "$T/c" "$T/g" "$T/outdir" "$T/s1" "$T/s2" "$T/s3" "$T/s4" "$T/s5" \
   "$T/s6/h" "$T/s6o" "$T/c13" "$T/c14wt/in" "$T/c15/wt" "$T/c16wt/in" "$T/c17/h" "$T/wt/s5" "$T/o2" "$T/o3" \
-  "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" "$T/c21" "$T/c22" "$T/s10" "$T/s11" "$T/w1" || setup "cannot create fixture directories"
+  "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" "$T/c21" "$T/c22" "$T/s10" "$T/s11" "$T/w1" \
+  "$T/cap" "$T/w1cap" "$T/pbin" "$T/fbin" "$T/pc" "$T/pc1res" "$T/pc5" "$T/pc5res" || setup "cannot create fixture directories"
 chmod 1777 "$T/s7" "$T/c19" "$T/s9sh" || setup "cannot chmod the shared fixture directories"
 # A private result directory beneath a shared temp-style directory (S9).
 mkdir -m 700 "$T/s9sh/p" || setup "cannot create the private fixture directory"
@@ -33,16 +34,55 @@ printf 'launch prompt %s.%s\n' "$$" "$RANDOM" >"$LF" || setup "cannot write the 
 LAUNCH_CONTENT=$(cat "$LF")
 : >"$T/res/r.md" || setup "cannot write fixtures"
 
+# Echo stubs: print cwd, TMPDIR, argv and stdin; a probe's run script captures its
+# stdout, so with STUB_LOG set they also append the same lines to that file.
 for b in claude codex; do
   cat >"$T/bin/$b" <<'EOF' || setup "cannot write stub $b"
 #!/usr/bin/env bash
-echo "cwd=$PWD"
-echo "tmpdir=${TMPDIR-}"
-for a in "$@"; do printf 'arg=%s\n' "$a"; done
-echo "stdin=$(cat)"
+out=$(echo "cwd=$PWD"; echo "tmpdir=${TMPDIR-}"; for a in "$@"; do printf 'arg=%s\n' "$a"; done; echo "stdin=$(cat)")
+printf '%s\n' "$out"
+[ -z "${STUB_LOG-}" ] || printf '%s\n' "$out" >>"$STUB_LOG"
 EOF
   chmod 755 "$T/bin/$b" || setup "cannot chmod stub $b"
 done
+
+# Stream stubs for the probe capture (PC1-PC7): read stdin, print STUB_STREAM on
+# stdout and STUB_ERR on stderr, and exit STUB_RC. With STUB_PROBE set they first
+# record whether both streams are pipes (STUB_FD), print STUB_MARK on both, wait,
+# and record the status of a search for it under STUB_CAP (STUB_SCAN).
+for b in claude codex; do
+  cat >"$T/pbin/$b" <<'EOF' || setup "cannot write stream stub $b"
+#!/usr/bin/env bash
+[ -z "${STUB_LOG-}" ] || { echo "cwd=$PWD"; for a in "$@"; do printf 'arg=%s\n' "$a"; done; } >"$STUB_LOG"
+cat >/dev/null
+if [ -n "${STUB_PROBE-}" ]; then
+  o=other e=other
+  if [ -p /dev/stdout ]; then o=pipe; fi
+  if [ -p /dev/stderr ]; then e=pipe; fi
+  printf 'out=%s\nerr=%s\n' "$o" "$e" >"$STUB_FD"
+  printf '%s\n' "$STUB_MARK"
+  printf '%s\n' "$STUB_MARK" >&2
+  sleep 1
+  grep -rqF -- "$STUB_MARK" "$STUB_CAP"
+  echo "$?" >"$STUB_SCAN"
+fi
+cat -- "$STUB_STREAM"
+cat -- "$STUB_ERR" >&2
+exit "${STUB_RC:-0}"
+EOF
+  chmod 755 "$T/pbin/$b" || setup "cannot chmod stream stub $b"
+done
+# A failing awk for PC7: STUB_AWK_FAIL=1 fails the stage that writes the capture's
+# stderr file, 2 the stage that writes its stdout file, after draining stdin.
+REAL_AWK=$(command -v awk) || setup "no awk on PATH"
+cat >"$T/fbin/awk" <<EOF || setup "cannot write the awk wrapper"
+#!/usr/bin/env bash
+case \${STUB_AWK_FAIL-}:\$(readlink -f /proc/\$\$/fd/1) in
+  1:*/stderr | 2:*/stdout) cat >/dev/null; exit 9 ;;
+esac
+exec '$REAL_AWK' "\$@"
+EOF
+chmod 755 "$T/fbin/awk" || setup "cannot chmod the awk wrapper"
 
 # Host source for the Claude write kinds: one plain file and one symlink.
 printf 'plain\n' >"$T/home/plain.md" && printf 'target\n' >"$T/home/real/target.md" \
@@ -240,17 +280,21 @@ stdin=$LAUNCH_CONTENT
 EOF
 
 k_case() { # NAME KIND EXPECTED [ARGS...]: build from $T/b, run from $T/r, diff, mode, check
-  local name=$1 kind=$2 exp=$3 out=$T/k/$1.sh rc
+  local name=$1 kind=$2 exp=$3 out=$T/k/$1.sh rc got=$T/log/$1.run
+  local -a cap=()
   shift 3
-  (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$kind" --out "$out" "${COMMON[@]}" "$@") \
+  # A probe's run script captures its stdout, so its argv is read from the stub's log.
+  case $kind in *-probe) cap=(--capture "$T/cap/$name") got=$T/log/$name.argv ;; esac
+  rm -f -- "$T/log/$name.argv"
+  (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$kind" --out "$out" "${COMMON[@]}" "$@" ${cap[@]+"${cap[@]}"}) \
     >"$T/log/$name.out" 2>"$T/log/$name.err"
   rc=$?
   [ "$rc" -eq 0 ] || { echo "write exited $rc: $(first "$T/log/$name.err")"; return 1; }
   [ "$(mode "$out")" = -rwx------ ] || { echo "mode is $(mode "$out"), not -rwx------"; return 1; }
-  (cd "$T/r" && TMPDIR=$T/ambient PATH="$T/bin:$PATH" "$out") >"$T/log/$name.run" 2>&1
+  (cd "$T/r" && TMPDIR=$T/ambient PATH="$T/bin:$PATH" STUB_LOG=$T/log/$name.argv "$out") >"$T/log/$name.run" 2>&1
   rc=$?
   [ "$rc" -eq 0 ] || { echo "run script exited $rc: $(first "$T/log/$name.run")"; return 1; }
-  diff "$exp" "$T/log/$name.run" >"$T/log/$name.diff" \
+  diff "$exp" "$got" >"$T/log/$name.diff" \
     || { echo "argv differs: $(grep '^[<>]' "$T/log/$name.diff" | head -n 1)"; return 1; }
   (cd "$T/r" && bash "$LAUNCH_SH" check "$out" --worktree "$T/wt") 2>"$T/log/$name.chk"
   rc=$?
@@ -268,25 +312,29 @@ K4() { k_case K4 codex-write "$T/exp/K4" "${ADDS[@]}" --result "$T/res/result.md
 K5() { k_case K5 codex-read "$T/exp/K5" --result "$T/res/result.md"; }
 K6() { k_case K6 codex-read-probe "$T/exp/K5" --result "$T/res/result.md"; }
 K7() {
-  [ -s "$T/log/K5.run" ] && [ -s "$T/log/K6.run" ] || { echo "K5 or K6 produced no output"; return 1; }
-  cmp -s "$T/log/K5.run" "$T/log/K6.run" || { echo "codex-read-probe output differs from codex-read"; return 1; }
+  [ -s "$T/log/K5.run" ] && [ -s "$T/log/K6.argv" ] || { echo "K5 or K6 produced no output"; return 1; }
+  cmp -s "$T/log/K5.run" "$T/log/K6.argv" || { echo "codex-read-probe output differs from codex-read"; return 1; }
 }
 
 # ---- #253 AC 2-3: the result lies outside the worker's only writable root (W1) ----
 
 W1() { # build and run both read kinds; the result is not in the start directory, -C, or TMPDIR
-  local k rc d cwd tdir cv res
+  local k rc d cwd tdir cv res log
+  local -a cap
   for k in codex-read codex-read-probe; do
+    cap=() log=$T/log/W1-$k.argv
+    [ "$k" = codex-read ] || cap=(--capture "$T/w1cap/$k")
+    rm -f -- "$log"
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/w1/$k.sh" --worktree "$T/wt" \
-      --launch-file "$LF" --result "$T/w1/result.md") >/dev/null 2>"$T/log/W1.err"
+      --launch-file "$LF" --result "$T/w1/result.md" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/W1.err"
     rc=$?
     [ "$rc" -eq 0 ] || { echo "$k: write exited $rc: $(first "$T/log/W1.err")"; return 1; }
-    (cd "$T/r" && PATH="$T/bin:$PATH" "$T/w1/$k.sh") >"$T/log/W1.run" 2>&1
+    (cd "$T/r" && PATH="$T/bin:$PATH" STUB_LOG=$log "$T/w1/$k.sh") >"$T/log/W1.run" 2>&1
     rc=$?
     [ "$rc" -eq 0 ] || { echo "$k: run script exited $rc"; return 1; }
-    cwd=$(sed -n 's/^cwd=//p' "$T/log/W1.run") tdir=$(sed -n 's/^tmpdir=//p' "$T/log/W1.run")
-    cv=$(sed -n '/^arg=-C$/{n;s/^arg=//p;}' "$T/log/W1.run")
-    res=$(sed -n '/^arg=--output-last-message$/{n;s/^arg=//p;}' "$T/log/W1.run")
+    cwd=$(sed -n 's/^cwd=//p' "$log") tdir=$(sed -n 's/^tmpdir=//p' "$log")
+    cv=$(sed -n '/^arg=-C$/{n;s/^arg=//p;}' "$log")
+    res=$(sed -n '/^arg=--output-last-message$/{n;s/^arg=//p;}' "$log")
     [ "$res" = "$T/w1/result.md" ] || { echo "$k: --output-last-message is $res"; return 1; }
     for d in "$cwd" "$cv" "$tdir"; do
       case $res/ in "${d%/}"/*) echo "$k: the result $res is inside the writable root $d"; return 1 ;; esac
@@ -422,6 +470,7 @@ c_build() { # NAME KIND [RESULT]: build the unedited fixture $T/c/NAME.base
   case $2 in codex-read*) ;; *) args+=(--add-dir "$T/res" --add-dir "$T/brief") ;; esac
   case $2 in claude-*) args+=(--allow "$ALLOW") ;; esac
   case $2 in claude-write*) args+=(--host-source "$T/home/src.md") ;; codex-*) args+=(--result "${3:-$T/res/result.md}") ;; esac
+  case $2 in *-probe) args+=(--capture "$T/cap/$1") ;; esac
   (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$2" --out "$T/c/$1.base" "${args[@]}") >/dev/null 2>"$T/log/$1.build" \
     || { echo "fixture build exited non-zero: $(first "$T/log/$1.build")"; return 1; }
   [ -f "$T/c/$1.base" ] || { echo "fixture was not built"; return 1; }
@@ -433,6 +482,7 @@ c_expect() { # NAME CWD MESSAGE: check $T/c/NAME.sh from CWD against $T/wt; want
   rc=$?
   [ "$rc" -eq 1 ] || { echo "check exited $rc, not 1"; return 1; }
   grep -qF -- "$3" "$T/log/$1.chk" || { echo "stderr lacks: $3"; return 1; }
+  ! grep -qF -- --capture "$T/log/$1.chk" || { echo "stopped at --capture"; return 1; }
 }
 after_gh() { sed -e "/^'Bash(gh \\*)'\$/a\\" -e "$2" "$T/c/$1.base" >"$T/c/$1.sh"; }
 C1() {
@@ -532,6 +582,7 @@ c_roots() { # NAME KIND DIR WORKTREE HOME MESSAGE: move -C, cd, the result and T
   rc=$?
   [ "$rc" -eq 1 ] || { echo "check exited $rc, not 1"; return 1; }
   grep -qF -- "$6" "$T/log/$1.chk" || { echo "stderr lacks: $6"; return 1; }
+  ! grep -qF -- --capture "$T/log/$1.chk" || { echo "stopped at --capture"; return 1; }
 }
 C14() { # -C, cd, result and TMPDIR moved together to the worktree or inside it, both read kinds
   local k
@@ -657,13 +708,17 @@ S4() { # an existing work/ or work/tmp/ that is not owner-only is refused
 }
 S5() { # write refuses a result directory at, inside, aliasing, or holding the worktree, both read kinds
   local rc k res msg
+  local -a cap
   for k in codex-read codex-read-probe; do
+    cap=()
+    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S5")
     while IFS='|' read -r res msg; do
       (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s5/run.sh" --worktree "$T/wt" \
-        --launch-file "$LF" --result "$res") >/dev/null 2>"$T/log/S5.err"
+        --launch-file "$LF" --result "$res" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S5.err"
       rc=$?
       [ "$rc" -eq 2 ] || { echo "$k --result $res: write exited $rc, not 2"; return 1; }
       grep -qF -- "$msg" "$T/log/S5.err" || { echo "$k --result $res: stderr lacks: $msg"; return 1; }
+      ! grep -qF -- --capture "$T/log/S5.err" || { echo "$k --result $res: stopped at --capture"; return 1; }
       [ ! -e "$T/s5/run.sh" ] && [ ! -e "${res%/*}/work" ] || { echo "$k --result $res: OUT or work was written"; return 1; }
     done <<EOF
 $T/wt/result.md|result directory $T/wt is inside the worktree $T/wt
@@ -676,13 +731,17 @@ EOF
 }
 S6() { # write refuses a result directory that is HOME, above HOME, or a symlink to HOME, both read kinds
   local rc k res
+  local -a cap
   for k in codex-read codex-read-probe; do
+    cap=()
+    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S6")
     for res in "$T/s6/h/result.md" "$T/s6/result.md" "$T/s6l/result.md"; do
       (cd "$T/b" && HOME=$T/s6/h bash "$LAUNCH_SH" write --kind "$k" --out "$T/s6o/run.sh" --worktree "$T/wt" \
-        --launch-file "$LF" --result "$res") >/dev/null 2>"$T/log/S6.err"
+        --launch-file "$LF" --result "$res" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S6.err"
       rc=$?
       [ "$rc" -eq 2 ] || { echo "$k --result $res: write exited $rc, not 2"; return 1; }
       grep -qF -- "is HOME or an ancestor of it" "$T/log/S6.err" || { echo "$k --result $res: stderr lacks: is HOME or an ancestor of it"; return 1; }
+      ! grep -qF -- --capture "$T/log/S6.err" || { echo "$k --result $res: stopped at --capture"; return 1; }
       [ ! -e "$T/s6o/run.sh" ] && [ ! -e "${res%/*}/work" ] || { echo "$k --result $res: OUT or work was written"; return 1; }
       no_tmp "$T/s6o" || { echo "$k --result $res: a .launch.* file was left"; return 1; }
     done
@@ -690,14 +749,18 @@ S6() { # write refuses a result directory that is HOME, above HOME, or a symlink
 }
 S7() { # write refuses a shared (1777) result directory or a symlink to it, both read kinds
   local rc k res
+  local -a cap
   for k in codex-read codex-read-probe; do
+    cap=()
+    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S7")
     for res in "$T/s7/result.md" "$T/s7l/result.md"; do
       (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s7o/run.sh" --worktree "$T/wt" \
-        --launch-file "$LF" --result "$res") >/dev/null 2>"$T/log/S7.err"
+        --launch-file "$LF" --result "$res" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S7.err"
       rc=$?
       [ "$rc" -eq 2 ] || { echo "$k --result $res: write exited $rc, not 2"; return 1; }
       grep -qF -- "result directory $T/s7 is writable by group or others" "$T/log/S7.err" \
         || { echo "$k --result $res: stderr lacks: result directory $T/s7 is writable by group or others"; return 1; }
+      ! grep -qF -- --capture "$T/log/S7.err" || { echo "$k --result $res: stopped at --capture"; return 1; }
       [ ! -e "$T/s7o/run.sh" ] && [ ! -e "$T/s7/work" ] || { echo "$k --result $res: OUT or work was written"; return 1; }
       no_tmp "$T/s7o" || { echo "$k --result $res: a .launch.* file was left"; return 1; }
     done
@@ -707,25 +770,31 @@ S8() { # write refuses --result /tmp/NAME.md and leaves /tmp/work as it was, bot
   # The worktree and HOME are this script's directory, so that neither the worktree
   # nor the HOME rule refuses /tmp first; the fixtures under $T may sit beneath /tmp.
   local rc k before after
+  local -a cap
   case $(realpath "$here")/ in "$(realpath /tmp)"/*) echo "this case needs the repository outside /tmp: $here"; return 1 ;; esac
   for k in codex-read codex-read-probe; do
-    before=0 after=0
+    before=0 after=0 cap=()
+    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S8")
     [ ! -e /tmp/work ] || before=1
     (cd "$T/b" && HOME=$here bash "$LAUNCH_SH" write --kind "$k" --out "$T/s8/run.sh" --worktree "$here" \
-      --launch-file "$LF" --result "/tmp/launch-test-$$.md") >/dev/null 2>"$T/log/S8.err"
+      --launch-file "$LF" --result "/tmp/launch-test-$$.md" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S8.err"
     rc=$?
     [ ! -e /tmp/work ] || after=1
     [ "$rc" -eq 2 ] || { echo "$k: write exited $rc, not 2"; return 1; }
     grep -qF -- "is not owned by the current user" "$T/log/S8.err" || { echo "$k: stderr lacks: is not owned by the current user"; return 1; }
+    ! grep -qF -- --capture "$T/log/S8.err" || { echo "$k: stopped at --capture"; return 1; }
     [ "$before" = "$after" ] || { echo "$k: /tmp/work was created"; return 1; }
     [ ! -e "$T/s8/run.sh" ] || { echo "$k: OUT was written"; return 1; }
   done
 }
 S9() { # a private directory beneath a shared (1777) directory still builds and checks, both read kinds
   local rc k
+  local -a cap
   for k in codex-read codex-read-probe; do
+    cap=()
+    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S9")
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s9/$k.sh" --worktree "$T/wt" \
-      --launch-file "$LF" --result "$T/s9sh/p/result.md") >/dev/null 2>"$T/log/S9.err"
+      --launch-file "$LF" --result "$T/s9sh/p/result.md" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S9.err"
     rc=$?
     [ "$rc" -eq 0 ] || { echo "$k: write exited $rc: $(first "$T/log/S9.err")"; return 1; }
     [ "$(mode "$T/s9sh/p/work/tmp")" = drwx------ ] || { echo "$k: tmp mode is $(mode "$T/s9sh/p/work/tmp"), not drwx------"; return 1; }
@@ -736,24 +805,32 @@ S9() { # a private directory beneath a shared (1777) directory still builds and 
 }
 S10() { # write refuses a --result that resolves into the writable root, both read kinds
   local rc k
+  local -a cap
   for k in codex-read codex-read-probe; do
+    cap=()
+    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S10")
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s10/$k.sh" --worktree "$T/wt" \
-      --launch-file "$LF" --result "$T/s10/work") >/dev/null 2>"$T/log/S10.err"
+      --launch-file "$LF" --result "$T/s10/work" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S10.err"
     rc=$?
     [ "$rc" -eq 2 ] || { echo "$k: write exited $rc, not 2"; return 1; }
     grep -qF -- "--result resolves into the writable root: $T/s10/work" "$T/log/S10.err" || { echo "$k: stderr lacks: --result resolves into the writable root"; return 1; }
+    ! grep -qF -- --capture "$T/log/S10.err" || { echo "$k: stopped at --capture"; return 1; }
     [ ! -e "$T/s10/$k.sh" ] && [ ! -e "$T/s10/work" ] || { echo "$k: OUT or work was written"; return 1; }
   done
 }
 S11() { # write refuses a --result that is a symlink into the writable root, both read kinds
   local rc k
+  local -a cap
   ln -s "$T/s11/work/result.md" "$T/s11/result.md" || { echo "cannot create the result link"; return 1; }
   for k in codex-read codex-read-probe; do
+    cap=()
+    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S11")
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s11/$k.sh" --worktree "$T/wt" \
-      --launch-file "$LF" --result "$T/s11/result.md") >/dev/null 2>"$T/log/S11.err"
+      --launch-file "$LF" --result "$T/s11/result.md" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S11.err"
     rc=$?
     [ "$rc" -eq 2 ] || { echo "$k: write exited $rc, not 2"; return 1; }
     grep -qF -- "--result is a symlink: $T/s11/result.md" "$T/log/S11.err" || { echo "$k: stderr lacks: --result is a symlink"; return 1; }
+    ! grep -qF -- --capture "$T/log/S11.err" || { echo "$k: stopped at --capture"; return 1; }
     [ ! -e "$T/s11/$k.sh" ] && [ ! -e "$T/s11/work" ] || { echo "$k: OUT or work was written"; return 1; }
   done
 }
@@ -795,8 +872,264 @@ O3() {
   no_tmp "$T/o3" || { echo "a .launch.* file was left"; return 1; }
 }
 
+# ---- #256: the probe capture (PC1-PC7) ----
+
+P=$$
+ESC_SECRET='a\"b\\c-'$P # MY_SECRET's value, JSON-escaped
+PC_CREDS=(TESTTOKEN="tok-$P-secretvalue" GH_TOKEN=Zq7 DBCRED="dbc-$P-x" MY_SECRET="a\"b\\c-$P" NUM_TOKEN="4242$P")
+printf 'Read %s~/plain.md%s.\n' "$bt" "$bt" >"$T/home/pc2src.md"
+PC_SHELLS='bash sh'
+if command -v zsh >/dev/null 2>&1; then PC_SHELLS='bash sh zsh'; fi
+
+# PC1 streams: a passing Claude write probe (AC 4) and a Codex read probe's lifecycle.
+cat >"$T/pc/claude.stdout" <<'EOF'
+{"type":"system","subtype":"init","session_id":"s1","model":"m1","cwd":"/somewhere","tools":["Bash","Read"]}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"git add --refresh -- .","description":"Refresh the index"}}]},"session_id":"s1"}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"tu1","type":"tool_result","content":"","is_error":false}]},"session_id":"s1"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"CAPSTAN_PROBE_OK"}]},"session_id":"s1"}
+{"type":"result","subtype":"success","is_error":false,"num_turns":2,"result":"CAPSTAN_PROBE_OK","session_id":"s1","permission_denials":[],"usage":{"input_tokens":10,"output_tokens":4}}
+EOF
+printf 'warning: a plain diagnostic\n' >"$T/pc/claude.stderr"
+cat >"$T/exp/PC1-claude-write-probe.stdout" <<'EOF'
+{"type":"system","subtype":"init","session_id":"s1","model":"m1","cwd":"[removed]","tools":["[removed]","[removed]"]}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"git add --refresh -- .","description":"[removed]"}}]},"session_id":"s1"}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"tu1","type":"tool_result","content":"[removed]","is_error":false}]},"session_id":"s1"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"[removed]"}]},"session_id":"s1"}
+{"type":"result","subtype":"success","is_error":false,"num_turns":2,"result":"CAPSTAN_PROBE_OK","session_id":"s1","permission_denials":[],"usage":{"input_tokens":10,"output_tokens":4}}
+EOF
+printf '[removed]\n' >"$T/exp/PC1-claude-write-probe.stderr"
+cat >"$T/pc/codex.stdout" <<'EOF'
+{"type":"thread.started","thread_id":"th-1"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"CAPSTAN_PROBE_OK"}}
+{"type":"turn.completed","usage":{"input_tokens":5,"cached_input_tokens":0,"output_tokens":2}}
+EOF
+printf 'warning: a plain diagnostic\n' >"$T/pc/codex.stderr"
+cp "$T/pc/codex.stdout" "$T/exp/PC1-codex-read-probe.stdout" && cp "$T/pc/codex.stderr" "$T/exp/PC1-codex-read-probe.stderr" \
+  || setup "cannot write the PC1 goldens"
+
+# PC2: a Claude stream with a granted Read, arguments under an unlisted field, chatter,
+# and each credential raw, JSON-escaped, and as a bare number; stderr holds host text.
+cat >"$T/pc/pc2.stdout" <<EOF
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"git add --refresh -- .","description":"Refresh the index"}}]}}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"tu1","type":"tool_result","content":"","is_error":false}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu2","name":"Read","input":{"file_path":"$T/home/plain.md"}}]}}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"tu2","type":"tool_result","content":[{"type":"text","text":"HOSTTEXT-$P \"quoted\" line"},{"type":"text","text":"tail","nested":[1,["HOSTTEXT-$P"]]}],"is_error":false}]},"tool_use_result":{"type":"text","file":{"filePath":"$T/home/plain.md","content":"HOSTTEXT-$P \"quoted\"","numLines":[1,[2,3]]}}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu3","name":"Probe","params":{"note":"ARGTEXT-$P","command":"ARGCMD-$P"}}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"CHATTER-$P tok-$P-secretvalue"}]}}
+{"type":"system","subtype":"note","id":"tok-$P-secretvalue","name":"x Zq7 y","model":"dbc-$P-x","session_id":"$ESC_SECRET","uuid":"pre-4242$P","n":4242$P,"list":[4242$P, 7]}
+{"type":"result","subtype":"success","is_error":false,"num_turns":3,"result":"CAPSTAN_PROBE_OK","permission_denials":[],"usage":{"input_tokens":12,"output_tokens":3}}
+EOF
+cat >"$T/pc/pc2.stderr" <<EOF
+{"type":"user","message":{"content":[{"tool_use_id":"tu2","type":"tool_result","content":"HOSTTEXT-$P","is_error":false}]}}
+diag HOSTTEXT-$P TESTTOKEN=tok-$P-secretvalue
+{"type":"system","subtype":"warn","model":"tok-$P-secretvalue Zq7 dbc-$P-x $ESC_SECRET","n":4242$P}
+EOF
+cat >"$T/exp/PC2.stdout" <<EOF
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"git add --refresh -- .","description":"[removed]"}}]}}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"tu1","type":"tool_result","content":"[removed]","is_error":false}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu2","name":"Read","input":{"file_path":"$T/home/plain.md"}}]}}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"tu2","type":"tool_result","content":"[host file content removed]","is_error":false}]},"tool_use_result":"[host file content removed]"}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu3","name":"Probe","params":{"note":"[removed]","command":"[removed]"}}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"[removed]"}]}}
+{"type":"system","subtype":"note","id":"[redacted]","name":"x [redacted] y","model":"[redacted]","session_id":"[redacted]","uuid":"pre-[redacted]","n":"[redacted]","list":["[redacted]", 7]}
+{"type":"result","subtype":"success","is_error":false,"num_turns":3,"result":"CAPSTAN_PROBE_OK","permission_denials":[],"usage":{"input_tokens":12,"output_tokens":3}}
+EOF
+cat >"$T/exp/PC2.stderr" <<'EOF'
+{"type":"user","message":{"content":[{"tool_use_id":"tu2","type":"tool_result","content":"[removed]","is_error":false}]}}
+[removed]
+{"type":"system","subtype":"warn","model":"[redacted] [redacted] [redacted] [redacted]","n":"[redacted]"}
+EOF
+
+# PC3: a Codex stream with the same credentials; stderr is a plain line.
+cat >"$T/pc/pc3.stdout" <<EOF
+{"type":"thread.started","thread_id":"th-1"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_1","type":"command_execution","command":"bash -lc 'git status --short'","aggregated_output":"tok-$P-secretvalue Zq7 dbc-$P-x $ESC_SECRET","exit_code":0,"status":"completed"}}
+{"type":"turn.completed","usage":{"input_tokens":4242$P,"cached_input_tokens":0,"output_tokens":2}}
+EOF
+printf 'warning: TESTTOKEN=tok-%s-secretvalue in plain text\n' "$P" >"$T/pc/pc3.stderr"
+cat >"$T/exp/PC3.stdout" <<'EOF'
+{"type":"thread.started","thread_id":"th-1"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_1","type":"command_execution","command":"bash -lc 'git status --short'","aggregated_output":"[redacted] [redacted] [redacted] [redacted]","exit_code":0,"status":"completed"}}
+{"type":"turn.completed","usage":{"input_tokens":"[redacted]","cached_input_tokens":0,"output_tokens":2}}
+EOF
+printf 'warning: TESTTOKEN=[redacted] in plain text\n' >"$T/exp/PC3.stderr"
+
+pc_build() { # NAME KIND CAPTURE_DIR [ARGS...]: write $T/pc/NAME.sh
+  local name=$1 kind=$2 rc
+  local -a args=(--worktree "$T/wt" --launch-file "$LF" --capture "$3")
+  shift 3
+  case $kind in claude-*) args+=(--host-source "$T/home/pc2src.md") ;; *) args+=(--result "$T/pc1res/result.md") ;; esac
+  (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$kind" --out "$T/pc/$name.sh" "${args[@]}" "$@") >/dev/null 2>"$T/log/$name.build"
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "$name: write exited $rc: $(first "$T/log/$name.build")"; return 1; }
+}
+pc_run() { # SHELL RUN_SCRIPT [NAME=VALUE...]: start RUN_SCRIPT as a command from SHELL, in a clean environment
+  local sh=$1 rs=$2
+  shift 2
+  (cd "$T/r" && env -i PATH="$T/pbin:$PATH" HOME="$HOME" "$@" "$sh" -c '"$1"' _ "$rs") >/dev/null 2>&1
+}
+pc_golden() { # NAME CAPTURE_DIR: both captured streams equal the goldens $T/exp/NAME.stdout and .stderr
+  local f
+  for f in stdout stderr; do
+    diff "$T/exp/$1.$f" "$2/$f" >"$T/log/$1.diff" \
+      || { echo "capture differs from golden: $f: $(grep '^[<>]' "$T/log/$1.diff" | head -n 1)"; return 1; }
+  done
+}
+pc_leak() { # CAPTURE_DIR [TEXT...]: no credential value and no TEXT appears under CAPTURE_DIR
+  local cap=$1 x rc
+  local -a e=()
+  shift
+  for x in "$@" "tok-$P-secretvalue" Zq7 "dbc-$P-x" "$ESC_SECRET" "a\"b\\c-$P" "4242$P"; do e+=(-e "$x"); done
+  grep -rF "${e[@]}" "$cap" >/dev/null
+  rc=$?
+  case $rc in
+    1) ;;
+    0) echo "secret or host text in capture: $(grep -rhoF "${e[@]}" "$cap" | head -n 1)"; return 1 ;;
+    *) echo "leak search error: grep exited $rc"; return 1 ;;
+  esac
+}
+
+PC1() { # both probe kinds x exits 0 and 3 x bash, sh and zsh: same exit, same exit file, same captures
+  local k sh rc got cap f
+  for k in claude-write-probe codex-read-probe; do
+    cap=$T/pc/cap1-$k
+    pc_build "PC1-$k" "$k" "$cap" || return 1
+    for rc in 0 3; do
+      for sh in $PC_SHELLS; do
+        pc_run "$sh" "$T/pc/PC1-$k.sh" STUB_STREAM="$T/pc/${k%%-*}.stdout" STUB_ERR="$T/pc/${k%%-*}.stderr" STUB_RC=$rc
+        got=$?
+        [ "$got" -eq "$rc" ] || { echo "$k $sh rc=$rc script exit=$got"; return 1; }
+        [ "$(cat "$cap/exit" 2>/dev/null)" = "$rc" ] || { echo "$k $sh rc=$rc exit file=$(cat "$cap/exit" 2>/dev/null)"; return 1; }
+        pc_golden "PC1-$k" "$cap" || { echo "$k $sh rc=$rc"; return 1; }
+        for f in exit stderr stdout; do
+          [ "$(mode "$cap/$f")" = -rw------- ] || { echo "$k $sh: $f mode is $(mode "$cap/$f")"; return 1; }
+        done
+        [ "$(ls -A "$cap" | tr '\n' ' ')" = 'exit stderr stdout ' ] || { echo "$k $sh: the capture holds: $(ls -A "$cap" | tr '\n' ' ')"; return 1; }
+      done
+    done
+  done
+}
+PC2() { # Claude: host-grant and credential redaction on both streams, exact goldens, no leak
+  local cap=$T/pc/cap2 rc
+  pc_build PC2 claude-write-probe "$cap" --redact-env DBCRED || return 1
+  pc_run bash "$T/pc/PC2.sh" STUB_STREAM="$T/pc/pc2.stdout" STUB_ERR="$T/pc/pc2.stderr" "${PC_CREDS[@]}"
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "run script exited $rc"; return 1; }
+  pc_golden PC2 "$cap" || return 1
+  pc_leak "$cap" "HOSTTEXT-$P" "CHATTER-$P" "ARGTEXT-$P" "ARGCMD-$P"
+}
+PC3() { # Codex: credential redaction on both streams keeps the lifecycle, command and exit code
+  local cap=$T/pc/cap3 rc
+  pc_build PC3 codex-read-probe "$cap" --redact-env DBCRED || return 1
+  pc_run bash "$T/pc/PC3.sh" STUB_STREAM="$T/pc/pc3.stdout" STUB_ERR="$T/pc/pc3.stderr" "${PC_CREDS[@]}"
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "run script exited $rc"; return 1; }
+  pc_golden PC3 "$cap" || return 1
+  pc_leak "$cap"
+}
+PC4() { # check accepts both generated probe scripts and rejects each tampered copy
+  local n rc
+  for n in PC4c:claude-write-probe PC4x:codex-read-probe; do
+    c_build "${n%%:*}" "${n#*:}" || return 1
+    (cd "$T/r" && bash "$LAUNCH_SH" check "$T/c/${n%%:*}.base" --worktree "$T/wt") 2>"$T/log/${n%%:*}.chk"
+    rc=$?
+    [ "$rc" -eq 0 ] || { echo "check rejected the generated ${n#*:} script: $(first "$T/log/${n%%:*}.chk")"; return 1; }
+  done
+  for n in 1 2 3 4 6 7 8; do c_build "PC4-$n" claude-write-probe || return 1; done
+  c_build PC4-5 claude-write || return 1
+  sed 's#} 3>&1 | awk -v names="$redact_env" "$red" >"$cap/stdout"$#} 3>\&1 >"$cap/stdout"#' "$T/c/PC4-1.base" >"$T/c/PC4-1.sh"
+  c_expect PC4-1 "$T/r" "capture block differs from the claude-write-probe block" || { echo "copy 1: $(first "$T/log/PC4-1.chk")"; return 1; }
+  mkdir -m 700 "$T/wt/pc4cap" && sed "s|^cap='.*'\$|cap='$T/wt/pc4cap'|" "$T/c/PC4-2.base" >"$T/c/PC4-2.sh"
+  c_expect PC4-2 "$T/r" "cap is inside the worktree: $T/wt/pc4cap" || { echo "copy 2"; return 1; }
+  mkdir -m 755 "$T/pc/m755" && sed "s|^cap='.*'\$|cap='$T/pc/m755'|" "$T/c/PC4-3.base" >"$T/c/PC4-3.sh"
+  c_expect PC4-3 "$T/r" "cap is not an owner-only directory: $T/pc/m755" || { echo "copy 3"; return 1; }
+  { sed '/^redact_env=/q' "$T/c/PC4-4.base"; printf '%s\n' 'exec "${argv[@]}" <"$lf"'; } >"$T/c/PC4-4.sh"
+  c_expect PC4-4 "$T/r" "exec line in a claude-write-probe run script" || { echo "copy 4"; return 1; }
+  { cat "$T/c/PC4-5.base"; sed -n '/^umask 077$/,$p' "$T/c/PC4-1.base"; } >"$T/c/PC4-5.sh"
+  c_expect PC4-5 "$T/r" "text after the exec line of a claude-write run script" || { echo "copy 5"; return 1; }
+  sed 's/"\[redacted\]"/"[redactex]"/' "$T/c/PC4-6.base" >"$T/c/PC4-6.sh"
+  c_expect PC4-6 "$T/r" "capture block differs from the claude-write-probe block" || { echo "copy 6"; return 1; }
+  : >"$T/cap/PC4-7/stdout" && sed "s|^lf='.*'\$|lf='$T/cap/PC4-7/stdout'|" "$T/c/PC4-7.base" >"$T/c/PC4-7.sh"
+  c_expect PC4-7 "$T/r" "cap $T/cap/PC4-7/stdout is the launch file" || { echo "copy 7"; return 1; }
+  sed "s|^redact_env='.*'\$|redact_env='A-B'|" "$T/c/PC4-8.base" >"$T/c/PC4-8.sh"
+  c_expect PC4-8 "$T/r" "redact_env is not a list of environment variable names: A-B" || { echo "copy 8"; return 1; }
+}
+pc5() { # LABEL MESSAGE OUT ARGS...: write exits 2 with MESSAGE, writes no OUT, and leaves no .launch.* file
+  local label=$1 msg=$2 out=$3 rc
+  shift 3
+  (cd "$T/b" && bash "$LAUNCH_SH" write --out "$out" --worktree "$T/wt" "$@") >/dev/null 2>"$T/log/PC5.err"
+  rc=$?
+  [ "$rc" -eq 2 ] || { echo "($label) write exited $rc, not 2: $(first "$T/log/PC5.err")"; return 1; }
+  grep -qF -- "launch.sh: $msg" "$T/log/PC5.err" || { echo "($label) stderr lacks: $msg"; return 1; }
+  [ ! -e "$out" ] || { echo "($label) OUT was written"; return 1; }
+  no_tmp "${out%/*}" || { echo "($label) a .launch.* file was left"; return 1; }
+}
+PC5() { # write refuses each bad --capture or --redact-env input; an owner-only capture beside the brief is accepted
+  local o=$T/pc5/run.sh rc
+  local -a cl=(--kind claude-write-probe --launch-file "$LF" --host-source "$T/home/src.md")
+  local -a cx=(--kind codex-read-probe --launch-file "$LF" --result "$T/pc5res/result.md")
+  mkdir -m 700 "$T/pc5/ok" "$T/pc5/g" "$T/pc5/h" "$T/pc5/i" && mkdir -m 1777 "$T/pc5/open" && : >"$T/pc5/g/stdout" \
+    || { echo "cannot create the PC5 fixtures"; return 1; }
+  pc5 a "--capture is required for claude-write-probe" "$o" "${cl[@]}" || return 1
+  pc5 b "--capture is only for probe kinds, not claude-write" "$o" --kind claude-write --launch-file "$LF" \
+    --host-source "$T/home/src.md" --capture "$T/pc5/ok" || return 1
+  pc5 c "--redact-env is only for probe kinds, not codex-read" "$o" --kind codex-read --launch-file "$LF" \
+    --result "$T/pc5res/result.md" --redact-env DBCRED || return 1
+  pc5 d "--capture is inside the worktree: $T/wt/pc5cap" "$o" "${cl[@]}" --capture "$T/wt/pc5cap" || return 1
+  [ ! -e "$T/wt/pc5cap" ] || { echo "(d) the capture directory was created inside the worktree"; return 1; }
+  pc5 e "--capture is not an owner-only directory: $T/pc5/open" "$o" "${cl[@]}" --capture "$T/pc5/open" || return 1
+  pc5 f "--capture resolves into the writable root: $T/pc5res/work/c" "$o" "${cx[@]}" --capture "$T/pc5res/work/c" || return 1
+  pc5 g "--capture $T/pc5/g/stdout is the launch file" "$o" --kind claude-write-probe --launch-file "$T/pc5/g/stdout" \
+    --host-source "$T/home/src.md" --capture "$T/pc5/g" || return 1
+  pc5 h "--capture $T/pc5/h/stderr is the run script" "$T/pc5/h/stderr" "${cl[@]}" --capture "$T/pc5/h" || return 1
+  pc5 i "--capture $T/pc5/i/exit is the result" "$o" --kind codex-read-probe --launch-file "$LF" \
+    --result "$T/pc5/i/exit" --capture "$T/pc5/i" || return 1
+  pc5 j "--redact-env must be an environment variable name: A-B" "$o" "${cl[@]}" --capture "$T/pc5/ok" --redact-env A-B || return 1
+  (cd "$T/b" && bash "$LAUNCH_SH" write --out "$T/pc5/ok.sh" --worktree "$T/wt" "${cl[@]}" --capture "$T/pc5/ok") \
+    >/dev/null 2>"$T/log/PC5.err"
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "(accepted) write exited $rc: $(first "$T/log/PC5.err")"; return 1; }
+}
+PC6() { # the harness streams reach the redactors as pipes, and no raw text is on disk during the run
+  local k cap rc
+  for k in claude-write-probe codex-read-probe; do
+    cap=$T/pc/cap6-$k
+    rm -f -- "$T/log/PC6-$k.fd" "$T/log/PC6-$k.scan"
+    pc_build "PC6-$k" "$k" "$cap" || return 1
+    pc_run bash "$T/pc/PC6-$k.sh" STUB_STREAM="$T/pc/${k%%-*}.stdout" STUB_ERR="$T/pc/${k%%-*}.stderr" STUB_PROBE=1 \
+      STUB_CAP="$cap" STUB_MARK="tok-$P-secretvalue" TESTTOKEN="tok-$P-secretvalue" STUB_FD="$T/log/PC6-$k.fd" STUB_SCAN="$T/log/PC6-$k.scan"
+    rc=$?
+    [ "$rc" -eq 0 ] || { echo "$k: run script exited $rc"; return 1; }
+    [ "$(sed -n 1p "$T/log/PC6-$k.fd" 2>/dev/null)" = out=pipe ] || { echo "$k: harness stdout is not a pipe"; return 1; }
+    [ "$(sed -n 2p "$T/log/PC6-$k.fd" 2>/dev/null)" = err=pipe ] || { echo "$k: harness stderr is not a pipe"; return 1; }
+    case $(cat "$T/log/PC6-$k.scan" 2>/dev/null) in
+      1) ;;
+      0) echo "$k: raw marker on disk during run"; return 1 ;;
+      *) echo "$k: the mid-run scan did not run or failed"; return 1 ;;
+    esac
+  done
+}
+PC7() { # a failed redaction stage keeps the harness status, writes capture-error, and exits 70
+  local cap=$T/pc/cap7 n rc want
+  pc_build PC7 claude-write-probe "$cap" || return 1
+  for n in 1 2; do
+    (cd "$T/r" && env -i PATH="$T/fbin:$T/pbin:$PATH" HOME="$HOME" STUB_STREAM="$T/pc/claude.stdout" \
+      STUB_ERR="$T/pc/claude.stderr" STUB_AWK_FAIL=$n bash -c '"$1"' _ "$T/pc/PC7.sh") >/dev/null 2>&1
+    rc=$?
+    [ "$rc" -eq 70 ] || { echo "stage $n failure: script exit $rc, not 70"; return 1; }
+    [ "$(cat "$cap/exit" 2>/dev/null)" = 0 ] || { echo "stage $n failure: exit file is $(cat "$cap/exit" 2>/dev/null)"; return 1; }
+    case $n in 1) want='harness-side=72 ' ;; *) want='stdout-redactor=9' ;; esac
+    grep -qF -- "$want" "$cap/capture-error" 2>/dev/null || { echo "stage $n failure not recorded"; return 1; }
+    [ "$(mode "$cap/capture-error")" = -rw------- ] || { echo "stage $n: capture-error mode is $(mode "$cap/capture-error")"; return 1; }
+  done
+}
+
+case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
 for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
-  C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3; do
+  C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7; do
   t "$c" "$c"
 done
 [ "$fails" -eq 0 ] || exit 1
