@@ -62,9 +62,10 @@ condition is not observed, leave `capstan:blocked`, leave the blocker handoff,
 and do not rerun the station. A label that is not `capstan:blocked`, including
 a label named `blocked`, does not refuse the invocation and is not removed.
 
-Review exhaustion is the one technical blocked overlay. Apply it only at
-[code-review convergence](review-convergence.md)'s configured round ceiling with
-effective blockers still open. It is not evidence that a person must diagnose or
+Review exhaustion is the one technical blocked overlay.
+[Code-review convergence](review-convergence.md) states when it applies
+("## Bounded rounds and recurrence", "## Coordinator-evidence findings").
+It is not evidence that a person must diagnose or
 repair the code. Its published resume conditions are a materially different
 candidate repair, a policy/spec change, or an explicit trusted disposition.
 
