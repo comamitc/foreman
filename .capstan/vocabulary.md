@@ -68,6 +68,8 @@
 
 **Blocked overlay**: the `capstan:blocked` label Capstan adds beside the stage label. Rejected: a label named `blocked`, or a GitHub issue dependency.
 
+**Denied spec publish**: an outcome of the triage spec publish. The rule owner is `references/triage.md` ("A denied spec publish is a host permission refusal"). Rejected: a GitHub API error from a command that ran.
+
 **Publication boundary**: the point after local code review converges and base freshness is confirmed, when Capstan first pushes the exact reviewed candidate and creates or reconciles the pull request. Rejected: every implementing or fix completion.
 
 **Local CI**: the declared checks run on the local machine during the local loop, including tests and the other commands the plan or repository conventions already name. Rejected: a GitHub Actions replay or a workflow parser.
