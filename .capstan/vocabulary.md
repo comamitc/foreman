@@ -142,7 +142,9 @@
 
 **Verified delivery**: a delivery that reached `capstan:ready-to-deploy` with its live gate verified. The rule owner is `references/modes/improvement.md` ("Resource comparison."). Rejected: a merged PR, a draft, or an attempt that stopped blocked.
 
-**Launch builder**: `scripts/launch.sh`. It writes and checks the run script for one Claude or Codex worker launch from structured inputs. Rejected: a builder that launches, supervises, or redacts workers.
+**Launch builder**: `scripts/launch.sh`. It writes and checks the run script for one Claude or Codex worker launch from structured inputs. Rejected: a builder that launches or supervises workers.
+
+**Probe capture**: the record a probe run script writes about its own run. The rule owner is `references/harnesses/shared.md` ("## Launch probe"). Rejected: a capture the coordinator writes ad hoc per probe.
 
 **Policy row**: the `ledger.md` row that records one quoted repository rule, its applicability, how it was satisfied, its evidence and head, and its state. The rule owner is `references/telemetry.md`. Rejected: a policy-register file.
 
