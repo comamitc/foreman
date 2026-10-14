@@ -56,8 +56,8 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    criteria, Open findings `none — no review yet`, Checks the repository commands the coordinator observed or `none
    observed`, and Named files the affected functions and callers as excerpts.
    Trace existing behavior from those excerpts and cite concrete patterns rather
-   than assuming a framework or file structure. A path the pack does not name is a gap under Risks and unresolved
-   items. Record the initial head and worktree status. [templates/brief.md](../templates/brief.md) ("## Worker constraints")
+   than assuming a framework or file structure. Record the initial head and
+   worktree status. [templates/brief.md](../templates/brief.md) ("## Worker constraints")
    governs reads and the operation count; the ceiling in the brief header applies to
    both planning steps.
 2. Name input/output and data shapes before implementation mechanics. Apply
