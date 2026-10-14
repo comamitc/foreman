@@ -33,18 +33,15 @@ URL creates no issue. Empty text creates no issue. Do not read a filesystem
 path. Do not use the surrounding transcript.
 
 The created issue is the delivery identity. This one create is the only added
-authority. An ordinary delivery does not create issues. Text intake does not
-enter init and does not run init.
+authority. An ordinary delivery does not create issues.
 
 An outcome mode files issues only where its mode file grants it: [improvement](modes/improvement.md) ("An issue is published only after an explicit improvement invocation") and [correction](modes/correction.md) ("This file owns correction").
 
-The create-time title is the provisional title. It is the first non-empty line of the preserved original request, at most 256 characters. On the `gh issue edit` that publishes the admitted spec, pass `--title` only when the live title still equals that provisional title and the Problem cut is non-empty. If the live title does not equal that provisional title, omit `--title`. If the live title equals that provisional title and the Problem cut is empty, omit `--title` and still publish the spec body. A title a person already changed stays as it is. An issue opened by URL or number uses this same comparison. Do not read the surrounding transcript.
+The create-time title is the provisional title: the first non-empty line of the preserved original request, at most 256 characters. On the `gh issue edit` that publishes the admitted spec, pass `--title` only when the live title still equals that provisional title and the Problem cut is non-empty. Otherwise omit `--title` and still publish the spec body. A title a person already changed stays as it is. An issue opened by URL or number uses this same comparison. Do not read the surrounding transcript.
 
-When `--title` is set, its value is the first sentence of the admitted Problem section. Use the Problem body under that heading and before the next heading. Use the first non-empty paragraph. A paragraph is a maximal run of non-blank lines. If the Problem body has no such paragraph, the cut is empty. If the paragraph contains `.`, `!`, or `?`, keep the text through the first of those characters. If it does not, keep the paragraph. Trim each kept line, drop a line that becomes empty, and join the remaining lines with one space. Trim the ends. If the result is longer than 256 characters, keep the first 256 characters. If the result is empty, omit `--title` on that same publishing edit. Still publish the spec body. The empty cut is not a successful title write. Record the empty cut in the publication record that triage step 5 already requires. Do not send an empty title. Do not send `--title` on a later edit.
+The `--title` value is the Problem cut, the first sentence of the admitted Problem section. Take the first non-empty paragraph (a maximal run of non-blank lines) of the body under that heading and before the next heading; with no such paragraph, the cut is empty. Keep the text through the first `.`, `!`, or `?`, or the whole paragraph when it has none. Trim each kept line, drop a line that becomes empty, join the rest with one space, and trim the ends. Keep at most the first 256 characters. An empty result is an empty cut. An empty cut is not a successful title write; record it in the publication record that triage step 5 already requires. Do not send an empty title. Do not send `--title` on a later edit.
 
-Read the title back after that edit. If `--title` was sent, the read-back title must equal the sent title. If `--title` was omitted, the read-back title must equal the live title from before the edit. A mismatch is not a successful publish. An empty cut is not a reason to skip the spec publish. Do not send a second edit to change the title.
-
-[references/recovery.md](recovery.md) owns blocked-overlay removal.
+Read the title back after that edit. It must equal the sent `--title`, or, when `--title` was omitted, the live title from before the edit. A mismatch is not a successful publish. Do not send a second edit to change the title.
 
 | Item | Stable identity |
 | --- | --- |
@@ -59,14 +56,17 @@ Read the title back after that edit. If `--title` was sent, the read-back title 
 
 Titles never participate in identity. Resolve the primary repository location
 from `git worktree list --porcelain` rather than nesting worktrees in worktrees.
-Use a fresh worktree for a new issue; continue an existing matching issue
-worktree. Never switch the shared checkout or edit the integration branch there.
-Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run. For example, a repository whose resolved base is `main` fetches `origin/main`. Immediately after a successful fetch, record the SHA of that ref. Create the worktree from that SHA. Local `<base>`, an unfetched `origin/<base>`, and `origin/HEAD` are not valid parents. If the fetch fails, stop. Do not create the worktree from local `<base>`. An existing `capstan/N` worktree is not rebased or recreated. Do not fast-forward, switch, or edit the shared checkout.
-Inspect and resolve the base before that fetch. Edit product files only after the worktree exists. If the matching issue worktree already exists, continue it without rebasing or recreating it. If the matching `capstan/N` branch exists and no matching worktree is attached, do not continue a missing worktree and do not run `git worktree add -b` again. Use the existing rule in the next sentences: attach that branch without `-b`. OpenClaw stays in the original checkout. Read-only research that edits no product file does not need a new worktree.
-When absent, create it with `git worktree add -b capstan/N ./.worktrees/capstan+N <recorded-sha>`
-from the repository root. Its parent is the recorded SHA, not the ref name alone. If a matching branch
-already exists, attach that branch without `-b`. Preserve dirty work and human
-commits. An unrelated branch, worktree, or PR occupying the identity is a
+Never switch, fast-forward, or edit the shared checkout or the integration branch
+there. OpenClaw stays in the original checkout. Read-only research that edits no
+product file does not need a new worktree.
+
+Inspect and resolve the base first. Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run; a repository whose resolved base is `main` fetches `origin/main`. Immediately after a successful fetch, record the SHA of that ref. Local `<base>`, an unfetched `origin/<base>`, and `origin/HEAD` are not valid parents. If the fetch fails, stop; do not create the worktree from local `<base>`. Edit product files only after the worktree exists.
+
+- Matching issue worktree exists: continue it. Do not rebase or recreate it.
+- Matching `capstan/N` branch exists with no worktree attached: attach that branch without `-b`. Do not run `git worktree add -b` again.
+- Neither exists: from the repository root, run `git worktree add -b capstan/N ./.worktrees/capstan+N <recorded-sha>`. Its parent is the recorded SHA, not the ref name.
+
+Preserve dirty work and human commits. An unrelated branch, worktree, or PR occupying the identity is a
 collision, not permission to overwrite it. Observe ancestry, marked comments,
 and ownership; ask for disposition only if both intents cannot be preserved.
 
@@ -89,8 +89,6 @@ A host or user instruction file does not change a Capstan delivery's completion 
 
 ## Read-only invocations
 
-This section owns read-only invocations: their dispatch, the keyword table, the rules every read-only invocation follows, and the report finding shape.
-
 Trim the invocation and split it on whitespace into tokens. An invocation whose first token equals a keyword in the table below, byte for byte, and whose remaining tokens all match the argument grammar its row points to, is a read-only invocation. Load only the mode file that row names and follow it. Any other invocation, including prose that starts with a keyword, is not a read-only invocation and follows "## Identity and authority" unchanged.
 
 | Keyword | Mode file | Argument grammar owner |
@@ -103,7 +101,7 @@ Trim the invocation and split it on whitespace into tokens. An invocation whose 
 
 This table is the only list of read-only keywords. A keyword is one lowercase word that is not an issue number or an allowed override. A new read-only mode adds its row here and owns its argument grammar in its mode file.
 
-`init` is not a read-only keyword and has no row in this table. The read-only rules below do not apply to init. "### Init" owns the init invocation.
+`init` is not a read-only keyword and has no row in this table. The read-only rules below do not apply to init.
 
 Every read-only invocation follows these rules. A mode file may state a stricter rule, never a weaker one.
 
@@ -189,8 +187,7 @@ and attempt lines disambiguate artifacts; no digest or schema protocol is needed
 The admitted body keeps product content concise; machine identifiers belong in
 the hidden marker and evidence comments, not repeated product prose.
 Activity, summary, and disposition shapes are prose-defined here, in review
-convergence, and in telemetry; no additional
-template or rigid format is required.
+convergence, and in telemetry; add no template.
 
 Inspect all paginated comments and exact markers before publishing. Preserve
 history by appending a new revision comment when judgment changes. On an
@@ -226,8 +223,6 @@ Exactly one stage label should exist, with optional `capstan:blocked` overlay.
 Create missing labels idempotently: inspect `gh label list --repo OWNER/REPO`,
 then `gh label create capstan:STAGE --repo OWNER/REPO --color 1d76db --description 'Capstan: STAGE'`
 only when absent. If creation races, re-read instead of treating it as fatal.
-Label creation during delivery remains required. Init is outside the delivery
-loop and does not replace that create. A missing `.capstan.json` still delivers.
 Use `gh issue edit N --repo OWNER/REPO --add-label capstan:NEXT --remove-label capstan:OLD`
 for observed old Capstan stage labels. Preserve every unrelated label. Read back
 with `gh issue view N --repo OWNER/REPO --json labels`. Multiple or stale stage
@@ -235,8 +230,8 @@ labels are repaired from evidence and recorded, never treated as a terminal erro
 
 After a successful ready projection, add `capstan:ready-to-deploy` to the marked
 pull request with
-`gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`.
-That add has no `--remove-label`. Read the issue labels back with
+`gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`, with no
+`--remove-label`. Read the issue labels back with
 `gh issue view N --repo OWNER/REPO --json labels` and the pull-request labels
 with `gh pr view PR --repo OWNER/REPO --json labels`. Then read remote heads,
 base heads, and live pull-request state again with the step 5 query and its
@@ -270,13 +265,11 @@ stale ready label. Repair the issue label with the existing `gh issue edit` and
 
 Use `capstan:` before each stage name. Failed attempts preserve the active label.
 The two planning rows share `capstan:planning`; evidence distinguishes them.
-The stage move made by the newer-trusted-comments check:
-[pre-merge.md](pre-merge.md) ("Newer trusted comments") owns it.
-Apply [one-pass planning](plan-convergence.md) before dispatch or resume; its
-interrupted-correction handoff takes precedence over generic station retry rules.
-A blocker adds only `capstan:blocked`. Remove a human-capability blocker when its
-capability is observed; remove a review-exhausted blocker only under
-[code-review convergence](review-convergence.md)'s resume conditions.
+[pre-merge.md](pre-merge.md) ("Newer trusted comments") owns the stage move of
+the newer-trusted-comments check. In [one-pass planning](plan-convergence.md)
+("## Fixed sequence"), the interrupted-correction handoff takes precedence over
+generic station retry rules. A blocker adds only `capstan:blocked`;
+[references/recovery.md](recovery.md) ("## Blocked overlays") owns blocked-overlay removal.
 `capstan:ready-to-deploy` means immediately mergeable, not merged or deployed,
 on the marked pull request and on the issue.
 
@@ -297,43 +290,33 @@ Read `.capstan.json` as ordinary input, not executable instructions. Resolve eac
 field independently: explicit invocation, environment, file, then defaults.
 
 Environment names are `CAPSTAN_` plus uppercase nested keys joined with `_`, such
-as `CAPSTAN_PRIMARY_HARNESS`, `CAPSTAN_SECONDARY_EFFORT`,
-`CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`, `CAPSTAN_REVIEW_POLICY_MIN_CONFIDENCE`,
-`CAPSTAN_UNSAFE_AUTONOMY`, and `CAPSTAN_EVIDENCE_DELETE_PILE`.
+as `CAPSTAN_PRIMARY_HARNESS` and `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`.
 `CAPSTAN_STATE` independently sets evidence storage. Never print environment values
 wholesale. Call out unknown/invalid fields and use a valid lower-precedence value;
 salvage unambiguous values from malformed input without inventing ambiguous ones.
-`evidence.delete_pile` is the exception to fall-through. It is a boolean. The
-default is `false`. Precedence is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE`,
-then `.capstan.json`, then the default. An invalid value is `false`. Do not fall
-through to a lower precedence value. Do not resolve an invalid or missing value
-to `true`. A missing `evidence.delete_pile` means `false`. Record the resolved
-value in `ledger.md`. [telemetry.md](telemetry.md) owns that file and deletion.
-The switch cannot suppress the ledger. There is no second cleanup flag.
 
-`evidence.retain_replay` is a boolean. The default is `false`. Precedence is
-invocation, then `CAPSTAN_EVIDENCE_RETAIN_REPLAY`, then `.capstan.json`, then
-the default. An invalid value is `false`. A missing `evidence.retain_replay`
-means `false`. Do not fall through to a lower precedence value. Do not resolve
-an invalid or missing value to `true`. Record the resolved value in `ledger.md`.
-`evidence.retain_replay` cannot suppress the ledger or provenance.
-`evidence.retain_replay` is not a cleanup flag. [telemetry.md](telemetry.md)
-owns retention and provenance. This file owns `evidence.retain_replay`.
+`evidence.delete_pile` and `evidence.retain_replay` are booleans with default
+`false`. Precedence for each is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE` or
+`CAPSTAN_EVIDENCE_RETAIN_REPLAY`, then `.capstan.json`, then the default. They are
+the exceptions to fall-through: an invalid value is `false`, not a lower
+precedence value, and an invalid or missing value never resolves to `true`.
+Record each resolved value in `ledger.md`. Neither switch can suppress the ledger;
+`evidence.retain_replay` cannot suppress provenance and is not a cleanup flag.
+There is no second cleanup flag. [telemetry.md](telemetry.md) ("This file owns the ledger, deletion, retention, and provenance.")
+owns the ledger, deletion, retention, and provenance. This file owns `evidence.retain_replay`.
 
-`review_policy.residual_effect_approval` is a boolean. The default is `false`.
+`review_policy.residual_effect_approval` is a boolean with default `false`.
 Precedence is invocation, then `CAPSTAN_REVIEW_POLICY_RESIDUAL_EFFECT_APPROVAL`,
-then `.capstan.json`, then the default. An invalid value is called out and falls
-through to the next valid source, per the rule above. Record the resolved value
-in `ledger.md`. When it resolves to `false`, every station behaves as before.
-[pre-merge.md](pre-merge.md) step 4 owns the residual-effect approval it enables.
+then `.capstan.json`, then the default; an invalid value is called out and falls
+through. [pre-merge.md](pre-merge.md) step 4 owns the residual-effect approval
+`true` enables; `false` enables nothing.
 
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
 `.capstan/features` when that directory contains `README.md`. `features: null`
 disables the map. It does not fall through to `.capstan/features`. An absent
 `features` field is not `features: null`. A missing explicit path is recorded in
-`ledger.md`. The run
-continues with no map. A delivery with no map still completes.
+`ledger.md`, and the run continues with no map.
 Capstan does not generate a map during an ordinary issue. Do not copy the map into a host skill
 directory.
 
@@ -344,12 +327,6 @@ harness name, a host skill path, or another section does not satisfy the shape.
 No Launch, Doctor, Evidence, Cleanup, or Helpers section.
 
 [references/implementing.md](implementing.md) owns the feature-map write.
-
-[references/modes/feature-map-adoption.md](modes/feature-map-adoption.md) ("This file owns feature-map adoption") owns feature-map adoption.
-
-[references/modes/feature-map-audit.md](modes/feature-map-audit.md) ("This file owns the feature-map audit") owns the feature-map audit.
-
-[references/modes/adr.md](modes/adr.md) ("This file owns the ADR rule") owns the ADR rule.
 
 Defaults: primary claude; secondary codex; optional fallback grok; model and effort
 null; transient_retries 3; same_failure_attempts 2;
@@ -367,15 +344,12 @@ recorded as such. Null fallback disables it. Prefer a different available second
 if only one harness works, disclose `independence: same-harness`. An explicitly
 requested unavailable setting fails visibly and enters recovery; never silently
 drop an effort setting. Record effective nonsecret configuration in `ledger.md`.
-[telemetry.md](telemetry.md) owns that file.
 
-`recovery.plan_revision_attempts` and `CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS`
-are retired and handled like any unknown field: called out and ignored.
-
-`recovery.max_cost_usd` and `CAPSTAN_RECOVERY_MAX_COST_USD` are retired and
-handled like any unknown field: called out, ignored, and recorded in `ledger.md`,
-including as an invocation override. A set value does not trigger a budget
-decision.
+`recovery.plan_revision_attempts`, `recovery.max_cost_usd`, and their
+`CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS` and `CAPSTAN_RECOVERY_MAX_COST_USD`
+variables are retired and handled like any unknown field: called out and ignored.
+A retired cost field, including an invocation override, is also recorded in
+`ledger.md` and never triggers a budget decision.
 
 The only run budget is wall time (`recovery.run_wall_timeout_min`). Budget begins
 when the run is accepted and survives ordinary resume through remote
@@ -384,10 +358,10 @@ earliest reliable run evidence. Do not invent prices or usage.
 
 ### Init
 
-Init is outside the delivery loop. It runs only on an explicit init invocation.
-A delivery, a resume, and an issue number do not enter init. Init is not a binary
-and not a station. Init is not a gate. Delivery remains valid without init. A
-missing `.capstan.json` still delivers. Label creation during delivery remains
+Init is outside the delivery loop and runs only on an explicit init invocation;
+a delivery, a resume, and an issue number do not enter init. Init is not a binary,
+a station, or a gate. Delivery remains valid without init: a missing
+`.capstan.json` still delivers, and label creation during delivery remains
 required.
 
 This section owns the init invocation. An invocation that, trimmed and split on
@@ -401,23 +375,19 @@ Probe each harness CLI on `PATH` with that CLI's documented help command from th
 named checkout. Recommend a primary and a different secondary only from CLIs that
 answered. Do not invent a model, effort, or harness. When the observed primary
 and a different observed secondary are unambiguous, select that pair and report
-it. Do not ask. Do not prompt. Ask only when the probe is ambiguous. Ask that one
-pair and recommend an observed answer. Keep timeouts and `unsafe_autonomy`
-at the documented defaults in this section. The invoking host does not become
+it without asking. Ask only when the probe is ambiguous: ask that one pair and
+recommend an observed answer. The invoking host does not become
 primary merely because it ran init.
 
-If `.capstan.json` is absent, exclusive-create it in the named checkout. Write
-only `primary`, `secondary`, and `fallback`, plus the documented recovery
-defaults. Set model and effort to null. Set `fallback` to null when no third
-observed harness exists. Set `unsafe_autonomy` to false. Do not write
-`evidence.delete_pile`. A missing `evidence.delete_pile` means `false`.
-Do not write `evidence.retain_replay`. Leave the file
-uncommitted. Do not switch branches. Do not commit, push, or open a pull request.
-The write is allowed on `main` and stays uncommitted. Exclusive create writes the
-new file only when it is absent. If the file is present before the write finishes,
-do not replace it. Resolve the repository with
-`gh repo view --json nameWithOwner,defaultBranchRef` from that checkout. Do not
-start init from an issue number.
+If `.capstan.json` is absent, exclusive-create it in the named checkout: if the
+file is present before the write finishes, do not replace it. Write only
+`primary`, `secondary`, and `fallback`, plus the documented recovery defaults.
+Set model and effort to null, `fallback` to null when no third observed harness
+exists, and `unsafe_autonomy` to false. Do not write `evidence.delete_pile` or
+`evidence.retain_replay`. The write is allowed on `main`. Leave the file
+uncommitted; do not switch branches, commit, push, or open a pull request.
+Resolve the repository with `gh repo view --json nameWithOwner,defaultBranchRef`
+from that checkout.
 
 If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
 replace, or use `--force`. Report that the file already exists.
@@ -428,9 +398,6 @@ Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
 `capstan:blocked`. Create only absent labels with the stage-projection command
 above. Re-read a race. Do not add or remove any other label.
 
-Init writes no secrets, no evidence directory, no worktree, and no feature map.
-Init does not write `features`. Init does not edit product source. The
-`.capstan.json` write is init configuration, not a product-source edit and not a
-delivery commit.
-
-[references/publication.md](publication.md) owns publication.
+Init writes no secrets, evidence directory, worktree, feature map, or `features`
+field, and edits no product source. The `.capstan.json` write is init
+configuration, not a product-source edit and not a delivery commit.

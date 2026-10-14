@@ -6,16 +6,11 @@ disable-model-invocation: true
 
 # Capstan
 
-[references/contract.md](references/contract.md) owns text intake. [references/recovery.md](references/recovery.md)
-owns blocked-overlay removal.
-
 You are the coordinator. Own observation, user decisions, worker delegation,
 GitHub mechanics, and verification. Workers author product changes and commits.
 Finish at an open, immediately mergeable PR. Never merge or deploy.
 
-Before step 1, read [contract](references/contract.md) "## Read-only invocations". If it dispatches the invocation, load only the mode file its keyword row names and follow it; do not run this loop.
-
-Before step 1, also read [contract](references/contract.md) "### Init". If the invocation is the init invocation that section owns, run init as that section defines it; do not run this loop.
+Before step 1, read [contract](references/contract.md) "## Read-only invocations" and "### Init".
 
 ## Coordinator loop
 
@@ -27,14 +22,14 @@ Before step 1, also read [contract](references/contract.md) "### Init". If the i
    the first paragraph of each file under [references/modes/](references/modes/).
    Load a mode file only when its trigger holds, extract that file's applicable
    rules into the pack, and follow its coordinator rules yourself.
-   Workers do not read mode files. Repair contradictory labels.
+   Workers do not read mode files.
    For planning, plan-review, or their resume, apply [one-pass planning](references/plan-convergence.md)
-   before dispatch: initial plan → review → single all-findings correction → implementing.
+   before dispatch.
 3. **Brief.** Before consuming issue content or writing a worker brief, read
    [security](references/security.md). Use [brief](templates/brief.md) with the
    admitted spec, numbered station steps, a checkable completion criterion, and
    one pack per launch, sized to the unit (compact for a one-file, one-check unit)
-   and named in the brief as the worker's task reading; [references/harnesses/shared.md](references/harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+   and named in the brief as the worker's task reading.
    Extract the applicable rules into the pack; never paste a conventions file.
 4. **Delegate.** Triage is interactive coordinator work. Before you dispatch a
    write station (implementing or fix) or a review station (plan-review or
@@ -45,7 +40,6 @@ Before step 1, also read [contract](references/contract.md) "### Init". If the i
    outside the product worktree. Read stations get a numeric turn ceiling in the
    brief; write stations read only the task files the pack names; [references/harnesses/shared.md](references/harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
    Supervise the process until exit or recorded handoff.
-   [references/telemetry.md](references/telemetry.md) owns the host status line.
 5. **Verify.** Inspect actual results, commands, commits, diff, and GitHub.
    [references/harnesses/shared.md](references/harnesses/shared.md) owns result acceptance.
    Before pushing a write-station candidate, apply [finding resolution's closure
@@ -59,11 +53,10 @@ Before step 1, also read [contract](references/contract.md) "### Init". If the i
 7. **Record.** Publish the station artifact with its revision or SHAs. Read
    [telemetry](references/telemetry.md) to record attempts and evidence. A telemetry
    failure is a reported gap, never a veto on delivery.
-   [references/telemetry.md](references/telemetry.md) owns the host status line.
-8. **Advance and re-observe.** Only after result acceptance owned by
-   [references/harnesses/shared.md](references/harnesses/shared.md) holds, project
+8. **Advance and re-observe.** Only after step 5's result acceptance holds, project
    the next stage label and read it and external state back. Repeat the loop.
-   [references/telemetry.md](references/telemetry.md) owns the host status line.
+
+[references/telemetry.md](references/telemetry.md) ("Host status line rule") owns the host status line for steps 4, 7, and 8. [references/telemetry.md](references/telemetry.md) ("Emission follows the summary read-back.") owns stage-analysis emission.
 
 | Station | Reference | Owner |
 | --- | --- | --- |
@@ -76,7 +69,7 @@ Before step 1, also read [contract](references/contract.md) "### Init". If the i
 | fix | [fix](references/fix.md), [code-review convergence](references/review-convergence.md), only for effective blockers | fresh primary |
 | pre-merge | [pre-merge](references/pre-merge.md) | coordinator and repair workers |
 
-Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run. For example, a repository whose resolved base is `main` fetches `origin/main`. Immediately after a successful fetch, record the SHA of that ref. Create the worktree from that SHA. Local `<base>`, an unfetched `origin/<base>`, and `origin/HEAD` are not valid parents. If the fetch fails, stop. Do not create the worktree from local `<base>`. An existing `capstan/N` worktree is not rebased or recreated. Do not fast-forward, switch, or edit the shared checkout.
+[contract](references/contract.md) "## Identity and authority" owns the fetch-then-worktree order.
 
 Stop only at verified `capstan:ready-to-deploy`, a verified review-exhausted
 blocked overlay, a typed human capability or budget decision from recovery, or
@@ -85,11 +78,3 @@ activity markers call for bounded waiting and observation, not abandonment.
 A correction invoker's answer that picks nothing to fix now is user cancellation after filing; [correction](references/modes/correction.md) ("Filing-only end") owns that end.
 On resume, [references/recovery.md](references/recovery.md) owns blocked-overlay
 removal. A formerly ready PR must satisfy the live gate again.
-
-[references/telemetry.md](references/telemetry.md) owns stage-analysis emission.
-
-## Init
-
-[references/contract.md](references/contract.md) owns init.
-
-[references/publication.md](references/publication.md) owns publication.
