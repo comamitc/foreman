@@ -1,7 +1,7 @@
 # Claude Code adapter
 
 Native counter: `num_turns` (assistant turns), not operations: a turn may batch
-several tool calls, and the json result carries no tool-call count. The worker's
+several tool calls. Tool-call count evidence: #12. The worker's
 list is the count.
 
 ```sh
@@ -20,7 +20,7 @@ This file owns the write-station grant. Pass `--add-dir` for the `RESULT_DIR`
 subdirectory, the `BRIEF_DIR` subdirectory, and each evidence subdirectory the
 pack names for reading. Do not pass the evidence root. Do not pass `$HOME`.
 
-The coordinator grants host-directed files read-only. Before the launch probe it reads `~/.claude/CLAUDE.md`, the source, and takes each inline code span whose whole content is a path that starts with `~/` or `/`, one level deep: it does not follow paths named inside the files it grants, and it ignores fenced code blocks. For each named path, E is the path with a leading `~` replaced by `$HOME`, and R is the output of `realpath E`, which resolves every symlink. The first reason that applies skips the path: `missing` when `test -e E` fails; `directory` when R is a directory; `not a regular file` when R is not a regular file; `unreadable` when R is not readable; `inside the worktree` when R is at or under the `realpath` of the worktree; `unsafe path` when E or R holds a character other than a letter, a digit, `/`, `.`, `_`, `-`, `+` or `@`, or an empty, `.` or `..` segment. Otherwise E gets one `--allowedTools` entry of the form `Read(//ABSOLUTE/PATH)`, a single file: `/home/u/notes.md` becomes `Read(//home/u/notes.md)`. When R differs from E, R gets a second entry for the same file. A path named twice is taken once. Nothing else is granted for host files: no `--add-dir` for `$HOME`, the evidence root, or the directory of a host file, and no write access. Read stations and other harnesses take no such entry. Probed 2026-09-30 on claude 2.1.284 under this recipe: the `Read(//home/mcomardo/.agent-operating-contract.md)` entry let that Read succeed; a Read of `~/.bashrc`, and an Edit and a Write of the granted file, were `permission_denials` entries, and the file's hash was unchanged. A Read of a symlink was denied with only the link or only its target granted, and succeeded with both.
+The coordinator grants host-directed files read-only. Before the launch probe it reads `~/.claude/CLAUDE.md`, the source, and takes each inline code span whose whole content is a path that starts with `~/` or `/`, one level deep: it does not follow paths named inside the files it grants, and it ignores fenced code blocks. For each named path, E is the path with a leading `~` replaced by `$HOME`, and R is the output of `realpath E`, which resolves every symlink. The first reason that applies skips the path: `missing` when `test -e E` fails; `directory` when R is a directory; `not a regular file` when R is not a regular file; `unreadable` when R is not readable; `inside the worktree` when R is at or under the `realpath` of the worktree; `unsafe path` when E or R holds a character other than a letter, a digit, `/`, `.`, `_`, `-`, `+` or `@`, or an empty, `.` or `..` segment. Otherwise E gets one `--allowedTools` entry of the form `Read(//ABSOLUTE/PATH)`, a single file: `/home/u/notes.md` becomes `Read(//home/u/notes.md)`. When R differs from E, R gets a second entry for the same file. A path named twice is taken once. Nothing else is granted for host files: no `--add-dir` for `$HOME`, the evidence root, or the directory of a host file, and no write access. Read stations and other harnesses take no such entry. Host-grant probe evidence: `references/harnesses/claude.md` at `cd38fa1`.
 
 The coordinator records one ledger notes line before the launch probe. With a grant it is `Host grant: E, E2 -> R2; skipped P (REASON), …`, where `E2 -> R2` is a path granted with its resolved target, P is a skipped path as the source names it, and the skipped part is left out when nothing is skipped. With no grant it is `Host grant: no host-directed files; skipped P (REASON), …` when every named path is skipped, `Host grant: no host-directed files; source names no path` when the source names none, and `Host grant: no host-directed files; source missing`, `source not a regular file`, or `source unreadable` when `test -e`, `test -f`, or `test -r` on the source fails, checked in that order. A skipped path or source does not block delivery. `scripts/launch.sh grant` applies this rule and prints this line.
 
@@ -28,7 +28,7 @@ With no grant, the write probe uses the write-probe prompt in [references/harnes
 
 Before any output of a run under a host grant is written, the streaming redaction step of [references/security.md](../security.md) rule 6 also removes host-file text. It replaces with `[host file content removed]` the `content` of each `tool_result` that answers a Read and whose `is_error` is not true, and the `tool_use_result` of that event. It replaces with `[removed]` each assistant `text` or `thinking` block and the `result` field unless it is exactly `CAPSTAN_PROBE_OK`, and each field that carries a tool's arguments, whether it is named `input`, `tool_input`, or `wire_tool_inputs` or otherwise, other than a Bash `command` and a `file_path`. It keeps each tool name, `id`, `tool_use_id`, `is_error`, `file_path`, and `permission_denials` entry.
 
-Bite restore is `git restore -- <path>`. `git checkout` is not the restore path. The coordinator adds one `--allowedTools` entry for each declared check, verbatim. Probed 2026-09-25 on claude 2.1.278: `Bash(git status *)` and `Bash(git restore -- *)` ran, and `Bash(git checkout *)` was the only `permission_denials` entry. This host did not re-run PraxisIQ/fuseiq-core#500.
+Bite restore is `git restore -- <path>`. `git checkout` is not the restore path. The coordinator adds one `--allowedTools` entry for each declared check, verbatim. Bite-restore probe evidence: PR #111.
 
 Use the worktree as cwd. Add `--model MODEL` and `--effort EFFORT` only when
 configured. Use `--setting-sources ''` to exclude unrelated project/user settings
@@ -40,8 +40,8 @@ approves file edits, not every shell command. For read stations use
 `--disallowedTools` spellings `Bash(grep -r*)`, `Bash(grep -R*)`,
 `Bash(grep --recursive*)`, `Bash(grep --dereference-recursive*)`, `Bash(rg *)`,
 and `Bash(find *)`, with `--permission-prompts none`; return results in stdout.
-Deny rules beat allow rules. Probed 2026-09-22 at `1af7446`: recursive-form denies let the exact check
-run and denied `grep -rn`, listed in `permission_denials`. `dontAsk` returned
+Deny rules beat allow rules.
+Read-station deny probe evidence: commits 5542194 and 1af7446. `dontAsk` returned
 nothing within five minutes in the 2026-09-22 probe; do not use it. No turn-cap
 flag exists; the brief ceiling is the control. Never use bypassPermissions or
 skip-permission flags without explicit unsafe_autonomy. Claude 2.1.278 is not a
@@ -53,8 +53,8 @@ and empty `permission_denials`. This host did not reproduce that result. Do not
 set `unsafe_autonomy`.
 
 Observed JSON fields: `session_id`, `result`, `is_error`, `permission_denials`,
-`duration_ms`, `num_turns`, `usage`, `modelUsage`, `total_cost_usd`. A successful
-probe returned `{"type":"result","subtype":"success","result":"CAPSTAN_PROBE_OK"}`.
+`duration_ms`, `num_turns`, `usage`, `modelUsage`, `total_cost_usd`.
+Probe JSON example: `references/harnesses/claude.md` at `cd38fa1`.
 Inspect permission denials even if the process exits zero.
 [references/telemetry.md](../telemetry.md) owns usage reporting.
 

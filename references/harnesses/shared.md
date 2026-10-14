@@ -1,9 +1,9 @@
 # Shared launch procedure
 
 Verify the selected installed CLI's `--version` and `--help` before using its
-adapter. Recipes were help-checked on 2026-09-22; model-only JSON probes
-succeeded for all four on 2026-09-21 and read-station recipes were behavior-probed
-on 2026-09-22. A probe is not proof that a task's filesystem/command permissions
+adapter.
+Recipe probe evidence: `references/harnesses/shared.md` at `cd38fa1`.
+A probe is not proof that a task's filesystem/command permissions
 work: the launch probe below verifies those in the issue worktree. Local CLI behavior is authoritative
 when a newer release changes flags.
 
@@ -112,7 +112,7 @@ Before the write probe, the coordinator runs `git status` once so the index's st
 
 A probe built with `scripts/launch.sh write` takes `--capture DIR`, and `--redact-env NAME` for each credential variable the launch environment carries whose name the builder's pattern does not match. Its run script writes the **probe capture**: `DIR/stdout` and `DIR/stderr` redacted before they are written, and `DIR/exit` with the harness exit status. When a capture stage fails, the script writes `DIR/capture-error` and exits 70. The probe is then a failure, and the record names the missing capture. The coordinator starts the script and judges the pass conditions from those files. A probe on a prose recipe is still captured and redacted by the coordinator before anything is written, as step 2 requires.
 
-A probe passes only when all of these hold: the process exits 0; the reported model response is exactly `CAPSTAN_PROBE_OK`; the harness reports no permission denial; the harness's own event record shows the commands the worker ran — for a write probe exactly one, `git add --refresh -- .`, with exit 0, and for a read probe none; and, for the write probe, no residue remains. The model's reply alone does not prove that a command ran. The Claude signals are the `tool_use` and `tool_result` events, then the `result` event with `is_error` false and an empty `permission_denials`. The Codex signals are `thread.started`, a `command_execution` item with its exit code for a write probe and none for a read probe, `turn.completed`, and the last-message file. The response proves the prompt arrived through stdin and that the harness authenticated. [references/telemetry.md](../telemetry.md) owns the ledger row.
+A probe passes only when all of these hold: the process exits 0; the reported model response is exactly `CAPSTAN_PROBE_OK`; the harness reports no permission denial; the harness's own event record shows the commands the worker ran — for a write probe exactly one, `git add --refresh -- .`, with exit 0, and for a read probe none; and, for the write probe, no residue remains. The model's reply alone does not prove that a command ran. The Claude signals are the `tool_use` and `tool_result` events, then the `result` event with `is_error` false and an empty `permission_denials`. The Codex signals are `thread.started`, a `command_execution` item with its exit code for a write probe and none for a read probe, `turn.completed`, and the last-message file. Probe-response evidence: #154. [references/telemetry.md](../telemetry.md) owns the ledger row.
 
 Any other outcome is a probe failure, including a process that exits with no result event. Its raw error is the exit status, the redacted stderr, and the redacted tail of stdout. Record it. No station worker of any role launches, and the run does not advance, until a new probe of the failed role's harness passes or a fallback that recovery selects for that role passes its probe. Recovery may launch a diagnosis worker only under a harness and recipe kind whose probe passed in this invocation; the fresh secondary in "Diagnosis and fallback" uses its read-station recipe. If no probe passed, no diagnosis worker launches. [references/recovery.md](../recovery.md) routes the failure. The stage label stays.
 

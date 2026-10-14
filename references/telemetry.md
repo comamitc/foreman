@@ -201,9 +201,7 @@ the invoking host session when an event-table event occurs. Shape:
 `capstan owner/repo#N · review · finding-census round 1: 2 blocking, 3 advisory → fix`.
 FACT is one observed value from that event's evidence. A value not observed is
 `unknown`. No estimates. A blocker line or a typed human decision line ends with
-what the operator must do. This narrows decision 3 of
-https://github.com/comamitc/capstan/issues/34: the stage-analysis table stays
-terminal-only, and one-line host status lines are allowed and required.
+what the operator must do. This rule (#134) narrows #34 decision 3.
 
 Supervision observations follow the same rule: a running worker, a silent-check
 wait, and the pre-merge CI wait. An observation posts a line only when it
@@ -263,7 +261,7 @@ resolution of `evidence.delete_pile` and owns `evidence.retain_replay`.
 write it, whether or not deletion is enabled. The attempt-table field rules
 above are the ledger row. The switch cannot suppress `ledger.md`.
 
-Ledger digest check: in the directory holding `ledger.md`, run `printf '%s  ledger.md\n' HEX | sha256sum -c -` or `printf '%s  ledger.md\n' HEX | shasum -a 256 -c -`, where HEX is the published `Ledger sha256:` value. It prints `ledger.md: OK` and exits 0 on a match, and prints `ledger.md: FAILED` and exits 1 otherwise. To check the published bytes instead, first recover them into an empty directory with `gh api repos/OWNER/REPO/issues/comments/ID --jq '.body | (split("\n\n</details>") | .[-2] | split("\n") | last) as $f | split("<summary>ledger.md</summary>\n\n" + $f + "\n") | last | split("\n" + $f + "\n") | first' > ledger.md`, then run the same command. The filter reads the fence from the comment's end and the last opening, so delimiter text inside the ledger or earlier in the summary does not cut the bytes short. A body with CRLF line endings fails recovery and the check. The digest is tamper-evident, not tamper-proof: a mismatch shows that the ledger or the published bytes changed after publication, and nothing prevents the change. Someone who can edit the comment can change both. It is not signing, attestation, or server enforcement.
+Ledger digest check: in the directory holding `ledger.md`, run `printf '%s  ledger.md\n' HEX | sha256sum -c -` or `printf '%s  ledger.md\n' HEX | shasum -a 256 -c -`, where HEX is the published `Ledger sha256:` value. It prints `ledger.md: OK` and exits 0 on a match, and prints `ledger.md: FAILED` and exits 1 otherwise. To check the published bytes instead, first recover them into an empty directory with `gh api repos/OWNER/REPO/issues/comments/ID --jq '.body | (split("\n\n</details>") | .[-2] | split("\n") | last) as $f | split("<summary>ledger.md</summary>\n\n" + $f + "\n") | last | split("\n" + $f + "\n") | first' > ledger.md`, then run the same command. Digest-filter evidence: #184. A body with CRLF line endings fails recovery and the check. The digest is tamper-evident, not tamper-proof: a mismatch shows that the ledger or the published bytes changed after publication, and nothing prevents the change. Someone who can edit the comment can change both. It is not signing, attestation, or server enforcement.
 
 This file owns the acceptance ledger row. Other files name this owner. Other
 files do not restate the row fields. The row is a ledger row in `ledger.md`.
