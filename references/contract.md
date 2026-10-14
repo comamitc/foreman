@@ -138,9 +138,9 @@ never adds:
 - a host-skill copy, per-host plugin, or marketplace directory;
 - an external skill dependency.
 
-Capstan's own behavior is a skill procedure executed by the coordinator. A
-Capstan init binary would violate the executable non-goal, not an
-implementation choice. The executable non-goal does not apply to a target
+Capstan's own behavior is a skill procedure executed by the coordinator.
+Init-binary evidence: `references/contract.md` at `cd38fa1`.
+The executable non-goal does not apply to a target
 repository unless that repository is Capstan. A delivery reads the target
 repository's own conventions. It does not import this rule into that
 repository. Permit only `git`, `gh`, existing harness CLIs, the coordinator's
@@ -254,8 +254,7 @@ and read the removal back with `gh pr view PR --repo OWNER/REPO --json labels`.
 Success is a read-back that does not contain the label. If the label remains,
 remove it once more on that pull request and read it back again. Do not leave a
 stale ready label. Repair the issue label with the existing `gh issue edit` and
-`gh issue view` stage rules. These sentences apply on the next ready projection
-after they are in force.
+`gh issue view` stage rules. Ready-label rollout evidence: #17.
 
 | Stage | Completion evidence | Next |
 | --- | --- | --- |
