@@ -56,7 +56,7 @@ Before step 1, read [contract](references/contract.md) "## Read-only invocations
 8. **Advance and re-observe.** Only after step 5's result acceptance holds, project
    the next stage label and read it and external state back. Repeat the loop.
 
-[references/telemetry.md](references/telemetry.md) ("Host status line rule") owns the host status line for steps 4, 7, and 8. [references/telemetry.md](references/telemetry.md) ("Emission follows the summary read-back.") owns stage-analysis emission.
+[references/telemetry.md](references/telemetry.md) ("Host status line rule") owns the host status line for steps 4, 7, and 8. [references/telemetry.md](references/telemetry.md) ("Emission follows the summary read-back.") owns the final message's attempt table.
 
 | Station | Reference | Owner |
 | --- | --- | --- |
