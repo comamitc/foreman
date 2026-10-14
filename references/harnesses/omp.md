@@ -3,7 +3,7 @@
 Native counter: `tool_execution_end`; `turn_end` is turns, not operations:
 cross-check telemetry for a tool call that reached execution end. A call that
 fails before execution, and result delivery that is only an assistant message,
-may be absent. `turn_end` is not operations. The worker's list is the count.
+may be absent.
 
 ```sh
 omp --cwd WORKTREE -p --mode json --approval-mode write \
@@ -23,8 +23,7 @@ use a temporary evidence-only `--config` overlay with exact task-specific
 without unsafe_autonomy, including an inherited yolo default.
 
 Observed NDJSON includes `session`, `message_end`, `turn_end`, `tool_execution_start`,
-`tool_execution_end`, and `agent_end`. Record `tool_execution_end` as cross-check
-telemetry, not as the operation count. `turn_end` counts turns. Assistant messages
+`tool_execution_end`, and `agent_end`. Assistant messages
 report model/provider and token usage. [references/telemetry.md](../telemetry.md) owns usage reporting. Count each completed assistant message once;
 later aggregate events can repeat the same messages. The probe initially produced
 thinking-only output before a final text response; inspect actual result text, not

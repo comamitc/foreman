@@ -25,8 +25,7 @@ when a newer release changes flags.
    A host-instruction read is not an operation: the worker lists it under `## Checks` as an unnumbered "Host-instruction read:" line, outside the ceiling.
    Before the read-station launch, observe how many lines one host read returns. If
    that page does not cover the pack, add one operation per page and name that count
-   in the brief. Do not discover the count after the review starts. One command
-   that reads several named files is one operation and finishes under that bound.
+   in the brief. Do not discover the count after the review starts.
    The worker's numbered list under `## Checks` is the operation count. The short
    launch prompt says: read this absolute brief, perform it, and write the result to
    this absolute path. `references/harnesses/codex.md` owns the stdin rule.
@@ -72,7 +71,7 @@ The station result records the coordinator's command, that exit code, and a summ
    [references/telemetry.md](../telemetry.md) owns the row fields ("The attempt table has these columns, in this order"),
    `unknown`, and the wall totals.
    Record the worker's operation count (its numbered lines under `## Checks`)
-   against the brief ceiling. That list is authoritative. Record each harness
+   against the brief ceiling. Record each harness
    native counter under its own name from the selected host file as cross-check
    telemetry. No native counter is the operation count, and none is compared
    with the ceiling. A completed event can be absent when a command fails before
