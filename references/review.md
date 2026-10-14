@@ -3,8 +3,7 @@
 The coordinator reads [finding resolution](findings.md) for new findings and
 prior-finding closure, then [code-review convergence](review-convergence.md) for
 policy, partitioning, ratchet, and round ceilings. It extracts the row format and
-applicable policy into the pack; the worker reads the brief and the pack, nothing
-else.
+applicable policy into the pack; the worker's task reading is the brief and the pack; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
 
 [references/contract.md](contract.md) owns feature-map resolution and heading shape.
 
