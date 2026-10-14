@@ -2,7 +2,7 @@
 
 Before dispatch, the coordinator applies [one-pass planning](plan-convergence.md),
 reads [finding resolution](findings.md) for the correction, and writes the pack;
-the worker reads the brief and the pack only.
+the worker's task reading is the brief and the pack; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
 
 Before writing the initial planning pack, the coordinator runs the history
 sweep once, with `git` and `gh` only. The window is the last 180 days; DATE is
