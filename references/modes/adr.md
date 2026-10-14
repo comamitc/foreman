@@ -12,7 +12,7 @@ A required ADR uses the repository's native format for context, decision, altern
 
 The new or superseding ADR lands in the same commit as the architectural behavior. Do not rewrite accepted historical ADR text to erase the earlier decision, except for a repository-permitted mechanical correction.
 
-[implementing](../implementing.md) writes only the paths the plan names.
+[implementing](../implementing.md) ("Write only the paths the plan names") owns the write scope.
 
 No convention and no explicit issue requirement means write no ADR and create no ADR infrastructure.
 

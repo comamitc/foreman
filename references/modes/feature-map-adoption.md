@@ -18,7 +18,7 @@ The index contains only user-facing features. Each feature file uses the heading
 
 Trace every seeded claim to current source, to existing authoritative docs, or to a runnable repository check. The map remains a claim. Omit an unverifiable claim, or report that claim as a gap.
 
-Name every file that adoption writes. [implementing](../implementing.md) writes only those files.
+Name every file that adoption writes. [implementing](../implementing.md) ("Write only the paths the plan names") owns the write scope.
 
 Do not install OpenSpec, AgentLens, a documentation generator, or another skill. Do not add a generated architecture encyclopedia.
 
