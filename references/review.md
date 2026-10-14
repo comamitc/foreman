@@ -52,11 +52,7 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    and the spec revision. Apply the effective policy and review ratchet extracted
    into the pack: round 1 covers the cumulative diff; later rounds verify prior
    effective blockers and the repair delta, with the policy's stated exceptions.
-   The pack carries every carried finding row with the
-   primary's proposed disposition and candidate location, not prior plan-review
-   essays or implementing narratives. The exception is each applicable red or
-   fault-injection observation carried under Checks as evidence already
-   recorded. [references/pack.md](pack.md) owns that carry.
+   [references/pack.md](pack.md) owns the finding rows the pack carries ("open prior code-review finding") and the carried evidence under Checks ("each applicable red or fault-injection").
    Confirm each citation's anchor under [references/pack.md](pack.md) ("Citation rule") and each row's
    original scenario against the saved diff; a citation that does not meet that rule is a
    finding. Run only the named checks and record the observed exit at HEAD. Callers

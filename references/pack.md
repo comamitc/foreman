@@ -23,6 +23,8 @@ carry reads `none` plus the reason.
 4. `## Open findings`: rows in the `references/findings.md` obligation format.
    Implementing and review packs carry every planning finding with its proposed
    treatment or refutation and unfinished items; never prior essays.
+   Review and fix packs for round 2 and later also carry every open prior code-review finding as a row in that format, with its disposition and, in a review pack, the primary's proposed disposition; never implementing narratives.
+   [Finding resolution](findings.md) ("Only independently verified dispositions close obligations") and [code-review convergence](review-convergence.md) ("An operator disposition must come from the explicit invocation") own when a prior code-review finding is closed; a closed prior code-review finding is not carried.
 5. `## Rules that apply`: sentences from repository instructions quoted with
    `path:line`. Never a whole file; never `CLAUDE.md`, the operating contract, or
    every caller pasted or pointed at for complete reading.
