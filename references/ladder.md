@@ -14,8 +14,6 @@ Rungs, highest first:
 6. one line
 7. the minimum that works
 
-Reach the minimum that works only when no earlier rung holds.
-
 ## Never-cut list
 
 Do not cut trust-boundary validation, handling that prevents data loss, security, accessibility basics, or any admitted requirement. An admitted acceptance criterion is an explicit request. Do not ship a smaller behavior and challenge the spec.

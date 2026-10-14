@@ -8,8 +8,7 @@ implementing and code review, not through repeated plan judgments.
 ## Fixed sequence
 
 One initial plan → one independent plan review → one correction pass covering the
-entire feedback set → implementing. If the review has no actionable findings,
-skip the correction. There is no second plan-review or planning escalation loop.
+entire feedback set → implementing. There is no second plan-review or planning escalation loop.
 
 | Observed evidence | Next action |
 | --- | --- |
@@ -52,9 +51,7 @@ Implementation must complete this mapping before affected code is written.
 
 Review severity alone does not stop implementation. Testable failure cases,
 cleanup protocols, checksums, validation, and other technical corrections become
-implementation tasks and regression checks. Code review independently verifies
-every carried finding against the resulting code and evidence. Code review applies
-[code-review convergence](review-convergence.md)'s effective policy.
+implementation tasks and regression checks.
 
 Only a demonstrated missing decision, authority, permission, credential, other
 human capability, or budget approval warrants [recovery](recovery.md)'s typed
