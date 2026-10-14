@@ -16,7 +16,7 @@ Preserve the target repository's authoritative documentation structure. A featur
 
 Change only verified stale or missing documentation. When no drift is found, reconcile the issue as a no-op. Do not manufacture a diff.
 
-Name every verified repair that the audit writes. [implementing](../implementing.md) writes only those repairs.
+Name every verified repair that the audit writes. [implementing](../implementing.md) ("Write only the paths the plan names") owns the write scope.
 
 The delivery uses the normal plan, implementation, review, and ready gate. The final summary lists the checked features, the proven repairs, the product-defect handoffs, the unresolved gaps, and the reviewer evidence.
 

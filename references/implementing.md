@@ -68,6 +68,8 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    [references/findings.md](findings.md) is the proof shape. Leave other
    existing tests alone unless test cleanup is the admitted task.
 3. Run each item's verification. Keep scope narrow; commit coherent changes.
+   Write only the paths the plan names. A path the plan does not name is a gap
+   reported under Risks and unresolved items, not a write.
    Triage reads the committed `.capstan/vocabulary.md` on `main` when it exists,
    after repository instructions and before a question. Implementation writes
    the file. An unmerged vocabulary edit is not evidence for a different issue.
@@ -75,9 +77,10 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    role, or artifact of the repository, and later deliveries need the same
    meaning. A settlement is delivery-scoped when it binds only this issue, this
    pull request, or this change. Keep a delivery-scoped decision in the admitted
-   spec. Do not copy it into `.capstan/vocabulary.md`. The implementation commit
-   for a repository-scoped term creates or updates `.capstan/vocabulary.md` in
-   the same commit as the behavior. Use one `**Term**:` entry per term. Include
+   spec. Do not copy it into `.capstan/vocabulary.md`. The plan names
+   `.capstan/vocabulary.md` when the delivery settles a repository-scoped term.
+   The implementation commit for a repository-scoped term creates or updates
+   `.capstan/vocabulary.md` in the same commit as the behavior. Use one `**Term**:` entry per term. Include
    the meaning and the rejected alternative that the triage walk recorded.
    Triage does not create the file. Do not edit `CONTEXT.md`.
    Keep #20's per-issue
