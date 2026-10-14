@@ -8,8 +8,7 @@ Counter-gap example: `references/harnesses/codex.md` at `cd38fa1`.
 `references/harnesses/shared.md` owns the silent-check rule. This command-log fact is not that rule.
 
 `item.started` duplicates a start. `agent_message` items
-are not operations. Result delivery is a completed item only when it is itself a
-shell command.
+are not operations.
 
 ```sh
 codex exec -C WORKTREE -s workspace-write -c approval_policy='"never"' \
