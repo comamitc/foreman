@@ -1,8 +1,7 @@
 # Planning — fresh primary, read-only
 
 Before dispatch, the coordinator applies [one-pass planning](plan-convergence.md),
-reads [finding resolution](findings.md) for the correction, and writes the pack;
-the worker's task reading is the brief and the pack; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+reads [finding resolution](findings.md) for the correction, and writes the pack.
 
 Before writing the initial planning pack, the coordinator runs the history
 sweep once, with `git` and `gh` only. The window is the last 180 days; DATE is
@@ -50,33 +49,17 @@ commands instead. The single correction and resume do not repeat the sweep.
 
 [implementing](implementing.md) owns the feature-map write.
 
-[modes/feature-map-adoption.md](modes/feature-map-adoption.md) ("This file owns feature-map adoption") owns feature-map adoption. Trigger: the admitted issue or the text invocation states that outcome.
-
-[modes/feature-map-audit.md](modes/feature-map-audit.md) ("This file owns the feature-map audit") owns the feature-map audit. Trigger: the admitted issue or the text invocation states that outcome.
-
-[modes/adr.md](modes/adr.md) ("This file owns the ADR rule") owns the ADR rule. Trigger: repository instructions or the admitted issue require an ADR.
-
-[modes/lessons.md](modes/lessons.md) ("This file owns the lesson rule") owns the lesson rule and lesson maintenance. Trigger: repository instructions name a lessons path, or the admitted issue or the text invocation states lesson maintenance.
-
-[modes/verification-path.md](modes/verification-path.md) ("This file owns verification-path adoption") owns verification-path adoption. Trigger: the admitted issue or the text invocation states that outcome.
-
-[modes/performance-proof.md](modes/performance-proof.md) ("This file owns performance proof") owns performance proof. Trigger: an admitted acceptance criterion or an applicable existing repository budget states a performance requirement.
-
-[modes/documentation-backfill.md](modes/documentation-backfill.md) ("This file owns documentation backfill") owns documentation backfill. Trigger: the admitted issue or the text invocation states that outcome.
+Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md) step 2 ("the first paragraph of each file under"): [feature-map adoption](modes/feature-map-adoption.md) ("This file owns feature-map adoption"), [feature-map audit](modes/feature-map-audit.md) ("This file owns the feature-map audit"), [ADR](modes/adr.md) ("This file owns the ADR rule"), [lessons](modes/lessons.md) ("This file owns the lesson rule"), [verification-path adoption](modes/verification-path.md) ("This file owns verification-path adoption"), [performance proof](modes/performance-proof.md) ("This file owns performance proof"), and [documentation backfill](modes/documentation-backfill.md) ("This file owns documentation backfill").
 
 1. Read the brief and the pack. For the initial plan the pack's Candidate is
    `no plan; diff empty at SHA` and the history sweep's lines, with the spec
    criteria, Open findings `none — no review yet`, Checks the repository commands the coordinator observed or `none
    observed`, and Named files the affected functions and callers as excerpts.
    Trace existing behavior from those excerpts and cite concrete patterns rather
-   than assuming a framework or file structure. Open a named file only to confirm
-   a citation's anchor under [references/pack.md](pack.md) ("Citation rule"). A path the pack does not name is a gap under Risks and unresolved
-   items, not a search. Record the initial head and worktree status. Count each
-   tool call, one read call or one shell command, however many files it names,
-   as a numbered line under `## Checks`, except a host-instruction read ([references/harnesses/shared.md](harnesses/shared.md) "A host-instruction read is not an operation");
-   at the ceiling in the brief header, stop and list unchecked items as gaps. The ceiling applies to
-   both planning steps. The pack is sized to the unit: a one-file, one-check unit
-   gets the compact form, whose single named file and check are the whole allowance.
+   than assuming a framework or file structure. Record the initial head and
+   worktree status. [templates/brief.md](../templates/brief.md) ("## Worker constraints")
+   governs reads and the operation count; the ceiling in the brief header applies to
+   both planning steps.
 2. Name input/output and data shapes before implementation mechanics. Apply
    [ladder](ladder.md). Do not restate the ladder.
    For each behavior it changes, the plan names the module that owns it and
@@ -128,26 +111,17 @@ commands instead. The single correction and resume do not repeat the sweep.
    unknown path.
 4. In the single correction pass, the pack is the current plan text, all
    plan-review rows, the commands the plan names, and the rows' citations as Named
-   files. Address ALL findings from the complete review. For each original scenario
-   and acceptance condition, update the affected plan items and implementation
-   checks, propose an evidence-backed refutation, or identify an actual
-   prerequisite. Carry technical obligations into implementation for code-level
-   verification. Preserve settled scope and report any omissions. A gap the
+   files. [One-pass planning](plan-convergence.md) ("One correction means one pass over all N findings")
+   owns the treatment of each finding; report any omissions. A gap the
    correction returns goes forward to implementing as an unresolved obligation
    with the affected finding's acceptance condition, never to another correction.
    [One-pass planning](plan-convergence.md) ("The correction returns only changed plan content") owns what the correction returns, the merge, and publication.
 5. Verify unchanged tree/head and write only the assigned result.
-
-The plan names declared checks. It does not resolve a runner. The coordinator
-runs [toolchain](toolchain.md) before the implementing worker launches.
 
 The planning result names [telemetry.md](telemetry.md) as the owner of the ledger row and the policy row.
 
 Use [templates/result.md](../templates/result.md) for planning result headings. Complete when every acceptance criterion is covered, every item
 has observable verification and a failure signal, every prior finding has a
 supported proposed disposition, repository gates are named, the plan cites the
-pack and lists its operations, and the tree is unchanged. The coordinator
-publishes the plan with its specification revision. The initial plan enters
-plan-review; the correction enters implementing with the complete finding handoff,
-without another plan review. Incomplete output follows the recovery rules in
-one-pass planning.
+pack and lists its operations, and the tree is unchanged. The next station and
+recovery of incomplete output follow one-pass planning.

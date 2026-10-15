@@ -5,7 +5,7 @@
 - Base / branch / worktree / current head:
 - Cumulative diff command:
 - Pack (required task reading):
-- Declared-check invocation (one plain command, tool path, provenance; [references/harnesses/claude.md](../references/harnesses/claude.md) owns the write-station shell grant; no `&&`, no semicolon, no `git -C`, no heredoc):
+- Declared-check invocation ([references/toolchain.md](../references/toolchain.md) ("The brief carries the exact invocation.") preflight result: one plain command, tool path, provenance; no `&&`, no semicolon, no `git -C`, no heredoc):
 - Turn ceiling (operations; read stations):
 - Result path (outside product tree):
 - Allowed writes: none to product at read stations; issue worktree at write stations;
@@ -41,11 +41,11 @@ No repository tour: a path not in the pack is a reported gap, not a search.
 Read stations open a named file only to confirm a citation's anchor under [references/pack.md](../references/pack.md) ("Citation rule"); write stations
 read named files fully. An operation is one tool call: one read call or one
 shell command, however many files it names. Number each under `## Checks`.
-List each host-instruction read there as an unnumbered "Host-instruction read:" line ([references/harnesses/shared.md](../references/harnesses/shared.md) "A host-instruction read is not an operation").
+List each host-instruction read there as an unnumbered "Host-instruction read:" line.
 Several tool calls in one turn count separately;
 one call that names several files counts once. Result delivery counts one.
 The numbered list is the operation count.
-[references/harnesses/shared.md](../references/harnesses/shared.md) owns the ceiling and host instructions.
+[references/harnesses/shared.md](../references/harnesses/shared.md) ("A host-instruction read is not an operation") owns the count, the ceiling, and host instructions.
 At the ceiling, stop and list unchecked items as gaps.
 Inspect current files and side effects before repeating actions. Use the simplicity
 ladder: need, existing code, standard library, platform, installed dependency, one
@@ -64,7 +64,4 @@ A plain command the grant permits, or a check the brief or the pack declares, st
 At write stations, do not read or edit an evidence check named under the pack's `## Checks`. When your station steps tell you to run it, run it as written.
 Report a suspected defect in an evidence check in your result; [references/pack.md](../references/pack.md) ("When a worker reports a defective evidence check") owns what follows.
 
-The coordinator runs [references/toolchain.md](../references/toolchain.md) before launch.
-The declared-check invocation in the brief header is that result. It names the
-command, the tool path, and the provenance. [references/harnesses/shared.md](../references/harnesses/shared.md)
-owns the operation-count procedure. [templates/result.md](result.md) owns result headings.
+[templates/result.md](result.md) owns result headings.

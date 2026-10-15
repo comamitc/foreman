@@ -32,7 +32,7 @@ carry reads `none` plus the reason.
    each rule's enforcer. Quote each of its rules that applies;
    [correction](modes/correction.md) ("This file owns correction") places that file.
    This is a content rule, not a reading ban; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
-   Each quoted repository rule carries its policy row from `ledger.md` as
+   Each quoted repository rule, here or on a compact `Rule:` line, carries its policy row from `ledger.md` as
    carried evidence, not a verdict; [references/telemetry.md](telemetry.md) owns the policy row.
    For code review, include the effective policy, severity/confidence
    calibration, partition rules, review ratchet, counted round and remaining
@@ -42,10 +42,8 @@ carry reads `none` plus the reason.
    observation that implementing recorded, marked as carried evidence (command,
    head, exit, and failure signal) and not as a command to run;
    [references/review.md](review.md) owns the judgment.
-   In verification-path adoption, it also carries the path's required state
-   and allowed effects; [references/modes/verification-path.md](modes/verification-path.md) ("This file owns verification-path adoption") owns that mode.
    A code-review pack also carries, under this heading, real-run evidence that passed the "Real-run evidence checklist" below, marked as carried evidence and not as a verdict.
-7. `## Named files`: `path:line-range` plus its anchor and reason, the only task files the worker may open; "Citation rule" below owns the entry's form; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
+7. `## Named files`: `path:line-range` plus its anchor and reason, the only task files the worker may open; "Citation rule" below owns the entry's form.
 
 Citation rule: every citation of repository text in a plan or a pack names its target by a stable anchor, as [.capstan/vocabulary.md](../.capstan/vocabulary.md) ("Stable anchor") defines it: a heading's exact text or a verbatim phrase.
 A `path:line` or `path:line-range` may accompany the anchor as a locating hint; when the hint and the anchor disagree, the anchor governs.
@@ -71,9 +69,7 @@ The checklist checks the evidence a run recorded; it does not replace the bite o
 
 Compact form, the exception for one Named files entry, one check, and no open
 finding rows: nothing is written as `none`, no heading beyond Candidate appears,
-and the read-station ceiling is 7 (1 + 1 + 5), an upper bound.
-A compact `Rule:` line carries its policy row from `ledger.md` as carried
-evidence, not a verdict; [references/telemetry.md](telemetry.md) owns the policy row.
+and the read-station ceiling is 7 (1 + 1 + 5).
 
 ```
 # Pack — owner/repo#N, implementing attempt 1, candidate: plan comment URL, revision R
@@ -116,7 +112,4 @@ Evidence scripts stay under the delivery's evidence root, outside the repository
 When a worker reports a defective evidence check, the worker does not repair it; the coordinator repairs it, records the old and new check in `ledger.md`, and repeats the bite.
 The next review pack carries the change, and the reviewer judges whether it weakened the check.
 
-For an implementing/fix brief carrying effective blocking findings, require one
-red/green/bite closure row per finding using `references/findings.md`. Name the
-exact reviewed head for red evidence and prohibit proxy checks that test a weaker
-condition than the original scenario.
+[references/findings.md](findings.md) ("## Closure proof gate") owns closure proof for the effective blocking findings an implementing or fix brief carries.
