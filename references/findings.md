@@ -23,10 +23,9 @@ with the source; silently weakening the condition is not resolution.
 ## Propose, then independently verify
 
 Planning uses [one pass](plan-convergence.md). The correction records proposed
-treatments for the entire review census; it does not close findings or receive
-another plan review. Carry every finding, including proposed refutations and
+treatments for the entire review census; it does not close findings. Carry every finding, including proposed refutations and
 unfinished items, into implementing and code review with its original acceptance
-condition and required evidence. Plan-level traces are not code-level closure.
+condition and required evidence.
 
 1. The primary maps every prior actionable finding to a proposed fix, proposed
    refutation, or unresolved disposition. Explain how the change meets the

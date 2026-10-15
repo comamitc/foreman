@@ -1,9 +1,7 @@
 # Implementing — fresh primary, write
 
 The coordinator extracts the [finding resolution](findings.md) closure-row
-requirements into the pack; the worker reads the brief and the pack. Planning
-handoff is permission to implement, not independent approval of the corrected
-design or closure of its findings.
+requirements into the pack; the worker reads the brief and the pack.
 
 [contract](contract.md) owns feature-map resolution and heading shape.
 
@@ -23,9 +21,9 @@ When a delivery has no map, or the change does not require a map update, write n
 
 This file owns documentation completeness and assesses public interfaces, user workflows, configuration/setup requirements, migrations, and operational recovery changes for a required Canonical document. Internal-only changes do not mechanically require a Canonical document. That limit does not skip a correction when a public statement becomes false.
 
-Prefer an existing canonical page. Add a new page or section only when necessary and in admitted scope. Do not require feature-map adoption. Do not create a docs tree. When the repository has no convention, planning names the smallest destination.
+Add a new page or section only when necessary and in admitted scope. Do not require feature-map adoption. When the repository has no convention, planning names the smallest destination.
 
-An existing canonical page is an existing `README.md`, an existing file under `docs/`, an existing config example, or the target repository's existing root agent-instructions file. Prefer that existing page when it is a suitable destination. When no suitable existing destination exists, and the addition is necessary and admitted, write the smallest new page or section that planning names. Correct existing public documentation whenever this diff makes a stated setup step, command, workflow, feature, flag, env var, limit, usage, limitation, or invariant false. That false-statement condition applies to correcting existing documentation. It does not decide canonical-document eligibility. The agent-instructions file is `AGENTS.md`, or `CLAUDE.md` when no `AGENTS.md` exists; a `CLAUDE.md` symlink to `AGENTS.md` is the same file, and the write goes to `AGENTS.md`. The plan names that page. The implementing pack includes it as a Named file. A path the pack does not name is a gap, not a search.
+An existing canonical page is an existing `README.md`, an existing file under `docs/`, an existing config example, or the target repository's existing root agent-instructions file. Prefer that existing page when it is a suitable destination. When no suitable existing destination exists, and the addition is necessary and admitted, write the smallest new page or section that planning names. Correct existing public documentation whenever this diff makes a stated setup step, command, workflow, feature, flag, env var, limit, usage, limitation, or invariant false. That false-statement condition applies to correcting existing documentation. It does not decide canonical-document eligibility. The agent-instructions file is `AGENTS.md`, or `CLAUDE.md` when no `AGENTS.md` exists; a `CLAUDE.md` symlink to `AGENTS.md` is the same file, and the write goes to `AGENTS.md`. The plan names that page. The implementing pack includes it as a Named file.
 
 The pack names the agent-instructions file as a `path:line-range` covering only the affected statement or the required section's location, never the whole file, with the anchor [pack](pack.md) ("Citation rule") requires. In that file, correct the statement this diff makes false. Add a section only when the admitted spec requires one. Do not restructure the file, rewrite unrelated text, or restate the diff.
 
@@ -42,12 +40,7 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
 1. Read the brief and the pack: the plan sections [pack](pack.md) ("Implementing: the plan's identity lines") names, every carried finding row
    with its proposed disposition including unfinished correction work, the rule
    extract, the commands the plan names plus the final gates, and the plan's
-   affected files and tests as Named files. A write station may read named files
-   fully and run the named checks and declared final gates except silent checks,
-   which `references/harnesses/shared.md` assigns to the coordinator; it has no numeric
-   ceiling. A path the pack does not name is a gap reported under Risks and
-   unresolved items, not a search. A one-file, one-check item gets a compact pack
-   whose single named file and check bound the reads. Map ALL carried findings to
+   affected files and tests as Named files. Map ALL carried findings to
    implementation tasks/checks or evidence-backed refutations. Complete this
    mapping before affected code is written. Reconcile existing work before
    repeating interrupted steps.
@@ -88,7 +81,7 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    ladder. Preserve human changes and do not silently stage unrelated files.
 4. Prove each carried finding's original acceptance condition against the code,
    or propose a refutation with concrete evidence. Record unfinished obligations
-   explicitly; technical failures stay in implementing recovery, not planning.
+   explicitly; technical failures stay in implementing recovery, not planning or `fix`.
    Run all declared final checks except a silent check and exercise the real user
    surface. Use the exact invocation the brief carries. For a silent check, record the coordinator
    result in the form `references/harnesses/shared.md` states. Record actual
@@ -117,7 +110,7 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    reversible change
    does not bypass required approval, existing checks, independent secondary
    review, or Capstan's prohibition on merge and deploy.
-   Report risks honestly and verify a clean worktree containing the intended commits.
+   Report risks honestly.
    Finish everything the pack supports; the result cites the pack.
 
 For any effective blocking obligation carried from review, include the red/green/bite
@@ -137,5 +130,4 @@ Coordinator independently checks evidence and applies the closure proof gate for
 every carried effective blocker. [references/publication.md](publication.md)
 owns publication. Implementing is not complete, and no review starts, until
 every coordinator-run silent check declared for it has exited 0. A silent-check
-failure is implementing recovery, not `fix`. Then review.
-Attempt failures use recovery inside implementing rather than the review fix label.
+failure is implementing recovery, not `fix`.

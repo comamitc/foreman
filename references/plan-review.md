@@ -3,22 +3,16 @@
 The coordinator reads [one-pass planning](plan-convergence.md) and
 [finding resolution](findings.md) and extracts the row format into the pack; the
 worker's task reading is the brief and the pack; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
-This is the single review of the initial plan, not a review of its correction.
 
 1. Read the brief and the pack. The pack carries the applicable criteria, the
    current plan text only (never a rejected plan), Open findings `none — single
    review of the initial plan`, the rule extract, the commands the plan names, the evidence-check bite outcomes and any repair as carried evidence, which [references/pack.md](pack.md) ("An evidence check the initial plan writes") owns, and
    the plan's own citations as Named files. Record the candidate plan/spec revision
-   and the initial tree. Open a named file only to confirm a citation's anchor; a citation
-   that does not meet [references/pack.md](pack.md) ("Citation rule") is a Standards or Correctness finding with the pack
-   row as evidence. A path the pack does not name is a gap under Risks and
-   unresolved items, not a search. Run only the named commands.
-   Count each tool call, one read call or one shell command, however many files it names, as a numbered line under `## Checks`, except a host-instruction read ([references/harnesses/shared.md](harnesses/shared.md) "A host-instruction read is not an operation");
-   at the ceiling written in the brief header, stop, write the result, and list
-   every unchecked criterion, item, citation, or check as a gap. A compact pack's
-   single named file and check are the whole read allowance.
+   and the initial tree. A citation that does not meet [references/pack.md](pack.md) ("Citation rule") is a Standards or Correctness finding with the pack
+   row as evidence. Run only the named commands. [brief](../templates/brief.md) ("## Worker constraints") owns reads and gaps; [references/harnesses/shared.md](harnesses/shared.md) ("An operation is one tool call") owns the operation count and the ceiling.
+   At the ceiling, write the result and list
+   every unchecked criterion, item, citation, or check as a gap.
 2. Examine every acceptance criterion and plan item on all applicable axes.
-   Judge simplicity by [ladder](ladder.md). Do not restate the ladder.
    On the Simplicity axis, judge module shape, including the red flags that
    [references/ladder.md](ladder.md) ("## Module") owns, by the module finding
    in [references/review.md](review.md) step 3. When "## Rules that apply" quotes
@@ -27,7 +21,6 @@ This is the single review of the initial plan, not a review of its correction.
    revise. When it quotes one, the finding is in scope with its existing
    severity and confidence.
    A design comparison that does not meet [references/planning.md](planning.md) ("Those designs are compared at equal reuse") is a Simplicity finding, in scope or out of scope as the module finding above is.
-   A repaired evidence check: [references/pack.md](pack.md) ("An evidence check the initial plan writes") owns the rule.
 
    | Axis | Question |
    | --- | --- |
@@ -36,11 +29,9 @@ This is the single review of the initial plan, not a review of its correction.
    | Correctness | Can the proposed sequence produce the intended result safely? |
    | Simplicity | Does it follow [ladder](ladder.md)? |
 
-3. Use [review](../templates/review.md) for separate axes and grounded findings.
-   Record each finding's original scenario, acceptance condition, correction,
-   evidence, and lineage. Produce the complete feedback set in this review, not
-   staged subsets. Distinguish actual prerequisites from implementation obligations;
-   severity alone does not require a planning stop. Ground unsafe behavior, missing
+3. Use [review](../templates/review.md) ("## Finding format") for separate axes and grounded findings.
+   Produce the complete feedback set in this review, not
+   staged subsets. Ground unsafe behavior, missing
    outcomes, and unrequested scope in evidence. Record inapplicable axes with reasons.
 4. Return approve or revise, identifying the exact plan reviewed. Verify the tree
    and head are unchanged; write only the result.
@@ -50,7 +41,4 @@ Add `## Reviewed plan`, `## Coverage`, `## Spec`, `## Standards`,
 Complete when all criteria/items are examined against the pack, the complete
 feedback set is recorded, the result cites the pack and lists its operations, and
 a supported verdict is present.
-Coordinator publishes a marked plan-review comment. Approve enters implementing;
-revise sends the complete finding set to the single correction pass, then directly
-to implementing. Actual missing prerequisites use typed recovery. Independent
-verification of corrections happens in code review, not another plan-review.
+Coordinator publishes a marked plan-review comment. [one-pass planning](plan-convergence.md) ("## Fixed sequence") owns what follows, and its section ("## Prerequisites versus implementation obligations") owns typed recovery.
