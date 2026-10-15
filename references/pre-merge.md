@@ -105,7 +105,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    approving review. A bot request-changes does not, by itself, satisfy the
    effective-blocker test. Bot claims do not replace the secondary code-review
    census and do not replace round 1. Do not set `unsafe_autonomy`. Do not redo
-   the git-metadata grant. Do not merge.
+   the git-metadata grant.
 
    Newer trusted comments: run this check after every push that reaches
    pre-merge and again immediately before step 7 projects
@@ -176,8 +176,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    [contract.md](contract.md) "Evidence and reconciliation" names the owner of
    `ledger.md`. An untrusted comment is handled as [security.md](security.md)
    item 1 states and never changes scope.
-7. [telemetry.md](telemetry.md) owns the
-   attempt-table field rules and emission. Withhold `capstan:ready-to-deploy`
+7. Withhold `capstan:ready-to-deploy`
    while an applicable policy row for a mandatory rule is not `verified`;
    [telemetry.md](telemetry.md) owns the policy row and the mandatory-rule test.
    A non-mandatory row that is not `verified` is disclosed in the summary and
@@ -196,11 +195,9 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    If the pull-request label is missing, re-add it
    once and read it back as that section states. If the live gate no longer
    holds, remove the pull-request label and read it back as that section states.
-   `Capstan: owner/repo#N` remains the identity check. The pull-request label is
-   not a substitute for that marker, branch `capstan/N`, or the worktree.
 
-   [telemetry.md](telemetry.md) owns the attempt-table field rules, the
-   end-to-end wall, and the end-of-run order. After the ready-label read-back,
+   [telemetry.md](telemetry.md) owns the attempt-table field rules and emission,
+   the end-to-end wall, and the end-of-run order. After the ready-label read-back,
    follow that order. Stop without merging or deploying.
 
 Technical repair workers use [templates/result.md](../templates/result.md), including
