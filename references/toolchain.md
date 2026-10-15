@@ -6,7 +6,6 @@ Run preflight before worker launch.
 The preflight records the command, the tool path, and the provenance.
 A preflight failure is visible.
 A preflight failure does not spend a worker turn on discovery.
-This is a ban on worker-side discovery.
 The brief carries the exact invocation.
 A worker that substitutes a global tool has not followed the brief.
 The worker runs that invocation.

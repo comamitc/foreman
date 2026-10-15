@@ -20,8 +20,6 @@
 ## Plan
 ## Acceptance mapping
 
-Acceptance mapping and Acceptance proof name [references/telemetry.md](../references/telemetry.md) as the owner of the ledger row and the policy row.
-
 ## Revision response
 
 ## Implementing
