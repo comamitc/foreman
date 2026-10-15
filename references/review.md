@@ -9,18 +9,18 @@ applicable policy into the pack; the worker's task reading is the brief and the 
 
 [references/implementing.md](implementing.md) owns the feature-map write.
 
-[modes/feature-map-adoption.md](modes/feature-map-adoption.md) ("This file owns feature-map adoption") owns feature-map adoption. Trigger: the admitted issue or the text invocation states that outcome.
-[modes/documentation-backfill.md](modes/documentation-backfill.md) ("This file owns documentation backfill") owns documentation backfill. Trigger: the admitted issue or the text invocation states that outcome.
+[modes/feature-map-adoption.md](modes/feature-map-adoption.md) ("This file owns feature-map adoption") owns feature-map adoption.
+[modes/documentation-backfill.md](modes/documentation-backfill.md) ("This file owns documentation backfill") owns documentation backfill.
 
-[modes/feature-map-audit.md](modes/feature-map-audit.md) ("This file owns the feature-map audit") owns the feature-map audit. Trigger: the admitted issue or the text invocation states that outcome.
+[modes/feature-map-audit.md](modes/feature-map-audit.md) ("This file owns the feature-map audit") owns the feature-map audit.
 
 Block a second map. Block an internal-only feature file. Block an unverifiable claim.
 
-[modes/adr.md](modes/adr.md) ("This file owns the ADR rule") owns the ADR rule. Trigger: repository instructions or the admitted issue require an ADR.
+[modes/adr.md](modes/adr.md) ("This file owns the ADR rule") owns the ADR rule.
 
-[modes/lessons.md](modes/lessons.md) ("This file owns the lesson rule") owns the lesson rule and lesson maintenance. Trigger: repository instructions name a lessons path, or the admitted issue or the text invocation states lesson maintenance.
+[modes/lessons.md](modes/lessons.md) ("This file owns the lesson rule") owns the lesson rule and lesson maintenance.
 
-[modes/correction.md](modes/correction.md) ("This file owns correction") owns correction. Trigger: the admitted issue or the text invocation states that outcome.
+[modes/correction.md](modes/correction.md) ("This file owns correction") owns correction.
 
 Review treats the map as a claim. The diff and the live command remain the
 proof. Removing a proof to pass blocks. Omitting a required map update blocks.
@@ -70,7 +70,7 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    Simplicity ([ladder](ladder.md)). Do not merge away disagreement. Do not
    restate the ladder. A new dependency, a new file, or a reimplementation of
    an existing function is unrequested scope and blocks. A pure "this could be
-   shorter" note stays minor. Keep one judge. Do not install a ponytail skill.
+   shorter" note stays minor. Keep one judge.
    On the Simplicity axis, a pass-through module, one behavior split by state
    across modules, or a red flag, in a module that the diff adds or reshapes,
    is a finding in the existing finding format;
@@ -122,7 +122,6 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    not sufficient behavioral proof under the discriminating-check rule above
    and uses the existing calibration.
    When the pack carries a changed evidence check, judge whether the change weakened it; [references/pack.md](pack.md) ("An evidence check is bitten before the brief that depends on it launches") owns the rule.
-   Do not change the tree.
    Do not produce the red evidence. A correction uses the
    existing implementing or fix write station. On round 1, apply this rule to
    every applicable new or changed check in the cumulative diff. On a later
@@ -160,11 +159,10 @@ Review names [telemetry.md](telemetry.md) as the owner of the ledger row.
 Complete when the saved diff and carried repair rows have been examined under the
 review ratchet, findings are grounded, prior lineages are reconciled, the result
 cites the pack, and tree/head are unchanged. The
-coordinator independently partitions findings under the effective policy. [references/publication.md](publication.md)
-owns census placement. Effective blockers
-enter fix while the round allowance remains; zero effective blockers enters
-pre-merge; a final allowed review with blockers adds the review-exhausted blocked
-overlay. Each of these routes is subject to
+coordinator independently partitions findings under the effective policy and
+routes them by the review row of [references/contract.md](contract.md) ("## Stage projection").
+[references/publication.md](publication.md)
+owns census placement. Each route is subject to
 [references/review-convergence.md](review-convergence.md) ("## Coordinator-evidence findings")
 for a coordinator-evidence finding. Any later head change requires the confirmation behavior in code-review
 convergence before readiness.
