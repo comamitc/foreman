@@ -43,7 +43,7 @@
 7. Inspect each artifact for credentials before posting. Publish only relevant
    redacted excerpts and evidence pointers, not full provider payloads or environment
    dumps. The one exception is the final `ledger.md`, which the marked summary
-   publishes verbatim per [telemetry.md](telemetry.md); it passes the same
+   publishes verbatim per [end-of-run.md](end-of-run.md); it passes the same
    credential inspection. Preserve original error information apart from redaction so recovery can
    reason from it. Treat unknown usage format as a telemetry gap, not a secret leak.
 8. [telemetry.md](telemetry.md) owns the ledger and pile deletion. Do not delete

@@ -56,7 +56,7 @@ Before step 1, read [contract](references/contract.md) "## Read-only invocations
 8. **Advance and re-observe.** Only after step 5's result acceptance holds, project
    the next stage label and read it and external state back. Repeat the loop.
 
-[references/telemetry.md](references/telemetry.md) ("Host status line rule") owns the host status line for steps 4, 7, and 8. [references/telemetry.md](references/telemetry.md) ("Emission follows the summary read-back.") owns the final message's attempt table.
+[references/telemetry.md](references/telemetry.md) ("Host status line rule") owns the host status line for steps 4, 7, and 8. [references/end-of-run.md](references/end-of-run.md) ("Emission follows the summary read-back.") owns the final message's attempt table.
 
 | Station | Reference | Owner |
 | --- | --- | --- |
@@ -65,9 +65,9 @@ Before step 1, read [contract](references/contract.md) "## Read-only invocations
 | planning | [planning](references/planning.md) | fresh primary |
 | plan-review | [plan-review](references/plan-review.md) | fresh secondary |
 | implementing | [implementing](references/implementing.md) | fresh primary |
-| review | [review](references/review.md), [code-review convergence](references/review-convergence.md) | fresh secondary |
+| review | [review](references/review.md), [code-review convergence](references/review-convergence.md), [end of run](references/end-of-run.md) at the review-exhaustion decision | fresh secondary |
 | fix | [fix](references/fix.md), [code-review convergence](references/review-convergence.md), only for effective blockers | fresh primary |
-| pre-merge | [pre-merge](references/pre-merge.md) | coordinator and repair workers |
+| pre-merge | [pre-merge](references/pre-merge.md), [end of run](references/end-of-run.md) | coordinator and repair workers |
 
 [contract](references/contract.md) "## Identity and authority" owns the fetch-then-worktree order.
 
