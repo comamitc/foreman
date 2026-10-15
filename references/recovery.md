@@ -43,8 +43,8 @@ preserve the active stage while recovering.
    remains. Exhausting transient retries is a diagnosis point, not permission to
    misclassify an outage as a product decision. Keep waits supervised and bounded.
 5. At the total wall-time budget, request only more time, an admitted scope
-   change, or cancellation. Preserve the run start across resume. Never request
-   human diagnosis or repair of a technical error.
+   change, or cancellation. Never request human diagnosis or repair of a
+   technical error.
 
 Deliver corrective feedback to the current worker only if its session is still
 reachable through an installed, help-verified continuation interface. Otherwise
@@ -88,9 +88,8 @@ technical recovery, not `safety-boundary`. `unsafe_autonomy` is not the remedy.
 Use [blocker](../templates/blocker.md). For human-capability blockers, publish one
 concrete action and why an agent cannot supply it. For review exhaustion, publish
 the qualifying repair/spec-policy/disposition resume choices and why automation
-cannot continue on the same evidence. Include attempted recovery, evidence,
-station/branch/head, and exact resume invocation. Add blocked overlay without
-removing the stage. If GitHub access
+cannot continue on the same evidence. Add blocked overlay without removing the
+stage. If GitHub access
 itself is unavailable, report the blocker locally and to the user, then publish
 when access returns; failure to publish does not hide the need.
 
