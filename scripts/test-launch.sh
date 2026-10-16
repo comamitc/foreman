@@ -22,7 +22,8 @@ mkdir -p "$T/home/real" "$T/home/adir" "$T/wt" "$T/res" "$T/brief" "$T/b" "$T/r"
   "$T/bin" "$T/log" "$T/exp" "$T/k" "$T/c" "$T/g" "$T/outdir" "$T/s1" "$T/s2" "$T/s3" "$T/s4" "$T/s5" \
   "$T/s6/h" "$T/s6o" "$T/c13" "$T/c14wt/in" "$T/c15/wt" "$T/c16wt/in" "$T/c17/h" "$T/wt/s5" "$T/o2" "$T/o3" \
   "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" "$T/c21" "$T/c22" "$T/s10" "$T/s11" "$T/w1" \
-  "$T/cap" "$T/w1cap" "$T/pbin" "$T/fbin" "$T/pc" "$T/pc1res" "$T/pc5" "$T/pc5res" || setup "cannot create fixture directories"
+  "$T/cap" "$T/w1cap" "$T/pbin" "$T/fbin" "$T/pc" "$T/pc1res" "$T/pc5" "$T/pc5res" "$T/ev" "$T/ts" "$T/ts/res" "$T/th2" \
+  || setup "cannot create fixture directories"
 chmod 1777 "$T/s7" "$T/c19" "$T/s9sh" || setup "cannot chmod the shared fixture directories"
 # A private result directory beneath a shared temp-style directory (S9).
 mkdir -m 700 "$T/s9sh/p" || setup "cannot create the private fixture directory"
@@ -34,7 +35,7 @@ printf 'launch prompt %s.%s\n' "$$" "$RANDOM" >"$LF" || setup "cannot write the 
 LAUNCH_CONTENT=$(cat "$LF")
 : >"$T/res/r.md" || setup "cannot write fixtures"
 
-# Echo stubs: print cwd, TMPDIR, argv and stdin; a probe's run script captures its
+# Echo stubs: print cwd, TMPDIR, argv and stdin; a run script captures their
 # stdout, so with STUB_LOG set they also append the same lines to that file.
 for b in claude codex; do
   cat >"$T/bin/$b" <<'EOF' || setup "cannot write stub $b"
@@ -46,10 +47,11 @@ EOF
   chmod 755 "$T/bin/$b" || setup "cannot chmod stub $b"
 done
 
-# Stream stubs for the probe capture (PC1-PC7): read stdin, print STUB_STREAM on
-# stdout and STUB_ERR on stderr, and exit STUB_RC. With STUB_PROBE set they first
-# record whether both streams are pipes (STUB_FD), print STUB_MARK on both, wait,
-# and record the status of a search for it under STUB_CAP (STUB_SCAN).
+# Stream stubs for the capture (PC1-PC9, TS1-TS5, TC3, TC5, TH1, TH2): read stdin,
+# print STUB_STREAM on stdout, or run the bash file STUB_RUN in its place, print
+# STUB_ERR on stderr, and exit STUB_RC. With STUB_PROBE set they first record
+# whether both streams are pipes (STUB_FD), print STUB_MARK on both, wait, and
+# record the status of a search for it under STUB_CAP (STUB_SCAN).
 for b in claude codex; do
   cat >"$T/pbin/$b" <<'EOF' || setup "cannot write stream stub $b"
 #!/usr/bin/env bash
@@ -66,19 +68,20 @@ if [ -n "${STUB_PROBE-}" ]; then
   grep -rqF -- "$STUB_MARK" "$STUB_CAP"
   echo "$?" >"$STUB_SCAN"
 fi
-cat -- "$STUB_STREAM"
-cat -- "$STUB_ERR" >&2
+if [ -n "${STUB_RUN-}" ]; then . "$STUB_RUN"; else cat -- "$STUB_STREAM"; fi
+cat -- "${STUB_ERR:-/dev/null}" >&2
 exit "${STUB_RC:-0}"
 EOF
   chmod 755 "$T/pbin/$b" || setup "cannot chmod stream stub $b"
 done
-# A failing awk for PC7: STUB_AWK_FAIL=1 fails the stage that writes the capture's
-# stderr file, 2 the stage that writes its stdout file, after draining stdin.
+# A failing awk for PC7 and TC3, after draining stdin: STUB_AWK_FAIL=1 fails the
+# stage that writes the capture's stderr file, 2 the stdout redactor, whose
+# stdout is a pipe, and 3 the tool-call stage, which appends to events.jsonl.
 REAL_AWK=$(command -v awk) || setup "no awk on PATH"
 cat >"$T/fbin/awk" <<EOF || setup "cannot write the awk wrapper"
 #!/usr/bin/env bash
-case \${STUB_AWK_FAIL-}:\$(readlink -f /proc/\$\$/fd/1) in
-  1:*/stderr | 2:*/stdout) cat >/dev/null; exit 9 ;;
+case \${STUB_AWK_FAIL-}:\$(readlink /proc/\$\$/fd/1) in
+  1:*/stderr | 2:pipe:* | 3:*/events.jsonl) cat >/dev/null; exit 9 ;;
 esac
 exec '$REAL_AWK' "\$@"
 EOF
@@ -92,6 +95,8 @@ LEDGER="Host grant: $T/home/plain.md, $T/home/link.md -> $T/home/real/target.md"
 ALLOW='Bash(make check)'
 COMMON=(--worktree "$T/wt" --launch-file "$LF" --model m1 --effort high)
 ADDS=(--add-dir "$T/res" --add-dir "$T/brief")
+# The tool-call event flags every kind takes; cases that read events use their own file.
+EV=(--events "$T/ev/events.jsonl" --delivery 'o/r#1' --station implementing --attempt 1)
 
 fails=0
 t() { # NAME FUNCTION: run one case and report it
@@ -111,7 +116,8 @@ arg=-p
 arg=--permission-mode
 arg=acceptEdits
 arg=--output-format
-arg=json
+arg=stream-json
+arg=--verbose
 arg=--model
 arg=m1
 arg=--effort
@@ -154,7 +160,8 @@ arg=-p
 arg=--permission-mode
 arg=plan
 arg=--output-format
-arg=json
+arg=stream-json
+arg=--verbose
 arg=--model
 arg=m1
 arg=--effort
@@ -280,18 +287,18 @@ stdin=$LAUNCH_CONTENT
 EOF
 
 k_case() { # NAME KIND EXPECTED [ARGS...]: build from $T/b, run from $T/r, diff, mode, check
-  local name=$1 kind=$2 exp=$3 out=$T/k/$1.sh rc got=$T/log/$1.run
-  local -a cap=()
+  local name=$1 kind=$2 exp=$3 out=$T/k/$1.sh rc got=$T/cap/$1/stdout
   shift 3
-  # A probe's run script captures its stdout, so its argv is read from the stub's log.
-  case $kind in *-probe) cap=(--capture "$T/cap/$name") got=$T/log/$name.argv ;; esac
+  # Every run script captures its stdout; under a host grant the redactor removes
+  # the stub's plain lines, so those kinds read the argv from the stub's log.
+  case $kind in claude-write*) got=$T/log/$name.argv ;; esac
   rm -f -- "$T/log/$name.argv"
-  (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$kind" --out "$out" "${COMMON[@]}" "$@" ${cap[@]+"${cap[@]}"}) \
+  (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$kind" --out "$out" "${COMMON[@]}" "$@" --capture "$T/cap/$name" "${EV[@]}") \
     >"$T/log/$name.out" 2>"$T/log/$name.err"
   rc=$?
   [ "$rc" -eq 0 ] || { echo "write exited $rc: $(first "$T/log/$name.err")"; return 1; }
   [ "$(mode "$out")" = -rwx------ ] || { echo "mode is $(mode "$out"), not -rwx------"; return 1; }
-  (cd "$T/r" && TMPDIR=$T/ambient PATH="$T/bin:$PATH" STUB_LOG=$T/log/$name.argv "$out") >"$T/log/$name.run" 2>&1
+  (cd "$T/r" && env -i TMPDIR="$T/ambient" PATH="$T/bin:$PATH" STUB_LOG="$T/log/$name.argv" "$out") >"$T/log/$name.run" 2>&1
   rc=$?
   [ "$rc" -eq 0 ] || { echo "run script exited $rc: $(first "$T/log/$name.run")"; return 1; }
   diff "$exp" "$got" >"$T/log/$name.diff" \
@@ -312,21 +319,19 @@ K4() { k_case K4 codex-write "$T/exp/K4" "${ADDS[@]}" --result "$T/res/result.md
 K5() { k_case K5 codex-read "$T/exp/K5" --result "$T/res/result.md"; }
 K6() { k_case K6 codex-read-probe "$T/exp/K5" --result "$T/res/result.md"; }
 K7() {
-  [ -s "$T/log/K5.run" ] && [ -s "$T/log/K6.argv" ] || { echo "K5 or K6 produced no output"; return 1; }
-  cmp -s "$T/log/K5.run" "$T/log/K6.argv" || { echo "codex-read-probe output differs from codex-read"; return 1; }
+  [ -s "$T/cap/K5/stdout" ] && [ -s "$T/cap/K6/stdout" ] || { echo "K5 or K6 produced no output"; return 1; }
+  cmp -s "$T/cap/K5/stdout" "$T/cap/K6/stdout" || { echo "codex-read-probe output differs from codex-read"; return 1; }
 }
 
 # ---- #253 AC 2-3: the result lies outside the worker's only writable root (W1) ----
 
 W1() { # build and run both read kinds; the result is not in the start directory, -C, or TMPDIR
   local k rc d cwd tdir cv res log
-  local -a cap
   for k in codex-read codex-read-probe; do
-    cap=() log=$T/log/W1-$k.argv
-    [ "$k" = codex-read ] || cap=(--capture "$T/w1cap/$k")
+    log=$T/log/W1-$k.argv
     rm -f -- "$log"
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/w1/$k.sh" --worktree "$T/wt" \
-      --launch-file "$LF" --result "$T/w1/result.md" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/W1.err"
+      --launch-file "$LF" --result "$T/w1/result.md" --capture "$T/w1cap/$k" "${EV[@]}") >/dev/null 2>"$T/log/W1.err"
     rc=$?
     [ "$rc" -eq 0 ] || { echo "$k: write exited $rc: $(first "$T/log/W1.err")"; return 1; }
     (cd "$T/r" && PATH="$T/bin:$PATH" STUB_LOG=$log "$T/w1/$k.sh") >"$T/log/W1.run" 2>&1
@@ -455,7 +460,7 @@ G9() { # a fence inside a blockquote, a list item, or a nested blockquote grants
   } >"$T/g/g9.md"
   g_case G9 "$T/g/g9.md" "Host grant: $T/home/plain.md, $T/home/quoted.md, $T/home/after.md" || return 1
   (cd "$T/b" && bash "$LAUNCH_SH" write --kind claude-write --out "$T/k/G9.sh" --worktree "$T/wt" \
-    --launch-file "$LF" --host-source "$T/g/g9.md") >"$T/log/G9.out" 2>"$T/log/G9.err"
+    --launch-file "$LF" --host-source "$T/g/g9.md" --capture "$T/cap/G9" "${EV[@]}") >"$T/log/G9.out" 2>"$T/log/G9.err"
   rc=$?
   [ "$rc" -eq 0 ] || { echo "write exited $rc: $(first "$T/log/G9.err")"; return 1; }
   grep -qxF "'Read(/$T/home/plain.md)'" "$T/k/G9.sh" && grep -qxF "'Read(/$T/home/quoted.md)'" "$T/k/G9.sh" \
@@ -470,7 +475,7 @@ c_build() { # NAME KIND [RESULT]: build the unedited fixture $T/c/NAME.base
   case $2 in codex-read*) ;; *) args+=(--add-dir "$T/res" --add-dir "$T/brief") ;; esac
   case $2 in claude-*) args+=(--allow "$ALLOW") ;; esac
   case $2 in claude-write*) args+=(--host-source "$T/home/src.md") ;; codex-*) args+=(--result "${3:-$T/res/result.md}") ;; esac
-  case $2 in *-probe) args+=(--capture "$T/cap/$1") ;; esac
+  args+=(--capture "$T/cap/$1" "${EV[@]}")
   (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$2" --out "$T/c/$1.base" "${args[@]}") >/dev/null 2>"$T/log/$1.build" \
     || { echo "fixture build exited non-zero: $(first "$T/log/$1.build")"; return 1; }
   [ -f "$T/c/$1.base" ] || { echo "fixture was not built"; return 1; }
@@ -511,8 +516,8 @@ C3b() {
 }
 C4() {
   c_build C4 claude-write || return 1
-  sed "s/ < '[^']*'\$//" "$T/c/C4.base" >"$T/c/C4.sh"
-  c_expect C4 "$T/r" "prompt not attached on stdin"
+  sed "s|^lf='.*'\$|lf='$T/nope.md'|" "$T/c/C4.base" >"$T/c/C4.sh"
+  c_expect C4 "$T/r" "prompt not attached on stdin: not a regular file: $T/nope.md"
 }
 C5() {
   c_build C5 codex-read || return 1
@@ -669,7 +674,7 @@ C23() { # the result moved onto the writable root itself
 S1() {
   local rc
   (cd "$T/b" && bash "$LAUNCH_SH" write --kind claude-write --out "$T/s1/run.sh" --worktree "$T/wt" \
-    --launch-file "$LF" --add-dir "$T/nope" --host-source "$T/home/src.md") >/dev/null 2>"$T/log/S1.err"
+    --launch-file "$LF" --add-dir "$T/nope" --host-source "$T/home/src.md" --capture "$T/cap/S1" "${EV[@]}") >/dev/null 2>"$T/log/S1.err"
   rc=$?
   [ "$rc" -ne 0 ] || { echo "write exited 0 with a missing --add-dir"; return 1; }
   [ ! -e "$T/s1/run.sh" ] || { echo "OUT was written"; return 1; }
@@ -686,7 +691,7 @@ S2() {
 S3() { # write --add-dir for a read kind: exit 2, no script, no tmp
   local rc
   (cd "$T/b" && bash "$LAUNCH_SH" write --kind codex-read --out "$T/s3/run.sh" --worktree "$T/wt" \
-    --launch-file "$LF" --result "$T/s3/result.md" --add-dir "$T/brief") >/dev/null 2>"$T/log/S3.err"
+    --launch-file "$LF" --result "$T/s3/result.md" --add-dir "$T/brief" --capture "$T/cap/S3" "${EV[@]}") >/dev/null 2>"$T/log/S3.err"
   rc=$?
   [ "$rc" -eq 2 ] || { echo "write exited $rc, not 2"; return 1; }
   grep -qF -- "--add-dir is not accepted for codex-read" "$T/log/S3.err" || { echo "stderr lacks: --add-dir is not accepted for codex-read"; return 1; }
@@ -698,7 +703,7 @@ S4() { # an existing work/ or work/tmp/ that is not owner-only is refused
   mkdir -m 755 "$T/s4/work" && mkdir -m 755 "$T/s4/work/tmp" || { echo "cannot create $T/s4/work/tmp"; return 1; }
   for d in "$T/s4/work" "$T/s4/work/tmp"; do
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind codex-read --out "$T/s4/run.sh" --worktree "$T/wt" \
-      --launch-file "$LF" --result "$T/s4/result.md") >/dev/null 2>"$T/log/S4.err"
+      --launch-file "$LF" --result "$T/s4/result.md" --capture "$T/cap/S4" "${EV[@]}") >/dev/null 2>"$T/log/S4.err"
     rc=$?
     [ "$rc" -eq 2 ] || { echo "write exited $rc, not 2"; return 1; }
     grep -qF -- "not an owner-only directory: $d" "$T/log/S4.err" || { echo "stderr lacks: not an owner-only directory: $d"; return 1; }
@@ -710,8 +715,7 @@ S5() { # write refuses a result directory at, inside, aliasing, or holding the w
   local rc k res msg
   local -a cap
   for k in codex-read codex-read-probe; do
-    cap=()
-    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S5")
+    cap=(--capture "$T/cap/S5" "${EV[@]}")
     while IFS='|' read -r res msg; do
       (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s5/run.sh" --worktree "$T/wt" \
         --launch-file "$LF" --result "$res" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S5.err"
@@ -733,8 +737,7 @@ S6() { # write refuses a result directory that is HOME, above HOME, or a symlink
   local rc k res
   local -a cap
   for k in codex-read codex-read-probe; do
-    cap=()
-    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S6")
+    cap=(--capture "$T/cap/S6" "${EV[@]}")
     for res in "$T/s6/h/result.md" "$T/s6/result.md" "$T/s6l/result.md"; do
       (cd "$T/b" && HOME=$T/s6/h bash "$LAUNCH_SH" write --kind "$k" --out "$T/s6o/run.sh" --worktree "$T/wt" \
         --launch-file "$LF" --result "$res" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S6.err"
@@ -751,8 +754,7 @@ S7() { # write refuses a shared (1777) result directory or a symlink to it, both
   local rc k res
   local -a cap
   for k in codex-read codex-read-probe; do
-    cap=()
-    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S7")
+    cap=(--capture "$T/cap/S7" "${EV[@]}")
     for res in "$T/s7/result.md" "$T/s7l/result.md"; do
       (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s7o/run.sh" --worktree "$T/wt" \
         --launch-file "$LF" --result "$res" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S7.err"
@@ -773,8 +775,7 @@ S8() { # write refuses --result /tmp/NAME.md and leaves /tmp/work as it was, bot
   local -a cap
   case $(realpath "$here")/ in "$(realpath /tmp)"/*) echo "this case needs the repository outside /tmp: $here"; return 1 ;; esac
   for k in codex-read codex-read-probe; do
-    before=0 after=0 cap=()
-    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S8")
+    before=0 after=0 cap=(--capture "$T/cap/S8" "${EV[@]}")
     [ ! -e /tmp/work ] || before=1
     (cd "$T/b" && HOME=$here bash "$LAUNCH_SH" write --kind "$k" --out "$T/s8/run.sh" --worktree "$here" \
       --launch-file "$LF" --result "/tmp/launch-test-$$.md" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S8.err"
@@ -791,8 +792,7 @@ S9() { # a private directory beneath a shared (1777) directory still builds and 
   local rc k
   local -a cap
   for k in codex-read codex-read-probe; do
-    cap=()
-    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S9")
+    cap=(--capture "$T/cap/S9-$k" "${EV[@]}")
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s9/$k.sh" --worktree "$T/wt" \
       --launch-file "$LF" --result "$T/s9sh/p/result.md" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S9.err"
     rc=$?
@@ -807,8 +807,7 @@ S10() { # write refuses a --result that resolves into the writable root, both re
   local rc k
   local -a cap
   for k in codex-read codex-read-probe; do
-    cap=()
-    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S10")
+    cap=(--capture "$T/cap/S10" "${EV[@]}")
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s10/$k.sh" --worktree "$T/wt" \
       --launch-file "$LF" --result "$T/s10/work" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S10.err"
     rc=$?
@@ -823,8 +822,7 @@ S11() { # write refuses a --result that is a symlink into the writable root, bot
   local -a cap
   ln -s "$T/s11/work/result.md" "$T/s11/result.md" || { echo "cannot create the result link"; return 1; }
   for k in codex-read codex-read-probe; do
-    cap=()
-    [ "$k" = codex-read ] || cap=(--capture "$T/cap/S11")
+    cap=(--capture "$T/cap/S11" "${EV[@]}")
     (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$k" --out "$T/s11/$k.sh" --worktree "$T/wt" \
       --launch-file "$LF" --result "$T/s11/result.md" ${cap[@]+"${cap[@]}"}) >/dev/null 2>"$T/log/S11.err"
     rc=$?
@@ -839,7 +837,7 @@ S11() { # write refuses a --result that is a symlink into the writable root, bot
 
 o_write() { # NAME OUT
   (cd "$T/b" && bash "$LAUNCH_SH" write --kind claude-read --out "$2" --worktree "$T/wt" \
-    --launch-file "$LF" --add-dir "$T/res") >/dev/null 2>"$T/log/$1.err"
+    --launch-file "$LF" --add-dir "$T/res" --capture "$T/cap/$1" "${EV[@]}") >/dev/null 2>"$T/log/$1.err"
 }
 O1() {
   local rc
@@ -959,7 +957,7 @@ printf 'warning: TESTTOKEN=[redacted] in plain text\n' >"$T/exp/PC3.stderr"
 
 pc_build() { # NAME KIND CAPTURE_DIR [ARGS...]: write $T/pc/NAME.sh
   local name=$1 kind=$2 rc
-  local -a args=(--worktree "$T/wt" --launch-file "$LF" --capture "$3")
+  local -a args=(--worktree "$T/wt" --launch-file "$LF" --capture "$3" "${EV[@]}")
   shift 3
   case $kind in claude-*) args+=(--host-source "$T/home/pc2src.md") ;; *) args+=(--result "$T/pc1res/result.md") ;; esac
   (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$kind" --out "$T/pc/$name.sh" "${args[@]}" "$@") >/dev/null 2>"$T/log/$name.build"
@@ -978,18 +976,32 @@ pc_golden() { # NAME CAPTURE_DIR: both captured streams equal the goldens $T/exp
       || { echo "capture differs from golden: $f: $(grep '^[<>]' "$T/log/$1.diff" | head -n 1)"; return 1; }
   done
 }
-pc_leak() { # CAPTURE_DIR [TEXT...]: no credential value and no TEXT appears under CAPTURE_DIR
-  local cap=$1 x rc
+pc_unclock() { # FILE: FILE's text without its well-formed clock values, which are digits no worker wrote:
+  # the ISO and EPOCH columns that start a stream record, and the time, start, end and duration_s
+  # values of an events.jsonl line. The stream payload and every other value are kept.
+  local iso='[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{6}Z'
+  case ${1##*/} in
+    stream) sed -E "s/^$iso"$'\t''[0-9]+\.[0-9]{6}'$'\t'"//" "$1" ;;
+    events.jsonl) sed -E -e "s/\"(time|start|end)\":\"$iso\"/\"\\1\":\"\"/g" -e 's/"duration_s":[0-9]+\.[0-9]{6}/"duration_s":""/g' "$1" ;;
+    *) cat -- "$1" ;;
+  esac
+}
+pc_leak() { # PATH [TEXT...]: no credential value and no TEXT appears in a file under PATH, outside its clock values
+  local cap=$1 x rc f
   local -a e=()
   shift
   for x in "$@" "tok-$P-secretvalue" Zq7 "dbc-$P-x" "$ESC_SECRET" "a\"b\\c-$P" "4242$P"; do e+=(-e "$x"); done
-  grep -rF "${e[@]}" "$cap" >/dev/null
-  rc=$?
-  case $rc in
-    1) ;;
-    0) echo "secret or host text in capture: $(grep -rhoF "${e[@]}" "$cap" | head -n 1)"; return 1 ;;
-    *) echo "leak search error: grep exited $rc"; return 1 ;;
-  esac
+  [ -e "$cap" ] || { echo "leak search error: no $cap"; return 1; }
+  while IFS= read -r f; do
+    pc_unclock "$f" >"$T/log/leak" || { echo "leak search error: cannot read $f"; return 1; }
+    grep -F "${e[@]}" "$T/log/leak" >/dev/null
+    rc=$?
+    case $rc in
+      1) ;;
+      0) echo "secret or host text in capture: $(grep -hoF "${e[@]}" "$T/log/leak" | head -n 1)"; return 1 ;;
+      *) echo "leak search error: grep exited $rc"; return 1 ;;
+    esac
+  done < <(find "$cap" -type f)
 }
 
 PC1() { # both probe kinds x exits 0 and 3 x bash, sh and zsh: same exit, same exit file, same captures
@@ -1004,10 +1016,10 @@ PC1() { # both probe kinds x exits 0 and 3 x bash, sh and zsh: same exit, same e
         [ "$got" -eq "$rc" ] || { echo "$k $sh rc=$rc script exit=$got"; return 1; }
         [ "$(cat "$cap/exit" 2>/dev/null)" = "$rc" ] || { echo "$k $sh rc=$rc exit file=$(cat "$cap/exit" 2>/dev/null)"; return 1; }
         why=$(pc_golden "PC1-$k" "$cap") || { echo "$k $sh rc=$rc: $why"; return 1; }
-        for f in exit stderr stdout; do
+        for f in exit stderr stdout stream; do
           [ "$(mode "$cap/$f")" = -rw------- ] || { echo "$k $sh: $f mode is $(mode "$cap/$f")"; return 1; }
         done
-        [ "$(ls -A "$cap" | tr '\n' ' ')" = 'exit stderr stdout ' ] || { echo "$k $sh: the capture holds: $(ls -A "$cap" | tr '\n' ' ')"; return 1; }
+        [ "$(ls -A "$cap" | tr '\n' ' ')" = 'exit stderr stdout stream ' ] || { echo "$k $sh: the capture holds: $(ls -A "$cap" | tr '\n' ' ')"; return 1; }
       done
     done
   done
@@ -1040,16 +1052,16 @@ PC4() { # check accepts both generated probe scripts and rejects each tampered c
   done
   for n in 1 2 3 4 6 7 8; do c_build "PC4-$n" claude-write-probe || return 1; done
   c_build PC4-5 claude-write || return 1
-  sed 's#} 3>&1 | awk -v names="$redact_env" "$red" >"$cap/stdout"$#} 3>\&1 >"$cap/stdout"#' "$T/c/PC4-1.base" >"$T/c/PC4-1.sh"
+  sed 's#} 3>&1 | awk -v names="$redact_env" "$red" | {$#} 3>\&1 | {#' "$T/c/PC4-1.base" >"$T/c/PC4-1.sh"
   pc4 1 "capture block differs from the claude-write-probe block" || return 1
   mkdir -m 700 "$T/wt/pc4cap" && sed "s|^cap='.*'\$|cap='$T/wt/pc4cap'|" "$T/c/PC4-2.base" >"$T/c/PC4-2.sh"
   pc4 2 "cap is inside the worktree: $T/wt/pc4cap" || return 1
   mkdir -m 755 "$T/pc/m755" && sed "s|^cap='.*'\$|cap='$T/pc/m755'|" "$T/c/PC4-3.base" >"$T/c/PC4-3.sh"
   pc4 3 "cap is not an owner-only directory: $T/pc/m755" || return 1
-  { sed '/^redact_env=/q' "$T/c/PC4-4.base"; printf '%s\n' 'exec "${argv[@]}" <"$lf"'; } >"$T/c/PC4-4.sh"
+  { sed '/^attempt=/q' "$T/c/PC4-4.base"; printf '%s\n' 'exec "${argv[@]}" <"$lf"'; } >"$T/c/PC4-4.sh"
   pc4 4 "exec line in a claude-write-probe run script" || return 1
-  { cat "$T/c/PC4-5.base"; sed -n '/^umask 077$/,$p' "$T/c/PC4-1.base"; } >"$T/c/PC4-5.sh"
-  pc4 5 "text after the exec line of a claude-write run script" || return 1
+  { cat "$T/c/PC4-5.base"; printf '%s\n' 'exec "${argv[@]}" <"$lf"'; } >"$T/c/PC4-5.sh"
+  pc4 5 "exec line in a claude-write run script, which captures its run" || return 1
   sed 's/"\[redacted\]"/"[redactex]"/' "$T/c/PC4-6.base" >"$T/c/PC4-6.sh"
   pc4 6 "capture block differs from the claude-write-probe block" || return 1
   : >"$T/cap/PC4-7/stdout" && sed "s|^lf='.*'\$|lf='$T/cap/PC4-7/stdout'|" "$T/c/PC4-7.base" >"$T/c/PC4-7.sh"
@@ -1071,26 +1083,26 @@ pc5() { # LABEL MESSAGE OUT ARGS...: write exits 2 with MESSAGE, writes no OUT, 
   [ ! -e "$out" ] || { echo "($label) OUT was written"; return 1; }
   no_tmp "${out%/*}" || { echo "($label) a .launch.* file was left"; return 1; }
 }
-PC5() { # write refuses each bad --capture or --redact-env input; an owner-only capture beside the brief is accepted
+PC5() { # write refuses each bad --capture, --events, --delivery or --redact-env input; an owner-only capture beside the brief is accepted
   local o=$T/pc5/run.sh rc
-  local -a cl=(--kind claude-write-probe --launch-file "$LF" --host-source "$T/home/src.md")
-  local -a cx=(--kind codex-read-probe --launch-file "$LF" --result "$T/pc5res/result.md")
+  local -a cl=(--kind claude-write-probe --launch-file "$LF" --host-source "$T/home/src.md" "${EV[@]}")
+  local -a cx=(--kind codex-read-probe --launch-file "$LF" --result "$T/pc5res/result.md" "${EV[@]}")
   mkdir -m 700 "$T/pc5/ok" "$T/pc5/g" "$T/pc5/h" "$T/pc5/i" && mkdir -m 1777 "$T/pc5/open" && : >"$T/pc5/g/stdout" \
     || { echo "cannot create the PC5 fixtures"; return 1; }
   pc5 a "--capture is required for claude-write-probe" "$o" "${cl[@]}" || return 1
-  pc5 b "--capture is only for probe kinds, not claude-write" "$o" --kind claude-write --launch-file "$LF" \
-    --host-source "$T/home/src.md" --capture "$T/pc5/ok" || return 1
-  pc5 c "--redact-env is only for probe kinds, not codex-read" "$o" --kind codex-read --launch-file "$LF" \
-    --result "$T/pc5res/result.md" --redact-env DBCRED || return 1
+  pc5 b "--events must be an absolute path ending in /events.jsonl: $T/ev/events.json" "$o" --kind claude-write --launch-file "$LF" \
+    --host-source "$T/home/src.md" --capture "$T/pc5/ok" --events "$T/ev/events.json" || return 1
+  pc5 c "--delivery must have the form OWNER/REPO#N: o/r" "$o" --kind codex-read --launch-file "$LF" \
+    --result "$T/pc5res/result.md" --capture "$T/pc5/ok" --delivery o/r || return 1
   pc5 d "--capture is inside the worktree: $T/wt/pc5cap" "$o" "${cl[@]}" --capture "$T/wt/pc5cap" || return 1
   [ ! -e "$T/wt/pc5cap" ] || { echo "(d) the capture directory was created inside the worktree"; return 1; }
   pc5 e "--capture is not an owner-only directory: $T/pc5/open" "$o" "${cl[@]}" --capture "$T/pc5/open" || return 1
   pc5 f "--capture resolves into the writable root: $T/pc5res/work/c" "$o" "${cx[@]}" --capture "$T/pc5res/work/c" || return 1
   pc5 g "--capture $T/pc5/g/stdout is the launch file" "$o" --kind claude-write-probe --launch-file "$T/pc5/g/stdout" \
-    --host-source "$T/home/src.md" --capture "$T/pc5/g" || return 1
+    --host-source "$T/home/src.md" --capture "$T/pc5/g" "${EV[@]}" || return 1
   pc5 h "--capture $T/pc5/h/stderr is the run script" "$T/pc5/h/stderr" "${cl[@]}" --capture "$T/pc5/h" || return 1
   pc5 i "--capture $T/pc5/i/exit is the result" "$o" --kind codex-read-probe --launch-file "$LF" \
-    --result "$T/pc5/i/exit" --capture "$T/pc5/i" || return 1
+    --result "$T/pc5/i/exit" --capture "$T/pc5/i" "${EV[@]}" || return 1
   pc5 j "--redact-env must be an environment variable name: A-B" "$o" "${cl[@]}" --capture "$T/pc5/ok" --redact-env A-B || return 1
   (cd "$T/b" && bash "$LAUNCH_SH" write --out "$T/pc5/ok.sh" --worktree "$T/wt" "${cl[@]}" --capture "$T/pc5/ok") \
     >/dev/null 2>"$T/log/PC5.err"
@@ -1116,7 +1128,7 @@ PC6() { # the harness streams reach the redactors as pipes, and no raw text is o
     esac
   done
 }
-PC7() { # a failed redaction stage keeps the harness status, writes capture-error, and exits 70
+PC7() { # a failed redaction stage keeps the harness status, writes capture-error, and exits 70; a stdout-redactor failure is not telemetry
   local cap=$T/pc/cap7 n rc want
   pc_build PC7 claude-write-probe "$cap" || return 1
   for n in 1 2; do
@@ -1185,9 +1197,236 @@ PC9() { # Codex: short and embedded credentials are removed and every object lin
   pc_golden PC9 "$cap"
 }
 
+# ---- #299: every kind captures; worker tool-call events (C24, C25, S12, TS1-TS5, TC1-TC5, TH1, TH2) ----
+
+C24() { # a station kind's run script that ends in a bare exec is rejected
+  local k
+  for k in claude-read codex-write; do
+    c_build "C24-$k" "$k" || return 1
+    { sed '/^cd -- /q' "$T/c/C24-$k.base"; printf '%s < %s\n' 'exec "${argv[@]}"' "'$LF'"; } >"$T/c/C24-$k.sh"
+    c_expect "C24-$k" "$T/r" "exec line in a $k run script, which captures its run" || return 1
+  done
+}
+C25() { # a run script with no delivery identity, a bad delivery, or a bad events path is rejected
+  c_build C25 claude-read || return 1
+  cp "$T/c/C25.base" "$T/c/C25a.base" && cp "$T/c/C25.base" "$T/c/C25b.base" && cp "$T/c/C25.base" "$T/c/C25c.base" \
+    && cp "$T/c/C25.base" "$T/c/C25d.base" || { echo "cannot copy the C25 fixture"; return 1; }
+  sed '/^delivery=/d' "$T/c/C25.base" >"$T/c/C25a.sh"
+  c_expect C25a "$T/r" "missing delivery= line in a claude-read run script" || return 1
+  sed "s|^delivery='.*'\$|delivery='x'|" "$T/c/C25.base" >"$T/c/C25b.sh"
+  c_expect C25b "$T/r" "delivery is not OWNER/REPO#N: x" || return 1
+  sed "s|^events='.*'\$|events='ev/events.jsonl'|" "$T/c/C25.base" >"$T/c/C25c.sh"
+  c_expect C25c "$T/r" "events is not an absolute path ending in /events.jsonl: ev/events.jsonl" || return 1
+  sed "s|^events='.*'\$|events='$T/ev/tool-calls.jsonl'|" "$T/c/C25.base" >"$T/c/C25d.sh"
+  c_expect C25d "$T/r" "events is not an absolute path ending in /events.jsonl: $T/ev/tool-calls.jsonl"
+}
+S12() { # write refuses a station kind without --capture, --events or --delivery and writes no OUT
+  local k f rc
+  local -a args
+  for k in claude-read codex-write; do
+    for f in --capture --events --delivery; do
+      args=(--kind "$k" --worktree "$T/wt" --launch-file "$LF" --out "$T/ts/S12.sh")
+      [ "$k" = claude-read ] || args+=(--result "$T/res/result.md")
+      [ "$f" = --capture ] || args+=(--capture "$T/cap/S12")
+      [ "$f" = --events ] || args+=(--events "$T/ev/events.jsonl")
+      [ "$f" = --delivery ] || args+=(--delivery 'o/r#1')
+      args+=(--station implementing --attempt 1)
+      (cd "$T/b" && bash "$LAUNCH_SH" write "${args[@]}") >/dev/null 2>"$T/log/S12.err"
+      rc=$?
+      [ "$rc" -eq 2 ] || { echo "$k without $f: write exited $rc, not 2"; return 1; }
+      grep -qF -- "$f is required for $k" "$T/log/S12.err" || { echo "$k without $f: stderr lacks: $f is required for $k"; return 1; }
+      [ ! -e "$T/ts/S12.sh" ] || { echo "$k without $f: OUT was written"; return 1; }
+    done
+  done
+}
+
+TCH='"kind":"tool-call","delivery":"o/r#1","station":"implementing","attempt":"1","source":"worker"'
+tab=$'\t'
+printf 'No host path here.\n' >"$T/home/nogrant.md" || setup "cannot write the no-grant source"
+
+ts_build() { # NAME KIND [ARGS...]: write $T/ts/NAME.sh with capture $T/ts/NAME.cap and events $T/ts/NAME.ev/events.jsonl
+  local name=$1 kind=$2 rc
+  local -a args=(--worktree "$T/wt" --launch-file "$LF" --capture "$T/ts/$1.cap" --events "$T/ts/$1.ev/events.jsonl"
+    --delivery 'o/r#1' --station implementing --attempt 1)
+  shift 2
+  mkdir -p "$T/ts/$name.ev" || { echo "$name: cannot create the events directory"; return 1; }
+  case $kind in codex-*) args+=(--result "$T/ts/res/result.md") ;; esac
+  (cd "$T/b" && bash "$LAUNCH_SH" write --kind "$kind" --out "$T/ts/$name.sh" "${args[@]}" "$@") >/dev/null 2>"$T/log/$name.build"
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "$name: write exited $rc: $(first "$T/log/$name.build")"; return 1; }
+}
+ev_field() { # FIELD LINE: the value of a string or number FIELD in one event line
+  printf '%s\n' "$2" | sed -n "s/.*\"$1\":\"\\{0,1\\}\\([^\",}]*\\).*/\\1/p"
+}
+
+# A Claude pair for TS1, TS5, TC3 and TC5.
+printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Bash","input":{"command":"git status"}}]}}' \
+  '{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"t1","content":"ok","is_error":false}]}}' >"$T/ts/pair.in" \
+  || setup "cannot write the TS pair"
+printf '%s\n' 'sed -n 1p "$TS_IN"' 'sleep 1' 'sed -n 2p "$TS_IN"' >"$T/ts/ts1.run" \
+  && printf '%s\n' 'printf "%s\n%s" "$(sed -n 1p "$TS_IN")" "$(sed -n 2p "$TS_IN")"' >"$T/ts/ts5.run" \
+  && printf '%s\n' 'cat -- "$TS_IN"' 'r=absent i=0' \
+    'while [ "$i" -lt 100 ]; do if [ -s "$TS_EV" ]; then r=found; break; fi; sleep 0.1; i=$((i + 1)); done' \
+    'printf "%s\n" "$r" >"$TS_FOUND"' >"$T/ts/tc5.run" || setup "cannot write the TS stub programs"
+
+TS1() { # each record carries its own arrival time, and the event takes its start and end from the stamped records
+  local s ev n d l1 l2
+  s=$T/ts/TS1.cap ev=$T/ts/TS1.ev/events.jsonl
+  ts_build TS1 claude-read || return 1
+  pc_run bash "$T/ts/TS1.sh" STUB_RUN="$T/ts/ts1.run" TS_IN="$T/ts/pair.in" || { echo "run script exited $?"; return 1; }
+  n=$(grep -cE "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$tab[0-9]+\\.[0-9]{6}$tab" "$s/stream")
+  [ "$n" = 2 ] && [ "$(wc -l <"$s/stream")" -eq 2 ] || { echo "stream has $n stamped lines of $(wc -l <"$s/stream")"; return 1; }
+  [ "$(wc -l <"$ev")" -eq 1 ] || { echo "events holds $(wc -l <"$ev") lines, not 1"; return 1; }
+  l1=$(sed -n 1p "$s/stream" | cut -f1) l2=$(sed -n 2p "$s/stream" | cut -f1)
+  [ "$(ev_field start "$(cat "$ev")")" = "$l1" ] || { echo "start is not the first record's time $l1"; return 1; }
+  [ "$(ev_field end "$(cat "$ev")")" = "$l2" ] && [ "$(ev_field time "$(cat "$ev")")" = "$l2" ] \
+    || { echo "end or time is not the second record's time $l2"; return 1; }
+  d=$(ev_field duration_s "$(cat "$ev")")
+  awk -v d="$d" 'BEGIN { exit !(d ~ /^[0-9]+\.[0-9]{6}$/ && d >= 1 && d <= 5) }' || { echo "duration_s $d is not within [1, 5]"; return 1; }
+}
+
+# TS2 and TS3: a Claude pair whose id is a credential, and credentials in its arguments, result, and a plain line.
+cat >"$T/ts/ts2.stdout" <<EOF
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"tok-$P-secretvalue","name":"Bash","input":{"command":"echo Zq7 dbc-$P-x"}}]}}
+{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"tok-$P-secretvalue","content":"$ESC_SECRET 4242$P","is_error":false}]}}
+plain tok-$P-secretvalue line
+EOF
+TS2() { # no credential reaches stdout, stream, or events: the stream is stamped and paired only after redaction
+  local s=$T/ts/TS2.cap ev=$T/ts/TS2.ev/events.jsonl
+  ts_build TS2 claude-read --redact-env DBCRED || return 1
+  pc_run bash "$T/ts/TS2.sh" STUB_STREAM="$T/ts/ts2.stdout" "${PC_CREDS[@]}" || { echo "run script exited $?"; return 1; }
+  [ "$(grep -c '"id":"\[redacted\]"' "$ev")" = 1 ] || { echo "events lacks the one redacted-id pair: $(head -c 200 "$ev")"; return 1; }
+  pc_leak "$s" || return 1
+  pc_leak "$ev"
+}
+TS3() { # the stream records are the stdout records: the same stage feeds both
+  local s=$T/ts/TS2.cap
+  [ -s "$s/stdout" ] && [ -s "$s/stream" ] || { echo "TS2 left no stdout or stream"; return 1; }
+  cut -f3- "$s/stream" | cmp -s - "$s/stdout" || { echo "the stream records differ from stdout"; return 1; }
+}
+
+# TS4: the PC3 stream with an item.started record before its command_execution item.
+sed '2a\
+{"type":"item.started","item":{"id":"item_1","type":"command_execution","command":"bash -lc '"'"'git status --short'"'"'","aggregated_output":"","exit_code":null,"status":"in_progress"}}' \
+  "$T/pc/pc3.stdout" >"$T/ts/ts4.stdout" && sed '2a\
+{"type":"item.started","item":{"id":"item_1","type":"command_execution","command":"bash -lc '"'"'git status --short'"'"'","aggregated_output":"","exit_code":null,"status":"in_progress"}}' \
+  "$T/exp/PC3.stdout" >"$T/exp/TS4.stdout" || setup "cannot write the TS4 stream"
+TS4() { # a stream that cannot be written keeps stdout, the harness status, and the events, and records a telemetry error
+  local s=$T/ts/TS4.cap ev=$T/ts/TS4.ev/events.jsonl rc
+  ts_build TS4 codex-read --redact-env DBCRED || return 1
+  mkdir "$s/stream" || { echo "cannot create the stream directory"; return 1; }
+  pc_run bash "$T/ts/TS4.sh" STUB_STREAM="$T/ts/ts4.stdout" STUB_ERR="$T/pc/pc3.stderr" STUB_RC=3 "${PC_CREDS[@]}"
+  rc=$?
+  [ "$rc" -eq 3 ] || { echo "run script exited $rc, not 3"; return 1; }
+  [ "$(cat "$s/exit" 2>/dev/null)" = 3 ] || { echo "exit file is $(cat "$s/exit" 2>/dev/null)"; return 1; }
+  diff "$T/exp/TS4.stdout" "$s/stdout" >"$T/log/TS4.diff" || { echo "stdout differs: $(grep '^[<>]' "$T/log/TS4.diff" | head -n 1)"; return 1; }
+  grep -qF 'stream=1' "$s/telemetry-error" 2>/dev/null || { echo "telemetry-error does not name stream=1"; return 1; }
+  [ ! -e "$s/capture-error" ] || { echo "capture-error was written: $(cat "$s/capture-error")"; return 1; }
+  [ "$(wc -l <"$ev")" -eq 1 ] && grep -qF '"tool":"command_execution","id":"item_1",' "$ev" && grep -qF '"exit":0}' "$ev" \
+    || { echo "events lacks the item_1 pair: $(head -c 300 "$ev")"; return 1; }
+}
+TS5() { # a final record with no newline is kept once, ends in one newline in stdout, and completes its pair
+  local s=$T/ts/TS5.cap ev=$T/ts/TS5.ev/events.jsonl
+  ts_build TS5 claude-read || return 1
+  pc_run bash "$T/ts/TS5.sh" STUB_RUN="$T/ts/ts5.run" TS_IN="$T/ts/pair.in" || { echo "run script exited $?"; return 1; }
+  diff "$T/ts/pair.in" "$s/stdout" >"$T/log/TS5.diff" || { echo "stdout differs: $(grep '^[<>]' "$T/log/TS5.diff" | head -n 1)"; return 1; }
+  [ "$(wc -l <"$s/stream")" -eq 2 ] && [ "$(tail -n 1 "$s/stream" | cut -f3-)" = "$(sed -n 2p "$T/ts/pair.in")" ] \
+    || { echo "the stream's last line is not the final record"; return 1; }
+  [ "$(wc -l <"$ev")" -eq 1 ] && grep -qF '"tool":"Bash","id":"t1",' "$ev" || { echo "events lacks the t1 pair"; return 1; }
+}
+
+# TC1, TC2, TC4: the tool-call program of a generated run script on fixed stamped input.
+tc_case() { # NAME: run the tc program on $T/ts/NAME.in and compare with $T/exp/NAME.events
+  local prog
+  [ -f "$T/c/TCP.base" ] || c_build TCP claude-read || return 1
+  prog=$(sed -n "/^tc='\$/,/^'\$/p" "$T/c/TCP.base" | sed '1d;$d')
+  [ -n "$prog" ] || { echo "no tc program in the run script"; return 1; }
+  awk -v delivery='o/r#1' -v station=implementing -v attempt=1 "$prog" "$T/ts/$1.in" >"$T/ts/$1.out" 2>"$T/log/$1.err" \
+    || { echo "tc exited non-zero: $(first "$T/log/$1.err")"; return 1; }
+  diff "$T/exp/$1.events" "$T/ts/$1.out" >"$T/log/$1.diff" || { echo "events differ: $(grep '^[<>]' "$T/log/$1.diff" | head -n 1)"; return 1; }
+}
+D='2026-10-16T00:00:'
+{
+  printf '%s\t%s\t%s\n' "${D}01.250000Z" 1792108801.250000 '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"a","name":"Bash","input":{"command":"x"}},{"type":"tool_use","id":"b","name":"Read","input":{"file_path":"/f"}}]}}'
+  printf '%s\t%s\t%s\n' "${D}02.000000Z" 1792108802.000000 '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"c","name":"Grep","input":{}}]}}'
+  printf '%s\t%s\t%s\n' "${D}03.500000Z" 1792108803.500000 '{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"b","content":"x","is_error":false}]}}'
+  printf '%s\t%s\t%s\n' "${D}04.750000Z" 1792108804.750000 '{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"a","content":"x","is_error":true}]}}'
+} >"$T/ts/TC1.in" && {
+  printf '{"time":"%s",%s,"tool":"Read","id":"b","start":"%s","end":"%s","duration_s":2.250000,"error":false}\n' "${D}03.500000Z" "$TCH" "${D}01.250000Z" "${D}03.500000Z"
+  printf '{"time":"%s",%s,"tool":"Bash","id":"a","start":"%s","end":"%s","duration_s":3.500000,"error":true}\n' "${D}04.750000Z" "$TCH" "${D}01.250000Z" "${D}04.750000Z"
+} >"$T/exp/TC1.events" && {
+  printf '%s\t%s\t%s\n' "${D}10.000000Z" 1792108810.000000 '{"type":"item.started","item":{"id":"item_1","type":"command_execution","command":"git status","status":"in_progress"}}'
+  printf '%s\t%s\t%s\n' "${D}10.400000Z" 1792108810.400000 '{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"hi"}}'
+  printf '%s\t%s\t%s\n' "${D}12.125000Z" 1792108812.125000 '{"type":"item.completed","item":{"id":"item_1","type":"command_execution","command":"git status","exit_code":1,"status":"failed"}}'
+} >"$T/ts/TC2.in" && {
+  printf '{"time":"%s",%s,"tool":"command_execution","id":"item_1","start":"%s","end":"%s","duration_s":2.125000,"exit":1}\n' "${D}12.125000Z" "$TCH" "${D}10.000000Z" "${D}12.125000Z"
+} >"$T/exp/TC2.events" && {
+  printf '%s\t%s\t%s\n' unknown unknown '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"u1","name":"Bash","input":{"command":"x"}}]}}'
+  printf '%s\t%s\t%s\n' unknown unknown '{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"u1","content":"x","is_error":false}]}}'
+  printf '%s\t%s\t%s\n' "${D}10.000000Z" 1792108810.000000 '{"type":"item.started","item":{"id":"item_2","type":"command_execution","command":"x"}}'
+  printf '%s\t%s\t%s\n' unknown unknown '{"type":"item.completed","item":{"id":"item_2","type":"command_execution","command":"x","exit_code":0}}'
+} >"$T/ts/TC4.in" && {
+  printf '{"time":"unknown",%s,"tool":"Bash","id":"u1","start":"unknown","end":"unknown","duration_s":"unknown","error":false}\n' "$TCH"
+  printf '{"time":"unknown",%s,"tool":"command_execution","id":"item_2","start":"%s","end":"unknown","duration_s":"unknown","exit":0}\n' "$TCH" "${D}10.000000Z"
+} >"$T/exp/TC4.events" || setup "cannot write the TC fixtures"
+TC1() { tc_case TC1; } # Claude: pairs by id in completion order, exact times and durations, no event for an unanswered call
+TC2() { tc_case TC2; } # Codex: pairs item.started with item.completed by item id; a completed-only item is not a call
+TC4() { tc_case TC4; } # a missing clock is "unknown", never zero or an estimate
+TC3() { # a failed tool-call stage keeps stdout and the harness status and records a telemetry error, not a capture error
+  local s=$T/ts/TC3.cap rc
+  ts_build TC3 claude-read || return 1
+  (cd "$T/r" && env -i PATH="$T/fbin:$T/pbin:$PATH" HOME="$HOME" STUB_STREAM="$T/ts/pair.in" STUB_RC=3 STUB_AWK_FAIL=3 \
+    bash -c '"$1"' _ "$T/ts/TC3.sh") >/dev/null 2>&1
+  rc=$?
+  [ "$rc" -eq 3 ] || { echo "run script exited $rc, not 3"; return 1; }
+  grep -qF 'tool-call' "$s/telemetry-error" 2>/dev/null || { echo "telemetry-error does not name the tool-call stage"; return 1; }
+  [ ! -e "$s/capture-error" ] || { echo "capture-error was written: $(cat "$s/capture-error")"; return 1; }
+  cmp -s "$T/ts/pair.in" "$s/stdout" || { echo "stdout differs from its golden"; return 1; }
+}
+TC5() { # a completed call reaches events while the worker still runs
+  local ev=$T/ts/TC5.ev/events.jsonl
+  ts_build TC5 claude-read || return 1
+  rm -f -- "$T/ts/TC5.found"
+  pc_run bash "$T/ts/TC5.sh" STUB_RUN="$T/ts/tc5.run" TS_IN="$T/ts/pair.in" TS_EV="$ev" TS_FOUND="$T/ts/TC5.found" \
+    || { echo "run script exited $?"; return 1; }
+  [ "$(cat "$T/ts/TC5.found" 2>/dev/null)" = found ] || { echo "events was $(cat "$T/ts/TC5.found" 2>/dev/null) while the worker ran"; return 1; }
+}
+
+TH1() { # claude-write under a host grant redacts host text from stdout and stream as the probe does
+  local s=$T/ts/TH1.cap
+  ts_build TH1 claude-write --host-source "$T/home/pc2src.md" --redact-env DBCRED || return 1
+  pc_run bash "$T/ts/TH1.sh" STUB_STREAM="$T/pc/pc2.stdout" STUB_ERR="$T/pc/pc2.stderr" "${PC_CREDS[@]}" \
+    || { echo "run script exited $?"; return 1; }
+  pc_golden PC2 "$s" || return 1
+  pc_leak "$s" "HOSTTEXT-$P" "CHATTER-$P" "ARGTEXT-$P" "ARGCMD-$P"
+}
+cat >"$T/ts/th2.stdout" <<EOF
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"r1","name":"Read","input":{"file_path":"$T/home/plain.md"}}]}}
+{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"r1","content":"HOSTTEXT-$P","is_error":false}]}}
+{"type":"assistant","message":{"content":[{"type":"tool_use","id":"w1","name":"Write","input":{"file_path":"$T/th2/result.md","content":"## Outcome\nHOSTTEXT-$P"}}]}}
+{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"w1","content":"File created","is_error":false}]}}
+{"type":"result","subtype":"success","is_error":false,"result":"## Outcome\nHOSTTEXT-$P","permission_denials":[]}
+EOF
+printf '## Outcome\nDone.\n## Steps completed\n## Evidence\n## Checks\nPack: %s/brief/pack.md\n' "$T" >"$T/exp/TH2.result" \
+  && printf '%s\n' 'cat -- "$STUB_STREAM"' 'cp -- "$TH2_SRC" "$TH2_RESULT"' >"$T/ts/th2.run" || setup "cannot write the TH2 fixtures"
+TH2() { # a granted write station's result is its result file; no host text in stdout, stream, or events
+  local s=$T/ts/TH2.cap ev=$T/ts/TH2.ev/events.jsonl
+  ts_build TH2 claude-write --host-source "$T/home/pc2src.md" || return 1
+  rm -f -- "$T/th2/result.md"
+  pc_run bash "$T/ts/TH2.sh" STUB_RUN="$T/ts/th2.run" STUB_STREAM="$T/ts/th2.stdout" TH2_SRC="$T/exp/TH2.result" \
+    TH2_RESULT="$T/th2/result.md" || { echo "run script exited $?"; return 1; }
+  pc_leak "$s" "HOSTTEXT-$P" || return 1
+  pc_leak "$ev" "HOSTTEXT-$P" || return 1
+  grep '"type":"result"' "$s/stdout" | tail -n 1 | grep -qF '"result":"[removed]"' || { echo "the result field was not removed"; return 1; }
+  grep -qF '"tool":"Read","id":"r1",' "$ev" && grep -qF '"tool":"Write","id":"w1",' "$ev" && [ "$(grep -cF '"error":false}' "$ev")" = 2 ] \
+    || { echo "events lacks the Read and Write lines with error false"; return 1; }
+  cmp -s "$T/exp/TH2.result" "$T/th2/result.md" || { echo "the result file changed"; return 1; }
+}
+
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
 for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
-  C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9; do
+  C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 \
+  C24 C25 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
   t "$c" "$c"
 done
 [ "$fails" -eq 0 ] || exit 1

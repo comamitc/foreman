@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
 # Capstan launch builder. The coordinator runs it; workers never do. It writes
 # and checks the run script for one Claude or Codex worker launch. It does not
-# launch or supervise. references/harnesses/shared.md ("## Launch probe") owns
-# the probe capture. The recipes in references/harnesses/claude.md,
-# codex.md, and shared.md ("Launch probe") are the specification: where this
-# file differs, this file is wrong.
+# launch or supervise. references/harnesses/shared.md ("A run script that
+# `scripts/launch.sh write` writes takes `--capture DIR`") owns the capture.
+# The recipes in references/harnesses/claude.md, codex.md, and shared.md
+# ("Launch probe") are the specification: where this file differs, this file
+# is wrong.
 #
 #   launch.sh write --kind K --worktree DIR --launch-file FILE --out RUN_SCRIPT
+#       --capture DIR --events FILE --delivery OWNER/REPO#N --station S --attempt A
 #       [--model M] [--effort E] [--add-dir DIR]... [--allow ENTRY]...
-#       [--host-source FILE] [--result FILE] [--capture DIR] [--redact-env NAME]...
+#       [--host-source FILE] [--result FILE] [--redact-env NAME]...
 #     K: claude-write, claude-read, claude-write-probe, codex-write, codex-read,
 #     codex-read-probe. Prints the Host grant: line for claude-write*.
-#     --capture and --redact-env are for the probe kinds only, and a probe kind
-#     requires --capture. Its DIR is absolute and owner-only, and is not inside
-#     --worktree or work/; no capture file in it is the launch file, the run
-#     script, or the result. NAME is an environment variable name.
+#     Every kind requires --capture, --events, --delivery, --station and
+#     --attempt; its run script ends in the capture block. The capture DIR is
+#     absolute and owner-only, and is not inside --worktree or work/; no capture
+#     file in it is the launch file, the run script, or the result. FILE is an
+#     absolute path ending in /events.jsonl; the run script appends each worker
+#     tool-call event to it. NAME is an environment variable name.
 #     codex-read and codex-read-probe start in work/ beneath the --result
 #     directory, create work/ and work/tmp/ owner-only with work/tmp as TMPDIR,
 #     and refuse --add-dir and a --result that is a symlink or resolves into
@@ -53,7 +57,9 @@ NAMES_RE='^([A-Za-z_][A-Za-z0-9_]*( [A-Za-z_][A-Za-z0-9_]*)*)?$'
 LF_RE="^lf='(/[^']*)'\$"
 CAP_RE="^cap='(/[^']*)'\$"
 RENV_RE="^redact_env='([^']*)'\$"
-CAP_NAMES='stdout stderr exit capture-error'
+DELIV_RE="^[^/' ]+/[^#' ]+#[0-9]+\$"
+EV_LINES=(events delivery station attempt)
+CAP_NAMES='stdout stderr exit capture-error stream telemetry-error'
 
 die() { printf 'launch.sh: %s\n' "$*" >&2; exit 2; }
 need_abs() { case $2 in /*) ;; *) die "$1 must be an absolute path: $2" ;; esac; }
@@ -80,8 +86,8 @@ root_bad() {
 }
 
 # cap_bad DIR WORKTREE RESULT LAUNCH_FILE RUN_SCRIPT: prints why DIR cannot hold
-# a probe capture, by canonical path; prints nothing when it can. RESULT is empty
-# for a Claude probe. A DIR that does not exist yet passes the checks that need it.
+# a capture, by canonical path; prints nothing when it can. RESULT is empty for
+# a Claude kind. A DIR that does not exist yet passes the checks that need it.
 cap_bad() {
   local rc rw n c
   rc=$(realpath -m -- "$1") && rw=$(realpath -m -- "$2") || { printf 'does not resolve: %s' "$1"; return 0; }
@@ -250,18 +256,20 @@ EOF
   else GRANT_LINE="Host grant: no host-directed files; skipped $skipped"; fi
 }
 
-# ---- probe capture: the block that ends a probe kind's run script ----
+# ---- capture: the block that ends every kind's run script ----
 
-# The redaction program of the probe capture. It implements the credential
+# The redaction program of the capture. It implements the credential
 # redaction of references/security.md item 6 on every stream and, with host set,
 # the host-grant redaction of references/harnesses/claude.md ("Before any output
 # of a run under a host grant is written") on both Claude streams. It reads the
 # credential values from ENVIRON, never argv: each value whose variable name
 # matches the pattern below, or is listed in names. A line that parses as one
 # JSON object is rewritten token by token, so its structure is kept; any other
-# line is redacted as text, or is [removed] with host set. The run script holds
-# this text inside single quotes, so it contains none.
-RED_AWK='
+# line is redacted as text, or is [removed] with host set. Each line is flushed
+# as it is written, so later stages see it when it arrives. The run script holds
+# this text, and TC_AWK, inside single quotes, so they contain none.
+# RED_FUNCS is the function section RED_AWK and TC_AWK share.
+RED_FUNCS='
 function esc(s,   o, i, c) {
   o = ""
   for (i = 1; i <= length(s); i++) {
@@ -458,10 +466,11 @@ function emit(   i, o, t) {
   }
   return o TAIL
 }
-BEGIN {
+'
+RED_AWK=$RED_FUNCS'BEGIN {
   SCALAR = "^(true|false|null|-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][-+]?[0-9]+)?)$"
   BARE = "-+.0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  HFC = "\"[host file content removed]\""
+  HFC ="\"[host file content removed]\""
   split("type subtype id name tool_name tool_use_id role model session_id uuid stop_reason file_path", a, " ")
   for (i in a) KEEP[a[i]] = 1
   split("input tool_input wire_tool_inputs", a, " ")
@@ -484,30 +493,126 @@ BEGIN {
 {
   split("", OPAR); split("", OKEY); split("", VPAR); split("", VKEY); split("", VEND); split("", ISKEY); split("", MEM); split("", REPL)
   P = 1
-  if (!lex($0) || TK[1] != "{" || !pobj(0) || P != NT + 1) { print (host ? "[removed]" : cred($0)); next }
+  if (!lex($0) || TK[1] != "{" || !pobj(0) || P != NT + 1) { print (host ? "[removed]" : cred($0)); fflush(); next }
   if (host) hostpass()
-  print emit()
+  print emit(); fflush()
 }
 '
 
-# probe_block KIND: prints the block that follows the lf=, cap= and redact_env=
-# lines of a probe kind's run script. It is the same for every input of KIND.
-probe_block() {
+# The tool-call program of the capture. It reads the arrival-stamped redacted
+# stream, ISO<TAB>EPOCH<TAB>LINE per record, and prints one worker tool-call
+# event of references/telemetry.md for each completed call, when its end record
+# arrives: a Claude tool_use and the tool_result with the same id, or a Codex
+# item.started and the item.completed with the same item id. A completion with
+# no start is dropped; a start that never completes prints nothing. duration_s
+# is exact integer-microsecond arithmetic; a missing clock is "unknown".
+TC_AWK=$RED_FUNCS'BEGIN {
+  SCALAR = "^(true|false|null|-?(0|[1-9][0-9]*)([.][0-9]+)?([eE][-+]?[0-9]+)?)$"
+  BARE = "-+.0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  for (i = 1; i < 32; i++) ORD[sprintf("%c", i)] = i
+  HEAD = "\"kind\":\"tool-call\",\"delivery\":" q(delivery) ",\"station\":" q(station) ",\"attempt\":" q(attempt) ",\"source\":\"worker\""
+}
+function q(s) { return "\"" esc(s) "\"" }
+function us(f) { return substr(f "000000", 1, 6) + 0 }
+function dur(se, ee,   a, b, d) {
+  if (se !~ /^[0-9]+[.][0-9]+$/ || ee !~ /^[0-9]+[.][0-9]+$/) return q("unknown")
+  split(se, a, "."); split(ee, b, ".")
+  d = (b[1] - a[1]) * 1000000 + (us(b[2]) - us(a[2]))
+  if (d < 0) return q("unknown")
+  return sprintf("%d.%06d", int(d / 1000000), d % 1000000)
+}
+function out(tool, id, si, se, tail) {
+  if (tool == "") tool = q("unknown")
+  print "{\"time\":" q(ISO) "," HEAD ",\"tool\":" tool ",\"id\":" id ",\"start\":" q(si) ",\"end\":" q(ISO) ",\"duration_s\":" dur(se, EP) "," tail "}"
+  fflush()
+}
+{
+  i = index($0, "\t"); if (!i) next
+  ISO = substr($0, 1, i - 1); r = substr($0, i + 1)
+  i = index(r, "\t"); if (!i) next
+  EP = substr(r, 1, i - 1); r = substr(r, i + 1)
+  split("", OPAR); split("", OKEY); split("", VPAR); split("", VKEY); split("", VEND); split("", ISKEY); split("", MEM)
+  P = 1
+  if (!lex(r) || TK[1] != "{" || !pobj(0) || P != NT + 1) next
+  t = mget(1, "type")
+  if (t == "\"item.started\"" || t == "\"item.completed\"") {
+    if (!((1, "item") in MEM) || TK[o = MEM[1, "item"]] != "{" || (id = mget(o, "id")) == "") next
+    if (t == "\"item.started\"") { XI[id] = ISO; XE[id] = EP; XT[id] = mget(o, "type"); next }
+    if (!(id in XI)) next
+    x = mget(o, "exit_code"); if (x !~ /^-?[0-9]+$/) x = q("unknown")
+    out(XT[id], id, XI[id], XE[id], "\"exit\":" x)
+    delete XI[id]; delete XE[id]; delete XT[id]
+    next
+  }
+  for (i = 1; i <= NT; i++) {
+    if (TK[i] != "{") continue
+    t = mget(i, "type")
+    if (t == "\"tool_use\"" && (id = mget(i, "id")) != "") { UI[id] = ISO; UE[id] = EP; UN[id] = mget(i, "name"); continue }
+    if (t != "\"tool_result\"") continue
+    id = mget(i, "tool_use_id")
+    if (!(id in UI)) continue
+    x = mget(i, "is_error"); if (x != "true" && x != "false") x = q("unknown")
+    out(UN[id], id, UI[id], UE[id], "\"error\":" x)
+    delete UI[id]; delete UE[id]; delete UN[id]
+  }
+}
+'
+
+# capture_block KIND HOST: prints the block that follows the lf=, cap=,
+# redact_env=, events=, delivery=, station= and attempt= lines of a run script.
+# HOST is 1 for a run under a host grant: claude-write-probe, and claude-write
+# when its argv carries a Read( entry. The harness stdout goes through the
+# redactor, then the stamping loop, which writes stdout and stream, then the
+# tool-call program, which appends to events. A failure of the harness side,
+# the stdout redactor, or the stdout writer is a capture failure: capture-error
+# and exit 70. A failure of the stream, the tool-call pipe or stage, or the
+# events append is a telemetry failure: telemetry-error and the harness status.
+capture_block() {
   local red=$RED_AWK
-  [ "$1" != claude-write-probe ] || red="BEGIN { host = 1 }$RED_AWK"
+  [ "$2" != 1 ] || red="BEGIN { host = 1 }$RED_AWK"
   cat <<'EOF'
 umask 077
 set +e
 rm -f -- "$cap/stdout" "$cap/stderr" "$cap/exit" "$cap/capture-error" || exit 70
+rm -f -- "$cap/stream" "$cap/telemetry-error" 2>/dev/null
 EOF
   printf "red='%s'\n" "$red"
+  printf "tc='%s'\n" "$TC_AWK"
   cat <<'EOF'
-{ { rc=0; "${argv[@]}" <"$lf" 2>&1 1>&3 3>&- || rc=$?; printf '%s\n' "$rc" >"$cap/exit" || exit 71; } | awk -v names="$redact_env" "$red" >"$cap/stderr"; s=("${PIPESTATUS[@]}"); [ "${s[0]}" = 0 ] && [ "${s[1]}" = 0 ] || exit 72; } 3>&1 | awk -v names="$redact_env" "$red" >"$cap/stdout"
+{ { rc=0; "${argv[@]}" <"$lf" 2>&1 1>&3 3>&- || rc=$?; printf '%s\n' "$rc" >"$cap/exit" || exit 71; } | awk -v names="$redact_env" "$red" >"$cap/stderr"; s=("${PIPESTATUS[@]}"); [ "${s[0]}" = 0 ] && [ "${s[1]}" = 0 ] || exit 72; } 3>&1 | awk -v names="$redact_env" "$red" | {
+  trap '' PIPE; export TZ=UTC0 LC_ALL=C; t=0 o=0
+  exec 4>"$cap/stream" || { exec 4>/dev/null; t=1; }
+  exec 5>"$cap/stdout" || exit 1
+  while :; do
+    if IFS= read -r l; then n=$'\n'; elif [ -n "$l" ]; then n=; else break; fi
+    e=${EPOCHREALTIME-}
+    if [ -n "$e" ]; then printf -v iso '%(%Y-%m-%dT%H:%M:%S)T' "${e%.*}"; iso=$iso.${e#*.}Z; else iso=unknown e=unknown; fi
+    printf '%s%s' "$l" "$n" >&5 || exit 1
+    [ "$t" = 1 ] || printf '%s\t%s\t%s\n' "$iso" "$e" "$l" >&4 || t=1
+    [ "$o" = 1 ] || printf '%s\t%s\t%s\n' "$iso" "$e" "$l" || o=1
+    [ -n "$n" ] || break
+  done
+  [ "$t$o" = 00 ] || printf 'telemetry failed: stream=%s tool-call-pipe=%s\n' "$t" "$o" >"$cap/telemetry-error" || :
+} | awk -v delivery="$delivery" -v station="$station" -v attempt="$attempt" "$tc" >>"$events"
 p=("${PIPESTATUS[@]}")
-if [ "${p[0]}" = 0 ] && [ "${p[1]}" = 0 ] && read -r rc <"$cap/exit"; then exit "$rc"; fi
-printf 'capture failed: harness-side=%s stdout-redactor=%s\n' "${p[0]}" "${p[1]}" >"$cap/capture-error"
+if [ "${p[0]}" = 0 ] && [ "${p[1]}" = 0 ] && [ "${p[2]}" = 0 ] && read -r rc <"$cap/exit"; then
+  [ "${p[3]}" = 0 ] || printf 'telemetry failed: tool-call-stage=%s\n' "${p[3]}" >>"$cap/telemetry-error" || :
+  exit "$rc"
+fi
+printf 'capture failed: harness-side=%s stdout-redactor=%s stdout-writer=%s\n' "${p[0]}" "${p[1]}" "${p[2]}" >"$cap/capture-error"
 exit 70
 EOF
+}
+
+# host_of KIND WORD...: prints 1 when a KIND run with this argv is under a host grant, else 0.
+host_of() {
+  local k=$1 w
+  shift
+  case $k in
+    claude-write-probe) echo 1; return ;;
+    claude-write) for w in "$@"; do case $w in 'Read('*) echo 1; return ;; esac; done ;;
+  esac
+  echo 0
 }
 
 # ---- check: validate a run script without running it ----
@@ -568,7 +673,6 @@ walk_claude() {
       -p | --verbose | --disable-slash-commands | --strict-mcp-config)
         CTX[i]=flag
         [ "$w" != -p ] || SAW_P=1
-        [ "$w" != --verbose ] || [ "$KIND" = claude-write-probe ] || v "flag not in the $KIND recipe: $w"
         i=$((i + 1)) ;;
       --permission-mode | --output-format | --model | --effort | --permission-prompts)
         CTX[i]=flag
@@ -578,7 +682,7 @@ walk_claude() {
         want=
         case $w in
           --permission-mode) want=acceptEdits; [ "$KIND" != claude-read ] || want=plan ;;
-          --output-format) want=json; [ "$KIND" != claude-write-probe ] || want=stream-json ;;
+          --output-format) want=stream-json ;;
           --permission-prompts) want=none ;;
         esac
         [ -z "$want" ] || [ "$val" = "$want" ] || v "$w must be $want for $KIND: $val"
@@ -598,10 +702,9 @@ walk_claude() {
         i=$((i + 1)) ;;
     esac
   done
-  for f in --permission-mode --output-format --disable-slash-commands --strict-mcp-config --mcp-config --permission-prompts --allowedTools --disallowedTools; do
+  for f in --permission-mode --output-format --verbose --disable-slash-commands --strict-mcp-config --mcp-config --permission-prompts --allowedTools --disallowedTools; do
     case $SEEN in *" $f "*) ;; *) v "missing flag: $f" ;; esac
   done
-  [ "$KIND" != claude-write-probe ] || case $SEEN in *" --verbose "*) ;; *) v "missing flag: --verbose" ;; esac
   [ "$KIND" != claude-read ] || case $SEEN in *" --tools "*) ;; *) v "missing flag: --tools" ;; esac
 }
 
@@ -686,11 +789,11 @@ walk_codex() {
   [ -z "$why" ] || v "$why"
 }
 
-# probe_lines FIRST TEXT: TEXT, which starts at line FIRST of the run script,
-# must equal probe_block KIND; reports the first line that differs.
-probe_lines() {
+# capture_lines FIRST TEXT: TEXT, which starts at line FIRST of the run script,
+# must equal capture_block KIND HOST; reports the first line that differs.
+capture_lines() {
   local e r=$2 k=$1
-  e=$(probe_block "$KIND"; printf x)
+  e=$(capture_block "$KIND" "$(host_of "$KIND" ${W[@]+"${W[@]}"})"; printf x)
   e=${e%x}
   [ "$r" != "$e" ] || return 0
   while [ -n "$r" ] && [ -n "$e" ] && [ "${r%%$'\n'*}" = "${e%%$'\n'*}" ]; do r=${r#*$'\n'} e=${e#*$'\n'} k=$((k + 1)); done
@@ -703,11 +806,12 @@ probe_lines() {
 
 # check_file RUN_SCRIPT: report each violation; VIOL holds the count.
 check_file() {
-  local line ln=0 state=1 ok j n word lines blk= rest=
+  local line ln=0 state=1 ok j n word lines blk= rest= re
   CK=$1 VIOL=0 KIND= CDT= STDIN= SAW_P= SEEN=' ' CAP= RENV= OLM=
-  W=() CTX=() PB_F=() PB_W=()
-  # Grammar: the eight-part form, every line newline-terminated, nothing else. A
-  # probe kind ends with its lf=, cap= and redact_env= lines and probe_block KIND.
+  W=() CTX=() PB_F=() PB_W=() EVV=()
+  # Grammar: the eight-part form, every line newline-terminated, nothing else.
+  # Every kind ends with its lf=, cap=, redact_env=, events=, delivery=,
+  # station= and attempt= lines and capture_block KIND HOST.
   if [ -s "$CK" ] && [ -n "$(tail -c 1 "$CK")" ]; then
     lines=$(wc -l <"$CK")
     v "not a launch-builder run script (line $((lines + 1)))"
@@ -735,36 +839,36 @@ check_file() {
             fi ;;
           7) if [[ $line =~ $CD_RE ]]; then CDT=${BASH_REMATCH[1]} state=8 ok=1; fi ;;
           8)
-            case $KIND:$line in
-              *-probe:"$EXEC0"*) v "exec line in a $KIND run script, which captures its run (line $ln)"; return ;;
-              *-probe:*) if [[ $line =~ $LF_RE ]]; then STDIN=${BASH_REMATCH[1]} state=20 ok=1; fi ;;
-              *:"$EXEC0") state=9 ok=1 ;;
-              *:"$EXEC0 < '"*"'")
-                word=${line#"$EXEC0 < '"} word=${word%"'"}
-                case $word in *"'"*) ;; *) STDIN=$word state=9 ok=1 ;; esac ;;
-            esac ;;
-          9) v "text after the exec line of a $KIND run script (line $ln)"; return ;;
+            case $line in "$EXEC0"*) v "exec line in a $KIND run script, which captures its run (line $ln)"; return ;; esac
+            if [[ $line =~ $LF_RE ]]; then STDIN=${BASH_REMATCH[1]} state=20 ok=1; fi ;;
           20) if [[ $line =~ $CAP_RE ]]; then CAP=${BASH_REMATCH[1]} state=21 ok=1; fi ;;
-          21) if [[ $line =~ $RENV_RE ]]; then RENV=${BASH_REMATCH[1]} blk=$((ln + 1)) state=22 ok=1; fi ;;
+          21) if [[ $line =~ $RENV_RE ]]; then RENV=${BASH_REMATCH[1]} state=23 ok=1; fi ;;
+          23 | 24 | 25 | 26)
+            word=${EV_LINES[state - 23]} re="^${EV_LINES[state - 23]}='([^']*)'\$"
+            [[ $line =~ $re ]] || { v "missing $word= line in a $KIND run script (line $ln)"; return; }
+            EVV+=("${BASH_REMATCH[1]}") state=$((state + 1)) ok=1
+            [ "$state" != 27 ] || state=22 blk=$((ln + 1)) ;;
           22) rest=$rest$line$'\n' ok=1 ;;
         esac ;;
     esac
     [ -n "$ok" ] || { v "not a launch-builder run script (line $ln)"; return; }
   done <"$CK"
   case $state in
-    9) ;;
-    22) probe_lines "$blk" "$rest" || return ;;
+    22) capture_lines "$blk" "$rest" || return ;;
     *) v "not a launch-builder run script (line $((ln + 1)))"; return ;;
   esac
   n=${#W[@]}
   case $KIND in claude-*) FAM=claude; walk_claude ;; *) FAM=codex; walk_codex ;; esac
-  if [ "$state" = 22 ]; then # the probe capture directory and the credential names
-    if [[ $RENV =~ $NAMES_RE ]]; then :; else v "redact_env is not a list of environment variable names: $RENV"; fi
-    if [ "$FAM" = claude ]; then word=$(cap_bad "$CAP" "$CDT" '' "$STDIN" "$CK")
-    else word=$(cap_bad "$CAP" "$CWT" "$OLM" "$STDIN" "$CK"); fi
-    [ -z "$word" ] || v "cap $word"
-    [ -d "$CAP" ] || v "cap is not an owner-only directory: $CAP"
-  fi
+  # The capture directory, the credential names, and the tool-call event lines.
+  if [[ $RENV =~ $NAMES_RE ]]; then :; else v "redact_env is not a list of environment variable names: $RENV"; fi
+  if [ "$FAM" = claude ]; then word=$(cap_bad "$CAP" "$CDT" '' "$STDIN" "$CK")
+  else word=$(cap_bad "$CAP" "$CWT" "$OLM" "$STDIN" "$CK"); fi
+  [ -z "$word" ] || v "cap $word"
+  [ -d "$CAP" ] || v "cap is not an owner-only directory: $CAP"
+  case ${EVV[0]} in /*/events.jsonl) ;; *) v "events is not an absolute path ending in /events.jsonl: ${EVV[0]}" ;; esac
+  [[ ${EVV[1]} =~ $DELIV_RE ]] || v "delivery is not OWNER/REPO#N: ${EVV[1]}"
+  [ -n "${EVV[2]}" ] || v "station is empty"
+  [ -n "${EVV[3]}" ] || v "attempt is empty"
   for ((j = 0; j < n; j++)); do case ${W[j]} in 'Read('*) [ "${CTX[j]-}" = --allowedTools ] || v "Read( entry outside --allowedTools: ${W[j]}" ;; esac; done # bite:read-outside
   for ((j = 0; j < n; j++)); do [ "${CTX[j]-}" != --add-dir ] || is_abs_dir "${W[j]}" || v "--add-dir is not an existing directory: ${W[j]}"; done # bite:add-dir
   for ((j = 0; j < ${#PB_W[@]}; j++)); do v "positional argument after list-taking flag ${PB_F[j]}: ${PB_W[j]}"; done # bite:positional
@@ -775,27 +879,24 @@ check_file() {
 
 # ---- subcommands ----
 
-render() { # KIND START_DIR LAUNCH_FILE WORD...; a probe kind also reads CAP and RENV
+render() { # KIND START_DIR LAUNCH_FILE WORD...; also reads CAP, RENV, EVENTS, DELIVERY, STATION and ATTEMPT
   local k=$1 w=$2 l=$3
   shift 3
   printf '#!/usr/bin/env bash\n# Capstan launch (%s). Written by scripts/launch.sh; verify with scripts/launch.sh check.\nset -eu\nargv=(\n' "$k"
   printf "'%s'\n" "$@"
-  case $k in
-    *-probe)
-      printf ")\ncd -- '%s'\nlf='%s'\ncap='%s'\nredact_env='%s'\n" "$w" "$l" "$CAP" "$RENV"
-      probe_block "$k" ;;
-    *) printf ")\ncd -- '%s'\n%s < '%s'\n" "$w" "$EXEC0" "$l" ;;
-  esac
+  printf ")\ncd -- '%s'\nlf='%s'\ncap='%s'\nredact_env='%s'\n" "$w" "$l" "$CAP" "$RENV"
+  printf "events='%s'\ndelivery='%s'\nstation='%s'\nattempt='%s'\n" "$EVENTS" "$DELIVERY" "$STATION" "$ATTEMPT"
+  capture_block "$k" "$(host_of "$k" "$@")"
 }
 
 cmd_write() {
-  local kind= wt= lf= out= model= effort= hs= result= cap= a val dir tmp d cdir rdir rres rroot tdir= why
+  local kind= wt= lf= out= model= effort= hs= result= cap= events= delivery= station= attempt= a val dir tmp d cdir rdir rres rroot tdir= why
   local -a adds=() allows=() renvs=() A=()
   while [ $# -gt 0 ]; do
     a=$1
     case $a in
       --kind | --worktree | --launch-file | --out | --model | --effort | --add-dir | --allow | --host-source | --result \
-        | --capture | --redact-env) ;;
+        | --capture | --redact-env | --events | --delivery | --station | --attempt) ;;
       *) die "write: unknown argument: $a" ;;
     esac
     [ $# -ge 2 ] || die "write: $a needs a value"
@@ -821,6 +922,13 @@ cmd_write() {
       --host-source) need_abs "$a" "$val"; hs=$val ;;
       --result) need_abs "$a" "$val"; result=$val ;;
       --capture) need_abs "$a" "$val"; cap=$val ;;
+      --events)
+        need_abs "$a" "$val"
+        case $val in */events.jsonl) ;; *) die "--events must be an absolute path ending in /events.jsonl: $val" ;; esac
+        events=$val ;;
+      --delivery) [[ $val =~ $DELIV_RE ]] || die "--delivery must have the form OWNER/REPO#N: $val"; delivery=$val ;;
+      --station) station=$val ;;
+      --attempt) attempt=$val ;;
     esac
   done
   [ -n "$kind" ] || die "write: --kind is required"
@@ -848,17 +956,13 @@ cmd_write() {
       [ "${#allows[@]}" -eq 0 ] || die "--allow is not accepted for $kind" ;;
     *) [ -z "$result" ] || die "--result is only for codex kinds, not $kind" ;;
   esac
-  case $kind in
-    *-probe) [ -n "$cap" ] || die "--capture is required for $kind" ;;
-    *)
-      [ -z "$cap" ] || die "--capture is only for probe kinds, not $kind"
-      [ "${#renvs[@]}" -eq 0 ] || die "--redact-env is only for probe kinds, not $kind" ;;
-  esac
+  [ -n "$cap" ] || die "--capture is required for $kind"
+  for a in events delivery station attempt; do
+    [ -n "${!a}" ] || die "--$a is required for $kind"
+  done
   # The capture directory is checked before anything is created and again once it exists.
-  if [ -n "$cap" ]; then
-    why=$(cap_bad "$cap" "$wt" "$result" "$lf" "$out")
-    [ -z "$why" ] || die "--capture $why"
-  fi
+  why=$(cap_bad "$cap" "$wt" "$result" "$lf" "$out")
+  [ -z "$why" ] || die "--capture $why"
   cdir=$wt
   case $kind in
     codex-read*)
@@ -879,12 +983,10 @@ cmd_write() {
         [ -O "$d" ] && [ "$(mode_of "$d")" = drwx------ ] || die "not an owner-only directory: $d"
       done ;;
   esac
-  if [ -n "$cap" ]; then
-    [ -e "$cap" ] || [ -L "$cap" ] || (umask 077 && mkdir -- "$cap") || die "cannot create $cap"
-    why=$(cap_bad "$cap" "$wt" "$result" "$lf" "$out")
-    [ -z "$why" ] || die "--capture $why"
-  fi
-  CAP=$cap RENV=${renvs[*]+"${renvs[*]}"}
+  [ -e "$cap" ] || [ -L "$cap" ] || (umask 077 && mkdir -- "$cap") || die "cannot create $cap"
+  why=$(cap_bad "$cap" "$wt" "$result" "$lf" "$out")
+  [ -z "$why" ] || die "--capture $why"
+  CAP=$cap RENV=${renvs[*]+"${renvs[*]}"} EVENTS=$events DELIVERY=$delivery STATION=$station ATTEMPT=$attempt
 
   GRANT_READS=()
   case $kind in claude-write*) grant "$hs" "$wt" ;; esac
@@ -893,7 +995,7 @@ cmd_write() {
     claude-*)
       A=(claude -p --permission-mode)
       if [ "$kind" = claude-read ]; then A+=(plan); else A+=(acceptEdits); fi
-      if [ "$kind" = claude-write-probe ]; then A+=(--output-format stream-json --verbose); else A+=(--output-format json); fi
+      A+=(--output-format stream-json --verbose)
       [ -z "$model" ] || A+=(--model "$model")
       [ -z "$effort" ] || A+=(--effort "$effort")
       A+=(--disable-slash-commands --strict-mcp-config --mcp-config "$MCP")

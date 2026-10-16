@@ -79,7 +79,28 @@ The station result records the coordinator's command, that exit code, and a summ
    it as a tool call; a final message alone is not one. Inspect the result and
    repository independently. If the worker cannot write an external result under
    its protection mode, accept Markdown in stdout, persist it as coordinator
-   evidence, and verify it; do not weaken safety just for formatting.
+   evidence, and verify it; do not weaken safety just for formatting. A Claude
+   write station under a host grant always writes the external result;
+   [claude.md](claude.md) ("Under a host grant the station result is the result file") owns why.
+   A run script that `scripts/launch.sh write` writes takes `--capture DIR`,
+   `--events FILE`, `--delivery`, `--station` and `--attempt`, and `--redact-env NAME`
+   for each credential variable the launch environment carries whose name the
+   builder's pattern does not match. Its run script writes the **probe capture**
+   for every kind, probe or station: `DIR/stdout` and `DIR/stderr` redacted before
+   they are written, `DIR/exit` with the harness exit status, and `DIR/stream` with
+   each redacted stdout record and its arrival time. While the worker runs, it
+   appends each worker `tool-call` line to FILE, the delivery's `events.jsonl`,
+   when that call completes. A failure of the harness side, the stdout redactor,
+   or the stdout writer is a required-capture failure: the script writes
+   `DIR/capture-error` and exits 70, the probe or station fails, and the record
+   names the missing capture. A failure of the stream, the tool-call stage, or the
+   `events.jsonl` append is a telemetry-only failure: `DIR/stdout` stays complete,
+   the script writes `DIR/telemetry-error` and exits with the harness status, and
+   the gap is a `telemetry-gap` under [references/telemetry.md](../telemetry.md) ("Gap rule").
+   The coordinator starts the script and judges the result from those files. A
+   launch on a prose recipe is still captured and redacted by the coordinator
+   before anything is written, as step 2 requires.
+   [references/telemetry.md](../telemetry.md) ("A Grok or Oh My Pi worker") owns tool-call durations for prose recipes.
 
 `references/harnesses/shared.md` owns result acceptance. This is the only statement of the rule.
 
@@ -99,7 +120,7 @@ This section owns the launch probe. A launch probe is not a help or version chec
 
 Run it once per invocation, before that invocation's first worker launch. For a fresh run that is at `ready`, after the worktree is reconciled. A resumed invocation runs it before its first worker launch, whatever stage it resumes at. Do not run it again before later stations in the same invocation. Probe the configured primary and secondary. Probe the fallback only when recovery first selects it, before its first launch, with the recipe kind of the role it fills.
 
-Launch each probe with steps 1–4 above and the exact recipe the station would use: the same flags, model, effort, sandbox or permission mode, isolated home, the working directory that recipe names ([references/harnesses/codex.md](codex.md) ("The read recipe, for kinds") owns the Codex read recipe), and the complete grant, including each per-check allow entry the coordinator adds for the run's declared checks. Build a Claude write probe or a Codex read probe with `scripts/launch.sh write`, with kind `claude-write-probe` or `codex-read-probe` and the station's inputs, which is the same builder the station uses. Any other probe uses its prose recipe. The primary uses its harness's write-station recipe. The secondary uses its read-station recipe. The one difference is the output format where the recipe's format does not report command execution: a Claude probe uses `--output-format stream-json --verbose` in place of `--output-format json`. That changes what the harness reports, not what the worker may do. Put the prompt in an owner-only launch file under `briefs/` and attach it through the recipe's stdin path. `references/harnesses/codex.md` owns the stdin rule. A Codex probe with no `thread.started` event is that owner's hung launch.
+Launch each probe with steps 1–4 above and the exact recipe the station would use: the same flags, model, effort, sandbox or permission mode, isolated home, the working directory that recipe names ([references/harnesses/codex.md](codex.md) ("The read recipe, for kinds") owns the Codex read recipe), and the complete grant, including each per-check allow entry the coordinator adds for the run's declared checks. Build a Claude write probe or a Codex read probe with `scripts/launch.sh write`, with kind `claude-write-probe` or `codex-read-probe` and the station's inputs, which is the same builder the station uses. Any other probe uses its prose recipe. The primary uses its harness's write-station recipe. The secondary uses its read-station recipe. Put the prompt in an owner-only launch file under `briefs/` and attach it through the recipe's stdin path. `references/harnesses/codex.md` owns the stdin rule. A Codex probe with no `thread.started` event is that owner's hung launch.
 
 Read-probe prompt: `Launch probe. Run no command. Reply with exactly CAPSTAN_PROBE_OK.`
 Write-probe prompt: `Launch probe. Run exactly one command: git add --refresh -- . If it exits 0, reply with exactly CAPSTAN_PROBE_OK. Otherwise reply with its exit code and stderr. Run nothing else.`
@@ -109,7 +130,7 @@ For a Claude write probe, [references/harnesses/claude.md](claude.md) ("The coor
 
 Before the write probe, the coordinator runs `git status` once so the index's stat data is current. Then, before and after the probe, it records HEAD, `git status --porcelain=v1 --untracked-files=all` run with `GIT_OPTIONAL_LOCKS=0`, the SHA-256 of the index file's bytes at `git rev-parse --git-path index`, and whether `git rev-parse --git-path index.lock` exists. Identical records with no lock mean no residue. A difference fails the probe and is recovery evidence.
 
-A probe built with `scripts/launch.sh write` takes `--capture DIR`, and `--redact-env NAME` for each credential variable the launch environment carries whose name the builder's pattern does not match. Its run script writes the **probe capture**: `DIR/stdout` and `DIR/stderr` redacted before they are written, and `DIR/exit` with the harness exit status. When a capture stage fails, the script writes `DIR/capture-error` and exits 70. The probe is then a failure, and the record names the missing capture. The coordinator starts the script and judges the pass conditions from those files. A probe on a prose recipe is still captured and redacted by the coordinator before anything is written, as step 2 requires.
+A probe built with `scripts/launch.sh write` writes the probe capture of step 5 above, and the coordinator judges the pass conditions from it.
 
 A probe passes only when all of these hold: the process exits 0; the reported model response is exactly `CAPSTAN_PROBE_OK`; the harness reports no permission denial; the harness's own event record shows the commands the worker ran — for a write probe exactly one, `git add --refresh -- .`, with exit 0, and for a read probe none; and, for the write probe, no residue remains. The model's reply alone does not prove that a command ran. The Claude signals are the `tool_use` and `tool_result` events, then the `result` event with `is_error` false and an empty `permission_denials`. The Codex signals are `thread.started`, a `command_execution` item with its exit code for a write probe and none for a read probe, `turn.completed`, and the last-message file. Probe-response evidence: #154. [references/telemetry.md](../telemetry.md) owns the ledger row.
 

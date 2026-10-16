@@ -32,7 +32,7 @@
 
 **Ledger**: `ledger.md`, the retained local record of totals and check outcomes. Always written. The rule owner is `references/telemetry.md`. Rejected: a switch that disables it.
 
-**Pile**: briefs, results, worker captures, check scripts and logs, the task toolchain, and optional `events.jsonl`. Exact paths: `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`, `tooling/`, and `events.jsonl` when present. Rejected: `ledger.md`.
+**Pile**: briefs, results, worker captures, check scripts and logs, the task toolchain, and `events.jsonl`. Exact paths: `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`, `tooling/`, and `events.jsonl`. Rejected: `ledger.md`.
 
 **Deletion switch**: `evidence.delete_pile`. It authorizes success-path removal of the pile and this run's worktree. It never authorizes removal of the ledger. Rejected: a second flag.
 
@@ -144,7 +144,11 @@
 
 **Launch builder**: `scripts/launch.sh`. It writes and checks the run script for one Claude or Codex worker launch from structured inputs. Rejected: a builder that launches or supervises workers.
 
-**Probe capture**: the record a probe run script writes about its own run. The rule owner is `references/harnesses/shared.md` ("## Launch probe"). Rejected: a capture the coordinator writes ad hoc per probe.
+**Probe capture**: the record a run script that `scripts/launch.sh write` writes keeps about its own run, for a probe or a station. The rule owner is `references/harnesses/shared.md` ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`"). Rejected: a capture the coordinator writes ad hoc per launch.
+
+**Tool-call event**: an `events.jsonl` line with kind `tool-call` that times one coordinator worker process, check, or wait, or one tool call inside a Claude or Codex worker. The rule owner is `references/telemetry.md` ("Every event line is one JSON object"). Rejected: timing each coordinator `git` or `gh` read.
+
+**Arrival time**: the UTC time the run script recorded when a line of the worker's redacted event stream arrived. It is the clock for worker tool-call durations. The rule owner is `references/telemetry.md` ("the arrival times of its start and end records"). Rejected: one clock reading for every line at harness exit.
 
 **Policy row**: the `ledger.md` row that records one quoted repository rule, its applicability, how it was satisfied, its evidence and head, and its state. The rule owner is `references/telemetry.md`. Rejected: a policy-register file.
 

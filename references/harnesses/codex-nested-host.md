@@ -38,6 +38,22 @@ verified Codex child used `-s read-only`. The verified Grok child used
 `references/harnesses/grok.md`. Do not copy one host's sandbox flag onto the
 other.
 
+The nested host launches a protected Codex child by running, through
+`tools.exec_command`, the run script that `scripts/launch.sh write` builds for
+the child's station kind. It does not launch `codex exec` directly. The child's
+private `CODEX_HOME` and its own `TMPDIR` are set in that command's environment,
+as this file requires. The capture directory and `events.jsonl` are the
+station's, under the evidence root. [shared.md](shared.md) ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`") owns the child's capture.
+The run script writes that capture directory and appends to `events.jsonl`
+inside the outer host, so the `capstan-runtime` profile adds one write grant
+beside the private runtime directory: the delivery's evidence root, as a
+directory, because an exact file path fails. It covers the capture directory
+and the `events.jsonl` append. Grant no parent of that root. The grant is in
+the inline profile, never a legacy writable root. It is the outer host's grant,
+not a child writable root: the child's sandbox and writable roots stay as its
+recipe sets them. This grant is not yet verified on a nested host.
+A protected Grok child keeps its prose recipe.
+
 For native async execution, print or capture the structured `tools.exec_command`
 return. Retain `session_id`. Continue that session with `tools.write_stdin`.
 Outer JavaScript cell completion is not child-exit proof. A later namespace-local
