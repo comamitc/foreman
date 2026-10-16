@@ -976,18 +976,32 @@ pc_golden() { # NAME CAPTURE_DIR: both captured streams equal the goldens $T/exp
       || { echo "capture differs from golden: $f: $(grep '^[<>]' "$T/log/$1.diff" | head -n 1)"; return 1; }
   done
 }
-pc_leak() { # CAPTURE_DIR [TEXT...]: no credential value and no TEXT appears under CAPTURE_DIR
-  local cap=$1 x rc
+pc_unclock() { # FILE: FILE's text without its well-formed clock values, which are digits no worker wrote:
+  # the ISO and EPOCH columns that start a stream record, and the time, start, end and duration_s
+  # values of an events.jsonl line. The stream payload and every other value are kept.
+  local iso='[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{6}Z'
+  case ${1##*/} in
+    stream) sed -E "s/^$iso"$'\t''[0-9]+\.[0-9]{6}'$'\t'"//" "$1" ;;
+    events.jsonl) sed -E -e "s/\"(time|start|end)\":\"$iso\"/\"\\1\":\"\"/g" -e 's/"duration_s":[0-9]+\.[0-9]{6}/"duration_s":""/g' "$1" ;;
+    *) cat -- "$1" ;;
+  esac
+}
+pc_leak() { # PATH [TEXT...]: no credential value and no TEXT appears in a file under PATH, outside its clock values
+  local cap=$1 x rc f
   local -a e=()
   shift
   for x in "$@" "tok-$P-secretvalue" Zq7 "dbc-$P-x" "$ESC_SECRET" "a\"b\\c-$P" "4242$P"; do e+=(-e "$x"); done
-  grep -rF "${e[@]}" "$cap" >/dev/null
-  rc=$?
-  case $rc in
-    1) ;;
-    0) echo "secret or host text in capture: $(grep -rhoF "${e[@]}" "$cap" | head -n 1)"; return 1 ;;
-    *) echo "leak search error: grep exited $rc"; return 1 ;;
-  esac
+  [ -e "$cap" ] || { echo "leak search error: no $cap"; return 1; }
+  while IFS= read -r f; do
+    pc_unclock "$f" >"$T/log/leak" || { echo "leak search error: cannot read $f"; return 1; }
+    grep -F "${e[@]}" "$T/log/leak" >/dev/null
+    rc=$?
+    case $rc in
+      1) ;;
+      0) echo "secret or host text in capture: $(grep -hoF "${e[@]}" "$T/log/leak" | head -n 1)"; return 1 ;;
+      *) echo "leak search error: grep exited $rc"; return 1 ;;
+    esac
+  done < <(find "$cap" -type f)
 }
 
 PC1() { # both probe kinds x exits 0 and 3 x bash, sh and zsh: same exit, same exit file, same captures
