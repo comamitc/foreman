@@ -12,6 +12,9 @@
 - Head:
 
 ## Checks
+
+For each check: command, head SHA, exit status, and duration. [references/telemetry.md](../references/telemetry.md) owns the `check` event.
+
 ## Changes or findings
 ## Risks and unresolved items
 

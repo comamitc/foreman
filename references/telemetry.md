@@ -1,9 +1,10 @@
 # Evidence, not control state
 
 At the contract's delivery evidence root, create owner-only `briefs/`, `results/`,
-`workers/`, `checks/`, and optional `events.jsonl`. Always write `ledger.md` at
-run acceptance and update it at each station end, including an interrupted
-attempt, whether or not deletion is enabled. `run.md` is not a second source of
+`workers/`, `checks/`, and `events.jsonl`. Create `events.jsonl` at run acceptance of every delivery run, single or batch, including a resume, and append each event when its trigger occurs. A resumed run appends to it. If it was lost, recreate it and record a `telemetry-gap`. A read-only invocation and init are not runs and write no `events.jsonl`. Always write `ledger.md` at
+run acceptance and rewrite it at each station end, an interrupted or failed
+attempt, a blocker publication, a cancellation, review exhaustion, and
+ready-to-deploy, whether or not deletion is enabled. `run.md` is not a second source of
 truth. Give attempts unique
 human-readable filenames, for example `planning-20260921T120000Z-1.md`. On resume,
 append rather than overwrite surviving attempts. Follow security before capture.
@@ -31,11 +32,13 @@ This file owns the attempt table. The attempt table has these columns, in this o
 - Tokens: one integer with thousands separators, counted once by the rule below, including cached reads. `—` for a row with no worker. `unknown` for a worker row whose usage was not reported, never zero or an estimate.
 
 The last row is the Total row: `| **Total** | — | START | END | WORKER | COORD | — | TOKENS |`.
-- Start is spec admission. End is the ready-label read-back, or the review-exhaustion decision.
+- Start is spec admission. End is the ready-label read-back, or the review-exhaustion decision. Until the ready-label read-back or the review-exhaustion decision, End is the latest End cell in the table that is not `unknown`, else `unknown`.
 - Worker is the Worker-process wall: the sum of the Worker cells. Coord is the sum of the Coord cells. Tokens is one total across all harnesses.
 - Each total is `unknown` when any cell it sums is `unknown`. A `—` or `not timed` cell adds zero.
 
-One line follows the table, the date line: `Date YYYY-MM-DD UTC · End-to-end DURATION`. The date is the UTC date of the first time cell, in the reading order above, that is not `unknown`; it is `unknown` when none is. DURATION is the End-to-end wall: from spec admission to the ready-label read-back, before summary publication, or to the review-exhaustion decision. A bound that was not observed makes it `unknown`. End-to-end also covers time between rows, so it can exceed Worker plus Coord. The Worker total and End-to-end are not substitutes for each other.
+One line follows the table, the date line: `Date YYYY-MM-DD UTC · End-to-end DURATION`. The date is the UTC date of the first time cell, in the reading order above, that is not `unknown`; it is `unknown` when none is. DURATION is the End-to-end wall: from spec admission to the ready-label read-back, before summary publication, or to the review-exhaustion decision; before either, to the Total row's End. A bound that was not observed makes it `unknown`. End-to-end also covers time between rows, so it can exceed Worker plus Coord. The Worker total and End-to-end are not substitutes for each other.
+
+Every write of `ledger.md` ends the attempt table with the Total row and the date line, so a run that stops at any point, or whose host dies after its last ledger write, leaves both. A resumed run appends its rows and rewrites the Total row over every row. A ledger recreated after local loss writes the Total row and the date line, with `unknown` cells for missing facts.
 
 Pre-merge rows separate CI wait from repair. Each `CI wait N` row and each `repair N` row is written in addition to the pre-merge `N` row. The `N` row spans the station attempt and has no worker process, so its Worker cell is `—`. Its Coord is End minus Start, minus the span (End minus Start) of each `CI wait` and `repair` row inside it. It is `unknown` when any of those rows lacks a bound. A `CI wait N` row runs from the first observation with a required check pending to the settled `check` event. It has no worker. A `repair N` row is the in-diff repair worker ([pre-merge](pre-merge.md)).
 
@@ -81,19 +84,36 @@ Use these event kinds when their trigger occurs:
 | run-start / run-resume | accepted invocation or reconstructed continuation |
 | station-start / station-end | station begins or completion criterion verified |
 | worker-start / worker-end | each worker attempt, including corrective attempts |
-| check | observed command/check outcome and applicable head |
+| check | each declared check outcome, coordinator-run or worker-reported |
 | finding-census | plan/code review verdict; policy; round; blocking/advisory partition at revision/SHAs |
 | recovery | failure, semantic progress comparison, hypothesis, next attempt |
 | label-change | observed before/after labels, including projection repair |
 | blocker / unblock | typed capability or review exhaustion, and observed resume condition |
 | telemetry-gap | missing, malformed, or failed evidence capture |
 | run-end | ready, blocked handoff, or cancellation |
+| tool-call | a coordinator worker process, check command, or wait ends; a worker tool call completes |
 
-Events may be Markdown paragraphs. JSONL is an optional convenience, with fields
-such as time, kind, station, attempt, head, outcome, and evidence. Existing `jq -cn`
-with `--arg` or another installed JSON emitter can append correctly escaped lines.
-Do not concatenate unescaped worker text into JSON. No validator, parser, helper,
-or event is needed to choose a station. A failed append or a malformed event is
+Every event line is one JSON object with these fields: `time`, `kind`, `delivery`, `station`, and `attempt`, then the added fields of its kind. `time` is UTC `YYYY-MM-DDTHH:MM:SS[.ffffff]Z`; `delivery` is `owner/repo#N`; `station` is the stage name as in the attempt table; `attempt` is the Attempt cell, or `—` outside an attempt. The added fields:
+
+- run-start, run-resume: `spec_revision`, `budget_start`.
+- station-start, station-end: `time` is the station's UTC start or end; station-end adds `outcome`.
+- worker-start, worker-end: `harness`, `model`, `process_start`, `process_exit`, `exit`.
+- check: `command`, `head`, `start`, `end`, `duration_s`, `exit`, and `source`: `coordinator` for a check the coordinator ran, `worker` for a check a worker reports.
+- finding-census: `verdict`, `round`, `blocking`, `advisory`, `head`.
+- recovery: `failure`, `hypothesis`, `next`.
+- label-change: `before`, `after`.
+- blocker, unblock: `reason`, `condition`.
+- telemetry-gap: `what`, `error` (redacted).
+- run-end: `outcome`.
+- tool-call: `source`, `tool`, `start`, `end`, `duration_s`. A coordinator call has `source` `coordinator`, `tool` `worker`, `check`, or `wait`, `command` with its command or a label, and `exit` with its exit status or `outcome` with its wait outcome: `settled`, `exited`, `timeout`, or `interrupted`. A worker call has `source` `worker`, `tool` with the tool name, `id`, and `error` with the Claude `is_error` or `exit` with the Codex `exit_code`.
+
+A value that was not observed is `"unknown"`, never zero or an estimate. `duration_s` is `end` minus `start` in seconds.
+
+The coordinator writes each of its own lines itself, escaping every string per JSON, as one append-mode write of a whole line. It never rewrites the file, and it never concatenates unescaped worker text into a line. Every declared check, coordinator-run or worker-reported, gets a `check` event. A worker-reported check's fields come from the result's `## Checks`; a field the worker omitted is `unknown`. Each worker process, check command, and wait the coordinator runs (a sleep or watch loop, a silent-check wait, or a CI wait) gets a coordinator `tool-call` event when it ends.
+
+The run script that [harnesses/shared.md](harnesses/shared.md) ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`") describes appends each worker `tool-call` line when that call completes, during the worker run. A worker call's `start` and `end` are the arrival times of its start and end records in the capture's stream. The coordinator does not read those lines during the run. At worker-end, a `telemetry-error` file in the capture becomes one `telemetry-gap` that cites it. A Grok or Oh My Pi worker's tool-call durations are `unknown`, recorded as one `telemetry-gap` per attempt.
+
+No validator, parser, helper, or event is needed to choose a station. A failed append or a malformed event is
 a telemetry gap under the gap rule below. A remote comment may still publish the
 gap. Continue.
 
@@ -105,7 +125,7 @@ the invoking host session when an event-table event occurs. Shape:
 `capstan owner/repo#N · review · finding-census round 1: 2 blocking, 3 advisory → fix`.
 FACT is one observed value from that event's evidence. A value not observed is
 `unknown`. No estimates. A blocker line or a typed human decision line ends with
-what the operator must do. This rule (#134) narrows #34 decision 3.
+what the operator must do. This rule (#134) narrows #34 decision 3. A `tool-call` event posts no host status line.
 
 Supervision observations follow the same rule: a running worker, a silent-check
 wait, and the pre-merge CI wait. An observation posts a line only when it
@@ -210,7 +230,7 @@ it.") owns the run budget. A missing raw file is `unknown` only when the ledger
 does not already contain the number.
 
 The pile is exactly `briefs/`, `results/`, `workers/`, `checks/`, `toolchain/`,
-`tooling/`, and `events.jsonl` when present. It does not include `ledger.md`.
+`tooling/`, and `events.jsonl`. It does not include `ledger.md`.
 `run.md` is not pile.
 
 A selected bundle is not pile only when the resolved `evidence.retain_replay`

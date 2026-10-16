@@ -205,7 +205,7 @@ protection. No hostile-input sandbox or distributed lock is provided in v1.
 ## Evidence and cleanup
 
 Evidence defaults to `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/`.
-Owner-only briefs, results, worker/check logs, and optional events.jsonl
+Owner-only briefs, results, worker/check logs, and events.jsonl
 record observed commands and usage. Secrets are redacted before persistence or
 publication. [references/telemetry.md](references/telemetry.md) owns the ledger,
 the pile, deletion, and missing-usage rules. [references/end-of-run.md](references/end-of-run.md) owns the ledger digest and its check.

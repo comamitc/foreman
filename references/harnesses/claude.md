@@ -5,7 +5,7 @@ several tool calls. Tool-call count evidence: #12. The worker's
 list is the count.
 
 ```sh
-claude -p --permission-mode acceptEdits --output-format json \
+claude -p --permission-mode acceptEdits --output-format stream-json --verbose \
   --disable-slash-commands --strict-mcp-config --mcp-config '{"mcpServers":{}}' \
   --add-dir RESULT_DIR --add-dir BRIEF_DIR \
   --permission-prompts none \
@@ -26,6 +26,8 @@ The coordinator records one ledger notes line before the launch probe. With a gr
 
 With no grant, the write probe uses the write-probe prompt in [references/harnesses/shared.md](shared.md) unchanged. With a grant, this prompt replaces it, with PATHS the granted E values joined by `, `: `Launch probe. Run exactly one command: git add --refresh -- . Then use the Read tool once on each of these files: PATHS. Use no other tool and run nothing else. If the command exits 0 and every Read succeeds, reply with exactly CAPSTAN_PROBE_OK. Otherwise reply with the exit code and stderr of the command and the path of each Read that failed.` That probe passes only when the shared pass conditions hold with `git add --refresh -- .` as the one command, and also: the `input.file_path` values of the Read `tool_use` events are exactly PATHS, each once; the `id` of each Read has one `tool_result` with that `tool_use_id` whose `is_error` is not true; no other tool is used; and `permission_denials` is empty. The ledger notes line above is the probe's record of its grant, including `no host-directed files`.
 
+A run under a host grant is the write probe, and a `claude-write` station whose `--allowedTools` carries a `Read(` grant entry. Under a host grant the station result is the result file, never the captured `result` field: the redaction below removes that field, and `--add-dir RESULT_DIR` makes the result file writable.
+
 Before any output of a run under a host grant is written, the streaming redaction step of [references/security.md](../security.md) rule 6 also removes host-file text. It replaces with `[host file content removed]` the `content` of each `tool_result` that answers a Read and whose `is_error` is not true, and the `tool_use_result` of that event. It replaces with `[removed]` each assistant `text` or `thinking` block and the `result` field unless it is exactly `CAPSTAN_PROBE_OK`, and each field that carries a tool's arguments, whether it is named `input`, `tool_input`, or `wire_tool_inputs` or otherwise, other than a Bash `command` and a `file_path`. It keeps each tool name, `id`, `tool_use_id`, `is_error`, `file_path`, and `permission_denials` entry.
 
 Bite restore is `git restore -- <path>`. `git checkout` is not the restore path. The coordinator adds one `--allowedTools` entry for each declared check, verbatim. Bite-restore probe evidence: PR #111.
@@ -39,7 +41,8 @@ approves file edits, not every shell command. For read stations use
 `Bash(git status *)`, `Bash(git rev-parse *)`, `Bash(git diff *)`, and
 `--disallowedTools` spellings `Bash(grep -r*)`, `Bash(grep -R*)`,
 `Bash(grep --recursive*)`, `Bash(grep --dereference-recursive*)`, `Bash(rg *)`,
-and `Bash(find *)`, with `--permission-prompts none`; return results in stdout.
+and `Bash(find *)`, with `--permission-prompts none`. A read station's result is
+the `result` field of the last `"type":"result"` line in the capture's `stdout`.
 Deny rules beat allow rules.
 Read-station deny probe evidence: commits 5542194 and 1af7446. `dontAsk` returned
 nothing within five minutes in the 2026-09-22 probe; do not use it. No turn-cap
@@ -52,8 +55,9 @@ a Claude 2.1.282 commit with `acceptEdits`, allowed `git add` and `git commit`,
 and empty `permission_denials`. This host did not reproduce that result. Do not
 set `unsafe_autonomy`.
 
-Observed JSON fields: `session_id`, `result`, `is_error`, `permission_denials`,
-`duration_ms`, `num_turns`, `usage`, `modelUsage`, `total_cost_usd`.
+Observed JSON fields of the stream's final `result` event: `session_id`, `result`,
+`is_error`, `permission_denials`, `duration_ms`, `num_turns`, `usage`, `modelUsage`,
+`total_cost_usd`.
 Probe JSON example: `references/harnesses/claude.md` at `cd38fa1`.
 Inspect permission denials even if the process exits zero.
 [references/telemetry.md](../telemetry.md) owns usage reporting.
