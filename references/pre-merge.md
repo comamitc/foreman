@@ -196,8 +196,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    once and read it back as that section states. If the live gate no longer
    holds, remove the pull-request label and read it back as that section states.
 
-   [telemetry.md](telemetry.md) owns the attempt-table field rules and emission,
-   the end-to-end wall, and the end-of-run order. After the ready-label read-back,
+   [telemetry.md](telemetry.md) owns the attempt-table field rules and the end-to-end wall.
+   [end-of-run.md](end-of-run.md) owns emission and the end-of-run order. After the ready-label read-back,
    follow that order. Stop without merging or deploying.
 
 Technical repair workers use [templates/result.md](../templates/result.md), including

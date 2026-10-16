@@ -208,7 +208,7 @@ Evidence defaults to `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N
 Owner-only briefs, results, worker/check logs, and optional events.jsonl
 record observed commands and usage. Secrets are redacted before persistence or
 publication. [references/telemetry.md](references/telemetry.md) owns the ledger,
-the ledger digest and its check, the pile, deletion, and missing-usage rules.
+the pile, deletion, and missing-usage rules. [references/end-of-run.md](references/end-of-run.md) owns the ledger digest and its check.
 [references/contract.md](references/contract.md) owns `evidence.delete_pile` and `evidence.retain_replay`.
 
 To clean raw logs manually before ready-to-deploy, first resolve the exact
