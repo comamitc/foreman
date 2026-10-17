@@ -36,7 +36,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    remaining `ci_timeout_min` bounds it, as [harnesses/shared.md](harnesses/shared.md) ("can bound a process") states.
    Never run the watch as a foreground call. The coordinator wakes when the
    process exits, on the host's wake signal ([harnesses/shared.md](harnesses/shared.md) ("including a launch probe")).
-   On cancel, stop the owned watch and start no new watch; [recovery](recovery.md) ("Stop/hand off owned processes explicitly on cancel") owns stopping it.
+   On cancel, start no new watch; [recovery](recovery.md) ("Stop/hand off owned processes explicitly on cancel") owns stopping the owned watch.
    A readback after cancel may record evidence; it never leads to a restart.
    The watch's exit status and output are not the result. On every other exit
    (pass, failure, a `--fail-fast` exit, a timeout, an interrupt not caused by
@@ -44,9 +44,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    the two `--json` reads above. When the run is not cancelled and the read
    shows no required check reported yet, corroborate as above. If a check is
    still expected, start `sleep 60; gh pr checks … --watch …` again as one
-   background process within the remaining bound. It posts no periodic status
-   line. The CI timeout is a diagnosis/re-observation boundary, not a human
-   blocker or automatic success.
+   background process within the remaining bound. The CI timeout is a
+   diagnosis/re-observation boundary, not a human blocker or automatic success.
 
    CI waits and repair workers: see [telemetry](telemetry.md) ("The attempt table has these columns, in this order").
 4. Observe review decision and required approvals. Agent census approval does not
