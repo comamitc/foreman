@@ -1,6 +1,6 @@
 # Architect invocation
 
-Load this file only when the trimmed invocation's first token is exactly `architect`, in lowercase, and every remaining token matches "## Argument grammar" below. It grades the invoking repository, or the named paths, against rules Capstan ships and prints one ranked report. `architect` followed by any other token is text intake.
+Load this file only when [contract](../contract.md) "## Read-only invocations" dispatches the `architect` keyword.
 
 This file owns the architect invocation.
 

@@ -1,6 +1,6 @@
 # Correction
 
-Run it only when the admitted issue or the text invocation states that the outcome is correction. A normal delivery, init, or resume does not enter it.
+Run it only when the admitted issue or the text invocation states that the outcome is correction.
 
 This file owns correction. Correction turns recurring mistakes and friction in this repository's earlier deliveries into enforcement in this repository.
 

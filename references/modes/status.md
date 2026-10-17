@@ -1,6 +1,6 @@
 # Status invocation
 
-Load this file only when the whole invocation, trimmed, is exactly `status`. `status` with any other text is text intake. An issue URL or an issue number is a delivery, and a batch list is a batch invocation.
+Load this file only when [contract](../contract.md) "## Read-only invocations" dispatches the `status` keyword.
 
 This file owns the status invocation.
 

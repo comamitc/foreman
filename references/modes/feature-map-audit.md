@@ -1,6 +1,6 @@
 # Feature-map audit
 
-Run the audit only when the admitted issue or the text invocation states that the outcome is an audit of the configured feature map. A normal feature delivery, init, or resume does not enter the audit. Do not run the audit during an unrelated delivery.
+Run the audit only when the admitted issue or the text invocation states that the outcome is an audit of the configured feature map.
 
 This file owns the feature-map audit.
 
