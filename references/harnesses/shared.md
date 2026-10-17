@@ -48,8 +48,12 @@ when a newer release changes flags.
    can bound a process; verify its help or use the coordinator's process manager.
    Replace example 60m limits with the resolved worker_timeout_min, capped by
    remaining run budget. Timeout exit 124 is recovery evidence, not proof of no side effects.
-   Supervision does not block the coordinator's host output for a whole worker
-   run. Observe the process with the host's wait mechanism.
+   Every worker launch, including a launch probe, runs as a background process
+   this run owns, never as one foreground call that holds the host until the
+   worker exits. The coordinator resumes on its host's wake signal, which
+   [claude.md](claude.md) ("## Claude Code host") or
+   [codex-nested-host.md](codex-nested-host.md) ("## Nested host") names. The
+   timeout above bounds it; [references/recovery.md](../recovery.md) ("Stop/hand off owned processes explicitly on cancel") owns stopping it.
    [references/telemetry.md](../telemetry.md) owns the host status line.
 
 A silent check is a declared check that can stay silent longer than the selected harness's command-log window. That window is the harness's own. This rule adds no Capstan number or timeout. The worker_timeout_min bound and timeout exit 124 above still apply to the station process. They are not this check's result.
@@ -58,7 +62,9 @@ The coordinator runs a silent check. The worker brief does not tell the worker t
 
 Before the coordinator starts one, it looks at the worker process it already recorded for this station. Recognition succeeds only when that process has a live child whose command line equals the declared check invocation already written in the brief. The coordinator does not parse worker prose. If recognition succeeds, the coordinator does not start a second process. It does not signal, restart, or kill the recognized process, and it does not wrap that process in timeout. It waits until that process exits. Silence is not an exit. The command it records is the declared invocation that matched. The exit code and output are the ones that process produced. An empty captured stream is not a percent and is not an exit code.
 
-If recognition fails, the coordinator starts the check itself and waits for that process to exit. It does not ask the worker to start it.
+That wait is not a foreground call. The coordinator did not start the recognized process and is not that process's parent, so it starts one background process this run owns that exits when the recognized process exits, and resumes on the host's wake signal (step 4 above). The worker_timeout_min bound applies to that wait process only; the recognized process stays unwrapped. The exit code and output come from the station's captured raw output (step 5 below) of the worker's run of the declared invocation. When that capture holds no exit code for it, the result records the exit code as not observed.
+
+If recognition fails, the coordinator starts the check itself as a background process and waits for its exit on the host's wake signal (step 4 above). It does not ask the worker to start it.
 
 A worker that is already running the check does not restart it, does not kill it, and does not treat missing streamed output as a stall. The check is complete only when the process exits. The recorded result is that exit code.
 

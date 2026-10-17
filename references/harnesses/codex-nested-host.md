@@ -56,6 +56,7 @@ A protected Grok child keeps its prose recipe.
 
 For native async execution, print or capture the structured `tools.exec_command`
 return. Retain `session_id`. Continue that session with `tools.write_stdin`.
+On this host, the wake signal for a background wait is that retained `tools.exec_command` session, continued with `tools.write_stdin` until the child exits.
 Outer JavaScript cell completion is not child-exit proof. A later namespace-local
 process scan is not child-exit proof. Reconcile a lost handle with the
 interactive host's owned terminal inventory and stop interface (`/ps` and
