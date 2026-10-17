@@ -1,6 +1,8 @@
 # Improvement invocation and replay
 
-Load this file when the resolved `evidence.retain_replay` is `true`, when an improvement invocation consumes replay inputs, or when the admitted issue or the text invocation states that the outcome is an improvement invocation. This file owns the improvement invocation, replay selection and consumption, review corrections, the no-new-violations guard, and the comment rule.
+Load this file when the resolved `evidence.retain_replay` is `true`, or when the admitted issue or the text invocation states that the outcome is an improvement invocation.
+
+This file owns the improvement invocation, replay selection and consumption, review corrections, the no-new-violations guard, and the comment rule.
 
 Replay-selection rule: a run is selected only when capture records a bundle of
 admitted inputs, pack content, check bodies, setup references, and outcomes.

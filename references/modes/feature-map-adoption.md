@@ -1,6 +1,6 @@
 # Feature-map adoption
 
-Run adoption only when the admitted issue or the text invocation states that the outcome is feature-map adoption. A normal feature delivery, init, or resume does not enter adoption.
+Run adoption only when the admitted issue or the text invocation states that the outcome is feature-map adoption.
 
 This file owns feature-map adoption.
 

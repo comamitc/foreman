@@ -1,6 +1,6 @@
 # Verification-path adoption
 
-Run it only when the admitted issue or the text invocation states that the outcome is verification-path adoption. A normal feature delivery, init, or resume does not enter it. Do not adopt a verification path during every delivery.
+Run it only when the admitted issue or the text invocation states that the outcome is verification-path adoption.
 
 This file owns verification-path adoption.
 

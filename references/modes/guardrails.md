@@ -1,6 +1,6 @@
 # Guardrails invocation
 
-Load this file only when the trimmed invocation's first token is exactly `guardrails`, in lowercase, and every remaining token matches "## Argument grammar" below. It inventories the invoking repository's guardrails with whether each runs, grades its test files, or those under the named paths, against Capstan's check rules, and prints one ranked report. It runs no test suite and writes nothing. `guardrails` followed by any other token is text intake.
+Load this file only when [contract](../contract.md) "## Read-only invocations" dispatches the `guardrails` keyword.
 
 This file owns the guardrails invocation.
 

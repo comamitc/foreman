@@ -1,8 +1,10 @@
 # Learn invocation
 
-Load this file only when the trimmed invocation's first token is exactly `learn`, in lowercase, and every remaining token matches "## Argument grammar" below. It reads every Capstan run recorded on this machine, across repositories, with each run's marked GitHub artifacts, groups the mistakes and friction it finds into classes, and prints one ranked report of Capstan-process proposals, with target-product learnings apart. It runs from any workspace, needs no repository, and writes, files, and publishes nothing. `learn` followed by any other token is text intake.
+Load this file only when [contract](../contract.md) "## Read-only invocations" dispatches the `learn` keyword.
 
 This file owns the learn invocation.
+
+It runs from any workspace, needs no repository, and writes, files, and publishes nothing.
 
 ## Argument grammar
 

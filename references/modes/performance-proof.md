@@ -1,6 +1,6 @@
 # Performance proof
 
-Run it only when a performance requirement applies: an admitted acceptance criterion, or an applicable existing repository budget. Otherwise add no profiling step and no readiness gate. Required existing checks and independent read-only review stay unchanged.
+Run it only when a performance requirement applies: an admitted acceptance criterion, or an applicable existing repository budget. Otherwise add no profiling step and no readiness gate.
 
 This file owns performance proof.
 
@@ -18,4 +18,4 @@ A change of head, spec, workload, or environment invalidates the affected proof.
 
 Capstan adds no schema service, universal benchmark framework, automatic hill-climbing loop, or default browser pass. Do not experiment on production traffic.
 
-Acceptance is the normal pipeline and reviewer evidence on the diff.
+Acceptance is the normal pipeline and reviewer evidence on the diff. Required existing checks and independent read-only review stay unchanged.

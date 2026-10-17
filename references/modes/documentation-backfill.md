@@ -1,6 +1,6 @@
 # Documentation backfill
 
-Run it only when the admitted issue or the text invocation states that the outcome is documentation backfill. A normal feature delivery, init, or resume does not enter it.
+Run it only when the admitted issue or the text invocation states that the outcome is documentation backfill.
 
 This file owns documentation backfill.
 

@@ -1,6 +1,6 @@
 # Batch invocation
 
-Load this file only when the whole invocation parses as a batch list: every token is an issue URL, an issue number, or an allowed override; tokens are separated only by spaces or commas; and the entries name two or more distinct issues. Prose that mentions issues, by number or by URL, does not load this file.
+Load this file only when [contract](../contract.md) "## Identity and authority" parses the invocation as a batch invocation.
 
 This file owns batch invocation order.
 

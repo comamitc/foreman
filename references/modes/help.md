@@ -1,6 +1,6 @@
 # Help invocation
 
-Load this file only when the trimmed invocation's first token is exactly `help`, in lowercase. Every invocation whose first token is `help` is a help invocation, whatever tokens follow. It answers a question about Capstan from the installed package, cites the file that owns the answer, and prints the invocation to send next; bare `help` prints a menu of topics. It starts no work and writes, files, and publishes nothing. A first token such as `Help` or `helpme` is not `help`; that invocation follows [contract](../contract.md) "## Read-only invocations" unchanged.
+Load this file only when [contract](../contract.md) "## Read-only invocations" dispatches the `help` keyword.
 
 This file owns the help invocation.
 
