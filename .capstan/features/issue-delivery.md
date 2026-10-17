@@ -48,3 +48,4 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Write-station shell commands and evidence-check runs: [brief template](../../templates/brief.md) ("## Worker constraints") owns that rule.
 - Denied spec publish: [triage](../../references/triage.md) ("A denied spec publish is a host permission refusal") owns that rule.
 - Probe capture: [shared harness](../../references/harnesses/shared.md) ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`") owns how a run script captures its run.
+- Coordinator waits: [shared harness](../../references/harnesses/shared.md) ("including a launch probe") owns the worker-launch and launch-probe wait, and ("The coordinator runs a silent check") owns the silent-check wait; [pre-merge](../../references/pre-merge.md) ("Wait for pending checks with one background process") owns the CI wait.

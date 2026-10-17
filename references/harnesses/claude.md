@@ -65,9 +65,12 @@ Inspect permission denials even if the process exits zero.
 ## Claude Code host
 
 The `claude -p` recipe above is the worker. It stays as written. This
-subsection is the interactive Claude Code coordinator that launches it. Start
-the worker as a background task, not as one foreground call that holds the
-session until the worker exits. Observe it with the host's wait mechanism, such
-as the background task's exit notice. At each observation, read the worktree
-head, new commits, and whether the result file exists.
+subsection is the interactive Claude Code coordinator that launches it.
+[shared.md](shared.md) ("including a launch probe") owns how the worker
+launches.
+On this host, the wake signal for a background wait is the background task's exit notice.
+An optional Monitor stream that prints one line only when
+the worktree head changes or the result file appears may wake the coordinator
+before the exit notice. At each observation, read the worktree head, new
+commits, and whether the result file exists.
 [references/telemetry.md](../telemetry.md) owns the host status line.
