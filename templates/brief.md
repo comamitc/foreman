@@ -5,7 +5,7 @@
 - Base / branch / worktree / current head:
 - Cumulative diff command:
 - Pack (required task reading):
-- Declared-check invocation ([references/toolchain.md](../references/toolchain.md) ("The brief carries the exact invocation.") preflight result: one plain command, tool path, provenance; no `&&`, no semicolon, no `git -C`, no heredoc):
+- Declared-check invocation ([references/toolchain.md](../references/toolchain.md) ("The brief carries the exact invocation.") preflight result: one plain command per declared check, in the plan's order ([references/planning.md](../references/planning.md) ("Mark each declared check heavy or not heavy")), a heavy check's as [references/toolchain.md](../references/toolchain.md) ("A heavy check's exact invocation is") builds it, tool path, provenance, whether `flock` is on `PATH`; no `&&`, no semicolon, no `git -C`, no heredoc):
 - Turn ceiling (operations; read stations):
 - Result path (outside product tree):
 - Allowed writes: none to product at read stations; issue worktree at write stations;

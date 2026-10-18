@@ -130,7 +130,8 @@ never adds:
   the exception; #181 records it for `scripts/launch.sh` and its test script);
 - a new stage, station, label, config field, or marker kind (unless an admitted
   issue records the exception; #185 records it for the config field
-  `review_policy.residual_effect_approval`);
+  `review_policy.residual_effect_approval`;
+  #297 records it for the config field `heavy_checks.max_concurrent`);
 - a daemon, scheduler, watcher, or recurring job;
 - a database, store, or state service;
 - a host-skill copy, per-host plugin, or marketplace directory;
@@ -143,7 +144,9 @@ repository unless that repository is Capstan. A delivery reads the target
 repository's own conventions. It does not import this rule into that
 repository. Permit only `git`, `gh`, existing harness CLIs, the coordinator's
 launch builder `scripts/launch.sh` (workers never run it), `sha256sum` or
-`shasum -a 256` for the ledger digest only, and a target repository's own CLI.
+`shasum -a 256` for the ledger digest only,
+`flock` for the heavy-check lock only (an admitted issue records the exception; #297 records it for the heavy-check lock in `references/toolchain.md`),
+and a target repository's own CLI.
 Do not permit the class "an installed CLI."
 
 ## Evidence and reconciliation
@@ -310,6 +313,13 @@ Precedence is invocation, then `CAPSTAN_REVIEW_POLICY_RESIDUAL_EFFECT_APPROVAL`,
 then `.capstan.json`, then the default; an invalid value is called out and falls
 through. [pre-merge.md](pre-merge.md) step 4 owns the residual-effect approval
 `true` enables; `false` enables nothing.
+
+`heavy_checks.max_concurrent` is a positive integer with default `1`.
+It is a host setting, so it is the exception to the file step in the field order above: precedence is invocation, then `CAPSTAN_HEAVY_CHECKS_MAX_CONCURRENT`, then the default.
+A `.capstan.json` value for it is called out and ignored, because a repository file cannot know a host's capacity.
+An invalid value for it is called out and falls through to the next source; `0`, `-1`, and `two` are invalid.
+[telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
+[toolchain.md](toolchain.md) ("A heavy check's exact invocation is") owns the slots the value sets.
 
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then

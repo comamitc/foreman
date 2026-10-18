@@ -30,7 +30,7 @@ A run under a host grant is the write probe, and a `claude-write` station whose 
 
 Before any output of a run under a host grant is written, the streaming redaction step of [references/security.md](../security.md) rule 6 also removes host-file text. It replaces with `[host file content removed]` the `content` of each `tool_result` that answers a Read and whose `is_error` is not true, and the `tool_use_result` of that event. It replaces with `[removed]` each assistant `text` or `thinking` block and the `result` field unless it is exactly `CAPSTAN_PROBE_OK`, and each field that carries a tool's arguments, whether it is named `input`, `tool_input`, or `wire_tool_inputs` or otherwise, other than a Bash `command` and a `file_path`. It keeps each tool name, `id`, `tool_use_id`, `is_error`, `file_path`, and `permission_denials` entry.
 
-Bite restore is `git restore -- <path>`. `git checkout` is not the restore path. The coordinator adds one `--allowedTools` entry for each declared check, verbatim. Bite-restore probe evidence: PR #111.
+Bite restore is `git restore -- <path>`. `git checkout` is not the restore path. The coordinator adds one `--allowedTools` entry for each declared check, verbatim as the brief's exact invocation ([references/toolchain.md](../toolchain.md) ("The brief carries the exact invocation.")). Bite-restore probe evidence: PR #111.
 
 Use the worktree as cwd. Add `--model MODEL` and `--effort EFFORT` only when
 configured. Use `--setting-sources ''` to exclude unrelated project/user settings
@@ -38,7 +38,8 @@ when required task/auth settings have been supplied explicitly. The installed CL
 advertises low/medium/high/xhigh/max; verify model support too. `acceptEdits`
 approves file edits, not every shell command. For read stations use
 `--permission-mode plan`, `--tools Read,Bash`, `--allowedTools` listing exactly
-`Bash(git status *)`, `Bash(git rev-parse *)`, `Bash(git diff *)`, and
+`Bash(git status *)`, `Bash(git rev-parse *)`, `Bash(git diff *)`,
+and each declared-check entry above for a check the pack's `## Checks` tells the station to run, and
 `--disallowedTools` spellings `Bash(grep -r*)`, `Bash(grep -R*)`,
 `Bash(grep --recursive*)`, `Bash(grep --dereference-recursive*)`, `Bash(rg *)`,
 and `Bash(find *)`, with `--permission-prompts none`. A read station's result is

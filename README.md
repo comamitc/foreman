@@ -134,8 +134,9 @@ Optional `.capstan.json` in the target repository:
 }
 ```
 
-The coordinator interprets each value. Precedence is invocation, environment,
-file, defaults. Environment keys use uppercase paths joined by underscores, such
+The coordinator interprets each value.
+Precedence is invocation, environment, file, defaults, except for `heavy_checks.max_concurrent`, a per-host setting read only from the invocation or `CAPSTAN_HEAVY_CHECKS_MAX_CONCURRENT`; [contract](references/contract.md) ("`heavy_checks.max_concurrent` is a positive integer") owns it.
+Environment keys use uppercase paths joined by underscores, such
 as `CAPSTAN_PRIMARY_HARNESS` or `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`.
 Unknown/malformed values are called out and ignored individually. Review findings
 block only when they meet both the configured severity and confidence floors;
