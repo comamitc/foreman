@@ -10,8 +10,9 @@ human-readable filenames, for example `planning-20260921T120000Z-1.md`. On resum
 append rather than overwrite surviving attempts. Follow security before capture.
 
 Write the ledger row directly. Record delivery
-identity, spec revision, effective nonsecret configuration, each ignored unknown
-or retired configuration field by name and source (file, environment, or
+identity, spec revision,
+effective nonsecret configuration with the source of `heavy_checks.max_concurrent`,
+each ignored unknown or retired configuration field or ignored file value by name and source (file, environment, or
 invocation override) apart from effective configuration and without its value,
 budget start, the
 resolved deletion switch, and

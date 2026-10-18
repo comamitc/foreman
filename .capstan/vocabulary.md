@@ -174,6 +174,6 @@
 
 **Same-head check record**: a write worker's declared-check record that the coordinator accepts instead of running the check again. The rule owner is `references/harnesses/shared.md` ("The coordinator accepts a same-head check record"). Rejected: a worker sentence that checks passed.
 
-**Heavy check**: a declared check that runs a full test suite, marked heavy in the plan. Lint, typecheck, and targeted tests are not heavy. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: Capstan parses a command or counts test files.
+**Heavy check**: a declared check that runs a full test suite, marked heavy in the plan. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: Capstan parses a command or counts test files.
 
-**Heavy-check lock**: the `flock` lock on `<state root>/heavy.lock` that lets one heavy check run at a time on a host. The rule owner is `references/toolchain.md` ("A heavy check's exact invocation is"). Rejected: an atomic `mkdir` lock, which leaves a stale lock after a kill; a per-repository or per-delivery lock.
+**Heavy-check lock**: the `flock` lock on one of `heavy_checks.max_concurrent` slot files under `<state root>` that bounds how many heavy checks run at once on a host. The rule owner is `references/toolchain.md` ("A heavy check's exact invocation is"). Rejected: an atomic `mkdir` lock, which leaves a stale lock after a kill; a per-repository or per-delivery lock; a counting semaphore or a lock daemon, which needs a new executable.
