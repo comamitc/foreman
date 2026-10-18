@@ -17,7 +17,7 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    old/new trace. Follow [ladder](ladder.md). Use the
    smallest coherent diff; avoid adjacent refactors and opportunistic cleanup.
 3. Run affected checks and the relevant final gates. Use the exact invocation
-   the brief carries. Commit coherent repairs,
+   the brief carries, in the order [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") owns. Commit coherent repairs,
    preserve human work, and verify clean status. Record each check as
    [templates/result.md](../templates/result.md) ("## Checks") defines it, and
    the resulting head and proof for every effective blocking finding, including

@@ -83,6 +83,15 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
 3. Produce [plan](../templates/plan.md). Map every acceptance criterion to ordered
    items with an observable outcome, affected area, verification command/seam,
    failure signal, and risk. Name final repository checks and real user-surface proof.
+   Mark each declared check heavy or not heavy.
+   A heavy check runs a full test suite: for example full vitest, pytest over more than about 10 files, or Playwright end-to-end.
+   Lint, typecheck, and targeted tests are not heavy.
+   Plan review checks the marks.
+   List the declared checks in this order: lint, typecheck, targeted tests, then heavy checks last.
+   Every run of the declared checks, by a worker at any station or by the coordinator, follows that order and stops at the first failing check.
+   A check the stop skips is recorded as not run, and no worker or coordinator runs it until the order starts again.
+   After a repair, the run starts again from the first check.
+   [references/toolchain.md](toolchain.md) ("A heavy check's exact invocation is") owns a heavy check's invocation.
    Size proof to the change; [references/ladder.md](ladder.md) ("## Check") owns the limit.
    A Markdown-only change uses the simplest observable text checks that discriminate a real defect.
    A multi-stage proof pipeline needs a stated reason in the plan.

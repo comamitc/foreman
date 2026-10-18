@@ -173,3 +173,7 @@
 **Friction signal**: evidence that a worker struggled without a finding: a pack gap, a repeated permission denial, a ceiling hit, a recovery attempt, or a defective evidence check. The rule owner is `references/modes/correction.md` ("This file owns correction"). Rejected: worker prose without a recorded artifact.
 
 **Same-head check record**: a write worker's declared-check record that the coordinator accepts instead of running the check again. The rule owner is `references/harnesses/shared.md` ("The coordinator accepts a same-head check record"). Rejected: a worker sentence that checks passed.
+
+**Heavy check**: a declared check that runs a full test suite, marked heavy in the plan. Lint, typecheck, and targeted tests are not heavy. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: Capstan parses a command or counts test files.
+
+**Heavy-check lock**: the `flock` lock on `<state root>/heavy.lock` that lets one heavy check run at a time on a host. The rule owner is `references/toolchain.md` ("A heavy check's exact invocation is"). Rejected: an atomic `mkdir` lock, which leaves a stale lock after a kill; a per-repository or per-delivery lock.

@@ -37,7 +37,9 @@ carry reads `none` plus the reason.
    For code review, include the effective policy, severity/confidence
    calibration, partition rules, review ratchet, counted round and remaining
    allowance from `references/review-convergence.md`.
-6. `## Checks`: exact commands with cwd and expected exit. A code-review pack
+6. `## Checks`: exact commands with cwd and expected exit.
+   Declared checks appear as the brief's invocations ([references/toolchain.md](toolchain.md) ("The brief carries the exact invocation.")), in the order [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") owns.
+   A code-review pack
    also carries, under this heading, each applicable red or fault-injection
    observation that implementing recorded, marked as carried evidence (command,
    head, exit, and failure signal) and not as a command to run;

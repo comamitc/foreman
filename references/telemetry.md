@@ -61,6 +61,8 @@ The ledger notes keep the raw usage. In `ledger.md`, after the date line, write 
 - A row with a worker: `- STAGE ATTEMPT: HARNESS VERSION MODEL EFFORT; field=value ...`. MODEL is the full model ID. A version, model, or effort the harness did not report is `unknown`.
 - A row with no worker: `- STAGE ATTEMPT: coordinator`. It carries no version, model, effort, or usage.
 
+After the attempt lines, write one line for each heavy check that ran unlocked, after its first observed unlocked run: ``- unlocked CHECK: ran unlocked because `flock` is not on `PATH` ``. CHECK is the declared invocation. An observed run is that check's entry under a captured result's `## Checks`, or the coordinator's own run. A heavy check the stop skipped writes no line. These lines are not attempt lines.
+
 Fields use the harness's own names and values, as reported. List only reported fields; when the harness reported no usage, write `usage=unknown`. A field is listed once. On a failed attempt, `exit=N error=REDACTED;` follows EFFORT, with the exit status and the redacted raw error. The summary and the final message do not copy the notes. The one exception is the verbatim `ledger.md` block the end-of-run order publishes in the summary; the summary's ordinary narrative still does not copy them. Capstan captures no cost. Record no spent, reported, or estimated cost figure or price in `ledger.md`, the summary, a host status line, or a benchmark or improvement comparison, even when the harness reports one.
 
 For planning, record the initial plan, single review, correction launch/outcome,

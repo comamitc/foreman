@@ -34,6 +34,12 @@ An Ordered items row for non-trivial logic names, inside its "Verification comma
 
 Repository checks and real user-surface demonstration.
 
+| Order | Declared check (exact command) | Heavy |
+| --- | --- | --- |
+| 1 | | |
+
+[references/planning.md](../references/planning.md) step 3 ("Mark each declared check heavy or not heavy") owns the marks and the order.
+
 [references/planning.md](../references/planning.md) step 3 ("A check script the plan writes") owns how a planned check script is built.
 
 ## Revision response

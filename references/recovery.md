@@ -28,7 +28,7 @@ preserve the active stage while recovering.
    | crash/timeout | inspect effects and live processes; fresh worker for unfinished work |
    | failed launch probe | no station worker launches and the run does not advance until a re-probe or a recovery-selected fallback's probe passes; diagnosis only under a recipe whose probe passed in this invocation ([launch probe](harnesses/shared.md)) |
    | missing/weak/malformed result | precise corrective feedback, up to 2 corrective prompts, then a fresh worker |
-   | failed behavior/test/type/lint/build | primary repairs using original command/logs, diff, spec and plan; rerun that check |
+   | failed behavior/test/type/lint/build | primary repairs using original command/logs, diff, spec and plan; rerun under [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") |
    | unknown technical failure | fresh diagnosis worker; unknown does not mean human-required |
    | resolved same_failure_attempts reached (default 2) | fresh secondary independent diagnosis, then fresh primary repair |
    | same failure after diagnosis and repair | one configured fallback attempt per original failure scenario per run; if unavailable or already attempted, fresh primary with a materially different hypothesis |

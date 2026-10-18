@@ -143,7 +143,9 @@ repository unless that repository is Capstan. A delivery reads the target
 repository's own conventions. It does not import this rule into that
 repository. Permit only `git`, `gh`, existing harness CLIs, the coordinator's
 launch builder `scripts/launch.sh` (workers never run it), `sha256sum` or
-`shasum -a 256` for the ledger digest only, and a target repository's own CLI.
+`shasum -a 256` for the ledger digest only,
+`flock` for the heavy-check lock only (an admitted issue records the exception; #297 records it for the heavy-check lock in `references/toolchain.md`),
+and a target repository's own CLI.
 Do not permit the class "an installed CLI."
 
 ## Evidence and reconciliation

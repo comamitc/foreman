@@ -83,7 +83,7 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    or propose a refutation with concrete evidence. Record unfinished obligations
    explicitly; technical failures stay in implementing recovery, not planning or `fix`.
    Run all declared final checks except a silent check and exercise the real user
-   surface. Use the exact invocation the brief carries. For a silent check, record the coordinator
+   surface. Use the exact invocation the brief carries, in the order [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") owns. For a silent check, record the coordinator
    result in the form `references/harnesses/shared.md` states. Record actual
    commands, working directories, exit statuses, and output/evidence paths,
    each check's head SHA as
