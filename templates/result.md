@@ -13,7 +13,7 @@
 
 ## Checks
 
-For each check: command, head SHA, exit status, and duration. [references/telemetry.md](../references/telemetry.md) owns the `check` event.
+For each check: command, working directory, head SHA, exit status, and duration. The head SHA is the `HEAD` the check ran at, not a head from a later commit. [references/telemetry.md](../references/telemetry.md) owns the `check` event.
 
 ## Changes or findings
 ## Risks and unresolved items

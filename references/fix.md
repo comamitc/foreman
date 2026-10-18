@@ -18,14 +18,18 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    smallest coherent diff; avoid adjacent refactors and opportunistic cleanup.
 3. Run affected checks and the relevant final gates. Use the exact invocation
    the brief carries. Commit coherent repairs,
-   preserve human work, and verify clean status. Record resulting head and proof
-   for every effective blocking finding, including evidence-backed refutations.
+   preserve human work, and verify clean status. Record each check as
+   [templates/result.md](../templates/result.md) ("## Checks") defines it, and
+   the resulting head and proof for every effective blocking finding, including
+   evidence-backed refutations.
 4. Write the result; never push or publish it yourself. For every effective blocking finding, include
    the complete red/green/bite row required by [finding resolution](findings.md).
 
 Use [templates/result.md](../templates/result.md) for common result headings and its "## Implementing" section. Complete when every effective blocking finding has a complete proposed
-closure row, checks pass, and the worktree is clean. The coordinator then applies
-the closure proof gate independently. Only
+closure row, checks pass, and the worktree is clean. The coordinator checks
+declared-check records under [references/harnesses/shared.md](harnesses/shared.md)
+("The coordinator accepts a same-head check record"), then applies the closure
+proof gate independently. Only
 after the gate passes does the coordinator start a fresh review
 under the code-review convergence ratchet, even if a refutation left head
 unchanged. The pack carries the cumulative diff and identifies the repair delta.
