@@ -171,3 +171,5 @@
 **Mistake class**: a recurring kind of review finding that occurred in two or more deliveries of one repository, cited by occurrence. The rule owner is `references/modes/correction.md` ("This file owns correction"). Rejected: a one-off finding.
 
 **Friction signal**: evidence that a worker struggled without a finding: a pack gap, a repeated permission denial, a ceiling hit, a recovery attempt, or a defective evidence check. The rule owner is `references/modes/correction.md` ("This file owns correction"). Rejected: worker prose without a recorded artifact.
+
+**Same-head check record**: a write worker's declared-check record that the coordinator accepts instead of running the check again. The rule owner is `references/harnesses/shared.md` ("The coordinator accepts a same-head check record"). Rejected: a worker sentence that checks passed.

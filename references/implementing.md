@@ -85,7 +85,10 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    Run all declared final checks except a silent check and exercise the real user
    surface. Use the exact invocation the brief carries. For a silent check, record the coordinator
    result in the form `references/harnesses/shared.md` states. Record actual
-   commands, exit statuses, output/evidence paths, and the resulting head SHA.
+   commands, working directories, exit statuses, and output/evidence paths,
+   each check's head SHA as
+   [templates/result.md](../templates/result.md) ("## Checks") defines it, and
+   the resulting head SHA.
 5. Prepare PR text with Why, Scope, Tradeoffs, Blast Radius, and Verification.
    Blast Radius states reversibility, rollback or mitigation, affected
    surfaces, and human attention. It cites its basis: the diff, commands,
@@ -126,8 +129,10 @@ result is demonstrated, commits contain the intended change, and the tree is cle
 A no-op or already-delivered issue is reconciled with the
 coordinator; do not manufacture a change to satisfy the nonempty criterion.
 
-Coordinator independently checks evidence and applies the closure proof gate for
-every carried effective blocker. [references/publication.md](publication.md)
+Coordinator independently checks evidence;
+[references/harnesses/shared.md](harnesses/shared.md) ("The coordinator accepts a same-head check record")
+owns whether it runs a declared check again. It applies the closure proof gate
+for every carried effective blocker. [references/publication.md](publication.md)
 owns publication. Implementing is not complete, and no review starts, until
 every coordinator-run silent check declared for it has exited 0. A silent-check
 failure is implementing recovery, not `fix`.
