@@ -318,7 +318,7 @@ through. [pre-merge.md](pre-merge.md) step 4 owns the residual-effect approval
 It is a host setting, so it is the exception to the file step in the field order above: precedence is invocation, then `CAPSTAN_HEAVY_CHECKS_MAX_CONCURRENT`, then the default.
 A `.capstan.json` value for it is called out and ignored, because a repository file cannot know a host's capacity.
 An invalid value for it is called out and falls through to the next source; `0`, `-1`, and `two` are invalid.
-`ledger.md` records the resolved value and its source; [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns the row.
+[telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 [toolchain.md](toolchain.md) ("A heavy check's exact invocation is") owns the slots the value sets.
 
 `features` is the optional feature-map field. Resolution order is invocation,
