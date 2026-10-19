@@ -106,6 +106,11 @@ The plan-review pack carries the bite outcomes and any repair as carried evidenc
 A check that the single correction changes, or that a worker reports defective, is bitten again before the brief that depends on it launches.
 The coordinator runs the evidence check against at least one known-good case, which it passes, and at least one planted defect, which it fails.
 Plant at least one defect per evidence check and one per carried finding the check claims to close.
+When an evidence check claims to preserve an inventory or a set of cases, the bite plants, for each item, a defect that removes or changes only that item, and the check must fail on each such plant.
+A check claims this when its group's named planted defect, the plan item it verifies, or the criterion it is derived from names items to keep, such as rows, sentences, duties, entries, or cases.
+A per-item plant deletes that one item, or rewrites only its required behavior, and keeps every other item and every phrase the check matches outside that item; every item is planted, with no sample.
+Per-item plants are planted defects, so this paragraph's known-good case, synthetic fixture, named deferred assertions, and `ledger.md` notes line apply to each one.
+A check that passes on one of these plants is a defective evidence check.
 When no known-good candidate exists yet, the coordinator either bites the check on a synthetic fixture or names the assertions that cannot run until the candidate exists.
 A synthetic fixture is a scratch copy with a representative edit built from the plan's text; it stays outside the product worktree, is a scratch git clone with a commit when the check inspects commits or diffs, and is never given to a worker.
 Named deferred assertions are the only exception to the pre-launch bite; the coordinator bites them at the closure proof gate, before review starts.
