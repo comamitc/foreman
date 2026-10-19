@@ -177,11 +177,13 @@ A PR found after a creation timeout completes the existing creation rather than
 duplicating it.
 
 Plans identify the spec revision. Implementation and repair identify resulting
-head SHA. Reviews identify exact head and base SHAs and inspect the three-dot
-diff. A new head requires fresh cumulative review and affected checks; a changed
-base requires reassessing the changed diff and review freshness. Neither change
-discards a still-applicable spec or plan. Spec changes invalidate only dependent
-judgments. PR readiness is always observed live.
+head SHA. Reviews identify exact head and base SHAs;
+[code-review convergence](review-convergence.md) ("## Review ratchet") owns
+what each code-review round inspects. A new head requires fresh review at that
+head and affected checks; a changed base requires reassessing the changed diff
+and review freshness. Neither change discards a still-applicable spec or plan.
+Spec changes invalidate only dependent judgments. PR readiness is always
+observed live.
 
 ## Marked Markdown artifacts
 

@@ -47,14 +47,17 @@ path or decision does not match the diff, or when the disposition is
 The review pack copies every Documentation impact path into Named files and
 every verification into Checks. Unknown paths stay `discovery gap:`.
 
-1. Read the brief and the pack. The saved `git diff BASE_SHA...HEAD_SHA` in the
-   pack is the candidate at the recorded SHAs; record them, the initial status,
-   and the spec revision. Apply the effective policy and review ratchet extracted
+1. Read the brief and the pack. The saved diff in the pack is the candidate at
+   the recorded SHAs: in round 1, `git diff BASE_SHA...HEAD_SHA`; in a later
+   round, the repair delta `git diff PRECEDING_HEAD_SHA..HEAD_SHA` at the
+   recorded preceding-reviewed-head and head SHAs, except in the fallback case
+   [references/pack.md](pack.md) ("not an ancestor of HEAD") owns. Record those
+   SHAs, the base SHA, the initial status, and the spec revision. Apply the effective policy and review ratchet extracted
    into the pack: round 1 covers the cumulative diff; later rounds verify prior
    effective blockers and the repair delta, with the policy's stated exceptions.
    [references/pack.md](pack.md) owns the finding rows the pack carries ("open prior code-review finding") and the carried evidence under Checks ("each applicable red or fault-injection").
    Confirm each citation's anchor under [references/pack.md](pack.md) ("Citation rule") and each row's
-   original scenario against the saved diff; a citation that does not meet that rule is a
+   original scenario against the saved diff or, in a later round, the row's ranges under `## Named files`; a citation that does not meet that rule is a
    finding. Run only the named checks, the declared ones under [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy"), and record the observed exit at HEAD. Callers
    are the ones the pack names; the diff carries the rest. A path the pack does not
    name is a gap under Risks and unresolved items, not a search.
