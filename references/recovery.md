@@ -37,6 +37,7 @@ preserve the active stage while recovering.
    | recurrent/reopened scenario after a claimed fix | record the insufficient red/green/bite proof, obtain fresh secondary diagnosis, then use a materially different primary repair hypothesis |
    | conflicts/CI | pre-merge reference's ordered recovery |
    | telemetry/local artifact/helper failure | recreate from remote evidence or use direct existing CLI; note the gap |
+   | denied coordinator step | "## Denied coordinator step" below; no other row applies |
 
 4. Re-observe and verify the original completion criterion after repair. Continue
    with new evidence, another hypothesis, or independent diagnosis while budget
@@ -51,6 +52,15 @@ reachable through an installed, help-verified continuation interface. Otherwise
 start a fresh worker carrying the prior result and precise feedback; missing resume
 support is not a blocker. Each new station and independent judgment starts fresh.
 Do not launch a second writer while a prior writer is alive.
+
+## Denied coordinator step
+
+A denied coordinator step is a host permission refusal to run a coordinator command, such as an auto-mode classifier denial. A GitHub API error from a command that ran is not a denied step; it follows "## Observe, diagnose, retry". [Claude adapter](harnesses/claude.md) ("## Claude Code host") owns the host's read forms.
+
+1. A denied read is retried once in the other form: the host's file-read tool for a local file, or the plain `gh` read with no redirect for GitHub. A read that was already in that form is retried once in that same form. A second denial follows step 2.
+2. For a denied GitHub write, or a read still denied after step 1, record the denial as a ledger row ([telemetry](telemetry.md) ("This file owns the attempt table.")). Do not rerun the command in this invocation. Do not route the step through another command or another surface, such as an issue comment, a pull request, or `gh api`. Publish a `permission-required` blocker as "## Blocked overlays" states, with [blocker](../templates/blocker.md) ("# Delivery blocked"), naming the exact command. Its action asks the person to allow or approve that command in the host and then re-invoke. Its resume condition is that command running and reading back. The delivery stops.
+3. When the blocker comment itself is denied, report the blocker locally and in the host session, and the delivery stops. A denial is not unavailable GitHub access.
+4. On a later invocation, "## Blocked overlays" governs overlay removal, and the condition it observes is this blocker's resume condition. Running the exact denied command once is that observation, not a station rerun. A run that reads back observes it, and "## Blocked overlays" ("remove only the overlay, and continue") owns what follows. A run that is denied again does not observe it: record that denial as a ledger row, do not run the command again in that invocation, publish no second blocker, and "## Blocked overlays" ("If that condition is not observed") owns what follows.
 
 ## Blocked overlays
 

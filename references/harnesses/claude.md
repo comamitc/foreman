@@ -71,3 +71,45 @@ the worktree head changes or the result file appears may wake the coordinator
 before the exit notice. At each observation, read the worktree head, new
 commits, and whether the result file exists.
 [references/telemetry.md](../telemetry.md) owns the host status line.
+
+Read Capstan package files (`SKILL.md`, `references/`, `templates/`) with the host's file-read tool, not with a shell `cat`, `sed`, `head`, or `grep`. Package-read evidence: #312.
+
+Run each GitHub read as one `gh` read command with no pipe, no chained command, and no process substitution. The only allowed addition is one redirect of its stdout to a file under the evidence root. Compare that file against a local file with a separate local command.
+
+A refused command is a denied coordinator step: [recovery](../recovery.md) ("## Denied coordinator step") owns its outcome.
+
+Two optional operator settings help the coordinator host. Capstan never writes either one; the operator adds them.
+
+`permissions.allow`, in the operator's user or local project settings, holds narrow rules for the read-only `gh` commands the coordinator runs, one read command per rule. It holds no `gh api` rule and no rule that can match a write.
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh issue view *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh run view *)",
+      "Bash(gh run list *)",
+      "Bash(gh repo view *)",
+      "Bash(gh label list *)"
+    ]
+  }
+}
+```
+
+`autoMode.environment` in `~/.claude/settings.json` names the target repository as trusted source control and keeps `"$defaults"`. Project settings (`.claude/settings.json`, `.claude/settings.local.json`) do not carry `autoMode`.
+
+```json
+{
+  "autoMode": {
+    "environment": [
+      "$defaults",
+      "**Source control**: the trusted repo and its remotes, and github.com/OWNER/REPO, the repository Capstan delivers to"
+    ]
+  }
+}
+```
+
+Settings evidence: Claude Code 2.1.304; `permissions.allow` checked against https://code.claude.com/docs/en/permission-modes (allow rules resolve before the classifier, and narrow rules stay in effect in auto mode); `autoMode.environment` checked against https://code.claude.com/docs/en/auto-mode-config and the `environment` key printed by `claude auto-mode defaults`, read 2026-10-19.

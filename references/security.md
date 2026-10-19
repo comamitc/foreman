@@ -26,7 +26,7 @@
    home-directory writes.
    Safety flags differ by host; use verified harness recipes. Permission bypass
    requires explicit `unsafe_autonomy: true` from the user and disclosure. A denied
-   operation is diagnosed; do not silently escalate to bypass or disable protections.
+   operation is diagnosed; do not silently escalate to bypass or disable protections. A denied coordinator step is diagnosed by [recovery](recovery.md) ("## Denied coordinator step").
 5. Pass an allowlist of necessary environment variables: PATH, HOME for the real
    authentication/config location, required locale/temp values, and only task/harness
    credentials actually needed. Never repurpose HOME or print the environment.

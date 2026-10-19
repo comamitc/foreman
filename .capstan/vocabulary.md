@@ -68,6 +68,8 @@
 
 **Blocked overlay**: the `capstan:blocked` label Capstan adds beside the stage label. Rejected: a label named `blocked`, or a GitHub issue dependency.
 
+**Denied coordinator step**: a host permission refusal to run a coordinator command, such as an auto-mode classifier denial. The rule owner is `references/recovery.md` ("## Denied coordinator step"). Rejected: a GitHub API error from a command that ran.
+
 **Denied spec publish**: an outcome of the triage spec publish. The rule owner is `references/triage.md` ("A denied spec publish is a host permission refusal"). Rejected: a GitHub API error from a command that ran.
 
 **Publication boundary**: the point after local code review converges and base freshness is confirmed, when Capstan first pushes the exact reviewed candidate and creates or reconciles the pull request. Rejected: every implementing or fix completion.
