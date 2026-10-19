@@ -116,6 +116,10 @@
 
 **Batch invocation**: one invocation that names two or more issues in one repository and delivers them sequentially in dependency order. The rule owner is `references/modes/batch-invocation.md` ("This file owns batch invocation order"). Rejected: parallel delivery; stacked PRs.
 
+**Boundary pass**: the opt-in end-of-batch or end-of-milestone run of `architect`, `guardrails`, and the recurrence grouping, followed by at most one Ask round. The rule owner is `references/modes/boundary-pass.md` ("This file owns the boundary pass"). Rejected: a scheduler or recurring job.
+
+**Boundary report**: the one host-session block the boundary pass prints. The rule owner is `references/modes/boundary-pass.md` ("This file owns the boundary pass"). Rejected: a marked GitHub comment.
+
 **Start condition**: what must hold before a delivery starts. The rule owner is `references/contract.md` ("## Start condition"). Rejected: a batch ordering edge.
 
 **Companion issue**: the issue in another repository that carries the half of a request this repository cannot verify. The rule owner is `references/triage.md` ("A criterion that is not verifiable in this repository is an Ask").

@@ -38,4 +38,5 @@ This file owns batch invocation order.
     - An issue that never started has a table of the stages it ran; bounds that were not observed are `unknown`.
     - The batch ends when every issue has a stop.
     - Emit the final message once, after the last issue's summary read-back. It lists issues in delivery order. Each issue has its outcome and its attempt table with the Total row and the date line, copied from its own read-back per [end of run](../end-of-run.md) "Emission follows the summary read-back".
+    - [boundary pass](boundary-pass.md) ("## Triggers") owns any pass after this final message.
     - No issue appears without a table.

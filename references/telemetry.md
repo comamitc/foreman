@@ -11,7 +11,8 @@ append rather than overwrite surviving attempts. Follow security before capture.
 
 Write the ledger row directly. Record delivery
 identity, spec revision,
-effective nonsecret configuration with the source of `heavy_checks.max_concurrent`,
+effective nonsecret configuration with the source of `heavy_checks.max_concurrent`
+and the resolved `boundary_pass` with its source,
 each ignored unknown or retired configuration field or ignored file value by name and source (file, environment, or
 invocation override) apart from effective configuration and without its value,
 budget start, the

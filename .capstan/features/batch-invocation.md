@@ -5,6 +5,7 @@
 - Dependency order among the issues in the batch.
 - Triage of every issue before any issue enters unattended delivery.
 - Per-issue branch, worktree, labels, ledger, spec, PR, and ready gate.
+- Opt-in boundary pass; [boundary pass](../../references/modes/boundary-pass.md) ("## Triggers") owns when it runs.
 
 ## How to get to it (user POV)
 Install Capstan as [README](../../README.md) ("Install and invoke") describes.
