@@ -46,6 +46,7 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Post-merge checks: [triage](../../references/triage.md) ("Visit every stated outcome as a node") owns the classification; [end of run](../../references/end-of-run.md) ("`## Post-merge checks` section contains that section copied verbatim") owns the ready-to-deploy summary heading.
 - Trusted comments after the spec: [pre-merge](../../references/pre-merge.md) ("Newer trusted comments") owns the check.
 - Codex read launches: [Codex adapter](../../references/harnesses/codex.md) ("The read recipe, for kinds") owns the recipe, and ("owns the Codex read-station result rule") owns the read-station result rule.
+- Claude read launches: [Claude adapter](../../references/harnesses/claude.md) ("For read stations use") owns the read recipe, and ("Allowlist probe evidence") owns the commands its allowlist does not constrain.
 - Write-station shell commands, evidence-check runs, check logs, and identical reruns: [brief template](../../templates/brief.md) ("## Worker constraints") owns that rule.
 - Denied spec publish: [triage](../../references/triage.md) ("A denied spec publish is a host permission refusal") owns that rule.
 - Probe capture: [shared harness](../../references/harnesses/shared.md) ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`") owns how a run script captures its run.
