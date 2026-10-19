@@ -37,6 +37,7 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Check scripts that a plan writes are built to one rule; [planning](../../references/planning.md) ("A check script the plan writes") owns that rule.
 - Design comparisons in plans: [planning](../../references/planning.md) ("Those designs are compared at equal reuse") owns that rule.
 - Bite timing for evidence checks the initial plan writes: [pack](../../references/pack.md) ("An evidence check the initial plan writes") owns that rule.
+- Per-item plants when an evidence check claims to preserve an inventory or a set of cases: [pack](../../references/pack.md) ("When an evidence check claims to preserve an inventory or a set of cases") owns that rule.
 - Real-run evidence checklist: [pack](../../references/pack.md) ("Real-run evidence checklist") owns that rule.
 - Review findings in the coordinator's own evidence: [code-review convergence](../../references/review-convergence.md) ("## Coordinator-evidence findings") owns that rule.
 - Citations in plans and packs: [pack](../../references/pack.md) ("Citation rule") owns that rule.
