@@ -40,10 +40,13 @@ set -u
 MCP='{"mcpServers":{}}'
 CLAUDE_WRITE_ALLOW=('Bash(git add *)' 'Bash(git commit *)' 'Bash(git status *)' 'Bash(git diff *)'
   'Bash(git log *)' 'Bash(git rev-parse *)' 'Bash(git show *)' 'Bash(git restore -- *)')
-CLAUDE_WRITE_DENY=('Bash(git checkout *)' 'Bash(git reset --hard *)' 'Bash(git push *)' 'Bash(gh *)')
+CLAUDE_WRITE_DENY=('Bash(git checkout *)' 'Bash(git reset --hard *)' 'Bash(git push *)' 'Bash(gh *)'
+  'Bash(time *)' 'Bash(nice *)' 'Bash(timeout *)' 'Bash(nohup *)')
 CLAUDE_READ_ALLOW=('Bash(git status *)' 'Bash(git rev-parse *)' 'Bash(git diff *)')
 CLAUDE_READ_DENY=('Bash(grep -r*)' 'Bash(grep -R*)' 'Bash(grep --recursive*)'
-  'Bash(grep --dereference-recursive*)' 'Bash(rg *)' 'Bash(find *)')
+  'Bash(grep --dereference-recursive*)' 'Bash(rg *)' 'Bash(find *)'
+  'Bash(time *)' 'Bash(nice *)' 'Bash(timeout *)' 'Bash(nohup *)')
+WRAP_RE='^Bash\((time|nice|timeout|nohup) '
 CLAUDE_FLAGS=' -p --verbose --disable-slash-commands --strict-mcp-config --permission-mode --output-format --model --effort --permission-prompts --add-dir --allowedTools --disallowedTools --mcp-config --tools '
 KINDS=' claude-write claude-read claude-write-probe codex-write codex-read codex-read-probe '
 ALLOW_RE='^Bash\(.+\)$'
@@ -648,6 +651,8 @@ list_items() {
       [ "$item" = "${exp[k]}" ] || pos_bad "$f" "$item"
     elif [ "$f" = --disallowedTools ]; then
       pos_bad "$f" "$item"
+    elif [[ $item =~ $WRAP_RE ]]; then
+      v "$f entry starts with a denied wrapper: $item"
     elif [ "$phase" != read ] && [[ $item =~ $ALLOW_RE ]]; then
       phase=bash
     elif [ "$KIND" != claude-read ] && [[ $item =~ $READ_RE ]] && safe_path "${BASH_REMATCH[1]}"; then
@@ -681,7 +686,7 @@ walk_claude() {
         CTX[i + 1]=$w
         want=
         case $w in
-          --permission-mode) want=acceptEdits; [ "$KIND" != claude-read ] || want=plan ;;
+          --permission-mode) want=acceptEdits; [ "$KIND" != claude-read ] || want=manual ;;
           --output-format) want=stream-json ;;
           --permission-prompts) want=none ;;
         esac
@@ -945,6 +950,7 @@ cmd_write() {
   case $effort in -* | *'"'*) die "--effort cannot start with - or hold a double quote: $effort" ;; esac
   for a in ${allows[@]+"${allows[@]}"}; do
     [[ $a =~ $ALLOW_RE ]] || die "--allow must have the form Bash(...): $a"
+    ! [[ $a =~ $WRAP_RE ]] || die "--allow starts with a denied wrapper: $a"
   done
   case $kind in
     claude-write*) [ -n "$hs" ] || die "--host-source is required for $kind" ;;
@@ -994,7 +1000,7 @@ cmd_write() {
   case $kind in
     claude-*)
       A=(claude -p --permission-mode)
-      if [ "$kind" = claude-read ]; then A+=(plan); else A+=(acceptEdits); fi
+      if [ "$kind" = claude-read ]; then A+=(manual); else A+=(acceptEdits); fi
       A+=(--output-format stream-json --verbose)
       [ -z "$model" ] || A+=(--model "$model")
       [ -z "$effort" ] || A+=(--effort "$effort")

@@ -150,6 +150,10 @@ arg=Bash(git checkout *)
 arg=Bash(git reset --hard *)
 arg=Bash(git push *)
 arg=Bash(gh *)
+arg=Bash(time *)
+arg=Bash(nice *)
+arg=Bash(timeout *)
+arg=Bash(nohup *)
 stdin=$LAUNCH_CONTENT
 EOF
 
@@ -158,7 +162,7 @@ cwd=$T/wt
 tmpdir=$T/ambient
 arg=-p
 arg=--permission-mode
-arg=plan
+arg=manual
 arg=--output-format
 arg=stream-json
 arg=--verbose
@@ -190,6 +194,10 @@ arg=Bash(grep --recursive*)
 arg=Bash(grep --dereference-recursive*)
 arg=Bash(rg *)
 arg=Bash(find *)
+arg=Bash(time *)
+arg=Bash(nice *)
+arg=Bash(timeout *)
+arg=Bash(nohup *)
 stdin=$LAUNCH_CONTENT
 EOF
 
@@ -234,6 +242,10 @@ arg=Bash(git checkout *)
 arg=Bash(git reset --hard *)
 arg=Bash(git push *)
 arg=Bash(gh *)
+arg=Bash(time *)
+arg=Bash(nice *)
+arg=Bash(timeout *)
+arg=Bash(nohup *)
 stdin=$LAUNCH_CONTENT
 EOF
 
@@ -1220,6 +1232,31 @@ C25() { # a run script with no delivery identity, a bad delivery, or a bad event
   sed "s|^events='.*'\$|events='$T/ev/tool-calls.jsonl'|" "$T/c/C25.base" >"$T/c/C25d.sh"
   c_expect C25d "$T/r" "events is not an absolute path ending in /events.jsonl: $T/ev/tool-calls.jsonl"
 }
+C26() { # claude-read mode left as plan
+  c_build C26 claude-read || return 1
+  sed "s|^'manual'\$|'plan'|" "$T/c/C26.base" >"$T/c/C26.sh"
+  c_expect C26 "$T/r" "--permission-mode must be manual for claude-read: plan"
+}
+C27() { # the trailing wrapper deny entry deleted
+  c_build C27 claude-write || return 1
+  sed "/^'Bash(nohup \\*)'\$/d" "$T/c/C27.base" >"$T/c/C27.sh"
+  c_expect C27 "$T/r" "missing recipe entry in --disallowedTools: Bash(nohup *)"
+}
+C28() { # a declared check that starts with a denied wrapper
+  local rc
+  (cd "$T/b" && bash "$LAUNCH_SH" write --kind claude-read --out "$T/c/C28a.sh" --worktree "$T/wt" --launch-file "$LF" \
+    --add-dir "$T/res" --add-dir "$T/brief" --allow 'Bash(time make check)' --capture "$T/cap/C28a" "${EV[@]}") >/dev/null 2>"$T/log/C28a.build"
+  rc=$?
+  [ "$rc" -eq 2 ] || { echo "write exited $rc, not 2"; return 1; }
+  grep -qF -- "--allow starts with a denied wrapper: Bash(time make check)" "$T/log/C28a.build" || { echo "stderr lacks the denied-wrapper refusal"; return 1; }
+  [ ! -e "$T/c/C28a.sh" ] || { echo "a run script was written"; return 1; }
+  (cd "$T/b" && bash "$LAUNCH_SH" write --kind claude-read --out "$T/c/C28t.sh" --worktree "$T/wt" --launch-file "$LF" \
+    --add-dir "$T/res" --add-dir "$T/brief" --allow 'Bash(timed-check)' --capture "$T/cap/C28t" "${EV[@]}") >/dev/null 2>"$T/log/C28t.build" \
+    || { echo "Bash(timed-check) was refused: $(first "$T/log/C28t.build")"; return 1; }
+  c_build C28 claude-write || return 1
+  sed "s|^'Bash(make check)'\$|'Bash(time make check)'|" "$T/c/C28.base" >"$T/c/C28.sh"
+  c_expect C28 "$T/r" "--allowedTools entry starts with a denied wrapper: Bash(time make check)"
+}
 S12() { # write refuses a station kind without --capture, --events or --delivery and writes no OUT
   local k f rc
   local -a args
@@ -1426,7 +1463,7 @@ TH2() { # a granted write station's result is its result file; no host text in s
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
 for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
   C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 \
-  C24 C25 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
+  C24 C25 C26 C27 C28 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
   t "$c" "$c"
 done
 [ "$fails" -eq 0 ] || exit 1

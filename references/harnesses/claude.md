@@ -10,7 +10,7 @@ claude -p --permission-mode acceptEdits --output-format stream-json --verbose \
   --add-dir RESULT_DIR --add-dir BRIEF_DIR \
   --permission-prompts none \
   --allowedTools 'Bash(git add *)' 'Bash(git commit *)' 'Bash(git status *)' 'Bash(git diff *)' 'Bash(git log *)' 'Bash(git rev-parse *)' 'Bash(git show *)' 'Bash(git restore -- *)' \
-  --disallowedTools 'Bash(git checkout *)' 'Bash(git reset --hard *)' 'Bash(git push *)' 'Bash(gh *)' \
+  --disallowedTools 'Bash(git checkout *)' 'Bash(git reset --hard *)' 'Bash(git push *)' 'Bash(gh *)' 'Bash(time *)' 'Bash(nice *)' 'Bash(timeout *)' 'Bash(nohup *)' \
   < LAUNCH_FILE
 ```
 
@@ -31,22 +31,16 @@ A run under a host grant is the write probe, and a `claude-write` station whose 
 Before any output of a run under a host grant is written, the streaming redaction step of [references/security.md](../security.md) rule 6 also removes host-file text. It replaces with `[host file content removed]` the `content` of each `tool_result` that answers a Read and whose `is_error` is not true, and the `tool_use_result` of that event. It replaces with `[removed]` each assistant `text` or `thinking` block and the `result` field unless it is exactly `CAPSTAN_PROBE_OK`, and each field that carries a tool's arguments, whether it is named `input`, `tool_input`, or `wire_tool_inputs` or otherwise, other than a Bash `command` and a `file_path`. It keeps each tool name, `id`, `tool_use_id`, `is_error`, `file_path`, and `permission_denials` entry.
 
 Bite restore is `git restore -- <path>`. `git checkout` is not the restore path. The coordinator adds one `--allowedTools` entry for each declared check, verbatim as the brief's exact invocation ([references/toolchain.md](../toolchain.md) ("The brief carries the exact invocation.")).
-That entry also permits the invocation followed by a redirect of its output to a check log under `RESULT_DIR`; the entry itself carries no redirect. Redirect probe evidence: #298.
+For a write station, that entry also permits the invocation followed by a redirect of its output to a check log under `RESULT_DIR`; the entry itself carries no redirect. Redirect probe evidence: #298.
 Bite-restore probe evidence: PR #111.
 
 Use the worktree as cwd. Add `--model MODEL` and `--effort EFFORT` only when
 configured. Use `--setting-sources ''` to exclude unrelated project/user settings
 when required task/auth settings have been supplied explicitly. The installed CLI
 advertises low/medium/high/xhigh/max; verify model support too. `acceptEdits`
-approves file edits, not every shell command. For read stations use
-`--permission-mode plan`, `--tools Read,Bash`, `--allowedTools` listing exactly
-`Bash(git status *)`, `Bash(git rev-parse *)`, `Bash(git diff *)`,
-and each declared-check entry above for a check the pack's `## Checks` tells the station to run, and
-`--disallowedTools` spellings `Bash(grep -r*)`, `Bash(grep -R*)`,
-`Bash(grep --recursive*)`, `Bash(grep --dereference-recursive*)`, `Bash(rg *)`,
-and `Bash(find *)`, with `--permission-prompts none`. A read station's result is
-the `result` field of the last `"type":"result"` line in the capture's `stdout`.
-Deny rules beat allow rules.
+approves file edits, not every shell command. For read stations use `--permission-mode manual`, `--tools Read,Bash`, `--add-dir` for the `BRIEF_DIR` subdirectory and each evidence subdirectory the pack names for reading (not `RESULT_DIR`), `--allowedTools` listing exactly `Bash(git status *)`, `Bash(git rev-parse *)`, `Bash(git diff *)`, and each declared-check entry above for a check the pack's `## Checks` tells the station to run, and `--disallowedTools` spellings `Bash(grep -r*)`, `Bash(grep -R*)`, `Bash(grep --recursive*)`, `Bash(grep --dereference-recursive*)`, `Bash(rg *)`, `Bash(find *)`, `Bash(time *)`, `Bash(nice *)`, `Bash(timeout *)`, and `Bash(nohup *)`, with `--permission-prompts none`. A read station runs each declared check without a redirect: under `manual` a redirect to a file is denied inside and outside every `--add-dir` directory. A read station's result is the `result` field of the last `"type":"result"` line in the capture's `stdout`.
+Deny rules beat allow rules. Claude Code strips `time`, `nice`, `timeout` and `nohup` before it matches an allow entry, so both recipes deny those wrappers. A declared check whose exact invocation starts with one of them gets no allow entry: `scripts/launch.sh write` refuses that `--allow` entry with exit 2, and `scripts/launch.sh check` rejects it. [shared.md](shared.md) ("The coordinator accepts a same-head check record") owns how such a check is run.
+Under both recipes and every mode tested (`plan`, `manual`, `dontAsk`), Claude Code runs a command it classifies as read-only, such as `cat README.md` or `git status --porcelain && echo x`, without a matching allow entry; `--allowedTools` does not constrain such commands. The control that replaces the allowlist for them is the `--disallowedTools` list, the read recipe's `--tools Read,Bash` under `manual`, which denied each tested shell command that creates or changes a file, and the brief's turn ceiling, numbered operation list, and head and tree comparison. Allowlist probe evidence: #308.
 Read-station deny probe evidence: commits 5542194 and 1af7446. `dontAsk` returned
 nothing within five minutes in the 2026-09-22 probe; do not use it. No turn-cap
 flag exists; the brief ceiling is the control. Never use bypassPermissions or
