@@ -17,8 +17,9 @@
 #     --attempt; its run script ends in the capture block. The capture DIR is
 #     absolute and owner-only, and is not inside --worktree or work/; no capture
 #     file in it is the launch file, the run script, or the result. FILE is an
-#     absolute path ending in /events.jsonl; the run script appends each worker
-#     tool-call event to it. NAME is an environment variable name.
+#     absolute path ending in /events.jsonl; references/telemetry.md
+#     ("appends each worker `tool-call` line when that call completes") owns
+#     what the run script appends to it. NAME is an environment variable name.
 #     codex-read and codex-read-probe start in work/ beneath the --result
 #     directory, create work/ and work/tmp/ owner-only with work/tmp as TMPDIR,
 #     and refuse --add-dir and a --result that is a symlink or resolves into
@@ -563,10 +564,9 @@ function out(tool, id, si, se, tail) {
 # HOST is 1 for a run under a host grant: claude-write-probe, and claude-write
 # when its argv carries a Read( entry. The harness stdout goes through the
 # redactor, then the stamping loop, which writes stdout and stream, then the
-# tool-call program, which appends to events. A failure of the harness side,
-# the stdout redactor, or the stdout writer is a capture failure: capture-error
-# and exit 70. A failure of the stream, the tool-call pipe or stage, or the
-# events append is a telemetry failure: telemetry-error and the harness status.
+# tool-call program, which appends to events. references/harnesses/shared.md
+# ("is a required-capture failure") owns the capture and telemetry failure
+# classes; a tool-call pipe failure counts there as a tool-call stage failure.
 capture_block() {
   local red=$RED_AWK
   [ "$2" != 1 ] || red="BEGIN { host = 1 }$RED_AWK"
