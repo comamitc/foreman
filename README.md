@@ -130,6 +130,7 @@ Optional `.capstan.json` in the target repository:
     "delete_pile": false,
     "retain_replay": false
   },
+  "boundary_pass": false,
   "features": null
 }
 ```
@@ -150,6 +151,10 @@ approval; [pre-merge](references/pre-merge.md) owns it. GitHub forbids approving
 one's own PR, so a solo repository that opts in needs a second human account.
 GitHub reports an account type, not who operates the account, so automation
 acting through a human account looks like a person to this gate.
+
+`boundary_pass` opts in to the boundary pass;
+[boundary pass](references/modes/boundary-pass.md) owns it, and
+[contract](references/contract.md) ("`boundary_pass` is a boolean") owns its resolution.
 
 [contract](references/contract.md) owns feature-map resolution and heading shape.
 

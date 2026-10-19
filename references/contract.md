@@ -35,7 +35,7 @@ path. Do not use the surrounding transcript.
 The created issue is the delivery identity. This one create is the only added
 authority. An ordinary delivery does not create issues.
 
-An outcome mode files issues only where its mode file grants it: [improvement](modes/improvement.md) ("An issue is published only after an explicit improvement invocation") and [correction](modes/correction.md) ("This file owns correction").
+An outcome mode files issues only where its mode file grants it: [improvement](modes/improvement.md) ("An issue is published only after an explicit improvement invocation"), [correction](modes/correction.md) ("This file owns correction"), and [boundary pass](modes/boundary-pass.md) ("This file owns the boundary pass").
 
 The create-time title is the provisional title: the first non-empty line of the preserved original request, at most 256 characters. On the `gh issue edit` that publishes the admitted spec, pass `--title` only when the live title still equals that provisional title and the Problem cut is non-empty. Otherwise omit `--title` and still publish the spec body. A title a person already changed stays as it is. An issue opened by URL or number uses this same comparison. Do not read the surrounding transcript.
 
@@ -111,6 +111,8 @@ Every read-only invocation follows these rules. A mode file may state a stricter
 - It prints its report once, then stops.
 - An unreadable or partial source is a named gap in the report, never zero or an empty result. No result is invented.
 
+A [boundary pass](modes/boundary-pass.md) ("## Procedure") dispatches the `architect` keyword and then the `guardrails` keyword, each with no path token, in the invoking session. Each dispatch loads that row's mode file and is a read-only invocation under the rules above, with one difference: its report is printed once inside the boundary report, and its stop ends that procedure, not the boundary pass.
+
 A read-only report other than `status` or `help` states each finding with:
 
 1. **Rule:** the Capstan rule applied, as its file and quoted heading.
@@ -131,7 +133,8 @@ never adds:
 - a new stage, station, label, config field, or marker kind (unless an admitted
   issue records the exception; #185 records it for the config field
   `review_policy.residual_effect_approval`;
-  #297 records it for the config field `heavy_checks.max_concurrent`);
+  #297 records it for the config field `heavy_checks.max_concurrent`;
+  #303 records it for the config field `boundary_pass`);
 - a daemon, scheduler, watcher, or recurring job;
 - a database, store, or state service;
 - a host-skill copy, per-host plugin, or marketplace directory;
@@ -314,6 +317,13 @@ then `.capstan.json`, then the default; an invalid value is called out and falls
 through. [pre-merge.md](pre-merge.md) step 4 owns the residual-effect approval
 `true` enables; `false` enables nothing.
 
+`boundary_pass` is a boolean with default `false`.
+Precedence is invocation, then `CAPSTAN_BOUNDARY_PASS`, then `.capstan.json`,
+then the default; an invalid value is called out and falls through.
+[boundary pass](modes/boundary-pass.md) ("This file owns the boundary pass") owns
+what `true` enables; `false` enables nothing.
+[telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
+
 `heavy_checks.max_concurrent` is a positive integer with default `1`.
 It is a host setting, so it is the exception to the file step in the field order above: precedence is invocation, then `CAPSTAN_HEAVY_CHECKS_MAX_CONCURRENT`, then the default.
 A `.capstan.json` value for it is called out and ignored, because a repository file cannot know a host's capacity.
@@ -344,9 +354,9 @@ run_wall_timeout_min 360;
 worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
 review_policy block_threshold medium, min_confidence 0.70,
 max_review_fix_rounds 3, surface_recurrence_rounds 3,
-residual_effect_approval false.
+residual_effect_approval false; boundary_pass false.
 Timeouts must be positive; retry counts nonnegative integers;
-unsafe_autonomy boolean; residual_effect_approval boolean. Review threshold
+unsafe_autonomy boolean; residual_effect_approval boolean; boundary_pass boolean. Review threshold
 must be critical/high/medium/low,
 confidence from 0 through 1, max rounds a positive integer, and recurrence rounds
 a nonnegative integer where 0 disables that early guard. Null model/effort uses the harness default and is
