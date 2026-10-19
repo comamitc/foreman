@@ -20,6 +20,9 @@ carry reads `none` plus the reason.
    - Code review and fix: the saved `git diff BASE...HEAD` output verbatim under
      its exact command line. A review or fix pack that carries plan text carries
      only the sections an implementing Candidate carries.
+     A code-review pack for round 2 and later instead carries the saved `git diff <preceding reviewed head>..<HEAD>` output, the repair delta, verbatim under its exact command line with both SHAs written out, and does not carry the cumulative `git diff BASE...HEAD`.
+     The preceding reviewed head is the head SHA the previous code-review round's census records as reviewed; the coordinator reads it there.
+     When the preceding reviewed head is not an ancestor of HEAD (`git merge-base --is-ancestor <preceding reviewed head> <HEAD>` exits nonzero), or the base SHA changed since the preceding reviewed head, the pack carries the saved cumulative `git diff BASE...HEAD` instead, as round 1 does.
 4. `## Open findings`: rows in the `references/findings.md` obligation format.
    Implementing and review packs carry every planning finding with its proposed
    treatment or refutation and unfinished items; never prior essays.
@@ -46,6 +49,9 @@ carry reads `none` plus the reason.
    [references/review.md](review.md) owns the judgment.
    A code-review pack also carries, under this heading, real-run evidence that passed the "Real-run evidence checklist" below, marked as carried evidence and not as a verdict.
 7. `## Named files`: `path:line-range` plus its anchor and reason, the only task files the worker may open; "Citation rule" below owns the entry's form.
+   A code-review pack for round 2 and later names under `## Named files`, for each prior code-review finding row it carries, the file range at HEAD that holds that row's location, in the entry form "Citation rule" below owns; the anchor is a verbatim phrase at that location at HEAD, and the reason names the row's ID.
+   It also names, in that form, each further range at HEAD that the row's original failure scenario and evidence reach, so the row's scenario and acceptance condition can be checked inside named ranges.
+   When a row's location no longer exists at HEAD, the row says so, the pack names no range for that location, and it still names the row's further ranges, including the range at HEAD, if any, that holds the code that replaced it.
 
 Citation rule: every citation of repository text in a plan or a pack names its target by a stable anchor, as [.capstan/vocabulary.md](../.capstan/vocabulary.md) ("Stable anchor") defines it: a heading's exact text or a verbatim phrase.
 A `path:line` or `path:line-range` may accompany the anchor as a locating hint; when the hint and the anchor disagree, the anchor governs.

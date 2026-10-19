@@ -175,9 +175,10 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    re-planned or re-reviewed. Route by what changed. An added or changed
    requirement, decision, or acceptance criterion reopens planning for that
    obligation. (a) When it needs a code change, implementing or fix follows,
-   and the new head gets the fresh cumulative review
-   [contract.md](contract.md) requires
-   ("A new head requires fresh cumulative review"). (b) When the planner shows
+   and the new head gets the fresh review [contract.md](contract.md) requires
+   ("A new head requires fresh review at that head"), in the scope
+   [code-review convergence](review-convergence.md) ("## Review ratchet")
+   owns. (b) When the planner shows
    that the head already satisfies it with no code change, review re-runs at
    the same head. (c) A withdrawn requirement, decision, or acceptance
    criterion re-reviews only the judgments that depended on it

@@ -47,6 +47,9 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
 2. Implement plan items in order. Show each required check failing for the
    intended reason without the change, or with the defect restored, before
    trusting it, and passing with the change.
+   One run of a check is the red observation for every case whose failure that run shows for its stated reason; a case needs a separate fault-injection run only when no earlier run shows it failing.
+   Planted defects for different cases may share one run when each defect changes only its own case's behavior and the output names each failing case.
+   A shared red run of a heavy check keeps the order [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") owns.
    Record the red or fault-injection observation under Acceptance proof;
    [references/review.md](review.md) owns the discriminating-check rule.
    [references/ladder.md](ladder.md) ("## Check") owns the check's derivation,

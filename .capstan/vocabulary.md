@@ -185,3 +185,7 @@
 **Check log**: the file in a write-station worker's result directory that holds one check's complete output. The rule owner is `templates/brief.md` ("## Worker constraints"). Rejected: a byte-capped excerpt in context; a log in the product worktree.
 
 **Heavy-check lock**: the `flock` lock on one of `heavy_checks.max_concurrent` slot files under `<state root>` that bounds how many heavy checks run at once on a host. The rule owner is `references/toolchain.md` ("A heavy check's exact invocation is"). Rejected: an atomic `mkdir` lock, which leaves a stale lock after a kill; a per-repository or per-delivery lock; a counting semaphore or a lock daemon, which needs a new executable.
+
+**Repair delta**: the diff from the preceding reviewed head to the current head, saved as `git diff <preceding reviewed head>..<HEAD>`. The rule owner is `references/pack.md` ("A code-review pack for round 2 and later instead carries"). Rejected: the cumulative `BASE...HEAD` diff.
+
+**Preceding reviewed head**: the head SHA the previous code-review round reviewed. The rule owner is `references/pack.md` ("The preceding reviewed head is the head SHA"). Rejected: the base SHA.
