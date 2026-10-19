@@ -44,8 +44,8 @@ the child's station kind. It does not launch `codex exec` directly. The child's
 private `CODEX_HOME` and its own `TMPDIR` are set in that command's environment,
 as this file requires. The capture directory and `events.jsonl` are the
 station's, under the evidence root. [shared.md](shared.md) ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`") owns the child's capture.
-The run script writes that capture directory and appends to `events.jsonl`
-inside the outer host, so the `capstan-runtime` profile adds one write grant
+Those capture writes happen inside the outer host, so the `capstan-runtime`
+profile adds one write grant
 beside the private runtime directory: the delivery's evidence root, as a
 directory, because an exact file path fails. It covers the capture directory
 and the `events.jsonl` append. Grant no parent of that root. The grant is in

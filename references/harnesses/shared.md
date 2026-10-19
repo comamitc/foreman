@@ -85,18 +85,17 @@ The station result records the coordinator's command, that exit code, and a summ
    it as a tool call; a final message alone is not one. Inspect the result and
    repository independently. If the worker cannot write an external result under
    its protection mode, accept Markdown in stdout, persist it as coordinator
-   evidence, and verify it; do not weaken safety just for formatting. A Claude
-   write station under a host grant always writes the external result;
-   [claude.md](claude.md) ("Under a host grant the station result is the result file") owns why.
+   evidence, and verify it; do not weaken safety just for formatting.
+   [claude.md](claude.md) ("Under a host grant the station result is the result file") owns the result of a Claude write station under a host grant.
    A run script that `scripts/launch.sh write` writes takes `--capture DIR`,
    `--events FILE`, `--delivery`, `--station` and `--attempt`, and `--redact-env NAME`
    for each credential variable the launch environment carries whose name the
    builder's pattern does not match. Its run script writes the **probe capture**
    for every kind, probe or station: `DIR/stdout` and `DIR/stderr` redacted before
    they are written, `DIR/exit` with the harness exit status, and `DIR/stream` with
-   each redacted stdout record and its arrival time. While the worker runs, it
-   appends each worker `tool-call` line to FILE, the delivery's `events.jsonl`,
-   when that call completes. A failure of the harness side, the stdout redactor,
+   each redacted stdout record and its arrival time. FILE is the delivery's
+   `events.jsonl`; [references/telemetry.md](../telemetry.md) ("appends each worker `tool-call` line when that call completes") owns what the run script appends to it.
+   A failure of the harness side, the stdout redactor,
    or the stdout writer is a required-capture failure: the script writes
    `DIR/capture-error` and exits 70, the probe or station fails, and the record
    names the missing capture. A failure of the stream, the tool-call stage, or the
