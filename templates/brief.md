@@ -47,7 +47,9 @@ one call that names several files counts once. Result delivery counts one.
 The numbered list is the operation count.
 [references/harnesses/shared.md](../references/harnesses/shared.md) ("A host-instruction read is not an operation") owns the count, the ceiling, and host instructions.
 At the ceiling, stop and list unchecked items as gaps.
-Inspect current files and side effects before repeating actions. Use the simplicity
+Inspect current files and side effects before repeating actions.
+Do not run a command again when it is identical to a command you already ran and you made no edit, commit, or other worktree change since that run; that earlier run's record stands. For a logged run, the command compared is the exact invocation without the check-log redirect, so a new log file name never permits a rerun. The only exception is a deliberate red, green, or bite proof that your station steps require ([references/findings.md](../references/findings.md) ("**Red:**", "**Green:**", "**Bite:**")).
+Use the simplicity
 ladder: need, existing code, standard library, platform, installed dependency, one
 line, minimum new code. Preserve human work and stay within scope. Report only
 observed commands/outcomes. At write stations commit coherent changes and provide
@@ -63,5 +65,12 @@ Make your own product edits with the edit tool, not with `sed -i`, a heredoc, or
 A plain command the grant permits, or a check the brief or the pack declares, still runs as its own command, for example `git status --porcelain` or `bash scripts/test-launch.sh`. It runs as written even when its own content uses a shape listed above, such as a declared check that edits a fixture with `sed -i`.
 At write stations, do not read or edit an evidence check named under the pack's `## Checks`. When your station steps tell you to run it, run it as written.
 Report a suspected defect in an evidence check in your result; [references/pack.md](../references/pack.md) ("When a worker reports a defective evidence check") owns what follows.
+
+At the implementing, fix, and pre-merge repair stations, run each declared check and each test command that your station steps have you run as its exact command followed by ` > LOG 2>&1`, where LOG is a new file in the directory of the brief's result path named `<result file name without .md>.check-<n>.log`, n counting your logged runs from 1.
+This rule changes only the output handling of a check you run; [references/harnesses/shared.md](../references/harnesses/shared.md) ("The coordinator runs a silent check") owns the checks the coordinator runs.
+The log holds the complete output, with no byte cap.
+Keep in your context only a short summary: the command, the exit status, the failing test names, the first relevant error lines, and the log path.
+Take those lines from the log with the Grep tool or a Read of a line range; open the whole log only when the summary is not enough.
+[templates/result.md](result.md) ("## Checks") owns the record.
 
 [templates/result.md](result.md) owns result headings.

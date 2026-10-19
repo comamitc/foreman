@@ -86,11 +86,15 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    Mark each declared check heavy or not heavy.
    A heavy check runs a full test suite: for example full vitest, pytest over more than about 10 files, or Playwright end-to-end.
    Lint, typecheck, and targeted tests are not heavy.
-   Plan review checks the marks.
+   When the repository has a test runner, the plan declares a targeted test: the repository's own test runner on a subset scoped to the change, either the runner's related-files mode with the changed source files, for example `vitest related <files>`, or the test files that cover the change, for example `pytest <test files>`.
+   The invocation writes each path out literally.
+   Plan review checks the marks and that no plan item's verification command is a heavy check.
    List the declared checks in this order: lint, typecheck, targeted tests, then heavy checks last.
    Every run of the declared checks, by a worker at any station or by the coordinator, follows that order and stops at the first failing check.
    A check the stop skips is recorded as not run, and no worker or coordinator runs it until the order starts again.
    After a repair, the run starts again from the first check.
+   A plan item's verification command is never a heavy check.
+   Implementing and fix run a heavy check only as the last check of that order.
    [references/toolchain.md](toolchain.md) ("A heavy check's exact invocation is") owns a heavy check's invocation.
    Size proof to the change; [references/ladder.md](ladder.md) ("## Check") owns the limit.
    A Markdown-only change uses the simplest observable text checks that discriminate a real defect.

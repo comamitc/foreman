@@ -13,7 +13,9 @@
 
 ## Checks
 
-For each check: command, working directory, head SHA, exit status, and duration. The head SHA is the `HEAD` the check ran at, not a head from a later commit. [references/telemetry.md](../references/telemetry.md) owns the `check` event.
+For each check: command, working directory, head SHA, exit status, and duration.
+A run with a check log also gives the decisive output and the log path, and its command is the exact invocation without the redirect; [templates/brief.md](brief.md) ("## Worker constraints") owns the check log.
+The head SHA is the `HEAD` the check ran at, not a head from a later commit. [references/telemetry.md](../references/telemetry.md) owns the `check` event.
 
 ## Changes or findings
 ## Risks and unresolved items

@@ -176,4 +176,8 @@
 
 **Heavy check**: a declared check that runs a full test suite, marked heavy in the plan. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: Capstan parses a command or counts test files.
 
+**Targeted test**: a declared check that runs the repository's own test runner on a subset of tests scoped to the change, with its paths written literally. Not a heavy check. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: a full suite per item; command substitution such as `$(git diff --name-only)`; Capstan detecting the runner.
+
+**Check log**: the file in a write-station worker's result directory that holds one check's complete output. The rule owner is `templates/brief.md` ("## Worker constraints"). Rejected: a byte-capped excerpt in context; a log in the product worktree.
+
 **Heavy-check lock**: the `flock` lock on one of `heavy_checks.max_concurrent` slot files under `<state root>` that bounds how many heavy checks run at once on a host. The rule owner is `references/toolchain.md` ("A heavy check's exact invocation is"). Rejected: an atomic `mkdir` lock, which leaves a stale lock after a kill; a per-repository or per-delivery lock; a counting semaphore or a lock daemon, which needs a new executable.
