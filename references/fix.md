@@ -32,6 +32,6 @@ declared-check records under [references/harnesses/shared.md](harnesses/shared.m
 proof gate independently. Only
 after the gate passes does the coordinator start a fresh review
 under the code-review convergence ratchet, even if a refutation left head
-unchanged. The pack carries the cumulative diff and identifies the repair delta.
+unchanged. [references/pack.md](pack.md) ("A code-review pack for round 2 and later instead carries") owns what that review's pack carries.
 
 [references/publication.md](publication.md) owns publication.
