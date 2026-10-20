@@ -13,6 +13,7 @@ when a newer release changes flags.
 2. Prepare owner-only brief, pack, and result paths outside the product tree. The
    brief names the pack as the worker's required task reading and, at read
    stations, the numeric turn ceiling; the pack is sized to the unit.
+   The coordinator runs the pack check, `scripts/launch.sh pack PACK --worktree WORKTREE`, on each pack after its last edit and before the launch that uses it, and launches only after it exits 0; on exit 1 it adds each entry the error names and runs it again. [pack](../pack.md) ("Pack check:") owns what the check requires.
    A worker inherits its host's instructions: the files its harness loads from the operator's host configuration and the files they direct it to read.
    A brief never forbids reading them and never contradicts them.
    A brief contradicts host instructions when the worker cannot follow both at its station: a brief sentence forbids what a host instruction requires there, or requires what a host instruction forbids.

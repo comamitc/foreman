@@ -148,7 +148,9 @@
 
 **Verified delivery**: a delivery that reached `capstan:ready-to-deploy` with its live gate verified. The rule owner is `references/modes/improvement.md` ("Resource comparison."). Rejected: a merged PR, a draft, or an attempt that stopped blocked.
 
-**Launch builder**: `scripts/launch.sh`. It writes and checks the run script for one Claude or Codex worker launch from structured inputs. Rejected: a builder that launches or supervises workers.
+**Launch builder**: `scripts/launch.sh`. It writes and checks the run script for one Claude or Codex worker launch from structured inputs, and checks the pack that launch uses. Rejected: a builder that launches or supervises workers.
+
+**Pack check**: `scripts/launch.sh pack`, the launch builder's check of a pack's quoted rule files against its `## Named files` entries. The rule owner is `references/pack.md` ("Pack check:"); `references/harnesses/shared.md` ("The coordinator runs the pack check") owns when it runs. Rejected: a check that a Named files anchor lies inside its range; a pack generator.
 
 **Probe capture**: the record a run script that `scripts/launch.sh write` writes keeps about its own run, for a probe or a station. The rule owner is `references/harnesses/shared.md` ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`"). Rejected: a capture the coordinator writes ad hoc per launch.
 

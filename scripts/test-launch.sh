@@ -23,7 +23,7 @@ mkdir -p "$T/home/real" "$T/home/adir" "$T/wt" "$T/res" "$T/brief" "$T/b" "$T/r"
   "$T/s6/h" "$T/s6o" "$T/c13" "$T/c14wt/in" "$T/c15/wt" "$T/c16wt/in" "$T/c17/h" "$T/wt/s5" "$T/o2" "$T/o3" \
   "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" "$T/c21" "$T/c22" "$T/s10" "$T/s11" "$T/w1" \
   "$T/cap" "$T/w1cap" "$T/pbin" "$T/fbin" "$T/pc" "$T/pc1res" "$T/pc5" "$T/pc5res" "$T/ev" "$T/ts" "$T/ts/res" "$T/th2" \
-  "$T/y1py" "$T/ybin" "$T/y1/res" "$T/y2/res" \
+  "$T/y1py" "$T/ybin" "$T/y1/res" "$T/y2/res" "$T/pk" \
   || setup "cannot create fixture directories"
 chmod 1777 "$T/s7" "$T/c19" "$T/s9sh" || setup "cannot chmod the shared fixture directories"
 # A private result directory beneath a shared temp-style directory (S9).
@@ -1546,8 +1546,181 @@ TH2() { # a granted write station's result is its result file; no host text in s
   cmp -s "$T/exp/TH2.result" "$T/th2/result.md" || { echo "the result file changed"; return 1; }
 }
 
+# Pack check (PK1-PK9). pk_run NAME PACK: run launch.sh pack with worktree $T/pk; sets rc.
+pk_run() { bash "$LAUNCH_SH" pack "$2" --worktree "$T/pk" >"$T/log/$1.out" 2>"$T/log/$1.err"; rc=$?; }
+# pk_fail NAME PACK FILE...: exit 1 with exactly one fix-naming error line per FILE.
+pk_fail() {
+  local n=$1 p=$2 f; shift 2
+  pk_run "$n" "$p"
+  [ "$rc" -eq 1 ] || { echo "pack exited $rc, not 1: $(first "$T/log/$n.err")"; return 1; }
+  [ "$(grep -c . "$T/log/$n.err")" = "$#" ] || { echo "expected $# error lines, got: $(cat "$T/log/$n.err")"; return 1; }
+  for f in "$@"; do
+    grep -F "launch.sh: pack: $f is cited at " "$T/log/$n.err" | grep -qF "add a" \
+      || { echo "no fix-naming error for $f"; return 1; }
+  done
+}
+# pk_pass NAME PACK: exit 0 and no stderr.
+pk_pass() {
+  pk_run "$1" "$2"
+  [ "$rc" -eq 0 ] && [ ! -s "$T/log/$1.err" ] || { echo "pack exited $rc: $(first "$T/log/$1.err")"; return 1; }
+}
+PK1() {   # #259 review r1 pack at head 7f31b54, verbatim, with its ~~~~~ separator
+  cat >"$T/pk/259.md" <<'EOF'
+# #259 review r1 pack (head 7f31b54, base e9f6228): ## Rules that apply and ## Named files, verbatim
+## Rules that apply
+
+
+- `AGENTS.md:6` — "Acceptance is the bar under `README.md` "Development and provenance". It is not a help check or a document-only review." (policy row: applies; planned: review evidence on the diff plus the declared check; unresolved)
+- `README.md:224` — "CI runs the declared check, `bash scripts/test-launch.sh`, from [.github/workflows/check.yml](.github/workflows/check.yml)." (policy row: applies; planned: declared check exit 0 and CI green; unresolved)
+- `CONTRIBUTING.md:9` — "**Restated rule.** Review reads each sentence that a plan or diff adds outside the file that owns the rule the sentence concerns, and compares it with that owner's text; a reworded sentence, and a sentence next to an owner link, get the same comparison. Review reports each sentence that states behavior the owner's text already states, and cites that owner and its stable anchor." (policy row: applies; planned: every added sentence outside review-convergence.md is a pointer, not a restatement, or a deliberate both-cases summary justified in the plan; unresolved)
+- `CONTRIBUTING.md:10` — "**Misattributed owner.** For each owner link and quoted anchor that a plan or diff adds, review opens the owner at the quoted text and reads the sentence or section that holds it. Review reports the pointer when that text does not state the rule the pointer cites it for, even when the quoted phrase is present." (policy row: applies; planned: each added anchor resolves to text stating the exhaustion condition; unresolved)
+- `CONTRIBUTING.md:11` — "**Dropped inventory or case.** A procedure covers every item of the inventory it names, every part of the coverage its criteria require, and every case its criteria require." (policy row: applies; planned: AC 2 inventory of three files fully covered; both exhaustion cases covered; unresolved)
+- `CONTRIBUTING.md:12` — "**Section contradiction.** No section of a mode contradicts another section of that mode, or an inherited rule that governs the mode, such as [SKILL.md](SKILL.md) ("Stop only at") or [references/contract.md](references/contract.md) ("## Stage projection")." (policy row: applies; planned: recovery.md no longer contradicts review-convergence.md; unresolved)
+- `.capstan/vocabulary.md:79` — "**Rule owner**: the single file that states a behavioral rule. Other files name it and do not restate the rule." (policy row: applies; planned: review-convergence.md stays the single owner; unresolved)
+- `.capstan/vocabulary.md:111` — "**Stable anchor**: a heading's exact text or a verbatim phrase of the target rule, named next to the owner-file link. Rejected: a line number." (policy row: applies; planned: added pointers use heading-text anchors; unresolved)
+
+
+Effective code-review policy (`references/review-convergence.md`, quoted; config: block_threshold medium, min_confidence 0.7, max_review_fix_rounds 3, surface_recurrence_rounds 3, residual_effect_approval false; no trusted operator dispositions). This is round 1 of 3 counted; remaining round allowance after this census: 2 if counted; evidence-only allowance 3. Round 1 reviews the complete cumulative diff.
+
+~~~~~
+## Named files
+
+- `references/recovery.md:55-72` ("## Blocked overlays") — changed paragraph (Documentation impact path).
+- `README.md:174-183` ("Code re-review is a ratchet") — changed paragraph (Documentation impact path).
+- `.capstan/features/issue-delivery.md:19-22` ("Other stops:") — changed line (Documentation impact path; feature map entry).
+- `references/review-convergence.md:84-193` ("## Coordinator-evidence findings") — the owner the new pointers cite; also holds "## Bounded rounds and recurrence".
+- `references/review.md:165-175` ("a final allowed review with blockers adds the review-exhausted blocked") — unchanged caller that names the condition; AC 2 inventory decision.
+- `references/contract.md:278-284` ("A blocker adds only `capstan:blocked`") — unchanged (AC 3).
+- `templates/blocker.md:1-15` ("Blocker kind:") — unchanged (AC 3).
+EOF
+  pk_fail PK1 "$T/pk/259.md" AGENTS.md CONTRIBUTING.md .capstan/vocabulary.md || return 1
+  printf -- '- `%s` ("%s") — quoted rule.\n' 'AGENTS.md:1-10' 'Acceptance is the bar' \
+    'CONTRIBUTING.md:1-13' '## Rules' '.capstan/vocabulary.md:79-114' '**Rule owner**' >>"$T/pk/259.md"
+  pk_pass PK1b "$T/pk/259.md"
+}
+PK2() {   # #281 review r1 · 1 pack at head f2dbbd4, verbatim; bare-path citations and absolute named paths
+  cat >"$T/pk/281.md" <<'EOF'
+# #281 review r1 · 1 pack (head f2dbbd4, base 2a69df1): ## Rules that apply and ## Named files, verbatim
+## Rules that apply
+
+- `CONTRIBUTING.md:9` — "**Restated rule.** Review reads each sentence that a plan or diff adds outside the file that owns the rule the sentence concerns, and compares it with that owner's text; a reworded sentence, and a sentence next to an owner link, get the same comparison. Review reports each sentence that states behavior the owner's text already states, and cites that owner and its stable anchor." (policy row: applies; planned; unresolved)
+- `CONTRIBUTING.md:10` — "**Misattributed owner.** For each owner link and quoted anchor that a plan or diff adds, review opens the owner at the quoted text and reads the sentence or section that holds it. Review reports the pointer when that text does not state the rule the pointer cites it for, even when the quoted phrase is present." (policy row: applies; planned; unresolved)
+- `CONTRIBUTING.md:12` — "**Section contradiction.** No section of a mode contradicts another section of that mode, or an inherited rule that governs the mode, such as [SKILL.md](SKILL.md) ("Stop only at") or [references/contract.md](references/contract.md) ("## Stage projection")." (policy row: applies; planned; unresolved)
+- `.capstan/vocabulary.md` "**Rule owner**" — "the single file that states a behavioral rule. Other files name it and do not restate the rule." (policy row: applies, mandatory; planned; unresolved)
+- `.capstan/vocabulary.md` "**Stable anchor**" — "a heading's exact text or a verbatim phrase of the target rule, named next to the owner-file link. Rejected: a line number." (policy row: applies; planned; unresolved)
+- `AGENTS.md:6` — "Acceptance is the bar under `README.md` "Development and provenance". It is not a help check or a document-only review." (policy row: applies; planned; unresolved)
+
+Effective code-review policy (`references/review-convergence.md`, quoted; config: block_threshold medium, min_confidence 0.7, max_review_fix_rounds 3, surface_recurrence_rounds 3, residual_effect_approval false; no trusted operator dispositions). This is round 1 of 3 counted; round 1 reviews the complete cumulative diff.
+
+## Named files
+
+- `references/plan-review.md:1-60` ("# Plan review — fresh secondary, read-only") — edit target (G5a-C1–C6)
+- `references/fix.md:1-40` ("# Fix — fresh primary, write") — edit target (G5a-C7–C11)
+- `references/implementing.md:1-141` ("# Implementing — fresh primary, write") — edit target (G5a-C12, C14–C19)
+- `references/findings.md:1-90` ("# Finding resolution") — edit target (G5a-C20)
+- `templates/brief.md:1-80` ("## Worker constraints") — owner for reads, gaps, operation count, ceiling stop (G5a-C2, C8, C15, C16)
+- `templates/review.md:1-70` ("## Finding format") — owner for finding fields (G5a-C5)
+- `references/plan-convergence.md:1-80` ("## Fixed sequence") — owner for routing, single review, correction as proposed treatment (G5a-C1, C6, C12, C20); "## Prerequisites versus implementation obligations"
+- `references/pack.md:1-120` ("An evidence check the initial plan writes") — owner for G5a-C4
+- `SKILL.md:1-90` ("## Coordinator loop") — owner for steps 3–5 (G5a-C8, C10, C16)
+- `references/triage.md:1-30` ("When `.capstan/vocabulary.md` exists, read it after repository instructions") — owner for G5a-C17
+- `/home/mcomardo/.local/state/capstan/comamitc/capstan/281/checks/spike-g5a-rows.md:1-40` ("Spike #257 G5a rows") — each cut's anchor, class, bytes, owner after cut, guarded failure, why kept.
+- `/home/mcomardo/.local/state/capstan/comamitc/capstan/281/checks/spike-g5a.diff:1-244` ("diff --git") — the spike candidate's applied text (cd38fa1 → 45534b2) for these files, to re-derive against current main.
+EOF
+  pk_fail PK2 "$T/pk/281.md" CONTRIBUTING.md .capstan/vocabulary.md AGENTS.md || return 1
+  printf -- '- `%s` ("%s") — quoted rule.\n' 'CONTRIBUTING.md:1-13' '## Rules' \
+    '.capstan/vocabulary.md:79-114' '**Rule owner**' 'AGENTS.md:1-10' 'Acceptance is the bar' >>"$T/pk/281.md"
+  pk_pass PK2b "$T/pk/281.md"
+}
+PK3() {   # compact form: the pre-change example fails; the new example passes
+  printf '%s\n' '# Pack — owner/repo#N, implementing attempt 1, candidate: plan comment URL, revision R' '## Candidate' \
+    '<the one plan item, verbatim>' 'Criterion: AC 2 — "<quoted criterion>"' 'Rule: `CONTRIBUTING.md:14` — "<quoted sentence>"' \
+    'Check: `make test` in WORKTREE, expected exit 0' \
+    'Named file: `src/cli.py:40-58` ("<anchor>") — the option parser this item edits' >"$T/pk/compact.md"
+  pk_fail PK3 "$T/pk/compact.md" CONTRIBUTING.md || return 1
+  grep -qF 'on a Rule: line' "$T/log/PK3.err" || { echo "compact error does not name the Rule: line"; return 1; }
+  printf '%s\n' 'Named file: `CONTRIBUTING.md:1-14` ("<quoted sentence>") — the rule the Rule: line quotes' >>"$T/pk/compact.md"
+  pk_pass PK3b "$T/pk/compact.md"
+}
+PK4() {   # range hints, ./ and in-worktree absolute paths; an outside absolute path; input errors
+  printf '%s\n' '## Rules that apply' '- `references/contract.md:131-132` — "a Capstan executable"' '- `./README.md:11` — "Issue #181"' \
+    '## Named files' "- \`$T/pk/references/contract.md:126-153\` (\"## Global non-goals\") — exception" \
+    '- `README.md:1-20` ("launch builder") — builder' >"$T/pk/abs.md"
+  pk_pass PK4 "$T/pk/abs.md" || return 1
+  sed "s#$T/pk/references#/elsewhere/references#" "$T/pk/abs.md" >"$T/pk/out.md"
+  pk_fail PK4b "$T/pk/out.md" references/contract.md || return 1
+  bash "$LAUNCH_SH" pack pk/abs.md --worktree "$T/pk" 2>/dev/null; [ $? -eq 2 ] || { echo "relative pack not exit 2"; return 1; }
+  bash "$LAUNCH_SH" pack "$T/pk/none.md" --worktree "$T/pk" 2>/dev/null; [ $? -eq 2 ] || { echo "missing pack not exit 2"; return 1; }
+  bash "$LAUNCH_SH" pack "$T/pk/abs.md" 2>/dev/null; [ $? -eq 2 ] || { echo "no --worktree not exit 2"; return 1; }
+}
+PK5() {   # PR1: unbulleted, * bullet, numbered, and blockquote quotes, an inline path:line, a non-path token
+  printf '%s\n' '## Rules that apply' \
+    '`CONTRIBUTING.md:9` — "unbulleted quote"' \
+    '* `AGENTS.md:3` — "star bullet"' \
+    '1. `SKILL.md:40` — "numbered"' \
+    '> `README.md:11` — "blockquote"' \
+    '- Correction review blocks (references/modes/correction.md:40-54, quoted): "Block a class."' \
+    '- `none` — no further rule; spec revision 2026-10-20T15:12:49Z' \
+    '## Named files' '- `scripts/launch.sh:1-69` ("Capstan launch builder") — builder' >"$T/pk/forms.md"
+  pk_fail PK5 "$T/pk/forms.md" CONTRIBUTING.md AGENTS.md SKILL.md README.md references/modes/correction.md || return 1
+  printf -- '- `%s` ("%s") — quoted rule.\n' 'CONTRIBUTING.md:1-13' '## Rules' 'AGENTS.md:1-10' 'integration base' \
+    'SKILL.md:1-90' 'Stop only at' 'README.md:1-20' 'launch builder' \
+    'references/modes/correction.md:1-54' 'This file owns correction' >>"$T/pk/forms.md"
+  pk_pass PK5b "$T/pk/forms.md"
+}
+PK6() {   # PR2: candidate text, fenced or under an unclosed fence, is not pack metadata (full form)
+  printf '%s\n' '# Pack — o/r#1, implementing attempt 1' '## Candidate' '~~~~' \
+    '## Rules that apply' '- `docs/only-in-candidate.md:3` — "a candidate example citation"' \
+    '## Named files' '- `AGENTS.md:1-10` ("integration base") — a candidate example entry' '~~~~' \
+    '```' '## Named files' '```' \
+    '## Open findings' 'none — initial attempt' \
+    '## Rules that apply' '- `AGENTS.md:3` — "The integration base is `main`."' \
+    '## Checks' '- `README.md:11` under Checks is not a rule citation' \
+    '~~~~~' \
+    '## Named files' '- `scripts/launch.sh:1-69` ("Capstan launch builder") — builder' >"$T/pk/cand.md"
+  pk_fail PK6 "$T/pk/cand.md" AGENTS.md || return 1
+  printf -- '- `AGENTS.md:1-10` ("integration base") — quoted rule.\n' >>"$T/pk/cand.md"
+  pk_pass PK6b "$T/pk/cand.md" || return 1
+  # No real ## Named files heading: the candidate's fenced heading and entry cannot stand in for it.
+  printf '%s\n' '## Candidate' '```' '## Named files' '- `AGENTS.md:1-10` ("integration base") — a candidate example entry' '```' \
+    '## Rules that apply' '- `AGENTS.md:3` — "The integration base is `main`."' '## Checks' 'none — no check' >"$T/pk/nonamed.md"
+  pk_fail PK6c "$T/pk/nonamed.md" AGENTS.md
+}
+PK7() {   # PR2: compact pack whose candidate carries a fenced ## Named files heading, Rule:, and Named file: lines
+  printf '%s\n' '# Pack — o/r#1, implementing attempt 1, candidate: plan comment URL, revision R' '## Candidate' \
+    'Item 5 example:' '```' '## Named files' 'Rule: `docs/only-in-candidate.md:3` — "example"' \
+    'Named file: `CONTRIBUTING.md:1-14` ("example") — example' '```' \
+    'Criterion: AC 2 — "<quoted criterion>"' 'Rule: `CONTRIBUTING.md:14` — "<quoted sentence>"' \
+    'Check: `make test` in WORKTREE, expected exit 0' \
+    'Named file: `src/cli.py:40-58` ("<anchor>") — the option parser this item edits' >"$T/pk/ccand.md"
+  pk_fail PK7 "$T/pk/ccand.md" CONTRIBUTING.md || return 1
+  grep -qF 'on a Rule: line' "$T/log/PK7.err" || { echo "compact pack read as full form"; return 1; }
+  printf '%s\n' 'Named file: `CONTRIBUTING.md:1-14` ("<quoted sentence>") — the rule the Rule: line quotes' >>"$T/pk/ccand.md"
+  pk_pass PK7b "$T/pk/ccand.md"
+}
+PK8() {   # #316 F1: an inline extensionless path:line, a blockquote-then-list bare path; timestamps cite nothing
+  printf '%s\n' '## Rules that apply' '- Source (LICENSE:9): rule' \
+    '## Named files' '- `README.md:1-20` ("launch builder") — builder' >"$T/pk/inline.md"
+  pk_fail PK8 "$T/pk/inline.md" LICENSE || return 1
+  printf -- '- `LICENSE:1-21` ("Permission is hereby granted") — quoted rule.\n' >>"$T/pk/inline.md"
+  pk_pass PK8b "$T/pk/inline.md" || return 1
+  printf '%s\n' '## Rules that apply' '> - `.capstan/vocabulary.md` "**Rule owner**" — "Other files name it."' \
+    '## Named files' '- `README.md:1-20` ("launch builder") — builder' >"$T/pk/bqlist.md"
+  pk_fail PK8c "$T/pk/bqlist.md" .capstan/vocabulary.md || return 1
+  printf -- '- `.capstan/vocabulary.md:79-114` ("**Rule owner**") — quoted rule.\n' >>"$T/pk/bqlist.md"
+  pk_pass PK8d "$T/pk/bqlist.md" || return 1
+  printf '%s\n' '## Rules that apply' '- `AGENTS.md:3` — rule' '- spec revision 2026-10-20T15:12:49Z, round 1, at 15:12 UTC' \
+    '## Named files' '- `AGENTS.md:1-10` ("integration base") — rule' >"$T/pk/stamp.md"
+  pk_pass PK8e "$T/pk/stamp.md"
+}
+PK9() {   # #316 F2: the quotes end at the first ## Checks heading, not the last
+  printf '%s\n' '## Rules that apply' '- `AGENTS.md:3` — rule' '## Checks' '- `README.md:11` — check description' \
+    '## Checks repeated' 'none' '## Named files' '- `AGENTS.md:1-10` ("integration base") — rule' >"$T/pk/checks2.md"
+  pk_pass PK9 "$T/pk/checks2.md"
+}
+
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
-for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
+for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 PK8 PK9 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
   C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 \
   C24 C25 C26 C27 C28 C29 C30 C31 C32 Y1 Y2 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
   t "$c" "$c"
