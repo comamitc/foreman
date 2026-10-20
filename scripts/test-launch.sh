@@ -2188,9 +2188,47 @@ PK11() {   # AC 2: no anchor (full, compact), a compact range miss, a whole-file
   printf '%s\n' "$H" "$Q" '## Named files' '- `references/contract.md` ("never adds anything") — whole file' >"$T/pk/r-whole.md"
   pkr_run PK11f "$T/pk/r-whole.md" 1 'launch.sh: pack: references/contract.md ("never adds anything"): the anchor does not occur in references/contract.md; fix:'
 }
+CT11() {   # #321 R1: an anchor with unbalanced parentheses is read; R2: an empty or blank anchor fails, in Markdown and plans
+  local d=$T/ct/t11 F=', as ("anchor")'
+  ct_put "$d" owner.md '# Owner' 'The owner holds this phrase (see below.' || return 1
+  ct_put "$d" a.md 'See [owner](owner.md) ("Missing (detail") here.' || return 1
+  ct_put "$d" b.md 'See [owner](owner.md) ("") here.' || return 1
+  ct_put "$d" c.md 'See [owner](owner.md) ("   ") here.' || return 1
+  ct_put "$d" e.md 'See [owner](owner.md) ("# Owner" and "") here.' || return 1
+  ct_fail CT11 4 --worktree "$d" || return 1
+  ct_is CT11 "launch.sh: cite: a.md: link owner.md (\"Missing (detail\"): the anchor \"Missing (detail\" does not occur in owner.md; fix: quote a heading or verbatim phrase that owner.md holds$F" || return 1
+  ct_is CT11 "launch.sh: cite: b.md: link owner.md (\"\"): the anchor \"\" holds no text; fix: quote a heading or verbatim phrase that owner.md holds$F" || return 1
+  ct_is CT11 "launch.sh: cite: c.md: link owner.md (\" \"): the anchor \" \" holds no text; fix: quote a heading or verbatim phrase that owner.md holds$F" || return 1
+  ct_is CT11 "launch.sh: cite: e.md: link owner.md (\"# Owner\" and \"\"): the anchor \"\" holds no text; fix: quote a heading or verbatim phrase that owner.md holds$F" || return 1
+  ct_put "$d" a.md 'See [owner](owner.md) ("holds this phrase (see") here.' || return 1
+  ct_put "$d" b.md 'See [owner](owner.md) ("# Owner") here.' || return 1
+  ct_put "$d" c.md 'See [owner](owner.md) ("# Owner") here.' || return 1
+  ct_put "$d" e.md 'See [owner](owner.md) ("# Owner" and "this phrase") here.' || return 1
+  ct_pass CT11b --worktree "$d" || return 1
+  printf '%s\n' '- `owner.md` ("") names it.' '- [owner](owner.md) ("  ") too.' '- `owner.md:2` "" here.' >"$T/ct/p11.md"
+  ct_fail CT11c 3 --plan "$T/ct/p11.md" --worktree "$d" || return 1
+  ct_is CT11c "launch.sh: cite: $T/ct/p11.md:1: owner.md (\"\"): the anchor \"\" holds no text; fix: quote a heading or verbatim phrase that owner.md holds$F" || return 1
+  ct_is CT11c "launch.sh: cite: $T/ct/p11.md:2: [owner](owner.md) (\"  \"): the anchor \"  \" holds no text; fix: quote a heading or verbatim phrase that owner.md holds$F" || return 1
+  ct_is CT11c "launch.sh: cite: $T/ct/p11.md:3: owner.md:2 (\"\"): the anchor \"\" holds no text; fix: quote a heading or verbatim phrase that owner.md holds$F"
+}
+PK12() {   # #321 R2: an empty or blank anchor fails in a full-form entry and on a compact Named file: line
+  local R='Rule: `references/contract.md:131-132` — "a Capstan executable"' H='## Rules that apply' Q='- `references/contract.md:131-132` — "a Capstan executable"'
+  local E='the anchor holds no text; fix: quote a heading or verbatim phrase inside the range, as ("anchor")'
+  pkr_tree || return 1
+  printf '%s\n' "$H" "$Q" '## Named files' '- `references/contract.md:124-150` ("") — executable non-goal' >"$T/pk/r-empty.md"
+  pkr_run PK12 "$T/pk/r-empty.md" 1 "$E" || return 1
+  ct_is PK12 "launch.sh: pack: references/contract.md:124-150 (\"\"): $E" || return 1
+  printf '%s\n' "$H" "$Q" '## Named files' '- `references/contract.md:124-150` ("  ") — executable non-goal' >"$T/pk/r-blank.md"
+  pkr_run PK12b "$T/pk/r-blank.md" 1 "$E" || return 1
+  ct_is PK12b "launch.sh: pack: references/contract.md:124-150 (\"  \"): $E" || return 1
+  printf '%s\n' '## Candidate' 'item' 'Criterion: AC 2 — "x"' "$R" 'Check: `true`, expected exit 0' \
+    'Named file: `references/contract.md:124-150` ("") — exception' >"$T/pk/r-cempty.md"
+  pkr_run PK12c "$T/pk/r-cempty.md" 1 "$E" || return 1
+  ct_is PK12c "launch.sh: pack: references/contract.md:124-150 (\"\"): $E"
+}
 
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
-for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 PK8 PK9 PK10 PK11 CT1 CT2 CT3 CT4 CT5 CT6 CT7 CT8 CT9 CT10 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
+for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 PK8 PK9 PK10 PK11 PK12 CT1 CT2 CT3 CT4 CT5 CT6 CT7 CT8 CT9 CT10 CT11 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
   C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 \
   C24 C25 C26 C27 C28 C29 C30 C31 C32 Y1 Y2 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
   t "$c" "$c"

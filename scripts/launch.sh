@@ -1148,6 +1148,10 @@ pk_entry() {
     printf 'launch.sh: pack: %s: no quoted anchor; fix: write `%s ("anchor") — reason` with a heading or verbatim phrase inside the range\n' "$c" "$c" >&2
     PK_BAD=$((PK_BAD + 1)); return
   fi
+  if [[ $a =~ ^[[:space:]]*$ ]]; then
+    printf 'launch.sh: pack: %s ("%s"): the anchor holds no text; fix: quote a heading or verbatim phrase inside the range, as ("anchor")\n' "$c" "$a" >&2
+    PK_BAD=$((PK_BAD + 1)); return
+  fi
   f=$(pk_file "$c" "$3")
   [[ $f != /* && -f $3/$f ]] || return 0
   [[ $c =~ :([0-9]+)(-([0-9]+))?$ ]] && { s=${BASH_REMATCH[1]}; e=${BASH_REMATCH[3]:-$s}; }
@@ -1242,7 +1246,6 @@ cmd_pack() {
 
 CT_REPO_RE='\]\(([^) ]+)\)([^][()]{0,60})\("'
 CT_STOP_RE='[.!?][[:space:]]'
-CT_PAIR_RE='\([^()]*\)'
 CT_LINK_RE='\[[^]]*\]\(([^) ]+)\)'
 CT_TICK_RE='`([^`[:space:]]+)`'
 CT_HINT_ANCHOR_RE='^([^][()|"`]{0,60})\(?"'
@@ -1298,16 +1301,19 @@ ct_fail() {
 }
 
 # ct_check WHERE CITATION PATH INNER: each anchor of INNER, one quote's text or several
-# joined by '" and "' or '", "', occurs in PATH.
+# joined by '" and "' or '", "', holds text other than whitespace and occurs in PATH.
 ct_check() {
   local in=$4 a why
-  in=${in//\" and \"/$'\x1f'}; in=${in//\", \"/$'\x1f'}
+  in=${in//\" and \"/$'\x1f'}; in=${in//\", \"/$'\x1f'}$'\x1f'
   while [ -n "$in" ]; do
-    a=${in%%$'\x1f'*}
-    if [ "$a" = "$in" ]; then in=; else in=${in#*$'\x1f'}; fi
-    ct_has "$3" "$a" && continue
-    why="the anchor \"$a\" does not occur in $3"
-    case $a in *…* | *...*) why+="; an ellipsis is not verbatim text" ;; esac
+    a=${in%%$'\x1f'*}; in=${in#*$'\x1f'}
+    if [[ $a =~ ^[[:space:]]*$ ]]; then
+      why="the anchor \"$a\" holds no text"
+    else
+      ct_has "$3" "$a" && continue
+      why="the anchor \"$a\" does not occur in $3"
+      case $a in *…* | *...*) why+="; an ellipsis is not verbatim text" ;; esac
+    fi
     ct_fail "$1" "$2" "$why" "$3"
   done
 }
@@ -1326,16 +1332,9 @@ ct_canon() {
   REPLY=$out
 }
 
-# ct_balanced TEXT: each ( in TEXT closes with a ) after it, and each ) closes one.
-ct_balanced() {
-  local x=$1
-  while [[ $x =~ $CT_PAIR_RE ]]; do x=${x/"${BASH_REMATCH[0]}"/}; done
-  [[ $x != *[\(\)]* ]]
-}
-
 # ct_repo: each owner link and quoted anchor pair in the tree's Markdown files. A pair is one
 # sentence: a gap holding . ! or ? and then whitespace is two. The parenthesis closes at the
-# first ") when the text before it holds balanced parentheses, so an anchor may hold ( and ).
+# first "), so an anchor may hold ( and ).
 ct_repo() {
   local f d s link gap in tgt
   while IFS= read -r f; do
@@ -1348,7 +1347,6 @@ ct_repo() {
       [[ $gap =~ $CT_STOP_RE ]] && continue
       [[ $s == *'")'* ]] || continue
       in=${s%%'")'*}
-      ct_balanced "$in" || continue
       s=${s#*'")'}
       case $link in http* | '#'*) continue ;; esac
       ct_canon "$d" "${link%%#*}"; tgt=$REPLY
@@ -1364,14 +1362,15 @@ ct_repo() {
 # ct_paren TEXT: TEXT opens, after any spaces, with ("…"); REPLY holds each quote's text joined by
 # '" and "', with any directly following and ("…") or , ("…"); CT_PLEN is the length of TEXT they span.
 ct_paren() {
-  local t=$1 q= a
+  local t=$1 q= a k=0
   while [[ $t =~ ^[[:space:]]*\(\"(.*)$ ]] && [[ ${BASH_REMATCH[1]} == *'")'* ]]; do
-    a=${BASH_REMATCH[1]%%'")'*}; q=${q:+$q\" and \"}$a
-    t=${BASH_REMATCH[1]#*'")'}
+    a=${BASH_REMATCH[1]%%'")'*}
+    if [ "$k" -gt 0 ]; then q+="\" and \"$a"; else q=$a; fi
+    k=$((k + 1)) t=${BASH_REMATCH[1]#*'")'}
     [[ $t =~ ^(,|[[:space:]]+and)([[:space:]]*\(\".*)$ ]] || break
     t=${BASH_REMATCH[2]}
   done
-  [ -n "$q" ] || return 1
+  [ "$k" -gt 0 ] || return 1
   REPLY=$q CT_PLEN=$((${#1} - ${#t}))
 }
 
@@ -1393,14 +1392,14 @@ ct_resolve() {
 # ct_hinted WHERE TOKEN AFTER: a path:line or path:line-range TOKEN, and the text AFTER it.
 # CT_EAT is the length of AFTER that its anchor spans, so the scan reads on after the anchor.
 ct_hinted() {
-  local p q= t g
+  local p q= t g k=
   p=$(pk_file "$2" "$CT_WT")
   if [[ $3 =~ $CT_HINT_ANCHOR_RE ]]; then
     g=${#BASH_REMATCH[1]}; t=${3:g}
-    if [[ $t == '('* ]]; then ct_paren "$t" && { q=$REPLY; CT_EAT=$((g + CT_PLEN)); }
-    else t=${t#\"}; [[ $t == *\"* ]] && { q=${t%%\"*}; CT_EAT=$((g + ${#q} + 2)); }; fi
+    if [[ $t == '('* ]]; then ct_paren "$t" && { q=$REPLY k=1 CT_EAT=$((g + CT_PLEN)); }
+    else t=${t#\"}; [[ $t == *\"* ]] && { q=${t%%\"*} k=1; CT_EAT=$((g + ${#q} + 2)); }; fi
   fi
-  if [ -n "$q" ]; then
+  if [ -n "$k" ]; then
     ct_resolve "$1" "$p" 1 || return 0
     ct_check "$1" "$2 (\"$q\")" "$REPLY" "$q"
   else
@@ -1430,16 +1429,16 @@ ct_tick() {
 # ct_link WHERE LINK TARGET AFTER: a Markdown LINK to TARGET, and the text AFTER it; CT_EAT is the
 # length of AFTER that its anchor spans, read even for a link the check skips.
 ct_link() {
-  local t=${3%%#*} q= g
+  local t=${3%%#*} q= g k=
   if [[ $4 =~ $CT_LINK_ANCHOR_RE ]]; then
     g=${#BASH_REMATCH[1]}
-    ct_paren "${4:g}" && { q=$REPLY; CT_EAT=$((g + CT_PLEN)); }
+    ct_paren "${4:g}" && { q=$REPLY k=1 CT_EAT=$((g + CT_PLEN)); }
   fi
   case $t in '' | *://* | mailto:*) return 0 ;; esac
   while :; do case $t in ./*) t=${t#./} ;; ../*) t=${t#../} ;; *) break ;; esac; done
   ct_canon "" "$t"; t=$REPLY
   ct_in "$t" || return 0
-  if [ -n "$q" ]; then ct_check "$1" "$2 (\"$q\")" "$t" "$q"
+  if [ -n "$k" ]; then ct_check "$1" "$2 (\"$q\")" "$t" "$q"
   else ct_fail "$1" "$2" "no quoted anchor" "$t"; fi
 }
 
