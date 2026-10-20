@@ -107,6 +107,7 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    A negative search passes only on the search tool's "no match" exit, exit 1 for `grep` and `git grep`, and a count such as `grep -c` reads that exit as zero matches; any other non-zero exit fails the group.
    This rule covers only check scripts the plan writes; it does not change the repository's declared test command or the Markdown-only rule above.
    Every citation of repository text in the plan follows [references/pack.md](pack.md) ("Citation rule"), which owns it.
+   For each rule sentence the plan adds or changes in a procedure file, the plan's "Current behavior and data shape" section lists the owners that [CONTRIBUTING.md](../CONTRIBUTING.md) ("**Section contradiction.**") requires the author to name, each as a citation in the form [references/pack.md](pack.md) ("Citation rule") owns; that row owns the comparison, and [templates/brief.md](../templates/brief.md) ("No repository tour") governs an owner the pack does not name.
    An Ordered items row for non-trivial logic names, inside its "Verification
    command and failure signal" cell, the acceptance criterion its check is
    derived from, the seam (the owning module's interface) it drives through,
