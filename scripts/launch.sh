@@ -1332,9 +1332,32 @@ ct_canon() {
   REPLY=$out
 }
 
+# ct_quote TEXT: TEXT follows the (" of a quoted anchor, which closes at a " directly before ).
+# Inside it, " and " or ", " joins two anchors, and a " after a space opens an inner quote that
+# the next " closes. REPLY holds the text before the closing "); it fails when a quote closes
+# anywhere else or an inner quote holds (", so the parenthesis is no anchor and is not read.
+ct_quote() {
+  local t=$1 q= c in=
+  while [[ $t == *'"'* ]]; do
+    c=${t%%'"'*}; t=${t#*'"'}
+    if [ -n "$in" ]; then
+      [[ $c == *'(' || $t == ')'* ]] && return 1
+      q+=$c'"' in=; continue
+    fi
+    q+=$c
+    case $t in
+      ')'*) REPLY=$q; return 0 ;;
+      ' and "'*) q+='" and "' t=${t#' and "'} ;;
+      ', "'*) q+='", "' t=${t#', "'} ;;
+      *) [[ -z $q || $q == *' ' ]] || return 1; q+='"' in=1 ;;
+    esac
+  done
+  return 1
+}
+
 # ct_repo: each owner link and quoted anchor pair in the tree's Markdown files. A pair is one
-# sentence: a gap holding . ! or ? and then whitespace is two. The parenthesis closes at the
-# first "), so an anchor may hold ( and ).
+# sentence: a gap holding . ! or ? and then whitespace is two. ct_quote reads the anchor, so it
+# may hold ( and ), and a parenthesized quote that is no anchor reads nothing after it.
 ct_repo() {
   local f d s link gap in tgt
   while IFS= read -r f; do
@@ -1345,9 +1368,8 @@ ct_repo() {
       link=${BASH_REMATCH[1]} gap=${BASH_REMATCH[2]}
       s=${s#*"${BASH_REMATCH[0]}"}
       [[ $gap =~ $CT_STOP_RE ]] && continue
-      [[ $s == *'")'* ]] || continue
-      in=${s%%'")'*}
-      s=${s#*'")'}
+      ct_quote "$s" || continue
+      in=$REPLY s=${s:${#REPLY}+2}
       case $link in http* | '#'*) continue ;; esac
       ct_canon "$d" "${link%%#*}"; tgt=$REPLY
       if ! ct_in "$tgt"; then

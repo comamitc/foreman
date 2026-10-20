@@ -2226,9 +2226,23 @@ PK12() {   # #321 R2: an empty or blank anchor fails in a full-form entry and on
   pkr_run PK12c "$T/pk/r-cempty.md" 1 "$E" || return 1
   ct_is PK12c "launch.sh: pack: references/contract.md:124-150 (\"\"): $E"
 }
+CT12() {   # #321 R5: a parenthesized quote that is no anchor reads nothing after it; a later anchor and an inner-quote anchor are read once
+  local d=$T/ct/t12 F=', as ("anchor")' I='Do not permit the class "an installed CLI."'
+  ct_put "$d" owner.md '# Owner' 'quoted words here.' "$I" || return 1
+  ct_put "$d" a.md 'See [owner](owner.md) ("quoted" words). See [owner](owner.md) ("# Owner").' || return 1
+  ct_put "$d" b.md 'See [owner](owner.md) ("quoted" words). Later prose ends "here").' || return 1
+  ct_put "$d" c.md 'See [contract](owner.md) ("Do not permit the class' '"an installed CLI.""). It installs nothing.' || return 1
+  ct_pass CT12 --worktree "$d" || return 1
+  ct_put "$d" owner.md 'quoted words here.' "$I" || return 1
+  ct_fail CT12b 1 --worktree "$d" || return 1
+  ct_is CT12b "launch.sh: cite: a.md: link owner.md (\"# Owner\"): the anchor \"# Owner\" does not occur in owner.md; fix: quote a heading or verbatim phrase that owner.md holds$F" || return 1
+  ct_put "$d" owner.md '# Owner' 'quoted words here.' || return 1
+  ct_fail CT12c 1 --worktree "$d" || return 1
+  ct_is CT12c "launch.sh: cite: c.md: link owner.md (\"$I\"): the anchor \"$I\" does not occur in owner.md; fix: quote a heading or verbatim phrase that owner.md holds$F"
+}
 
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
-for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 PK8 PK9 PK10 PK11 PK12 CT1 CT2 CT3 CT4 CT5 CT6 CT7 CT8 CT9 CT10 CT11 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
+for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 PK8 PK9 PK10 PK11 PK12 CT1 CT2 CT3 CT4 CT5 CT6 CT7 CT8 CT9 CT10 CT11 CT12 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
   C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 \
   C24 C25 C26 C27 C28 C29 C30 C31 C32 Y1 Y2 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
   t "$c" "$c"
