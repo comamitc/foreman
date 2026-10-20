@@ -20,9 +20,9 @@
 #     absolute path ending in /events.jsonl; references/telemetry.md
 #     ("appends each worker `tool-call` line when that call completes") owns
 #     what the run script appends to it. NAME is an environment variable name.
-#     codex-read and codex-read-probe start in work/ beneath the --result
-#     directory, create work/ and work/tmp/ owner-only with work/tmp as TMPDIR,
-#     and refuse --add-dir and a --result that is a symlink or resolves into
+#     codex-read and codex-read-probe build the read recipe that
+#     references/harnesses/codex.md ("The read recipe, for kinds") owns, and
+#     refuse --add-dir and a --result that is a symlink or resolves into
 #     work/. references/harnesses/codex.md ("owns the Codex read-station result
 #     rule") governs the result file. They refuse
 #     a --result directory that is, holds, or sits inside --worktree, or that is
@@ -53,6 +53,7 @@ ALLOW_RE='^Bash\(.+\)$'
 READ_RE='^Read\(/(/.*)\)$'
 SAFE_RE='^/[A-Za-z0-9._+@-]+(/[A-Za-z0-9._+@-]+)*$'
 EFFORT_RE='^model_reasoning_effort="[^"]*"$'
+PATHPOL_RE='^shell_environment_policy\.set\.PATH="([^"\\]*)"$'
 HEAD_RE='^# Capstan launch \((claude-write|claude-read|claude-write-probe|codex-write|codex-read|codex-read-probe)\)\. Written by scripts/launch\.sh; verify with scripts/launch\.sh check\.$'
 CD_RE="^cd -- '(/[^']*)'\$"
 EXEC0='exec "${argv[@]}"'
@@ -714,7 +715,7 @@ walk_claude() {
 }
 
 walk_codex() {
-  local i=1 n=${#W[@]} w val policy= rk= excl= cdir= olm= tdir= rdir rres rroot why
+  local i=1 n=${#W[@]} w val policy= rk= excl= cdir= olm= tdir= tpre= ppath= pseen= rdir rres rroot why
   [ "$KIND" = codex-write ] || rk=1
   if [ -n "$rk" ]; then
     # The run script does not name the worktree; check is given it.
@@ -723,8 +724,12 @@ walk_codex() {
     [ "${W[0]}" = env ] || v "first word is not env: ${W[0]}"
     CTX[0]=cmd
     case ${W[1]-} in TMPDIR=/*) CTX[1]=env tdir=${W[1]#TMPDIR=} ;; *) v "missing TMPDIR=ABSOLUTE_PATH after env: ${W[1]-}" ;; esac
-    [ "${W[2]-}" = codex ] || v "word after TMPDIR is not codex: ${W[2]-}"
-    CTX[2]=cmd i=3
+    case ${W[2]-} in
+      TMPPREFIX=/*) CTX[2]=env tpre=${W[2]#TMPPREFIX=} i=3 ;;
+      *) v "missing TMPPREFIX=RESULT_DIR/work/tmp/zsh after TMPDIR: ${W[2]-}"; i=2 ;;
+    esac
+    [ "${W[i]-}" = codex ] || v "word after the env words is not codex: ${W[i]-}"
+    CTX[i]=cmd i=$((i + 1))
   else
     [ "${W[0]}" = codex ] || v "first word is not codex: ${W[0]}"
     CTX[0]=cmd
@@ -751,6 +756,7 @@ walk_codex() {
           -c)
             if [ "$val" = 'approval_policy="never"' ]; then policy=1
             elif [ -n "$rk" ] && [ "$val" = sandbox_workspace_write.exclude_slash_tmp=true ]; then excl=1
+            elif [ -n "$rk" ] && [[ $val =~ $PATHPOL_RE ]]; then pseen=1 ppath=${BASH_REMATCH[1]}
             elif ! [[ $val =~ $EFFORT_RE ]]; then v "-c value not allowed: $val"; fi ;;
           -C | --output-last-message)
             case $val in /*) ;; *) v "$w must be an absolute path: $val" ;; esac
@@ -776,6 +782,7 @@ walk_codex() {
   [ -n "$rk" ] || return 0
   case $SEEN in *" --skip-git-repo-check "*) ;; *) v "missing flag: --skip-git-repo-check" ;; esac
   [ -n "$excl" ] || v "missing flag: -c sandbox_workspace_write.exclude_slash_tmp=true"
+  [ -n "$pseen" ] || v 'missing flag: -c shell_environment_policy.set.PATH="RESULT_DIR/bin:PATH"'
   [ -n "$olm" ] || return 0
   rdir=$(dirname -- "$olm")
   [ ! -L "$olm" ] || v "--output-last-message is a symlink: $olm"
@@ -790,6 +797,10 @@ walk_codex() {
   [ -z "$tdir" ] || [ "$tdir" = "$rdir/work/tmp" ] || v "TMPDIR must be $rdir/work/tmp for $KIND: $tdir"
   [ -z "$tdir" ] || { [ -d "$tdir" ] && ! [ -L "$tdir" ] && [ -O "$tdir" ] && [ "$(mode_of "$tdir")" = drwx------ ]; } \
     || v "TMPDIR is not an owner-only directory: $tdir"
+  [ -z "$tpre" ] || [ "$tpre" = "$rdir/work/tmp/zsh" ] || v "TMPPREFIX must be $rdir/work/tmp/zsh for $KIND: $tpre"
+  [ -z "$pseen" ] || case $ppath in "$rdir/bin:"*) ;; *) v "shell_environment_policy.set.PATH must start with $rdir/bin: for $KIND: $ppath" ;; esac
+  [ -z "$pseen" ] || { [ -d "$rdir/bin" ] && ! [ -L "$rdir/bin" ] && [ -O "$rdir/bin" ] && [ "$(mode_of "$rdir/bin")" = drwx------ ]; } \
+    || v "$rdir/bin is not an owner-only directory"
   why=$(root_bad "$rdir" "$CWT")
   [ -z "$why" ] || v "$why"
 }
@@ -895,7 +906,7 @@ render() { # KIND START_DIR LAUNCH_FILE WORD...; also reads CAP, RENV, EVENTS, D
 }
 
 cmd_write() {
-  local kind= wt= lf= out= model= effort= hs= result= cap= events= delivery= station= attempt= a val dir tmp d cdir rdir rres rroot tdir= why
+  local kind= wt= lf= out= model= effort= hs= result= cap= events= delivery= station= attempt= a val dir tmp d cdir rdir rres rroot tdir= bdir py why
   local -a adds=() allows=() renvs=() A=()
   while [ $# -gt 0 ]; do
     a=$1
@@ -982,12 +993,16 @@ cmd_write() {
       if [ -L "$result" ]; then die "--result is a symlink: $result"; fi
       rres=$(realpath -m -- "$result") && rroot=$(realpath -m -- "$rdir/work") || die "--result does not resolve: $result"
       case $rres/ in "${rroot%/}"/*) die "--result resolves into the writable root: $result" ;; esac
-      cdir=$rdir/work tdir=$rdir/work/tmp
-      for d in "$cdir" "$tdir"; do
+      case $PATH in *[\'\"\\]* | *[[:cntrl:]]*) die "PATH holds a single quote, double quote, backslash or control character: cannot build $kind" ;; esac
+      cdir=$rdir/work tdir=$rdir/work/tmp bdir=$rdir/bin
+      for d in "$cdir" "$tdir" "$bdir"; do
         if [ -L "$d" ] || { [ -e "$d" ] && ! [ -d "$d" ]; }; then die "not a directory: $d"; fi
         [ -d "$d" ] || (umask 077 && mkdir -- "$d") || die "cannot create $d"
         [ -O "$d" ] && [ "$(mode_of "$d")" = drwx------ ] || die "not an owner-only directory: $d"
-      done ;;
+      done
+      [ ! -e "$bdir/python" ] || [ -L "$bdir/python" ] || die "not a symlink: $bdir/python"
+      py=$(command -v python3) || py=
+      case $py in /*) ln -sfn -- "$py" "$bdir/python" || die "cannot link $bdir/python" ;; *) rm -f -- "$bdir/python" ;; esac ;;
   esac
   [ -e "$cap" ] || [ -L "$cap" ] || (umask 077 && mkdir -- "$cap") || die "cannot create $cap"
   why=$(cap_bad "$cap" "$wt" "$result" "$lf" "$out")
@@ -1016,7 +1031,8 @@ cmd_write() {
       fi ;;
     codex-*)
       A=(codex exec -C "$cdir" -s workspace-write)
-      [ "$kind" = codex-write ] || A=(env "TMPDIR=$tdir" "${A[@]}" --skip-git-repo-check -c sandbox_workspace_write.exclude_slash_tmp=true)
+      [ "$kind" = codex-write ] || A=(env "TMPDIR=$tdir" "TMPPREFIX=$tdir/zsh" "${A[@]}" --skip-git-repo-check -c sandbox_workspace_write.exclude_slash_tmp=true \
+        -c "shell_environment_policy.set.PATH=\"$bdir:$PATH\"")
       A+=(-c 'approval_policy="never"')
       [ -z "$model" ] || A+=(--model "$model")
       [ -z "$effort" ] || A+=(-c "model_reasoning_effort=\"$effort\"")
