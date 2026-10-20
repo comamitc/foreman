@@ -34,15 +34,9 @@
 #   launch.sh grant --source FILE --worktree DIR
 #   launch.sh pack PACK --worktree DIR
 #     The pack check; references/pack.md ("Pack check:") owns the rule.
-#   launch.sh cite --worktree DIR [--plan PLAN] [--rev SHA]
-#     The citation check; references/pack.md ("Citation check:") owns the rule.
-#     Without --plan it reads each tracked Markdown file of DIR; with --plan it
-#     reads PLAN against DIR's files. --rev reads those files at SHA, not the
-#     working tree. DIR is a git work tree.
 #
-# Exit: 0 ok; 1 check violation (for write, no script was written; for pack, a cited rule file is not named,
-# or a named file's anchor is missing or outside its range; for cite, a citation's anchor is missing or
-# not in its target, or a linked file is not in the tree); 2 usage or input error. Every path input must be absolute.
+# Exit: 0 ok; 1 check violation (for write, no script was written; for pack, a cited rule file is not named); 2 usage or
+# input error. Every path input must be absolute.
 set -u
 
 MCP='{"mcpServers":{}}'
@@ -1108,7 +1102,7 @@ PK_BLANK_RE='^[[:space:]]*$'
 PK_COMPACT_RE='^(Criterion|Rule|Check|Named file):'
 PK_RULE_RE='^Rule:[[:space:]]*`?([^`[:space:]]+)'
 PK_NAMED_RE='^Named file:[[:space:]]*`([^`[:space:]]+)`'
-PK_CITES=() PK_NAMED=() PK_BAD=0
+PK_CITES=() PK_NAMED=()
 
 # pk_file CITATION WORKTREE: the cited file without a :LINE or :LINE-RANGE hint,
 # a leading ./, or a leading WORKTREE/.
@@ -1136,33 +1130,6 @@ pk_cite() {
     PK_CITES+=("${BASH_REMATCH[2]}:${BASH_REMATCH[3]}")
     rest=${rest#*"${BASH_REMATCH[0]}"}
   done
-}
-
-# pk_entry ENTRY REST WT: the Named files ENTRY carries ("anchor") at the start of REST; when ENTRY's
-# path is a file in WT, the anchor occurs inside its line range, or in the file when it has none.
-pk_entry() {
-  local c=$1 f a s= e=
-  if [[ $2 =~ ^[[:space:]]*\(\"(.*)$ ]] && [[ ${BASH_REMATCH[1]} == *'")'* ]]; then
-    a=${BASH_REMATCH[1]%%'")'*}
-  else
-    printf 'launch.sh: pack: %s: no quoted anchor; fix: write `%s ("anchor") — reason` with a heading or verbatim phrase inside the range\n' "$c" "$c" >&2
-    PK_BAD=$((PK_BAD + 1)); return
-  fi
-  if [[ $a =~ ^[[:space:]]*$ ]]; then
-    printf 'launch.sh: pack: %s ("%s"): the anchor holds no text; fix: quote a heading or verbatim phrase inside the range, as ("anchor")\n' "$c" "$a" >&2
-    PK_BAD=$((PK_BAD + 1)); return
-  fi
-  f=$(pk_file "$c" "$3")
-  [[ $f != /* && -f $3/$f ]] || return 0
-  [[ $c =~ :([0-9]+)(-([0-9]+))?$ ]] && { s=${BASH_REMATCH[1]}; e=${BASH_REMATCH[3]:-$s}; }
-  CT_WT=$3 CT_REV=
-  ct_has "$f" "$a" "$s" "$e" && return 0
-  if [ -n "$s" ]; then
-    printf 'launch.sh: pack: %s ("%s"): the anchor is not inside lines %s-%s of %s; fix: widen the range to the lines that hold it, or quote a heading or verbatim phrase inside it\n' "$c" "$a" "$s" "$e" "$f" >&2
-  else
-    printf 'launch.sh: pack: %s ("%s"): the anchor does not occur in %s; fix: quote a heading or verbatim phrase that %s holds\n' "$c" "$a" "$f" "$f" >&2
-  fi
-  PK_BAD=$((PK_BAD + 1))
 }
 
 cmd_pack() {
@@ -1196,9 +1163,7 @@ cmd_pack() {
       if [[ ${L[i]} =~ $PK_RULE_RE ]]; then
         PK_CITES+=("${BASH_REMATCH[1]}")
       elif [[ ${L[i]} =~ $PK_NAMED_RE ]]; then
-        c=${BASH_REMATCH[1]}
-        PK_NAMED+=("$(pk_file "$c" "$wt")")
-        pk_entry "$c" "${L[i]#*"\`$c\`"}" "$wt"
+        PK_NAMED+=("$(pk_file "${BASH_REMATCH[1]}" "$wt")")
       fi
     done
     where='on a Rule: line, but no Named file: line names it; add a Named file: line'
@@ -1223,9 +1188,7 @@ cmd_pack() {
         case ${L[i]} in '## '*) break ;; esac
         [[ ${L[i]} =~ $PK_LEAD_RE ]] || continue
         c=${BASH_REMATCH[3]}
-        pk_path "$c" || continue
-        PK_NAMED+=("$(pk_file "$c" "$wt")")
-        pk_entry "$c" "${L[i]#*"\`$c\`"}" "$wt"
+        pk_path "$c" && PK_NAMED+=("$(pk_file "$c" "$wt")")
       done
     fi
     where='under ## Rules that apply, but no ## Named files entry names it; add a ## Named files entry'
@@ -1238,297 +1201,7 @@ cmd_pack() {
     printf 'launch.sh: pack: %s is cited at %s %s %s whose range holds the quoted line\n' "$f" "$c" "$where" "$entry" >&2
     bad=$((bad + 1))
   done
-  [ "$bad" -eq 0 ] && [ "$PK_BAD" -eq 0 ] || exit 1
-  exit 0
-}
-
-# ---- cite: the citation check; references/pack.md ("Citation check:") owns the rule ----
-
-CT_REPO_RE='\]\(([^) ]+)\)([^][()]{0,60})\("'
-CT_STOP_RE='[.!?][[:space:]]'
-CT_LINK_RE='\[[^]]*\]\(([^) ]+)\)'
-CT_TICK_RE='`([^`[:space:]]+)`'
-CT_HINT_ANCHOR_RE='^([^][()|"`]{0,60})\(?"'
-CT_LINK_ANCHOR_RE='^([^][()|"`]{0,60})\("'
-CT_STEP_RE='^[[:space:]]*(\((steps?|items?)[[:space:]]+[0-9][^)]*\))'
-CT_FENCE_RE='^ {0,3}(```+|~~~+)'
-CT_WT= CT_REV= CT_BAD=0 CT_EAT=0 CT_PLEN=0 CT_FILES=$'\n'
-CT_CP=() CT_CT=()
-
-# ct_norm TEXT: TEXT with each run of whitespace collapsed to one space, in REPLY.
-ct_norm() {
-  local s=${1//[$'\t\r\n']/ }
-  while [[ $s == *'  '* ]]; do s=${s//  / }; done
-  REPLY=$s
-}
-
-# ct_list: the tree's files, at --rev or in the index, one per line in CT_FILES.
-ct_list() {
-  local out
-  if [ -n "$CT_REV" ]; then
-    out=$(git -C "$CT_WT" -c core.quotepath=off ls-tree -r --name-only "$CT_REV") || die "cite: cannot list $CT_REV in $CT_WT"
-  else
-    out=$(git -C "$CT_WT" -c core.quotepath=off ls-files) || die "cite: --worktree is not a git work tree: $CT_WT"
-  fi
-  CT_FILES=$'\n'$out$'\n'
-}
-ct_in() { [[ $CT_FILES == *$'\n'"$1"$'\n'* ]]; }
-
-# ct_text PATH [START END]: PATH's collapsed text, or that of its lines START-END, in REPLY.
-ct_text() {
-  local p=$1 s=${2-} e=${3-} raw i line out=
-  if [ -z "$s" ]; then
-    for i in "${!CT_CP[@]}"; do [ "${CT_CP[i]}" = "$p" ] && { REPLY=${CT_CT[i]}; return; }; done
-  fi
-  if [ -n "$CT_REV" ]; then raw=$(git -C "$CT_WT" show "$CT_REV:$p") || die "cite: cannot read $p at $CT_REV"
-  else raw=$(<"$CT_WT/$p") || die "cannot read $CT_WT/$p"; fi
-  if [ -n "$s" ]; then
-    i=0
-    while IFS= read -r line; do i=$((i + 1)); [ "$i" -ge "$s" ] && [ "$i" -le "$e" ] && out+="$line "; done <<<"$raw"
-    raw=$out
-  fi
-  ct_norm "$raw"
-  [ -n "$s" ] || { CT_CP+=("$p"); CT_CT+=("$REPLY"); }
-}
-
-# ct_has PATH ANCHOR [START END]: ANCHOR, collapsed, is part of PATH's text or of its lines START-END.
-ct_has() { local a; ct_norm "$2"; a=$REPLY; ct_text "$1" "${3-}" "${4-}"; [[ $REPLY == *"$a"* ]]; }
-
-# ct_fail WHERE CITATION PROBLEM TARGET: one error line that names the fix.
-ct_fail() {
-  printf 'launch.sh: cite: %s: %s: %s; fix: quote a heading or verbatim phrase that %s holds, as ("anchor")\n' "$1" "$2" "$3" "$4" >&2
-  CT_BAD=$((CT_BAD + 1))
-}
-
-# ct_check WHERE CITATION PATH INNER: each anchor of INNER, one quote's text or several
-# joined by '" and "' or '", "', holds text other than whitespace and occurs in PATH.
-ct_check() {
-  local in=$4 a why
-  in=${in//\" and \"/$'\x1f'}; in=${in//\", \"/$'\x1f'}$'\x1f'
-  while [ -n "$in" ]; do
-    a=${in%%$'\x1f'*}; in=${in#*$'\x1f'}
-    if [[ $a =~ ^[[:space:]]*$ ]]; then
-      why="the anchor \"$a\" holds no text"
-    else
-      ct_has "$3" "$a" && continue
-      why="the anchor \"$a\" does not occur in $3"
-      case $a in *…* | *...*) why+="; an ellipsis is not verbatim text" ;; esac
-    fi
-    ct_fail "$1" "$2" "$why" "$3"
-  done
-}
-
-# ct_canon DIR PATH: DIR/PATH without empty, . and .. segments, in REPLY; .. at the root is dropped.
-ct_canon() {
-  local seg out= p=$1/$2 IFS=/
-  set -f; set -- $p; set +f
-  for seg; do
-    case $seg in
-      '' | .) ;;
-      ..) case $out in */*) out=${out%/*} ;; *) out= ;; esac ;;
-      *) out=${out:+$out/}$seg ;;
-    esac
-  done
-  REPLY=$out
-}
-
-# ct_quote TEXT: TEXT follows the (" of a quoted anchor, which closes at a " directly before ).
-# Inside it, " and " or ", " joins two anchors, and a " after a space opens an inner quote that
-# the next " closes. REPLY holds the text before the closing "); it fails when a quote closes
-# anywhere else or an inner quote holds (", so the parenthesis is no anchor and is not read.
-ct_quote() {
-  local t=$1 q= c in=
-  while [[ $t == *'"'* ]]; do
-    c=${t%%'"'*}; t=${t#*'"'}
-    if [ -n "$in" ]; then
-      [[ $c == *'(' || $t == ')'* ]] && return 1
-      q+=$c'"' in=; continue
-    fi
-    q+=$c
-    case $t in
-      ')'*) REPLY=$q; return 0 ;;
-      ' and "'*) q+='" and "' t=${t#' and "'} ;;
-      ', "'*) q+='", "' t=${t#', "'} ;;
-      *) [[ -z $q || $q == *' ' ]] || return 1; q+='"' in=1 ;;
-    esac
-  done
-  return 1
-}
-
-# ct_repo: each owner link and quoted anchor pair in the tree's Markdown files. A pair is one
-# sentence: a gap holding . ! or ? and then whitespace is two. ct_quote reads the anchor, so it
-# may hold ( and ), and a parenthesized quote that is no anchor reads nothing after it.
-ct_repo() {
-  local f d s link gap in tgt
-  while IFS= read -r f; do
-    case $f in *.md) ;; *) continue ;; esac
-    ct_text "$f"; s=$REPLY
-    d=${f%/*}; [ "$d" = "$f" ] && d=
-    while [[ $s =~ $CT_REPO_RE ]]; do
-      link=${BASH_REMATCH[1]} gap=${BASH_REMATCH[2]}
-      s=${s#*"${BASH_REMATCH[0]}"}
-      [[ $gap =~ $CT_STOP_RE ]] && continue
-      ct_quote "$s" || continue
-      in=$REPLY s=${s:${#REPLY}+2}
-      case $link in http* | '#'*) continue ;; esac
-      ct_canon "$d" "${link%%#*}"; tgt=$REPLY
-      if ! ct_in "$tgt"; then
-        printf 'launch.sh: cite: %s: link %s ("%s"): the target %s is not in the tree; fix: link a file the tree holds, and quote a heading or verbatim phrase that it holds, as ("anchor")\n' "$f" "$link" "$in" "$tgt" >&2
-        CT_BAD=$((CT_BAD + 1)); continue
-      fi
-      ct_check "$f" "link $link (\"$in\")" "$tgt" "$in"
-    done
-  done <<<"$CT_FILES"
-}
-
-# ct_paren TEXT: TEXT opens, after any spaces, with ("…"); REPLY holds each quote's text joined by
-# '" and "', with any directly following and ("…") or , ("…"); CT_PLEN is the length of TEXT they span.
-ct_paren() {
-  local t=$1 q= a k=0
-  while [[ $t =~ ^[[:space:]]*\(\"(.*)$ ]] && [[ ${BASH_REMATCH[1]} == *'")'* ]]; do
-    a=${BASH_REMATCH[1]%%'")'*}
-    if [ "$k" -gt 0 ]; then q+="\" and \"$a"; else q=$a; fi
-    k=$((k + 1)) t=${BASH_REMATCH[1]#*'")'}
-    [[ $t =~ ^(,|[[:space:]]+and)([[:space:]]*\(\".*)$ ]] || break
-    t=${BASH_REMATCH[2]}
-  done
-  [ "$k" -gt 0 ] || return 1
-  REPLY=$q CT_PLEN=$((${#1} - ${#t}))
-}
-
-# ct_resolve WHERE PATH ANCHORED: the tree file PATH names, in REPLY. A PATH that is no file in the
-# tree names nothing unless ANCHORED is 1 and PATH holds no /: then it names the one file with that name.
-ct_resolve() {
-  local f hit= k=0
-  ct_in "$2" && { REPLY=$2; return 0; }
-  [ "$3" = 1 ] && [[ $2 != */* ]] || return 1
-  while IFS= read -r f; do [ "${f##*/}" = "$2" ] && { hit=$f; k=$((k + 1)); }; done <<<"$CT_FILES"
-  [ "$k" -eq 1 ] && { REPLY=$hit; return 0; }
-  if [ "$k" -gt 1 ]; then
-    printf 'launch.sh: cite: %s: %s: %s files in the tree have this name; fix: cite it by its path from the repository root\n' "$1" "$2" "$k" >&2
-    CT_BAD=$((CT_BAD + 1))
-  fi
-  return 1
-}
-
-# ct_hinted WHERE TOKEN AFTER: a path:line or path:line-range TOKEN, and the text AFTER it.
-# CT_EAT is the length of AFTER that its anchor spans, so the scan reads on after the anchor.
-ct_hinted() {
-  local p q= t g k=
-  p=$(pk_file "$2" "$CT_WT")
-  if [[ $3 =~ $CT_HINT_ANCHOR_RE ]]; then
-    g=${#BASH_REMATCH[1]}; t=${3:g}
-    if [[ $t == '('* ]]; then ct_paren "$t" && { q=$REPLY k=1 CT_EAT=$((g + CT_PLEN)); }
-    else t=${t#\"}; [[ $t == *\"* ]] && { q=${t%%\"*} k=1; CT_EAT=$((g + ${#q} + 2)); }; fi
-  fi
-  if [ -n "$k" ]; then
-    ct_resolve "$1" "$p" 1 || return 0
-    ct_check "$1" "$2 (\"$q\")" "$REPLY" "$q"
-  else
-    ct_resolve "$1" "$p" 0 || return 0
-    ct_fail "$1" "$2" "no quoted anchor" "$REPLY"
-  fi
-}
-
-# ct_tick WHERE TOKEN AFTER: a backticked TOKEN. With no line hint it cites only when ("…"),
-# (step N), or (item N) directly follows it; CT_EAT is the length of AFTER that follower spans.
-ct_tick() {
-  local p q s
-  if [[ $2 =~ $PK_HINT_RE ]]; then ct_hinted "$@"; return; fi
-  pk_path "$2" || return 0
-  p=$(pk_file "$2" "$CT_WT")
-  if ct_paren "$3"; then
-    q=$REPLY CT_EAT=$CT_PLEN
-    ct_resolve "$1" "$p" 1 || return 0
-    ct_check "$1" "$2 (\"$q\")" "$REPLY" "$q"
-  elif [[ $3 =~ $CT_STEP_RE ]]; then
-    s=${BASH_REMATCH[1]} CT_EAT=${#BASH_REMATCH[0]}
-    ct_resolve "$1" "$p" 1 || return 0
-    ct_fail "$1" "$2 $s" "a step or item number is not an anchor" "$REPLY"
-  fi
-}
-
-# ct_link WHERE LINK TARGET AFTER: a Markdown LINK to TARGET, and the text AFTER it; CT_EAT is the
-# length of AFTER that its anchor spans, read even for a link the check skips.
-ct_link() {
-  local t=${3%%#*} q= g k=
-  if [[ $4 =~ $CT_LINK_ANCHOR_RE ]]; then
-    g=${#BASH_REMATCH[1]}
-    ct_paren "${4:g}" && { q=$REPLY k=1 CT_EAT=$((g + CT_PLEN)); }
-  fi
-  case $t in '' | *://* | mailto:*) return 0 ;; esac
-  while :; do case $t in ./*) t=${t#./} ;; ../*) t=${t#../} ;; *) break ;; esac; done
-  ct_canon "" "$t"; t=$REPLY
-  ct_in "$t" || return 0
-  if [ -n "$k" ]; then ct_check "$1" "$2 (\"$q\")" "$t" "$q"
-  else ct_fail "$1" "$2" "no quoted anchor" "$t"; fi
-}
-
-# ct_line WHERE LINE: each citation on one plan line outside fences, left to right; after each
-# citation the scan reads on after its anchor, so an anchor's text is never read as a citation.
-ct_line() {
-  local w=$1 rest=$2 k re m o bo kind tok tgt
-  while :; do
-    bo=-1
-    for k in link tick inline; do
-      case $k in link) re=$CT_LINK_RE ;; tick) re=$CT_TICK_RE ;; *) re=$PK_INLINE_RE ;; esac
-      [[ $rest =~ $re ]] || continue
-      m=${BASH_REMATCH[0]}; o=${rest%%"$m"*}; o=${#o}
-      if [ "$bo" -lt 0 ] || [ "$o" -lt "$bo" ]; then
-        bo=$o kind=$k tok=$m
-        case $k in inline) tgt=${BASH_REMATCH[2]}:${BASH_REMATCH[3]} ;; *) tgt=${BASH_REMATCH[1]} ;; esac
-      fi
-    done
-    [ "$bo" -ge 0 ] || return 0
-    rest=${rest:bo+${#tok}} CT_EAT=0
-    case $kind in
-      link) ct_link "$w" "$tok" "$tgt" "$rest" ;;
-      tick) ct_tick "$w" "$tgt" "$rest" ;;
-      *) ct_hinted "$w" "$tgt" "$rest" ;;
-    esac
-    rest=${rest:CT_EAT}
-  done
-}
-
-# ct_plan PLAN: each line of PLAN outside fenced blocks; a fence closes on the same character, at least as long.
-ct_plan() {
-  local n=0 line f= t
-  while IFS= read -r line || [ -n "$line" ]; do
-    n=$((n + 1))
-    if [[ $line =~ $CT_FENCE_RE ]]; then
-      t=${BASH_REMATCH[1]}
-      if [ -z "$f" ]; then f=$t
-      elif [ "${t:0:1}" = "${f:0:1}" ] && [ "${#t}" -ge "${#f}" ]; then f=; fi
-      continue
-    fi
-    [ -n "$f" ] || ct_line "$1:$n" "$line"
-  done <"$1"
-}
-
-cmd_cite() {
-  local plan=
-  while [ $# -gt 0 ]; do
-    case $1 in
-      --worktree)
-        [ $# -ge 2 ] || die "cite: --worktree needs a value"
-        need_abs --worktree "$2"
-        [ -d "$2" ] || die "--worktree is not a directory: $2"
-        CT_WT=${2%/}; shift 2 ;;
-      --plan)
-        [ $# -ge 2 ] || die "cite: --plan needs a value"
-        need_abs --plan "$2"; plan=$2; shift 2 ;;
-      --rev)
-        [ $# -ge 2 ] || die "cite: --rev needs a value"
-        CT_REV=$2; shift 2 ;;
-      *) die "usage: launch.sh cite --worktree DIR [--plan PLAN] [--rev SHA]" ;;
-    esac
-  done
-  [ -n "$CT_WT" ] || die "usage: launch.sh cite --worktree DIR [--plan PLAN] [--rev SHA]"
-  [ -z "$plan" ] || { [ -f "$plan" ] && [ -r "$plan" ]; } || die "cite: cannot read plan: $plan"
-  [ -z "$CT_REV" ] || git -C "$CT_WT" rev-parse -q --verify "$CT_REV^{commit}" >/dev/null || die "cite: --rev is not a commit in $CT_WT: $CT_REV"
-  ct_list
-  if [ -n "$plan" ]; then ct_plan "$plan"; else ct_repo; fi
-  [ "$CT_BAD" -eq 0 ] || exit 1
+  [ "$bad" -eq 0 ] || exit 1
   exit 0
 }
 
@@ -1556,6 +1229,5 @@ case ${1-} in
   check) shift; cmd_check "$@" ;;
   grant) shift; cmd_grant "$@" ;;
   pack) shift; cmd_pack "$@" ;;
-  cite) shift; cmd_cite "$@" ;;
-  *) die "usage: launch.sh write|check|grant|pack|cite ... (see the header of scripts/launch.sh)" ;;
+  *) die "usage: launch.sh write|check|grant|pack ... (see the header of scripts/launch.sh)" ;;
 esac

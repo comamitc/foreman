@@ -19,8 +19,6 @@ entire feedback set → implementing. There is no second plan-review or planning
 | Correction returned | Merge the changes, check coverage, publish the merged plan and the handoff, enter implementing |
 | Correction interrupted or incomplete | Preserve its output; hand off unfinished obligations to implementing |
 
-A plan revision that the citation check sends back to its author keeps its step: the corrective prompts are not a second plan, plan review, or correction pass, and the returned initial plan is still the one initial plan. When the corrective prompts on the correction revision end with citation errors left, each remaining error line is an unfinished obligation, handled as the "Correction interrupted or incomplete" row above states. [references/harnesses/shared.md](harnesses/shared.md) ("The coordinator runs the citation check") owns when that check runs and the bound on the send-back.
-
 One correction means one pass over all N findings, not one finding per pass. Its
 brief includes the full census with original scenarios, acceptance conditions,
 and evidence. Each finding needs a concrete plan correction with an implementation
