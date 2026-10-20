@@ -23,6 +23,7 @@ mkdir -p "$T/home/real" "$T/home/adir" "$T/wt" "$T/res" "$T/brief" "$T/b" "$T/r"
   "$T/s6/h" "$T/s6o" "$T/c13" "$T/c14wt/in" "$T/c15/wt" "$T/c16wt/in" "$T/c17/h" "$T/wt/s5" "$T/o2" "$T/o3" \
   "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" "$T/c21" "$T/c22" "$T/s10" "$T/s11" "$T/w1" \
   "$T/cap" "$T/w1cap" "$T/pbin" "$T/fbin" "$T/pc" "$T/pc1res" "$T/pc5" "$T/pc5res" "$T/ev" "$T/ts" "$T/ts/res" "$T/th2" \
+  "$T/y1py" "$T/ybin" "$T/y1/res" "$T/y2/res" \
   || setup "cannot create fixture directories"
 chmod 1777 "$T/s7" "$T/c19" "$T/s9sh" || setup "cannot chmod the shared fixture directories"
 # A private result directory beneath a shared temp-style directory (S9).
@@ -35,17 +36,33 @@ printf 'launch prompt %s.%s\n' "$$" "$RANDOM" >"$LF" || setup "cannot write the 
 LAUNCH_CONTENT=$(cat "$LF")
 : >"$T/res/r.md" || setup "cannot write fixtures"
 
-# Echo stubs: print cwd, TMPDIR, argv and stdin; a run script captures their
+# Echo stubs: print cwd, TMPDIR, TMPPREFIX when set, argv and stdin; a run script captures their
 # stdout, so with STUB_LOG set they also append the same lines to that file.
 for b in claude codex; do
   cat >"$T/bin/$b" <<'EOF' || setup "cannot write stub $b"
 #!/usr/bin/env bash
-out=$(echo "cwd=$PWD"; echo "tmpdir=${TMPDIR-}"; for a in "$@"; do printf 'arg=%s\n' "$a"; done; echo "stdin=$(cat)")
+out=$(echo "cwd=$PWD"; echo "tmpdir=${TMPDIR-}"; [ -z "${TMPPREFIX+x}" ] || echo "tmpprefix=$TMPPREFIX"; for a in "$@"; do printf 'arg=%s\n' "$a"; done; echo "stdin=$(cat)")
 printf '%s\n' "$out"
 [ -z "${STUB_LOG-}" ] || printf '%s\n' "$out" >>"$STUB_LOG"
 EOF
   chmod 755 "$T/bin/$b" || setup "cannot chmod stub $b"
 done
+
+# Policy stub for Y1, a stand-in for codex exec at the CLI boundary: it applies
+# the emitted shell_environment_policy.set.PATH to one worker command. The fake
+# python3 is what that PATH's python link must reach.
+cat >"$T/ybin/codex" <<'EOF' || setup "cannot write the policy stub"
+#!/usr/bin/env bash
+# Stand-in for codex exec: apply the emitted shell_environment_policy.set.PATH to one worker command.
+cat >/dev/null
+p=
+for a in "$@"; do case $a in shell_environment_policy.set.PATH=*) p=${a#shell_environment_policy.set.PATH=} ;; esac; done
+p=${p#\"} p=${p%\"}
+o=$(env -i PATH="${p:-/nonexistent}" python -c 'print(1)' 2>&1); rc=$?
+printf 'policy=%s\npy_rc=%s\npy_out=%s\n' "${p:-none}" "$rc" "$o"
+EOF
+printf '#!/bin/sh\necho fake-python3 "$@"\n' >"$T/y1py/python3" \
+  && chmod 755 "$T/ybin/codex" "$T/y1py/python3" || setup "cannot write the Y1 fixtures"
 
 # Stream stubs for the capture (PC1-PC9, TS1-TS5, TC3, TC5, TH1, TH2): read stdin,
 # print STUB_STREAM on stdout, or run the bash file STUB_RUN in its place, print
@@ -277,6 +294,7 @@ EOF
 cat >"$T/exp/K5" <<EOF
 cwd=$T/res/work
 tmpdir=$T/res/work/tmp
+tmpprefix=$T/res/work/tmp/zsh
 arg=exec
 arg=-C
 arg=$T/res/work
@@ -285,6 +303,8 @@ arg=workspace-write
 arg=--skip-git-repo-check
 arg=-c
 arg=sandbox_workspace_write.exclude_slash_tmp=true
+arg=-c
+arg=shell_environment_policy.set.PATH="$T/res/bin:$PATH"
 arg=-c
 arg=approval_policy="never"
 arg=--model
@@ -355,7 +375,38 @@ W1() { # build and run both read kinds; the result is not in the start directory
     [ "$res" = "$T/w1/result.md" ] || { echo "$k: --output-last-message is $res"; return 1; }
     for d in "$cwd" "$cv" "$tdir"; do
       case $res/ in "${d%/}"/*) echo "$k: the result $res is inside the writable root $d"; return 1 ;; esac
+      case $T/w1/bin/ in "${d%/}"/*) echo "$k: $T/w1/bin is inside the writable root $d"; return 1 ;; esac
     done
+  done
+}
+
+# ---- #314 AC 5: the worker's python resolves through the emitted PATH policy (Y1, Y2) ----
+
+Y1() { # build codex-read with a fake python3 on PATH; the run script's codex applies the emitted policy word
+  local rc t
+  (cd "$T/b" && PATH="$T/y1py:$PATH" bash "$LAUNCH_SH" write --kind codex-read --out "$T/y1/r.sh" --worktree "$T/wt" \
+    --launch-file "$LF" --result "$T/y1/res/result.md" --capture "$T/cap/Y1" "${EV[@]}") >/dev/null 2>"$T/log/Y1.err"
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "write exited $rc: $(first "$T/log/Y1.err")"; return 1; }
+  (cd "$T/r" && PATH="$T/ybin:$PATH" "$T/y1/r.sh") >"$T/log/Y1.run" 2>&1
+  rc=$?
+  [ "$rc" -eq 0 ] || { echo "run script exited $rc: $(first "$T/log/Y1.run")"; return 1; }
+  grep -qxF 'py_rc=0' "$T/cap/Y1/stdout" && grep -qxF 'py_out=fake-python3 -c print(1)' "$T/cap/Y1/stdout" \
+    || { echo "worker python under the emitted policy: $(tr '\n' ' ' <"$T/cap/Y1/stdout")"; return 1; }
+  t=$(readlink -- "$T/y1/res/bin/python")
+  [ "$t" = "$T/y1py/python3" ] || { echo "bin/python is not a link to $T/y1py/python3: $t"; return 1; }
+  [ "$(mode "$T/y1/res/bin")" = drwx------ ] || { echo "bin mode is $(mode "$T/y1/res/bin"), not drwx------"; return 1; }
+}
+Y2() { # a PATH holding a quote, backslash or line feed is refused before anything is written
+  local rc b
+  for b in "'" '"' '\' $'\n'; do
+    (cd "$T/b" && PATH="$PATH:$T/y2/a${b}b" bash "$LAUNCH_SH" write --kind codex-read --out "$T/y2/r.sh" --worktree "$T/wt" \
+      --launch-file "$LF" --result "$T/y2/res/result.md" --capture "$T/cap/Y2" "${EV[@]}") >/dev/null 2>"$T/log/Y2.err"
+    rc=$?
+    [ "$rc" -eq 2 ] || { echo "PATH with $(printf %q "$b"): write exited $rc, not 2"; return 1; }
+    grep -qF 'PATH holds a single quote, double quote, backslash or control character' "$T/log/Y2.err" \
+      || { echo "PATH with $(printf %q "$b"): stderr lacks the PATH refusal"; return 1; }
+    [ ! -e "$T/y2/r.sh" ] && [ ! -e "$T/y2/res/bin" ] || { echo "PATH with $(printf %q "$b"): run script written or bin created"; return 1; }
   done
 }
 
@@ -679,6 +730,41 @@ C23() { # the result moved onto the writable root itself
   c_build C23 codex-read || return 1
   sed "s|^'$T/res/result.md'\$|'$T/res/work'|" "$T/c/C23.base" >"$T/c/C23.sh"
   c_expect C23 "$T/r" "--output-last-message resolves into the writable root: $T/res/work"
+}
+
+# ---- #314 AC 2 and 5: check refuses a read script without the zsh TMPPREFIX or the worker PATH policy (C29-C32) ----
+
+C29() { # the TMPPREFIX word deleted, both read kinds
+  local k
+  for k in codex-read codex-read-probe; do
+    c_build "C29-$k" "$k" || return 1
+    sed "/^'TMPPREFIX=/d" "$T/c/C29-$k.base" >"$T/c/C29-$k.sh"
+    c_expect "C29-$k" "$T/r" "missing TMPPREFIX=RESULT_DIR/work/tmp/zsh after TMPDIR" || return 1
+  done
+}
+C30() { # TMPPREFIX moved back to the zsh default under /tmp, both read kinds
+  local k
+  for k in codex-read codex-read-probe; do
+    c_build "C30-$k" "$k" || return 1
+    sed "s|^'TMPPREFIX=.*'\$|'TMPPREFIX=/tmp/zsh'|" "$T/c/C30-$k.base" >"$T/c/C30-$k.sh"
+    c_expect "C30-$k" "$T/r" "TMPPREFIX must be $T/res/work/tmp/zsh for $k: /tmp/zsh" || return 1
+  done
+}
+C31() { # the worker PATH policy omitted (its -c and value deleted), both read kinds
+  local k
+  for k in codex-read codex-read-probe; do
+    c_build "C31-$k" "$k" || return 1
+    sed "/^'sandbox_workspace_write.exclude_slash_tmp=true'\$/{n;N;d;}" "$T/c/C31-$k.base" >"$T/c/C31-$k.sh"
+    c_expect "C31-$k" "$T/r" 'missing flag: -c shell_environment_policy.set.PATH="RESULT_DIR/bin:PATH"' || return 1
+  done
+}
+C32() { # the worker PATH policy led by a directory other than RESULT_DIR/bin, both read kinds
+  local k
+  for k in codex-read codex-read-probe; do
+    c_build "C32-$k" "$k" || return 1
+    sed "s|^'shell_environment_policy.set.PATH=\"$T/res/bin:|'shell_environment_policy.set.PATH=\"$T/brief:|" "$T/c/C32-$k.base" >"$T/c/C32-$k.sh"
+    c_expect "C32-$k" "$T/r" "shell_environment_policy.set.PATH must start with $T/res/bin: for $k" || return 1
+  done
 }
 
 # ---- AC 4: self-check and rejected inputs (S1, S2) ----
@@ -1463,7 +1549,7 @@ TH2() { # a granted write station's result is its result file; no host text in s
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
 for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
   C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 \
-  C24 C25 C26 C27 C28 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
+  C24 C25 C26 C27 C28 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2 C29 C30 C31 C32 Y1 Y2; do
   t "$c" "$c"
 done
 [ "$fails" -eq 0 ] || exit 1
