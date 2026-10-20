@@ -23,7 +23,7 @@ mkdir -p "$T/home/real" "$T/home/adir" "$T/wt" "$T/res" "$T/brief" "$T/b" "$T/r"
   "$T/s6/h" "$T/s6o" "$T/c13" "$T/c14wt/in" "$T/c15/wt" "$T/c16wt/in" "$T/c17/h" "$T/wt/s5" "$T/o2" "$T/o3" \
   "$T/s7" "$T/s7o" "$T/s8" "$T/s9" "$T/s9sh" "$T/c19" "$T/c21" "$T/c22" "$T/s10" "$T/s11" "$T/w1" \
   "$T/cap" "$T/w1cap" "$T/pbin" "$T/fbin" "$T/pc" "$T/pc1res" "$T/pc5" "$T/pc5res" "$T/ev" "$T/ts" "$T/ts/res" "$T/th2" \
-  "$T/y1py" "$T/ybin" "$T/y1/res" "$T/y2/res" "$T/pk" \
+  "$T/y1py" "$T/ybin" "$T/y1/res" "$T/y2/res" "$T/pk" "$T/pkr" "$T/ct" \
   || setup "cannot create fixture directories"
 chmod 1777 "$T/s7" "$T/c19" "$T/s9sh" || setup "cannot chmod the shared fixture directories"
 # A private result directory beneath a shared temp-style directory (S9).
@@ -1719,8 +1719,477 @@ PK9() {   # #316 F2: the quotes end at the first ## Checks heading, not the last
   pk_pass PK9 "$T/pk/checks2.md"
 }
 
+# Citation check (CT1-CT10). ct_run NAME ARGS...: run launch.sh cite; sets rc.
+ct_run() { local n=$1; shift; bash "$LAUNCH_SH" cite "$@" >"$T/log/$n.out" 2>"$T/log/$n.err"; rc=$?; }
+# ct_fail NAME WANT ARGS...: exit 1 with exactly WANT error lines, each naming its fix.
+ct_fail() {
+  local n=$1 w=$2; shift 2
+  ct_run "$n" "$@"
+  [ "$rc" -eq 1 ] || { echo "cite exited $rc, not 1: $(first "$T/log/$n.err")"; return 1; }
+  [ "$(grep -c . "$T/log/$n.err")" = "$w" ] || { echo "expected $w error lines, got: $(cat "$T/log/$n.err")"; return 1; }
+  [ "$(grep -c '; fix: ' "$T/log/$n.err")" = "$w" ] || { echo "an error line names no fix: $(cat "$T/log/$n.err")"; return 1; }
+}
+# ct_pass NAME ARGS...: exit 0 and no stderr.
+ct_pass() { local n=$1; shift; ct_run "$n" "$@"; [ "$rc" -eq 0 ] && [ ! -s "$T/log/$n.err" ] || { echo "cite exited $rc: $(first "$T/log/$n.err")"; return 1; }; }
+# ct_err NAME TEXT: NAME's error output holds TEXT.
+ct_err() { grep -qF -- "$2" "$T/log/$1.err" || { echo "$1 error lacks: $2"; return 1; }; }
+# ct_is NAME LINE: one line of NAME's error output is exactly LINE.
+ct_is() { grep -qxF -- "$2" "$T/log/$1.err" || { echo "$1 has no error line: $2"; return 1; }; }
+# ct_put DIR PATH LINE...: write PATH under DIR, one LINE per line, and stage it in DIR's git index.
+ct_put() {
+  local d=$1 p=$2; shift 2
+  mkdir -p "$(dirname "$d/$p")" && printf '%s\n' "$@" >"$d/$p" || return 1
+  [ -d "$d/.git" ] || git -C "$d" init -q || return 1
+  git -C "$d" add -- "$p"
+}
+CT1() {   # AC 1, #311 R1 at 1daa66b, then lists, sentence ends, anchors with parentheses, a missing target
+  local d=$T/ct/r311
+  ct_put "$d" references/contract.md '## Review' '' 'Any new head gets a fresh cumulative review before merge.' 'Rounds are bounded (three by default).' || return 1
+  ct_put "$d" references/pre-merge.md \
+    '   obligation. (a) When it needs a code change, implementing or fix follows,' \
+    '   and the new head gets the fresh cumulative review' \
+    '   [contract.md](contract.md) requires' \
+    '   ("A new head requires fresh cumulative review"). (b) When the planner shows' || return 1
+  ct_fail CT1 1 --worktree "$d" || return 1
+  ct_err CT1 'launch.sh: cite: references/pre-merge.md: link contract.md ("A new head requires fresh cumulative review"): the anchor "A new head requires fresh cumulative review" does not occur in references/contract.md; fix: quote a heading or verbatim phrase that references/contract.md holds' || return 1
+  ct_put "$d" references/pre-merge.md '   [contract.md](contract.md) requires' '   ("Any new head gets a' '   fresh cumulative review"). (b)' || return 1
+  ct_pass CT1b --worktree "$d" || return 1
+  ct_put "$d" README.md \
+    '[contract](references/contract.md) ("## Review" and "No such phrase"), [gone](gone.md) ("x"), [run](https://example.com/x) ("y").' \
+    '[contract](references/contract.md) ("## Review", "Also absent") and [contract](references/contract.md) ("A missing phrase (detail)").' \
+    '[contract](references/contract.md) "## Review." ("Absent after a quoted heading")' || return 1
+  ct_fail CT1c 5 --worktree "$d" || return 1
+  ct_err CT1c 'the anchor "No such phrase" does not occur in references/contract.md' || return 1
+  ct_err CT1c 'the anchor "Also absent" does not occur in references/contract.md' || return 1
+  ct_err CT1c 'the anchor "A missing phrase (detail)" does not occur in references/contract.md' || return 1
+  ct_err CT1c 'the anchor "Absent after a quoted heading" does not occur in references/contract.md' || return 1
+  ct_is CT1c 'launch.sh: cite: README.md: link gone.md ("x"): the target gone.md is not in the tree; fix: link a file the tree holds, and quote a heading or verbatim phrase that it holds, as ("anchor")' || return 1
+  ct_put "$d" README.md \
+    'See [contract](references/contract.md). ("Not in the contract") opens the next sentence, so it is no anchor.' \
+    'Is it [contract](references/contract.md)? ("Nor this") opens one too.' \
+    '[contract](references/contract.md) ("Rounds are bounded (three by default)") and [contract](references/contract.md) "## Review." ("Any new head gets a").' || return 1
+  ct_pass CT1d --worktree "$d"
+}
+CT2() {   # AC 1: the checked-out repository tree passes; usage and input errors exit 2
+  local root; root=$(cd "$here/.." && pwd) || return 1
+  ct_pass CT2 --worktree "$root" || return 1
+  bash "$LAUNCH_SH" cite 2>/dev/null; [ $? -eq 2 ] || { echo "no --worktree not exit 2"; return 1; }
+  bash "$LAUNCH_SH" cite --worktree ct 2>/dev/null; [ $? -eq 2 ] || { echo "relative --worktree not exit 2"; return 1; }
+  bash "$LAUNCH_SH" cite --worktree "$T/log" 2>/dev/null; [ $? -eq 2 ] || { echo "non-git worktree not exit 2"; return 1; }
+  bash "$LAUNCH_SH" cite --worktree "$root" --plan "$T/ct/none.md" 2>/dev/null; [ $? -eq 2 ] || { echo "missing plan not exit 2"; return 1; }
+  bash "$LAUNCH_SH" cite --worktree "$root" --rev 0000000000000000000000000000000000000000 2>/dev/null; [ $? -eq 2 ] || { echo "bad --rev not exit 2"; return 1; }
+}
+CT3() {   # AC 3, #306 PR1-02 at baa6eee: line-only citations at plan lines 257 and 264
+  local d=$T/ct/t306
+  ct_put "$d" CONTRIBUTING.md '| **Misattributed owner.** For each owner link and quoted anchor that a plan or diff adds, review opens the owner at the quoted text. | x | review | y |' || return 1
+  cat >"$T/ct/p306.md" <<'EOF'
+   The reviewer should find no restated behavior, and each pointer's anchor should state the rule it is cited for (`CONTRIBUTING.md:10`).
+| `CONTRIBUTING.md:10` | applies | Each new anchor is checked in its owner (G2–G4) and by review |
+EOF
+  ct_fail CT3 2 --plan "$T/ct/p306.md" --worktree "$d" || return 1
+  ct_err CT3 "$T/ct/p306.md:1: CONTRIBUTING.md:10: no quoted anchor; fix: quote a heading or verbatim phrase that CONTRIBUTING.md holds" || return 1
+  ct_err CT3 "$T/ct/p306.md:2: CONTRIBUTING.md:10: no quoted anchor" || return 1
+  cat >"$T/ct/p306.md" <<'EOF'
+   The reviewer should find no restated behavior, and each pointer's anchor should state the rule it is cited for (`CONTRIBUTING.md:10` ("**Misattributed owner.**")).
+| `CONTRIBUTING.md:10` ("**Misattributed owner.**") | applies | Each new anchor is checked in its owner (G2–G4) and by review |
+EOF
+  ct_pass CT3b --plan "$T/ct/p306.md" --worktree "$d"
+}
+CT4() {   # AC 3, #316 PR7 at 0c4b366: line 38 line-only; line 102 ellipsis anchor and a planned anchor cited as present
+  local d=$T/ct/t316
+  ct_put "$d" scripts/launch.sh '#   launch.sh pack PACK --worktree DIR' '# Exit: 0 ok; 1 check violation; 2 usage or' || return 1
+  ct_put "$d" references/pack.md 'An evidence check is bitten before the brief that depends on it launches, except for the deferred assertions named below.' || return 1
+  ct_put "$d" .capstan/vocabulary.md '**Evidence check**: a script or multi-step command.' || return 1
+  cat >"$T/ct/p316.md" <<'EOF'
+- Output: exit 0 when the pack is clean. Otherwise exit 1 with one stderr line per missing file. Exit 2 for a usage or input error. The exit codes reuse the header contract at `scripts/launch.sh:36`.
+| Base-case and changed-check bite (AC 1) | `references/pack.md` ("A check group whose planned assertion requires") | `.capstan/vocabulary.md` ("**Evidence check**") already links to `references/pack.md` ("An evidence check is bitten before…"); unchanged. `CONTRIBUTING.md` row "Dropped inventory or case" links to the same anchor; unchanged. The new feature Gotcha links and states no behavior. |
+EOF
+  ct_fail CT4 3 --plan "$T/ct/p316.md" --worktree "$d" || return 1
+  ct_err CT4 "$T/ct/p316.md:1: scripts/launch.sh:36: no quoted anchor" || return 1
+  ct_err CT4 "$T/ct/p316.md:2: references/pack.md (\"An evidence check is bitten before…\"): the anchor \"An evidence check is bitten before…\" does not occur in references/pack.md; an ellipsis is not verbatim text; fix:" || return 1
+  ct_err CT4 "$T/ct/p316.md:2: references/pack.md (\"A check group whose planned assertion requires\")" || return 1
+  cat >"$T/ct/p316.md" <<'EOF'
+- Output: exit 0 when the pack is clean. Otherwise exit 1 with one stderr line per missing file. Exit 2 for a usage or input error. The exit codes reuse the header contract at `scripts/launch.sh:36` ("# Exit: 0 ok; 1 check violation").
+| Base-case and changed-check bite (AC 1) | `references/pack.md`, new sentence "A check group whose planned assertion requires" | `.capstan/vocabulary.md` ("**Evidence check**") already links to `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches"); unchanged. `CONTRIBUTING.md` row "Dropped inventory or case" links to the same anchor; unchanged. The new feature Gotcha links and states no behavior. |
+EOF
+  ct_pass CT4b --plan "$T/ct/p316.md" --worktree "$d"
+}
+CT5() {   # AC 3, #278 F3 at 2a69df1: line 77's ellipsis anchor fails; lines 43 and 64 (no citation) pass
+  local d=$T/ct/t278
+  ct_put "$d" references/contract.md 'Budget begins at spec admission. Loss of local telemetry does not reset it.' || return 1
+  ct_put "$d" references/telemetry.md 'On a failed attempt, `exit=N error=REDACTED;` follows EFFORT.' || return 1
+  cat >"$T/ct/p278.md" <<'EOF'
+   - Remove "`toolchain/` and `tooling/` are pile when present." Owner: this file, "The pile is exactly `briefs/`, … `toolchain/`, `tooling/`, and `events.jsonl` when present." Guards #10.
+   - "A failed attempt's notes line carries its exit status and redacted raw error." Owner: the notes rule. In that rule, change "On a failed attempt, `exit=N error=REDACTED;` follows EFFORT." to "… follows EFFORT, with the exit status and the redacted raw error." so the owner states the whole rule.
+9. **G2-C14, `run.md`/events paragraph.** Replace "Budget start still survives from the earliest remote activity or summary timestamp. Loss of the pile does not reset the budget. Resume does not reset budgets." with "Remote progress evidence preserves budget and rerun history across local deletion; loss of the pile or a resume does not reset a budget." Also remove "Unreported usage is `unknown`, never zero and never estimated." Owners: `contract.md` ("Budget begins … Loss of local telemetry does not reset it.") and the Tokens bullet ("never zero or an estimate").
+EOF
+  ct_fail CT5 1 --plan "$T/ct/p278.md" --worktree "$d" || return 1
+  ct_err CT5 "$T/ct/p278.md:3: contract.md (\"Budget begins … Loss of local telemetry does not reset it.\"): the anchor \"Budget begins … Loss of local telemetry does not reset it.\" does not occur in references/contract.md; an ellipsis is not verbatim text" || return 1
+  sed 's/("Budget begins … Loss of local telemetry does not reset it.")/("Loss of local telemetry does not reset it.")/' "$T/ct/p278.md" >"$T/ct/p278b.md" || return 1
+  ct_pass CT5b --plan "$T/ct/p278b.md" --worktree "$d" || return 1
+  ct_put "$d" templates/contract.md 'A second file with the same name.' || return 1
+  ct_fail CT5c 1 --plan "$T/ct/p278b.md" --worktree "$d" || return 1
+  ct_err CT5c 'contract.md: 2 files in the tree have this name; fix: cite it by its path from the repository root'
+}
+CT6() {   # AC 3, #318 PR4 at 7349d97: "(step 3)" and "(item 7)" in place of an anchor; --rev reads the commit
+  local d=$T/ct/t318
+  ct_put "$d" references/planning.md 'For each rule sentence the plan adds or changes in a procedure file, the plan lists its owners.' || return 1
+  printf '%s\n' '- What the plan lists for each changed rule sentence: `references/planning.md` (step 3).' \
+    '- The same file by item: `references/planning.md` (item 7).' >"$T/ct/p318.md"
+  ct_fail CT6 2 --plan "$T/ct/p318.md" --worktree "$d" || return 1
+  ct_err CT6 "$T/ct/p318.md:1: references/planning.md (step 3): a step or item number is not an anchor; fix: quote a heading or verbatim phrase that references/planning.md holds" || return 1
+  ct_err CT6 "$T/ct/p318.md:2: references/planning.md (item 7): a step or item number is not an anchor" || return 1
+  printf '%s\n' '- What the plan lists for each changed rule sentence: `references/planning.md` ("For each rule sentence the plan adds or changes in a procedure file").' >"$T/ct/p318.md"
+  ct_pass CT6b --plan "$T/ct/p318.md" --worktree "$d" || return 1
+  git -C "$d" -c user.name=t -c user.email=t@example.invalid commit -qm base || return 1
+  printf '%s\n' 'Rewritten.' >"$d/references/planning.md"
+  ct_fail CT6c 1 --plan "$T/ct/p318.md" --worktree "$d" || return 1
+  ct_pass CT6d --plan "$T/ct/p318.md" --worktree "$d" --rev HEAD
+}
+CT7() {   # AC 3, #280 PR3 at 31591d9: row G4-C7 links references/toolchain.md with no anchor
+  local d=$T/ct/t280
+  ct_put "$d" references/toolchain.md 'The brief carries the exact invocation.' || return 1
+  ct_put "$d" templates/brief.md '## Worker constraints' || return 1
+  cat >"$T/ct/p280.md" <<'EOF'
+| G4-C7 | AC 1, 2, 3 | File: `templates/brief.md` · anchor "- Declared-check invocation" · denied-shape list kept (L8) · Removed: «(one plain command, tool path, provenance; [references/harnesses/claude.md](../references/harnesses/claude.md) owns the write-station shell grant; no» Replacement: «([references/toolchain.md](../references/toolchain.md) preflight result: one plain command, tool path, provenance; no» · Owners: ⟨templates/brief.md ("## Worker constraints"); templates/brief.md ("owns the write-station grant"); references/toolchain.md ("The brief carries the exact invocation.")⟩ | Markdown-only rule. Groups B, F, G; denied list dropped → `FAIL B: templates/brief.md paragraph 1 differs` | claude.md not named (gap) |
+EOF
+  ct_fail CT7 1 --plan "$T/ct/p280.md" --worktree "$d" || return 1
+  ct_err CT7 "$T/ct/p280.md:1: [references/toolchain.md](../references/toolchain.md): no quoted anchor; fix: quote a heading or verbatim phrase that references/toolchain.md holds" || return 1
+  sed 's#«(\[references/toolchain.md\](../references/toolchain.md) preflight#«([references/toolchain.md](../references/toolchain.md) ("The brief carries the exact invocation.") preflight#' "$T/ct/p280.md" >"$T/ct/p280b.md" || return 1
+  ct_pass CT7b --plan "$T/ct/p280b.md" --worktree "$d"
+}
+CT8() {   # AC 3: #310 plan revision 1 (https://github.com/comamitc/capstan/issues/310#issuecomment-6277110623), review found no citation finding
+  local d=$T/ct/t310
+  ct_put "$d" CONTRIBUTING.md '## Rules' '| **Dropped inventory or case.** A procedure covers every item. | this file | review | x |' || return 1
+  ct_put "$d" references/pack.md 'An evidence check is bitten before the brief that depends on it launches, except for the deferred assertions named below.' || return 1
+  ct_put "$d" references/planning.md 'Each check group names the planted defect it rejects.' || return 1
+  ct_put "$d" .capstan/features/issue-delivery.md '- Bite timing for evidence checks the initial plan writes: owned elsewhere.' || return 1
+  ct_put "$d" README.md '## Development and provenance' || return 1
+  cat >"$T/ct/p310.md" <<'PLAN310'
+<!-- source: https://github.com/comamitc/capstan/issues/310#issuecomment-6277110623 author_association=OWNER created_at=2026-10-19T20:54:44Z -->
+<!-- capstan:plan comamitc/capstan#310 -->
+# Plan
+
+Plan revision: 1 (initial), 2026-10-19T20:54:41Z; planning worker result: planning-1 (claude opus-5-5)
+
+Specification revision / issue body updatedAt: 2026-10-19T20:43:31Z
+Observed head / base: 834ada7c7d38169faef9d5aa5f565ce7166aa0ea / 834ada7c7d38169faef9d5aa5f565ce7166aa0ea
+Planning step (initial / single correction) / review artifact / correction launch: initial / none / none
+
+## Current behavior and data shape
+
+- **The row.** `CONTRIBUTING.md` ("## Rules") holds a four-column table: Rule | Owner | Enforcer | Occurrences. The "Dropped inventory or case" row (`:11`) states a procedure-coverage rule and the review sentences. Its owner is `this file`, its enforcer is `review`, and it has five occurrence entries. It places no obligation on the author before writing.
+- **The bite.** `references/pack.md` states the bite one sentence per line, from "An evidence check is bitten before the brief that depends on it launches" (`:100`) to "The next review pack carries the change …" (`:115`). It requires one planted defect per evidence check and one per carried finding (`:108`). It does not require one per item of an inventory the check claims to preserve.
+- **Why that matters.** A check like #263 G3 matches only some phrases. It can pass a plant that deletes an unmatched duty, and it reaches plan review undetected (#263 R2).
+
+## Simplicity decision
+
+- **Level:** standards text plus a coordinator procedure change (D7). There is no new script, lint or row (D12), and no edits to planning, plan-review or templates (D13).
+- **`CONTRIBUTING.md`:** one row rewrite.
+- **`references/pack.md`:** five added lines.
+- **`.capstan/features/issue-delivery.md`:** one pointer line.
+- **Reuse:** the existing bite (known-good case, fixture, deferred assertions, ledger line) and the existing defective-check rules, by reference.
+
+## Ordered items
+
+| Item | Acceptance criterion | Observable outcome / affected area | Verification command and failure signal | Risk |
+| --- | --- | --- | --- | --- |
+| 1 | AC 1 | `CONTRIBUTING.md:11`, the "Dropped inventory or case" row: replace the whole line with the row below this table. | Markdown-only rule (text checks): evidence groups C1a–C1e. Failure: `FAIL C1*`. Review reads the row on the PR diff. | Restating the bite in the row. Mitigated by the owner pointer and gate C1e. |
+| 2 | AC 2(a) | `references/pack.md`: insert the five lines below this table directly after "Plant at least one defect per evidence check and one per carried finding the check claims to close." (`:108`) and before "When no known-good candidate exists yet, …" (`:109`). Change no existing line. | Markdown-only rule: groups P1 (rejects base), P2 (gate), P3 (rejects base) and P4 (gate). Failure: `FAIL P*`. | #316 overlap (D14). Only lines are added. |
+| 3 | AC 2 (doc impact) | `.capstan/features/issue-delivery.md`: after the line "- Bite timing for evidence checks the initial plan writes: …" (`:39`), add the pointer line below this table. | Markdown-only rule: group F1 (rejects base). Failure: `FAIL F1`. | None. |
+| 4 | AC 2(b) | Reviewer walkthrough of the new rule over #263 G3 (below this table). The implementer copies it into the PR body. | Review reads the walkthrough against the PR diff and the carried G3 text. Failure: no per-item plant passes G3, or the new text would not class G3 as defective. | `count_flat` is not carried (gap). |
+| 5 | AC 3 | CI runs `bash scripts/test-launch.sh` (`.github/workflows/check.yml`) on the PR head. | CI check on the PR. Failure: a non-zero exit or a last line other than `PASS`. | None. Markdown only. |
+| 6 | D12, D13, scope | Only `CONTRIBUTING.md`, `references/pack.md` and `.capstan/features/issue-delivery.md` change. No untracked files are added. | Markdown-only rule: group S (gate). Failure: `FAIL S`. | None. |
+
+**Item 1: replacement row** (the whole line):
+
+```
+| **Dropped inventory or case.** Before the author of a plan or diff writes a step, rewrite, or check, the author lists each inventory item, each part of the required coverage, and each case that the criteria require, and names for each one the step that covers it and the check that fails when it is removed or changed; [references/pack.md](references/pack.md) ("An evidence check is bitten before the brief that depends on it launches") owns how that check is bitten. A procedure covers every item of the inventory it names, every part of the coverage its criteria require, and every case its criteria require. Review lists that inventory, coverage, and those cases from the criteria, looks for each one in the procedure, and reports each one it cannot find. | this file | review | #200 F2, F5 @ 592fced; #208 PR1, PR3 @ ebd36de; #209 F3, F4 @ 33df6d4; #210 F3 @ 4199f58; #229 PR1 @ 40a9bf6; #256 R6 @ e9f6228; #262 PR2 @ 3246d15; #263 R2, R3 @ 93cf81e; #265 F3 @ 548861e; #279 PR1 @ d78e384; #280 PR4 @ 31591d9; #295 PR2 @ 29c68b8; #297 F10 @ ee0b04d; #298 PR1 @ fde779c; #299 PR5, PR7 @ 6afd13c; #303 PR6 @ 4818ef3; #308 R3 @ 6687c75 |
+```
+
+- The authoring obligation comes first and binds the plan or diff author before writing.
+- The two existing sentences stay word for word. Owner `this file` and enforcer `review` stay.
+- The five existing entries are followed by the twelve D4 entries in delivery-number order, 17 deliveries in all, which matches D4's count.
+- The bite is stated only by owner and anchor.
+
+**Item 2: five lines added to `references/pack.md`**:
+
+```
+When an evidence check claims to preserve an inventory or a set of cases, the bite plants, for each item, a defect that removes or changes only that item, and the check must fail on each such plant.
+A check claims this when its group's named planted defect, the plan item it verifies, or the criterion it is derived from names items to keep, such as rows, sentences, duties, entries, or cases.
+A per-item plant deletes that one item, or rewrites only its required behavior, and keeps every other item and every phrase the check matches outside that item; every item is planted, with no sample.
+Per-item plants are planted defects, so this paragraph's known-good case, synthetic fixture, named deferred assertions, and `ledger.md` notes line apply to each one.
+A check that passes on one of these plants is a defective evidence check.
+```
+
+How each point the brief asks for is settled:
+- **How the coordinator knows a check claims an inventory:** line 2 names the group's planted defect, the plan item and the source criterion.
+- **What a per-item plant is:** line 3 covers rows, sentences, duties, entries and cases. Per D8 every item is planted, with no sample.
+- **How plants fit the fixture, deferred-assertion and ledger rules:** line 4 names those rules without restating them.
+- **What a passing plant means:** line 5 makes the check defective. The existing `:103` and `:114` sentences and the `:98` gap-table row then apply, so no new row is added.
+- **D14:** the insertion touches only the per-item plant and edits no existing line.
+
+**Item 3: pointer line for `.capstan/features/issue-delivery.md`**:
+
+```
+- Per-item plants when an evidence check claims to preserve an inventory or a set of cases: [pack](../../references/pack.md) ("When an evidence check claims to preserve an inventory or a set of cases") owns that rule.
+```
+
+**Item 4: walkthrough over #263 G3** (plan revision 1, base 93cf81e85015420762aee9816caf2dec28acd492, review R2 https://github.com/comamitc/capstan/issues/263#issuecomment-6173495752)
+
+**Is G3 an inventory check?** Yes, on two grounds from line 2 of the new text:
+- G3's named planted defect is "vocabulary write left unplanned, or a duty deleted".
+- Plan item 2 says "The feature-map and doc-page duties stay word-for-word".
+
+**The items G3 claims to keep, in `references/implementing.md` step 3** (anchors from the carried R2 row):
+- (i) the new vocabulary plan-naming sentence;
+- (ii) the feature-map plan-naming phrase "the plan names the feature file and the index line";
+- (iii) the doc-page plan-naming phrase "The plan names that page.";
+- (iv) the feature-map same-commit duty "Write that update in the same commit as the behavior";
+- (v) the documentation-correction same-commit duty "Write the correction in the same commit as the behavior";
+- (vi) the vocabulary same-commit duty "The implementation commit for a repository-scoped term creates or updates `.capstan/vocabulary.md`".
+
+**Per-item plants and the outcome read from the carried G3 lines:**
+
+| Item | Per-item plant | Carried G3 line that decides | Outcome |
+| --- | --- | --- | --- |
+| (i) | Delete the sentence | G3a needs `n -eq 1`; `n=0` | `FAIL G3a`: caught |
+| (ii) | Delete the phrase | G3b `count_flat` finds no match, `rc≠0` | `FAIL G3b`: caught |
+| (iii) | Delete the phrase | G3c, `rc≠0` | `FAIL G3c`: caught |
+| (iv) | Delete "Write that update in the same commit as the behavior" and keep (i)–(iii) | No G3 line matches this text. G3a, G3b and G3c all still match. | **G3 passes** |
+| (v) | Delete "Write the correction in the same commit as the behavior" and keep the rest | Same as (iv) | **G3 passes** |
+| (vi) | Delete "The implementation commit for a repository-scoped term creates or updates `.capstan/vocabulary.md`" and keep the rest | G3a matches the plan-naming sentence, not the duty | **G3 passes** |
+
+- Under new line 5, a pass on plant (iv), (v) or (vi) makes G3 a defective evidence check.
+- The bite runs after plan publication and before the plan-review brief launches (`pack.md:102`). So `:103` repairs G3 before plan review and records old and new in `ledger.md`. R2 would not have needed plan review to find it.
+
+## Documentation impact
+
+| Changed behavior | Canonical path | Decision | Verification |
+| --- | --- | --- | --- |
+| Authoring obligation for dropped inventory | `CONTRIBUTING.md` ("## Rules") | change (item 1) | C1a–C1e |
+| Per-item plant in the bite | `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches") | change (item 2) | P1–P4 |
+| Issue-delivery feature map | `.capstan/features/issue-delivery.md` ("Bite timing for evidence checks the initial plan writes") | change: add one owner pointer (item 3), the same pattern as `:36-42` | F1 |
+| Planning, plan review, templates | `references/planning.md`, `references/plan-review.md`, `templates/` | no change (D13): `planning.md:103` already points to the bite owner | S |
+| Acceptance bar | `README.md` ("Development and provenance") | no change: the declared check is unchanged | item 5 |
+
+## Final proof
+
+| Order | Declared check (exact command) | Heavy |
+| --- | --- | --- |
+| 1 | `bash scripts/test-launch.sh` (cwd the worktree; CI `.github/workflows/check.yml`) | no (pack carries no heavy mark; gap) |
+
+**Evidence check** (Markdown-only rule). The coordinator bites it under the delivery's evidence root, per `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches"). It runs under `bash`.
+
+```bash
+#!/usr/bin/env bash
+# Evidence check, comamitc/capstan#310, criteria 1 and 2 (Markdown-only rule).
+cd "${CHECK_ROOT:-/home/mcomardo/dev/capstan/.worktrees/capstan+310}" || exit 2
+BASE=834ada7c7d38169faef9d5aa5f565ce7166aa0ea
+C=CONTRIBUTING.md P=references/pack.md F=.capstan/features/issue-delivery.md
+fail=0
+ok()  { echo "ok $1"; }
+bad() { echo "FAIL $1"; fail=1; }
+once() { local n rc; n=$(grep -Fxc -- "$1" "$2"); rc=$?; [ "$rc" -eq 0 ] && [ "$n" -eq 1 ]; }
+pos()  { local o rc; o=$(grep -nFx -- "$1" "$P"); rc=$?; [ "$rc" -eq 0 ] || { echo 0; return 1; }; echo "${o%%:*}"; }
+
+# C1 row: exactly one "Dropped inventory or case" row.
+n=$(grep -Fc '| **Dropped inventory or case.** ' "$C"); rc=$?
+row=$(grep -F '| **Dropped inventory or case.** ' "$C"); rc2=$?
+{ [ "$rc" -eq 0 ] && [ "$n" -eq 1 ] && [ "$rc2" -eq 0 ]; } && ok C1row || { bad "C1row rc=$rc n=$n"; row=; }
+
+# C1a (rejects base) planted defect: any part of the authoring obligation removed or changed; variant: sentence moved within the row.
+AUTH='Before the author of a plan or diff writes a step, rewrite, or check, the author lists each inventory item, each part of the required coverage, and each case that the criteria require, and names for each one the step that covers it and the check that fails when it is removed or changed'
+[[ $row == *"$AUTH"* ]] && ok C1a || bad C1a
+
+# C1b (gate) planted defect: either review sentence removed or changed; variant: sentences follow the new one.
+R1='A procedure covers every item of the inventory it names, every part of the coverage its criteria require, and every case its criteria require.'
+R2='Review lists that inventory, coverage, and those cases from the criteria, looks for each one in the procedure, and reports each one it cannot find.'
+[[ $row == *"$R1"* ]] && ok C1b1 || bad C1b1
+[[ $row == *"$R2"* ]] && ok C1b2 || bad C1b2
+
+# C1c (rejects base) planted defect: owner, enforcer, or any one occurrence entry removed, changed, or reordered; variant: rule cell reworded.
+OCC='#200 F2, F5 @ 592fced; #208 PR1, PR3 @ ebd36de; #209 F3, F4 @ 33df6d4; #210 F3 @ 4199f58; #229 PR1 @ 40a9bf6; #256 R6 @ e9f6228; #262 PR2 @ 3246d15; #263 R2, R3 @ 93cf81e; #265 F3 @ 548861e; #279 PR1 @ d78e384; #280 PR4 @ 31591d9; #295 PR2 @ 29c68b8; #297 F10 @ ee0b04d; #298 PR1 @ fde779c; #299 PR5, PR7 @ 6afd13c; #303 PR6 @ 4818ef3; #308 R3 @ 6687c75'
+[[ $row == *"| this file | review | $OCC |" ]] && ok C1c || bad C1c
+
+# C1d (rejects base) planted defect: bite-owner pointer removed or its anchor changed; variant: pointer placed elsewhere in the rule cell.
+PTR='[references/pack.md](references/pack.md) ("An evidence check is bitten before the brief that depends on it launches")'
+n=$(grep -Fc 'An evidence check is bitten before the brief that depends on it launches' "$P"); rc=$?
+{ [[ $row == *"$PTR"* ]] && [ "$rc" -eq 0 ] && [ "$n" -ge 1 ]; } && ok C1d || bad "C1d rc=$rc n=$n"
+
+# C1e (gate, negative) planted defect: the row restates bite terms; variant: the owner pointer alone.
+printf '%s\n' "$row" | grep -Fiq -e 'planted' -e 'known-good' -e 'synthetic fixture' -e 'ledger.md' -e 'deferred assertion'; rc=$?
+[ "$rc" -eq 1 ] && ok C1e || bad "C1e rc=$rc"
+
+# P1 (rejects base) planted defect: any new line removed or changed; variant: other pack.md lines edited.
+mapfile -t NEW <<'EOF'
+When an evidence check claims to preserve an inventory or a set of cases, the bite plants, for each item, a defect that removes or changes only that item, and the check must fail on each such plant.
+A check claims this when its group's named planted defect, the plan item it verifies, or the criterion it is derived from names items to keep, such as rows, sentences, duties, entries, or cases.
+A per-item plant deletes that one item, or rewrites only its required behavior, and keeps every other item and every phrase the check matches outside that item; every item is planted, with no sample.
+Per-item plants are planted defects, so this paragraph's known-good case, synthetic fixture, named deferred assertions, and `ledger.md` notes line apply to each one.
+A check that passes on one of these plants is a defective evidence check.
+EOF
+for i in "${!NEW[@]}"; do once "${NEW[$i]}" "$P" && ok "P1.$((i+1))" || bad "P1.$((i+1))"; done
+
+# P2 (gate) planted defect: any existing bite line removed or changed; variant: lines inserted between them.
+mapfile -t KEEP <<'EOF'
+An evidence check is bitten before the brief that depends on it launches, except for the deferred assertions named below.
+A command the coordinator writes from plan text for a pack's `## Checks` is an evidence check even when the plan quotes it; a declared check is not an evidence check, and [references/toolchain.md](toolchain.md) owns its preflight.
+An evidence check the initial plan writes is bitten after the coordinator publishes that plan and before the plan-review brief launches, by the method below.
+When that bite shows a defective check, the coordinator repairs it before plan review, records the old and new check in `ledger.md`, and repeats the bite; later packs carry the repaired check until the single correction changes it.
+A check that passes that bite goes to plan review unchanged, and no repair is recorded.
+The plan-review pack carries the bite outcomes and any repair as carried evidence, and the plan reviewer judges whether a repair weakened the check.
+A check that the single correction changes, or that a worker reports defective, is bitten again before the brief that depends on it launches.
+The coordinator runs the evidence check against at least one known-good case, which it passes, and at least one planted defect, which it fails.
+Plant at least one defect per evidence check and one per carried finding the check claims to close.
+When no known-good candidate exists yet, the coordinator either bites the check on a synthetic fixture or names the assertions that cannot run until the candidate exists.
+A synthetic fixture is a scratch copy with a representative edit built from the plan's text; it stays outside the product worktree, is a scratch git clone with a commit when the check inspects commits or diffs, and is never given to a worker.
+Named deferred assertions are the only exception to the pre-launch bite; the coordinator bites them at the closure proof gate, before review starts.
+The coordinator records a notes line in `ledger.md` naming each check's command, the known-good outcome, and each planted defect's outcome and exit.
+Evidence scripts stay under the delivery's evidence root, outside the repository.
+When a worker reports a defective evidence check, the worker does not repair it; the coordinator repairs it, records the old and new check in `ledger.md`, and repeats the bite.
+The next review pack carries the change, and the reviewer judges whether it weakened the check.
+EOF
+for i in "${!KEEP[@]}"; do once "${KEEP[$i]}" "$P" && ok "P2.$((i+1))" || bad "P2.$((i+1))"; done
+
+# P3 (rejects base) planted defect: a new line placed outside the bite rule; variant: the five lines in another order inside it.
+lo=$(pos "${KEEP[8]}") || bad P3lo
+hi=$(pos "${KEEP[9]}") || bad P3hi
+for i in "${!NEW[@]}"; do
+  p=$(pos "${NEW[$i]}") && [ "$p" -gt "$lo" ] && [ "$p" -lt "$hi" ] && ok "P3.$((i+1))" || bad "P3.$((i+1))"
+done
+
+# P4 (gate) planted defect: a new row in the gap table, or the defective-check row changed; variant: rows added to other tables.
+IFS= read -r DEFROW <<'EOF'
+| any station reporting a defective evidence check | repair the check as the coordinator, record old and new in ledger.md, and repeat the bite; then continue by that station's row above, so after single correction the pass stays consumed and the repaired check is carried in the implementing pack |
+EOF
+t=$(awk '/^\| Station returning a pack gap \|/{f=1} f&&/^$/{exit} f' "$P"); rc=$?
+n=$(printf '%s\n' "$t" | grep -c '^| '); rc2=$?
+{ [ "$rc" -eq 0 ] && [ "$rc2" -eq 0 ] && [ "$n" -eq 6 ] && once "$DEFROW" "$P"; } && ok P4 || bad "P4 rc=$rc/$rc2 n=$n"
+
+# F1 (rejects base) planted defect: feature pointer removed or its anchor changed; variant: other feature lines edited.
+FB='- Per-item plants when an evidence check claims to preserve an inventory or a set of cases: [pack](../../references/pack.md) ("When an evidence check claims to preserve an inventory or a set of cases") owns that rule.'
+once "$FB" "$F" && ok F1 || bad F1
+
+# S (gate) planted defect: planning.md, plan-review.md, templates/, or a new script changed or added; variant: edits to the three named files only.
+ch=$(git diff --name-only "$BASE" --); rc=$?
+un=$(git ls-files --others --exclude-standard); rc2=$?
+extra=$(printf '%s\n' "$ch" "$un" | grep -v '^$' | grep -vFx -e "$C" -e "$P" -e "$F"); rc3=$?
+{ [ "$rc" -eq 0 ] && [ "$rc2" -eq 0 ] && [ "$rc3" -eq 1 ]; } && ok S || bad "S rc=$rc/$rc2/$rc3 extra=$extra"
+
+[ "$fail" -eq 0 ] && { echo PASS; exit 0; }
+echo FAIL; exit 1
+```
+
+**Per-item plants the bite runs** (new `pack.md` line 1; each must print `FAIL`):
+
+| Group | Inventory item → plant |
+| --- | --- |
+| C1a | Each of 7 parts of the obligation, one plant each: actor "author of a plan or diff" → "reviewer"; "Before" → "After"; drop "each inventory item"; drop "each part of the required coverage"; drop "each case that the criteria require"; drop "the step that covers it"; drop "the check that fails when it is removed or changed". |
+| C1b | Delete R1. Delete R2. Change R2's "reports each one" to "reports the first one". |
+| C1c | Owner → `references/pack.md`. Enforcer → `named check`. Delete each one of the 17 entries (17 plants). Swap two entries. Change one SHA, for example `93cf81e` → `93cf81f`. |
+| C1d | Delete the pointer. Change its anchor to "An evidence check is bitten". |
+| C1e | Append "the bite plants each item as a planted defect" to the row. |
+| P1 | Delete each of the 5 lines (5 plants). Also change "for each item" → "for a sample of items", drop "the plan item it verifies", drop "with no sample", drop "named deferred assertions", and change "is a defective evidence check" → "is reported". |
+| P2 | Delete each of the 16 existing lines (16 plants), including known-good `:107`, plant floor `:108`, fixture `:109-110`, deferred `:111` and ledger `:112`. |
+| P3 | Move each new line after `:115` (5 plants). |
+| P4 | Add the row "\| per-item plant passes \| … \|". Change "repeat the bite" in the defective-check row. |
+| F1 | Delete the pointer. Change its anchor. |
+| S | Edit `references/planning.md`. Edit `references/plan-review.md`. Edit `templates/plan.md`. Add an untracked `scripts/check-inventory.sh`. |
+
+- **Known-good case:** the candidate head after items 1–3. The coordinator builds it as a synthetic fixture (a scratch clone with a commit made from this plan's text) until the candidate exists. No assertion is deferred.
+- **Reject the base (exit 1 at 834ada7):** C1a, C1c, C1d, P1, P3, F1.
+- **Gates (pass at the base):** C1row, C1b, C1e, P2, P4, S.
+
+## Revision response
+
+none (initial plan)
+PLAN310
+  ct_pass CT8 --plan "$T/ct/p310.md" --worktree "$d"
+}
+CT9() {   # D14 forms: whole-file path, timestamp, URL, policy-row key, non-anchor ellipsis, fence, outside paths, a range
+  local d=$T/ct/t9
+  ct_put "$d" references/pack.md 'Pack check: every file.' || return 1
+  ct_put "$d" AGENTS.md '- The integration base is `main`.' || return 1
+  cat >"$T/ct/p9.md" <<'EOF'
+- `references/pack.md` names the rule; see `references/pack.md`.
+- spec revision 2026-10-20T15:12:49Z, round 1, at 15:12 UTC; run https://example.com:8080/x and [run](https://github.com/o/r/actions/runs/1).
+- `AGENTS.md:3` — "The integration base is `main`."
+- `AGENTS.md:3` — "The integration base is `staging`."
+   - In that rule, change "On a failed attempt, `exit=N error=REDACTED;` follows EFFORT." to "… follows EFFORT, with the exit status."
+```
+- Pointer: [pack](references/pack.md) ("A planned anchor") owns that rule.
+```
+- Pointer: [pack](references/pack.md) ("A planned anchor") owns that rule.
+- `docs/elsewhere.md:4` and `checks/occurrences/plan-306-r1.md:257` ("`CONTRIBUTING.md:10`") are outside the tree.
+- `references/pack.md`, new sentence "A planned anchor".
+- See `AGENTS.md:1-3` for the base.
+EOF
+  ct_fail CT9 3 --plan "$T/ct/p9.md" --worktree "$d" || return 1
+  ct_err CT9 "$T/ct/p9.md:4: AGENTS.md:3 (\"The integration base is \`staging\`.\"): the anchor" || return 1
+  ct_err CT9 "$T/ct/p9.md:9: [pack](references/pack.md) (\"A planned anchor\"): the anchor \"A planned anchor\" does not occur in references/pack.md" || return 1
+  ct_err CT9 "$T/ct/p9.md:12: AGENTS.md:1-3: no quoted anchor"
+}
+CT10() {   # D14: an anchor's own text is never read as a citation; a citation after the anchor still is
+  local d=$T/ct/t10
+  ct_put "$d" AGENTS.md 'See CONTRIBUTING.md:10 for the row.' || return 1
+  ct_put "$d" CONTRIBUTING.md '| **Misattributed owner.** x |' || return 1
+  printf '%s\n' '- `AGENTS.md` ("See CONTRIBUTING.md:10") names the row.' \
+    '- [agents](AGENTS.md) ("See CONTRIBUTING.md:10") and `AGENTS.md:1` ("See CONTRIBUTING.md:10") name it too.' >"$T/ct/p10.md"
+  ct_pass CT10 --plan "$T/ct/p10.md" --worktree "$d" || return 1
+  printf '%s\n' '- `AGENTS.md` ("See CONTRIBUTING.md:10") names the row, and so does `CONTRIBUTING.md:10` with no anchor.' >"$T/ct/p10.md"
+  ct_fail CT10b 1 --plan "$T/ct/p10.md" --worktree "$d" || return 1
+  ct_is CT10b "launch.sh: cite: $T/ct/p10.md:1: CONTRIBUTING.md:10: no quoted anchor; fix: quote a heading or verbatim phrase that CONTRIBUTING.md holds, as (\"anchor\")"
+}
+# pkr_tree: $T/pkr/references/contract.md with "## Global non-goals" at line 124, as at 6afd13c.
+pkr_tree() {
+  local i
+  mkdir -p "$T/pkr/references" || return 1
+  { for ((i = 1; i <= 123; i++)); do echo "filler line $i"; done
+    printf '%s\n' '## Global non-goals' '' 'These global non-goals apply to every Capstan file and every mode file. Capstan' 'never adds:'
+    for ((i = 128; i <= 155; i++)); do echo "filler line $i"; done
+  } >"$T/pkr/references/contract.md"
+}
+# pkr_run NAME PACK WANT [TEXT]: launch.sh pack with worktree $T/pkr exits WANT; with WANT 1, one error line holding TEXT.
+pkr_run() {
+  bash "$LAUNCH_SH" pack "$2" --worktree "$T/pkr" >"$T/log/$1.out" 2>"$T/log/$1.err"; rc=$?
+  [ "$rc" -eq "$3" ] || { echo "pack exited $rc, not $3: $(first "$T/log/$1.err")"; return 1; }
+  if [ "$3" -eq 0 ]; then [ ! -s "$T/log/$1.err" ] || { echo "stderr: $(first "$T/log/$1.err")"; return 1; }; return 0; fi
+  [ "$(grep -c . "$T/log/$1.err")" = 1 ] && grep -qF -- "$4" "$T/log/$1.err" || { echo "expected one error with: $4; got: $(cat "$T/log/$1.err")"; return 1; }
+}
+PK10() {   # AC 2, #299 PR8: the planning-pack entry's range 126-150 misses "## Global non-goals" at line 124 (6afd13c)
+  pkr_tree || return 1
+  printf '%s\n' '## Rules that apply' '- `references/contract.md:131-132` — "a Capstan executable"' '## Named files' \
+    '- `references/contract.md:126-150` ("## Global non-goals") — executable non-goal, #181 exception, permit list.' >"$T/pk/r299.md"
+  pkr_run PK10 "$T/pk/r299.md" 1 'launch.sh: pack: references/contract.md:126-150 ("## Global non-goals"): the anchor is not inside lines 126-150 of references/contract.md; fix: widen the range to the lines that hold it' || return 1
+  printf '%s\n' '## Rules that apply' '- `references/contract.md:131-132` — "a Capstan executable"' '## Named files' \
+    '- `references/contract.md:124-150` ("## Global non-goals") — executable non-goal, #181 exception, permit list.' >"$T/pk/r299.md"
+  pkr_run PK10b "$T/pk/r299.md" 0
+}
+PK11() {   # AC 2: no anchor (full, compact), a compact range miss, a whole-file entry, and paths outside the worktree
+  local R='Rule: `references/contract.md:131-132` — "a Capstan executable"' H='## Rules that apply' Q='- `references/contract.md:131-132` — "a Capstan executable"'
+  pkr_tree || return 1
+  printf '%s\n' "$H" "$Q" '## Named files' '- `references/contract.md:124-150` — executable non-goal' >"$T/pk/r-none.md"
+  pkr_run PK11 "$T/pk/r-none.md" 1 'launch.sh: pack: references/contract.md:124-150: no quoted anchor; fix: write' || return 1
+  printf '%s\n' '## Candidate' 'item' 'Criterion: AC 2 — "x"' "$R" 'Check: `true`, expected exit 0' \
+    'Named file: `references/contract.md:126-150` ("## Global non-goals") — exception' >"$T/pk/r-compact.md"
+  pkr_run PK11b "$T/pk/r-compact.md" 1 'the anchor is not inside lines 126-150 of references/contract.md; fix: widen' || return 1
+  printf '%s\n' '## Candidate' 'item' 'Criterion: AC 2 — "x"' "$R" 'Check: `true`, expected exit 0' \
+    'Named file: `references/contract.md:124-150` — exception' >"$T/pk/r-compact.md"
+  pkr_run PK11c "$T/pk/r-compact.md" 1 'launch.sh: pack: references/contract.md:124-150: no quoted anchor; fix: write' || return 1
+  printf '%s\n' '## Candidate' 'item' 'Criterion: AC 2 — "x"' "$R" 'Check: `true`, expected exit 0' \
+    'Named file: `references/contract.md:124-150` ("## Global non-goals") — exception' >"$T/pk/r-compact.md"
+  pkr_run PK11d "$T/pk/r-compact.md" 0 || return 1
+  printf '%s\n' "$H" "$Q" '## Named files' '- `references/contract.md` ("never adds:") — whole file' \
+    '- `checks/occurrences/x.md:1-5` ("not in the worktree") — evidence-root file' \
+    '- `/elsewhere/y.md:1-2` ("outside the worktree") — absolute path' >"$T/pk/r-out.md"
+  pkr_run PK11e "$T/pk/r-out.md" 0 || return 1
+  printf '%s\n' "$H" "$Q" '## Named files' '- `references/contract.md` ("never adds anything") — whole file' >"$T/pk/r-whole.md"
+  pkr_run PK11f "$T/pk/r-whole.md" 1 'launch.sh: pack: references/contract.md ("never adds anything"): the anchor does not occur in references/contract.md; fix:'
+}
+
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
-for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 PK8 PK9 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
+for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 PK8 PK9 PK10 PK11 CT1 CT2 CT3 CT4 CT5 CT6 CT7 CT8 CT9 CT10 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
   C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 \
   C24 C25 C26 C27 C28 C29 C30 C31 C32 Y1 Y2 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
   t "$c" "$c"

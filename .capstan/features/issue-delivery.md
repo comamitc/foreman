@@ -40,8 +40,9 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Per-item plants when an evidence check claims to preserve an inventory or a set of cases: [pack](../../references/pack.md) ("When an evidence check claims to preserve an inventory or a set of cases") owns that rule.
 - Real-run evidence checklist: [pack](../../references/pack.md) ("Real-run evidence checklist") owns that rule.
 - Review findings in the coordinator's own evidence: [code-review convergence](../../references/review-convergence.md) ("## Coordinator-evidence findings") owns that rule.
-- Citations in plans and packs: [pack](../../references/pack.md) ("Citation rule") owns that rule.
+- Citations in plans, packs, and repository Markdown: [pack](../../references/pack.md) ("Citation rule") owns that rule.
 - Pack check: [pack](../../references/pack.md) ("Pack check:") owns the rule, and [shared harness](../../references/harnesses/shared.md) ("The coordinator runs the pack check") owns when it runs.
+- Citation check: [pack](../../references/pack.md) ("Citation check:") owns what it requires, and [shared harness](../../references/harnesses/shared.md) ("The coordinator runs the citation check") owns when it runs.
 - Owners of changed rule sentences: [CONTRIBUTING.md](../../CONTRIBUTING.md) ("**Section contradiction.**") owns the authoring obligation and review's comparison; [planning](../../references/planning.md) ("lists the owners that") owns the plan's owner list, and [pack](../../references/pack.md) ("states a rule on a behavior those criteria change") owns the planning pack's owner entries.
 - Base cases and changed evidence checks in the bite: [pack](../../references/pack.md) ("A check group whose planned assertion requires") owns that rule.
 - Later-round code-review Candidate and its fallback to the cumulative diff: [pack](../../references/pack.md) ("A code-review pack for round 2 and later instead carries") owns that rule.
