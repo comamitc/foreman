@@ -1546,7 +1546,7 @@ TH2() { # a granted write station's result is its result file; no host text in s
   cmp -s "$T/exp/TH2.result" "$T/th2/result.md" || { echo "the result file changed"; return 1; }
 }
 
-# Pack check (PK1-PK7). pk_run NAME PACK: run launch.sh pack with worktree $T/pk; sets rc.
+# Pack check (PK1-PK9). pk_run NAME PACK: run launch.sh pack with worktree $T/pk; sets rc.
 pk_run() { bash "$LAUNCH_SH" pack "$2" --worktree "$T/pk" >"$T/log/$1.out" 2>"$T/log/$1.err"; rc=$?; }
 # pk_fail NAME PACK FILE...: exit 1 with exactly one fix-naming error line per FILE.
 pk_fail() {
@@ -1698,9 +1698,29 @@ PK7() {   # PR2: compact pack whose candidate carries a fenced ## Named files he
   printf '%s\n' 'Named file: `CONTRIBUTING.md:1-14` ("<quoted sentence>") — the rule the Rule: line quotes' >>"$T/pk/ccand.md"
   pk_pass PK7b "$T/pk/ccand.md"
 }
+PK8() {   # #316 F1: an inline extensionless path:line, a blockquote-then-list bare path; timestamps cite nothing
+  printf '%s\n' '## Rules that apply' '- Source (LICENSE:9): rule' \
+    '## Named files' '- `README.md:1-20` ("launch builder") — builder' >"$T/pk/inline.md"
+  pk_fail PK8 "$T/pk/inline.md" LICENSE || return 1
+  printf -- '- `LICENSE:1-21` ("Permission is hereby granted") — quoted rule.\n' >>"$T/pk/inline.md"
+  pk_pass PK8b "$T/pk/inline.md" || return 1
+  printf '%s\n' '## Rules that apply' '> - `.capstan/vocabulary.md` "**Rule owner**" — "Other files name it."' \
+    '## Named files' '- `README.md:1-20` ("launch builder") — builder' >"$T/pk/bqlist.md"
+  pk_fail PK8c "$T/pk/bqlist.md" .capstan/vocabulary.md || return 1
+  printf -- '- `.capstan/vocabulary.md:79-114` ("**Rule owner**") — quoted rule.\n' >>"$T/pk/bqlist.md"
+  pk_pass PK8d "$T/pk/bqlist.md" || return 1
+  printf '%s\n' '## Rules that apply' '- `AGENTS.md:3` — rule' '- spec revision 2026-10-20T15:12:49Z, round 1, at 15:12 UTC' \
+    '## Named files' '- `AGENTS.md:1-10` ("integration base") — rule' >"$T/pk/stamp.md"
+  pk_pass PK8e "$T/pk/stamp.md"
+}
+PK9() {   # #316 F2: the quotes end at the first ## Checks heading, not the last
+  printf '%s\n' '## Rules that apply' '- `AGENTS.md:3` — rule' '## Checks' '- `README.md:11` — check description' \
+    '## Checks repeated' 'none' '## Named files' '- `AGENTS.md:1-10` ("integration base") — rule' >"$T/pk/checks2.md"
+  pk_pass PK9 "$T/pk/checks2.md"
+}
 
 case $PC_SHELLS in *zsh*) ;; *) echo "skip PC1-zsh: zsh not on PATH" ;; esac
-for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
+for c in K1 K2 K3 K4 K5 K6 K7 W1 P1 P2 PK1 PK2 PK3 PK4 PK5 PK6 PK7 PK8 PK9 G1 G2 G3 G4 G5 G6 G7 G8 G9 C1 C2 C3 C3b C4 C5 C6 C7 C8 C9 C10 C11 C12 C13 \
   C14 C15 C16 C17 C18 C19 C20 C21 C22 C23 S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 O1 O2 O3 PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 \
   C24 C25 C26 C27 C28 C29 C30 C31 C32 Y1 Y2 S12 TS1 TS2 TS3 TS4 TS5 TC1 TC2 TC3 TC4 TC5 TH1 TH2; do
   t "$c" "$c"

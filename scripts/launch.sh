@@ -1095,8 +1095,8 @@ cmd_check() {
 
 # ---- pack: the pack check; references/pack.md ("Pack check:") owns the rule ----
 
-PK_LEAD_RE='^[[:space:]]*([-*+]|[0-9]+[.)])?[[:space:]]*(>[[:space:]]*)?`([^`[:space:]]+)`'
-PK_INLINE_RE='(^|[[:space:](`])([A-Za-z0-9_.~/+-]*[./][A-Za-z0-9_.~/+-]*[A-Za-z0-9_-]):([0-9]+(-[0-9]+)?)'
+PK_LEAD_RE='^[[:space:]]*(([-*+]|[0-9]+[.)]|>)[[:space:]]*)*`([^`[:space:]]+)`'
+PK_INLINE_RE='(^|[[:space:](`])([A-Za-z0-9_.~/+-]*[A-Za-z][A-Za-z0-9_.~/+-]*):([0-9]+(-[0-9]+)?)([^:A-Za-z0-9]|$)'
 PK_HINT_RE='^(.+):[0-9]+(-[0-9]+)?$'
 PK_BLANK_RE='^[[:space:]]*$'
 PK_COMPACT_RE='^(Criterion|Rule|Check|Named file):'
@@ -1118,7 +1118,8 @@ pk_file() {
 pk_path() { [[ $1 == */* || $1 == *.* || $1 =~ $PK_HINT_RE ]]; }
 
 # pk_cite LINE: add what one ## Rules that apply line cites to PK_CITES: the backticked
-# path that opens it, after any list or blockquote marker, or else each path:line hint on it.
+# path that opens it, after any list or blockquote markers, or else each path:line hint on it
+# whose path holds a letter and whose hint is followed by no :, letter, or digit.
 pk_cite() {
   local rest=$1 t
   if [[ $rest =~ $PK_LEAD_RE ]]; then
@@ -1132,7 +1133,7 @@ pk_cite() {
 }
 
 cmd_pack() {
-  local pk= wt= line c f n i b e end where entry r=-1 k=-1 nf=-1 bad=0
+  local pk= wt= line c f n i b e where entry r=-1 nf=-1 bad=0
   local -a L=() seen=()
   while [ $# -gt 0 ]; do
     case $1 in
@@ -1172,15 +1173,15 @@ cmd_pack() {
     for i in "${!L[@]}"; do
       case ${L[i]} in
         '## Rules that apply'*) r=$i ;;
-        '## Checks'*) k=$i ;;
         '## Named files'*) nf=$i ;;
       esac
     done
     if [ "$r" -ge 0 ]; then
-      end=${#L[@]}
-      [ "$k" -gt "$r" ] && end=$k
-      [ "$nf" -gt "$r" ] && [ "$nf" -lt "$end" ] && end=$nf
-      for ((i = r + 1; i < end; i++)); do pk_cite "${L[i]}"; done
+      # The quotes end at the first ## Checks or ## Named files line after the Rules heading.
+      for ((i = r + 1; i < ${#L[@]}; i++)); do
+        case ${L[i]} in '## Checks'* | '## Named files'*) break ;; esac
+        pk_cite "${L[i]}"
+      done
     fi
     if [ "$nf" -gt "$r" ]; then
       for ((i = nf + 1; i < ${#L[@]}; i++)); do
