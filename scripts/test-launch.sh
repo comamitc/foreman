@@ -2104,6 +2104,7 @@ echo FAIL; exit 1
 ## Revision response
 
 none (initial plan)
+
 PLAN310
   ct_pass CT8 --plan "$T/ct/p310.md" --worktree "$d"
 }
