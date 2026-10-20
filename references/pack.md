@@ -61,6 +61,13 @@ A quoted sentence under `## Rules that apply`, or on a compact `Rule:` line, alr
 A citation whose anchor matches its target is valid even when its line hint has moved, and a hint that disagrees with its anchor is not a finding.
 A citation with no anchor, or whose anchor does not match its target, does not meet this rule.
 This rule covers citations in plans and packs only; it does not change the evidence field of a read-only report, which [references/contract.md](contract.md) ("**Evidence:**") owns, the policy-row key, which [references/telemetry.md](telemetry.md) ("This file owns the policy row") owns, or citations in worker results and run reports, including the Citations item of the "Real-run evidence checklist" below.
+Pack check: every file that a `## Rules that apply` quote or a compact `Rule:` line cites is also named by a `## Named files` entry or a compact `Named file:` line in the form the Citation rule above owns, so the worker can open the quoted line.
+In a full pack, the quotes are the lines under the last line that starts `## Rules that apply`, up to the next line after it that starts `## Checks` or `## Named files`, and the entries are the lines under the last line that starts `## Named files`, when that line comes after it, up to the next line that starts `## `.
+The candidate and the open findings come before those headings, so a heading or line they carry, fenced or not, is not pack metadata.
+A quote line cites the backticked path that opens it, after any list or blockquote marker; a line that opens with no backticked path cites each `path:line` or `path:line-range` on it; an entry names the backticked path that opens it; a path holds a `/` or a `.`, or ends in a line hint.
+A compact pack is one whose last non-blank line starts `Criterion:`, `Rule:`, `Check:`, or `Named file:`; the lines read are the closing run of such lines and blank lines, where a `Rule:` line cites the path after `Rule:`, backticked or not, and a `Named file:` line names the backticked path after `Named file:`.
+A cited path and a named path are compared without a `:line` or `:line-range` hint, a leading `./`, or a leading worktree path.
+`scripts/launch.sh pack` checks this; [references/harnesses/shared.md](harnesses/shared.md) ("The coordinator runs the pack check") owns when it runs.
 
 Real-run evidence checklist: real-run evidence is evidence the coordinator itself produces by running an invocation or a launch for an acceptance criterion; worker output and declared checks are not real-run evidence.
 Before writing a code-review pack that carries real-run evidence, the coordinator checks that evidence against these four items:
@@ -75,9 +82,7 @@ The coordinator records a notes line in `ledger.md` naming each failed item, wha
 Evidence that meets every item goes into the pack unchanged, and no correction is recorded.
 The checklist checks the evidence a run recorded; it does not replace the bite of an evidence check below.
 
-Compact form, the exception for one Named files entry, one check, and no open
-finding rows: nothing is written as `none`, no heading beyond Candidate appears,
-and the read-station ceiling is 7 (1 + 1 + 5).
+Compact form, the exception for one task Named files entry, one check, and no open finding rows: nothing is written as `none`, no heading beyond Candidate appears, each file a `Rule:` line quotes gets its own `Named file:` line as "Pack check:" above requires, and the read-station ceiling is the number of `Named file:` lines + 1 + 5 (8 for the example below).
 
 ```
 # Pack — owner/repo#N, implementing attempt 1, candidate: plan comment URL, revision R
@@ -87,6 +92,7 @@ Criterion: AC 2 — "<quoted criterion>"
 Rule: `CONTRIBUTING.md:14` — "<quoted sentence>"
 Check: `make test` in WORKTREE, expected exit 0
 Named file: `src/cli.py:40-58` ("<anchor>") — the option parser this item edits
+Named file: `CONTRIBUTING.md:1-14` ("<quoted sentence>") — the rule the Rule: line quotes
 ```
 
 The launch gate: if Candidate, Checks, or Open findings cannot be filled with
@@ -117,6 +123,9 @@ A check claims this when its group's named planted defect, the plan item it veri
 A per-item plant deletes that one item, or rewrites only its required behavior, and keeps every other item and every phrase the check matches outside that item; every item is planted, with no sample.
 Per-item plants are planted defects, so this paragraph's known-good case, synthetic fixture, named deferred assertions, and `ledger.md` notes line apply to each one.
 A check that passes on one of these plants is a defective evidence check.
+A check group whose planned assertion requires text or behavior that is absent at the resolved base is also run at that base as part of its bite, whatever its gate label, and must fail there; the base run counts as a planted defect for this paragraph's `ledger.md` notes line.
+A check that the coordinator changes after the plan states it, by a bite repair, a single-correction change, a worker-reported defect, or a fix-round change, is bitten again against every planted defect and every base case its earlier version failed, and must fail each one.
+A check that passes one of these cases is a defective evidence check.
 When no known-good candidate exists yet, the coordinator either bites the check on a synthetic fixture or names the assertions that cannot run until the candidate exists.
 A synthetic fixture is a scratch copy with a representative edit built from the plan's text; it stays outside the product worktree, is a scratch git clone with a commit when the check inspects commits or diffs, and is never given to a worker.
 Named deferred assertions are the only exception to the pre-launch bite; the coordinator bites them at the closure proof gate, before review starts.

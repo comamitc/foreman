@@ -41,6 +41,8 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Real-run evidence checklist: [pack](../../references/pack.md) ("Real-run evidence checklist") owns that rule.
 - Review findings in the coordinator's own evidence: [code-review convergence](../../references/review-convergence.md) ("## Coordinator-evidence findings") owns that rule.
 - Citations in plans and packs: [pack](../../references/pack.md) ("Citation rule") owns that rule.
+- Pack check: [pack](../../references/pack.md) ("Pack check:") owns the rule, and [shared harness](../../references/harnesses/shared.md) ("The coordinator runs the pack check") owns when it runs.
+- Base cases and changed evidence checks in the bite: [pack](../../references/pack.md) ("A check group whose planned assertion requires") owns that rule.
 - Later-round code-review Candidate and its fallback to the cumulative diff: [pack](../../references/pack.md) ("A code-review pack for round 2 and later instead carries") owns that rule.
 - Shared red runs in implementing: [implementing](../../references/implementing.md) ("One run of a check is the red observation") owns that rule.
 - A delivery's summary discloses finding classes and friction that recurred in two or more earlier deliveries and suggests the correction mode; [telemetry](../../references/telemetry.md) ("This section owns earlier deliveries") owns that rule.

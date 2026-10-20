@@ -32,8 +32,10 @@
 #     --worktree is required for codex-read and codex-read-probe: their run
 #     script does not name the worktree, and check applies the --result rule above.
 #   launch.sh grant --source FILE --worktree DIR
+#   launch.sh pack PACK --worktree DIR
+#     The pack check; references/pack.md ("Pack check:") owns the rule.
 #
-# Exit: 0 ok; 1 check violation (for write, no script was written); 2 usage or
+# Exit: 0 ok; 1 check violation (for write, no script was written; for pack, a cited rule file is not named); 2 usage or
 # input error. Every path input must be absolute.
 set -u
 
@@ -1091,6 +1093,117 @@ cmd_check() {
   exit 0
 }
 
+# ---- pack: the pack check; references/pack.md ("Pack check:") owns the rule ----
+
+PK_LEAD_RE='^[[:space:]]*([-*+]|[0-9]+[.)])?[[:space:]]*(>[[:space:]]*)?`([^`[:space:]]+)`'
+PK_INLINE_RE='(^|[[:space:](`])([A-Za-z0-9_.~/+-]*[./][A-Za-z0-9_.~/+-]*[A-Za-z0-9_-]):([0-9]+(-[0-9]+)?)'
+PK_HINT_RE='^(.+):[0-9]+(-[0-9]+)?$'
+PK_BLANK_RE='^[[:space:]]*$'
+PK_COMPACT_RE='^(Criterion|Rule|Check|Named file):'
+PK_RULE_RE='^Rule:[[:space:]]*`?([^`[:space:]]+)'
+PK_NAMED_RE='^Named file:[[:space:]]*`([^`[:space:]]+)`'
+PK_CITES=() PK_NAMED=()
+
+# pk_file CITATION WORKTREE: the cited file without a :LINE or :LINE-RANGE hint,
+# a leading ./, or a leading WORKTREE/.
+pk_file() {
+  local p=$1
+  [[ $p =~ $PK_HINT_RE ]] && p=${BASH_REMATCH[1]}
+  p=${p#./}
+  case $p in "$2"/*) p=${p#"$2"/} ;; esac
+  printf '%s\n' "$p"
+}
+
+# pk_path TOKEN: TOKEN is a path: it holds a / or a ., or ends in a :LINE or :LINE-RANGE hint.
+pk_path() { [[ $1 == */* || $1 == *.* || $1 =~ $PK_HINT_RE ]]; }
+
+# pk_cite LINE: add what one ## Rules that apply line cites to PK_CITES: the backticked
+# path that opens it, after any list or blockquote marker, or else each path:line hint on it.
+pk_cite() {
+  local rest=$1 t
+  if [[ $rest =~ $PK_LEAD_RE ]]; then
+    t=${BASH_REMATCH[3]}
+    pk_path "$t" && { PK_CITES+=("$t"); return; }
+  fi
+  while [[ $rest =~ $PK_INLINE_RE ]]; do
+    PK_CITES+=("${BASH_REMATCH[2]}:${BASH_REMATCH[3]}")
+    rest=${rest#*"${BASH_REMATCH[0]}"}
+  done
+}
+
+cmd_pack() {
+  local pk= wt= line c f n i b e end where entry r=-1 k=-1 nf=-1 bad=0
+  local -a L=() seen=()
+  while [ $# -gt 0 ]; do
+    case $1 in
+      --worktree)
+        [ $# -ge 2 ] || die "pack: --worktree needs a value"
+        need_abs --worktree "$2"
+        [ -d "$2" ] || die "--worktree is not a directory: $2"
+        wt=${2%/}
+        shift 2 ;;
+      *)
+        [ -z "$pk" ] || die "usage: launch.sh pack PACK --worktree DIR"
+        pk=$1
+        shift ;;
+    esac
+  done
+  [ -n "$pk" ] && [ -n "$wt" ] || die "usage: launch.sh pack PACK --worktree DIR"
+  need_abs PACK "$pk"
+  [ -f "$pk" ] && [ -r "$pk" ] || die "pack: cannot read pack: $pk"
+  while IFS= read -r line || [ -n "$line" ]; do L+=("$line"); done <"$pk"
+  e=$((${#L[@]} - 1))
+  while [ "$e" -ge 0 ] && [[ ${L[e]} =~ $PK_BLANK_RE ]]; do e=$((e - 1)); done
+  if [ "$e" -ge 0 ] && [[ ${L[e]} =~ $PK_COMPACT_RE ]]; then
+    # Compact: only the closing run of Criterion:, Rule:, Check:, Named file:, and blank lines.
+    b=$e
+    while [ "$b" -gt 0 ] && [[ ${L[b-1]} =~ $PK_COMPACT_RE || ${L[b-1]} =~ $PK_BLANK_RE ]]; do b=$((b - 1)); done
+    for ((i = b; i <= e; i++)); do
+      if [[ ${L[i]} =~ $PK_RULE_RE ]]; then
+        PK_CITES+=("${BASH_REMATCH[1]}")
+      elif [[ ${L[i]} =~ $PK_NAMED_RE ]]; then
+        PK_NAMED+=("$(pk_file "${BASH_REMATCH[1]}" "$wt")")
+      fi
+    done
+    where='on a Rule: line, but no Named file: line names it; add a Named file: line'
+  else
+    # Full: the last ## Rules that apply and ## Named files headings. The candidate and the
+    # open findings come before them, so nothing they carry, fenced or not, is read here.
+    for i in "${!L[@]}"; do
+      case ${L[i]} in
+        '## Rules that apply'*) r=$i ;;
+        '## Checks'*) k=$i ;;
+        '## Named files'*) nf=$i ;;
+      esac
+    done
+    if [ "$r" -ge 0 ]; then
+      end=${#L[@]}
+      [ "$k" -gt "$r" ] && end=$k
+      [ "$nf" -gt "$r" ] && [ "$nf" -lt "$end" ] && end=$nf
+      for ((i = r + 1; i < end; i++)); do pk_cite "${L[i]}"; done
+    fi
+    if [ "$nf" -gt "$r" ]; then
+      for ((i = nf + 1; i < ${#L[@]}; i++)); do
+        case ${L[i]} in '## '*) break ;; esac
+        [[ ${L[i]} =~ $PK_LEAD_RE ]] || continue
+        c=${BASH_REMATCH[3]}
+        pk_path "$c" && PK_NAMED+=("$(pk_file "$c" "$wt")")
+      done
+    fi
+    where='under ## Rules that apply, but no ## Named files entry names it; add a ## Named files entry'
+  fi
+  for c in "${PK_CITES[@]}"; do
+    f=$(pk_file "$c" "$wt")
+    for n in "${PK_NAMED[@]}" "${seen[@]}"; do [ "$n" = "$f" ] && continue 2; done
+    seen+=("$f")
+    entry="\`$f:START-END (\"anchor\") — reason\`"
+    printf 'launch.sh: pack: %s is cited at %s %s %s whose range holds the quoted line\n' "$f" "$c" "$where" "$entry" >&2
+    bad=$((bad + 1))
+  done
+  [ "$bad" -eq 0 ] || exit 1
+  exit 0
+}
+
 cmd_grant() {
   local src= wt=
   while [ $# -gt 0 ]; do
@@ -1114,5 +1227,6 @@ case ${1-} in
   write) shift; cmd_write "$@" ;;
   check) shift; cmd_check "$@" ;;
   grant) shift; cmd_grant "$@" ;;
-  *) die "usage: launch.sh write|check|grant ... (see the header of scripts/launch.sh)" ;;
+  pack) shift; cmd_pack "$@" ;;
+  *) die "usage: launch.sh write|check|grant|pack ... (see the header of scripts/launch.sh)" ;;
 esac
