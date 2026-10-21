@@ -21,6 +21,16 @@ An Ordered items row for non-trivial logic names, inside its "Verification comma
 | --- | --- | --- | --- | --- |
 | 1 | AC 1 | | | |
 
+## Sentences outside their rule owner
+
+Each row is a sentence the plan proposes to add outside the file that owns the rule the sentence concerns. [CONTRIBUTING.md](../CONTRIBUTING.md) ("**Restated rule.**") owns how review compares these rows with their owners.
+
+| Proposed sentence | Owner file link | Owner's stable anchor | One fact the owner's text does not state |
+| --- | --- | --- | --- |
+| | | | |
+
+A row whose sentence adds no such fact is a bare pointer: the sentence names the owner file and anchor and states no behavior, and its last cell reads "bare pointer". A plan that proposes no such sentence writes "none" in place of the table.
+
 ## Documentation impact
 
 [references/planning.md](../references/planning.md) owns this field. [references/implementing.md](../references/implementing.md) owns documentation completeness.
