@@ -54,7 +54,7 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Trusted comments after the spec: [pre-merge](../../references/pre-merge.md) ("Newer trusted comments") owns the check.
 - Codex read launches: [Codex adapter](../../references/harnesses/codex.md) ("The read recipe, for kinds") owns the recipe, and ("owns the Codex read-station result rule") owns the read-station result rule.
 - Claude read launches: [Claude adapter](../../references/harnesses/claude.md) ("For read stations use") owns the read recipe, and ("Allowlist probe evidence") owns the commands its allowlist does not constrain.
-- Write-station shell commands, evidence-check runs, check logs, and identical reruns: [brief template](../../templates/brief.md) ("## Worker constraints") owns that rule.
+- Shell commands at every station, write-station evidence-check runs, check logs, and identical reruns: [brief template](../../templates/brief.md) ("## Worker constraints") owns that rule.
 - Denied spec publish: [triage](../../references/triage.md) ("A denied spec publish is a host permission refusal") owns that rule.
 - Denied coordinator steps: [recovery](../../references/recovery.md) ("## Denied coordinator step") owns the outcome; [Claude adapter](../../references/harnesses/claude.md) ("## Claude Code host") owns the host command shapes and the optional operator settings.
 - Probe capture: [shared harness](../../references/harnesses/shared.md) ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`") owns how a run script captures its run.
