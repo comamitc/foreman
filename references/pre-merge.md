@@ -12,7 +12,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    the checks ([references/harnesses/shared.md](harnesses/shared.md) ("The coordinator accepts a same-head check record")
    owns whether the coordinator runs one again; the repair worker records each
    check as [templates/result.md](../templates/result.md) ("## Checks") defines
-   it), and clean tree; the coordinator pushes normally. Any new head or changed
+   it; at a Claude write station, [references/harnesses/claude.md](harnesses/claude.md) ("A heavy check at a write station gets no allow entry") owns which declared checks the repair worker runs),
+   and clean tree; the coordinator pushes normally. Any new head or changed
    reviewed diff returns through the confirmation review and ratchet in
    [code-review convergence](review-convergence.md) before completing this station.
 3. Read current checks with `gh pr checks PR --repo OWNER/REPO --required --json name,state,bucket,link`

@@ -49,6 +49,7 @@ CLAUDE_READ_DENY=('Bash(grep -r*)' 'Bash(grep -R*)' 'Bash(grep --recursive*)'
   'Bash(grep --dereference-recursive*)' 'Bash(rg *)' 'Bash(find *)'
   'Bash(time *)' 'Bash(nice *)' 'Bash(timeout *)' 'Bash(nohup *)')
 WRAP_RE='^Bash\((time|nice|timeout|nohup) '
+FLOCK_RE='^Bash\(flock '
 CLAUDE_FLAGS=' -p --verbose --disable-slash-commands --strict-mcp-config --permission-mode --output-format --model --effort --permission-prompts --add-dir --allowedTools --disallowedTools --mcp-config --tools '
 KINDS=' claude-write claude-read claude-write-probe codex-write codex-read codex-read-probe '
 ALLOW_RE='^Bash\(.+\)$'
@@ -964,6 +965,7 @@ cmd_write() {
   for a in ${allows[@]+"${allows[@]}"}; do
     [[ $a =~ $ALLOW_RE ]] || die "--allow must have the form Bash(...): $a"
     ! [[ $a =~ $WRAP_RE ]] || die "--allow starts with a denied wrapper: $a"
+    case $kind in claude-write*) ! [[ $a =~ $FLOCK_RE ]] || die "--allow starts with a denied wrapper: $a" ;; esac
   done
   case $kind in
     claude-write*) [ -n "$hs" ] || die "--host-source is required for $kind" ;;
