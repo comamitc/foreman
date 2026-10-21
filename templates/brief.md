@@ -5,7 +5,7 @@
 - Base / branch / worktree / current head:
 - Cumulative diff command:
 - Pack (required task reading):
-- Declared-check invocation ([references/toolchain.md](../references/toolchain.md) ("The brief carries the exact invocation.") preflight result: one plain command per declared check, in the plan's order ([references/planning.md](../references/planning.md) ("Mark each declared check heavy or not heavy")), a heavy check's as [references/toolchain.md](../references/toolchain.md) ("A heavy check's exact invocation is") builds it, tool path, provenance, whether `flock` is on `PATH`; no `&&`, no semicolon, no `git -C`, no heredoc):
+- Declared-check invocation ([references/toolchain.md](../references/toolchain.md) ("The brief carries the exact invocation.") preflight result: one plain command per declared check, in the plan's order ([references/planning.md](../references/planning.md) ("Mark each declared check heavy or not heavy")), each check's heavy or not-heavy mark, a heavy check's as [references/toolchain.md](../references/toolchain.md) ("A heavy check's exact invocation is") builds it, tool path, provenance, whether `flock` is on `PATH`; no `&&`, no semicolon, no `git -C`, no heredoc):
 - Turn ceiling (operations; read stations):
 - Result path (outside product tree):
 - Allowed writes: none to product at read stations; issue worktree at write stations;
@@ -68,6 +68,7 @@ Report a suspected defect in an evidence check in your result; [references/pack.
 
 At the implementing, fix, and pre-merge repair stations, run each declared check and each test command that your station steps have you run as its exact command followed by ` > LOG 2>&1`, where LOG is a new file in the directory of the brief's result path named `<result file name without .md>.check-<n>.log`, n counting your logged runs from 1.
 This rule changes only the output handling of a check you run; [references/harnesses/shared.md](../references/harnesses/shared.md) ("The coordinator runs a silent check") owns the checks the coordinator runs.
+At a Claude write station, [references/harnesses/claude.md](../references/harnesses/claude.md) ("A heavy check at a write station gets no allow entry") owns which declared checks you run and how you record a heavy check you do not run.
 The log holds the complete output, with no byte cap.
 Keep in your context only a short summary: the command, the exit status, the failing test names, the first relevant error lines, and the log path.
 Take those lines from the log with the Grep tool or a Read of a line range; open the whole log only when the summary is not enough.

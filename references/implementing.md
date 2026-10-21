@@ -50,6 +50,7 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    One run of a check is the red observation for every case whose failure that run shows for its stated reason; a case needs a separate fault-injection run only when no earlier run shows it failing.
    Planted defects for different cases may share one run when each defect changes only its own case's behavior and the output names each failing case.
    A shared red run of a heavy check keeps the order [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") owns.
+   At a Claude write station, [references/harnesses/claude.md](harnesses/claude.md) ("A heavy check at a write station gets no allow entry") owns who makes a red, green, or bite run of a heavy check.
    Record the red or fault-injection observation under Acceptance proof;
    [references/review.md](review.md) owns the discriminating-check rule.
    [references/ladder.md](ladder.md) ("## Check") owns the check's derivation,
@@ -86,7 +87,9 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    or propose a refutation with concrete evidence. Record unfinished obligations
    explicitly; technical failures stay in implementing recovery, not planning or `fix`.
    Run all declared final checks except a silent check and exercise the real user
-   surface. Use the exact invocation the brief carries, in the order [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") owns. For a silent check, record the coordinator
+   surface. Use the exact invocation the brief carries, in the order [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") owns.
+   At a Claude write station, [references/harnesses/claude.md](harnesses/claude.md) ("A heavy check at a write station gets no allow entry") owns which of these checks the worker runs.
+   For a silent check, record the coordinator
    result in the form `references/harnesses/shared.md` states. Record actual
    commands, working directories, exit statuses, and output/evidence paths,
    each check's head SHA as
