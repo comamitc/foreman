@@ -87,7 +87,7 @@ The coordinator records a notes line in `ledger.md` naming each failed item, wha
 Evidence that meets every item goes into the pack unchanged, and no correction is recorded.
 The checklist checks the evidence a run recorded; it does not replace the bite of an evidence check below.
 
-Compact form, the exception for one task Named files entry, one check, and no open finding rows: nothing is written as `none`, no heading beyond Candidate appears, each file a `Rule:` line quotes gets its own `Named file:` line as "Pack check:" above requires, and the read-station ceiling is the number of `Named file:` lines + 1 + 5 (8 for the example below).
+Compact form, the exception for one task Named files entry, one check, and no open finding rows: nothing is written as `none`, no heading beyond Candidate appears, each file a `Rule:` line quotes gets its own `Named file:` line as "Pack check:" above requires, and the read-station ceiling is the number of `Named file:` lines + 1 + 7 (10 for the example below).
 
 ```
 # Pack — owner/repo#N, implementing attempt 1, candidate: plan comment URL, revision R

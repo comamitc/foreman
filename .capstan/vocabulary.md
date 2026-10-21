@@ -193,3 +193,5 @@
 **Repair delta**: the diff from the preceding reviewed head to the current head, saved as `git diff <preceding reviewed head>..<HEAD>`. The rule owner is `references/pack.md` ("A code-review pack for round 2 and later instead carries"). Rejected: the cumulative `BASE...HEAD` diff.
 
 **Preceding reviewed head**: the head SHA the previous code-review round reviewed. The rule owner is `references/pack.md` ("The preceding reviewed head is the head SHA"). Rejected: the base SHA.
+
+**Denied shape**: an entry in the list that `templates/brief.md` ("## Worker constraints") opens with "Do not use these denied shapes". The rule owner is `templates/brief.md` ("## Worker constraints"). Rejected: a copy of the list in a station procedure; launch-builder logic in `scripts/launch.sh`.

@@ -22,7 +22,7 @@ when a newer release changes flags.
    An operation is one tool call: one read call or one shell command, however many
    files it names. Several tool calls in one assistant turn count separately. The
    ceiling is an upper bound, not an expected count: Named files entries plus
-   Checks plus 5 (brief, pack, head and status before and after, result delivery).
+   Checks plus 7 (brief, pack, head before, status before, head after, status after, result delivery).
    A host-instruction read is not an operation: the worker lists it under `## Checks` as an unnumbered "Host-instruction read:" line, outside the ceiling.
    Before the read-station launch, observe how many lines one host read returns. If
    that page does not cover the pack, add one operation per page and name that count
