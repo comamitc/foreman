@@ -172,6 +172,8 @@
 
 **Interface**: everything a caller must know to use a module correctly: signature, invariants, ordering, error modes, configuration. The rule owner is `references/ladder.md` ("## Module"). Rejected: the type signature alone.
 
+**Contract surface**: a part of a module's interface, as **Interface** defines that word, that a file other than the declaring file depends on, such as an API schema, an exported or shared type, a public function or command signature, or a configuration or data format. The rule owners are `references/pack.md` ("refers to that contract surface"), `references/planning.md` ("each contract surface the plan changes" and "A plan that changes a contract surface includes"), `references/review.md` ("each caller the pack names for a contract surface"), and `references/findings.md` ("the gate also requires the coordinator's own green run"). Rejected: a declaration that only its own file uses.
+
 **Seam**: the place where a module's interface lives, where behavior can be substituted without editing the caller. The rule owner is `references/ladder.md` ("## Module"). Rejected: an injection point or abstract interface added where nothing varies.
 
 **Deep module**: a module with a small interface and substantial behavior behind it. The rule owner is `references/ladder.md` ("## Module"). Rejected: a shallow module whose interface is about as large as its behavior; a pass-through module.

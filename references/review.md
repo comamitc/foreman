@@ -59,7 +59,9 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    Confirm each citation's anchor under [references/pack.md](pack.md) ("Citation rule") and each row's
    original scenario against the saved diff or, in a later round, the row's ranges under `## Named files`; a citation that does not meet that rule is a
    finding. Run only the named checks, the declared ones under [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy"), and record the observed exit at HEAD. Callers
-   are the ones the pack names; the diff carries the rest. A path the pack does not
+   are the ones the pack names; the diff carries the rest.
+   The reviewer reads each caller the pack names for a contract surface ([references/pack.md](pack.md) ("found by the same search at the HEAD SHA")) and reports a caller whose use no longer matches the changed surface as a Correctness finding; a named caller the reviewer did not read is a gap under Risks and unresolved items.
+   A path the pack does not
    name is a gap under Risks and unresolved items, not a search.
    Count each tool call, one read call or one shell command, however many files it names, as a numbered line under `## Checks`, except a host-instruction read ([references/harnesses/shared.md](harnesses/shared.md) "A host-instruction read is not an operation");
    stop when the pack has been checked or at the ceiling in the brief header,
