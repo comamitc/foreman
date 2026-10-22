@@ -83,4 +83,5 @@ prior verified evidence while distinguishing plan-level traces from code proof.
 New findings, changed IDs/counts, technical repairs, base drift, fresh workers,
 and resume do not restart planning. Only an explicit operator-authorized scope or
 architectural change can reopen it; record the changed assumptions and affected
-obligations. Preserve the original budget unless the operator explicitly extends it.
+obligations. [pre-merge](pre-merge.md) ("Scope-change route") names the answers
+that are that change. Preserve the original budget unless the operator explicitly extends it.

@@ -9,6 +9,7 @@
 - Optional `.capstan.json` configuration; [README](../../README.md) ("Configuration") lists the fields.
 - Opt-in residual-effect approval; [pre-merge](../../references/pre-merge.md) owns it.
 - Opt-in boundary pass; [boundary pass](../../references/modes/boundary-pass.md) ("## Triggers") owns when it runs.
+- Opt-in auto-triage and its `capstan:needs-human` label; [triage](../../references/triage.md) ("Auto-triage:") owns both.
 - Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/` by default.
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
 

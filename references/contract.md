@@ -134,7 +134,10 @@ never adds:
   issue records the exception; #185 records it for the config field
   `review_policy.residual_effect_approval`;
   #297 records it for the config field `heavy_checks.max_concurrent`;
-  #303 records it for the config field `boundary_pass`);
+  #303 records it for the config field `boundary_pass`;
+  #294 records it for the config fields `triage.auto_accept_recommended` and
+  `triage.pause_categories`, the label `capstan:needs-human`, and the marker
+  kind `auto-answer`);
 - a daemon, scheduler, watcher, or recurring job;
 - a database, store, or state service;
 - a host-skill copy, per-host plugin, or marketplace directory;
@@ -188,14 +191,14 @@ observed live.
 ## Marked Markdown artifacts
 
 Use `<!-- capstan:KIND owner/repo#N -->` for `spec`, `plan`, `plan-review`,
-`review`, `review-disposition`, `blocker`, `activity`, and `summary`. Put the spec marker in the issue
-body, plans/plan reviews/blockers/activity/summaries in issue comments, and code
+`review`, `review-disposition`, `blocker`, `activity`, `summary`, and `auto-answer`. Put the spec marker in the issue
+body, plans/plan reviews/blockers/activity/summaries/auto-answer comments in issue comments, and code
 review censuses and dispositions in PR comments. Human-readable revision, UTC time, head/base,
 and attempt lines disambiguate artifacts; no digest or schema protocol is needed.
 The admitted body keeps product content concise; machine identifiers belong in
 the hidden marker and evidence comments, not repeated product prose.
-Activity, summary, and disposition shapes are prose-defined here, in review
-convergence, and in telemetry; add no template.
+Activity, summary, disposition, and auto-answer shapes are prose-defined here,
+in review convergence, in telemetry, and in triage; add no template.
 
 Inspect all paginated comments and exact markers before publishing. Preserve
 history by appending a new revision comment when judgment changes. On an
@@ -278,6 +281,9 @@ the newer-trusted-comments check. In [one-pass planning](plan-convergence.md)
 ("## Fixed sequence"), the interrupted-correction handoff takes precedence over
 generic station retry rules. A blocker adds only `capstan:blocked`;
 [references/recovery.md](recovery.md) ("## Blocked overlays") owns blocked-overlay removal.
+`capstan:needs-human` is neither a stage label nor an overlay; [triage](triage.md)
+("Auto-triage:") owns when it is added and removed. Create it when absent with
+the command above.
 `capstan:ready-to-deploy` means immediately mergeable, not merged or deployed,
 on the marked pull request and on the issue.
 
@@ -306,7 +312,7 @@ salvage unambiguous values from malformed input without inventing ambiguous ones
 `evidence.delete_pile` and `evidence.retain_replay` are booleans with default
 `false`. Precedence for each is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE` or
 `CAPSTAN_EVIDENCE_RETAIN_REPLAY`, then `.capstan.json`, then the default. They are
-the exceptions to fall-through: an invalid value is `false`, not a lower
+exceptions to fall-through: an invalid value is `false`, not a lower
 precedence value, and an invalid or missing value never resolves to `true`.
 Record each resolved value in `ledger.md`. Neither switch can suppress the ledger;
 `evidence.retain_replay` cannot suppress provenance and is not a cleanup flag.
@@ -333,6 +339,22 @@ An invalid value for it is called out and falls through to the next source; `0`,
 [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 [toolchain.md](toolchain.md) ("A heavy check's exact invocation is") owns the slots the value sets.
 
+`triage.auto_accept_recommended` is a boolean with default `false`.
+Precedence is invocation, then `CAPSTAN_TRIAGE_AUTO_ACCEPT_RECOMMENDED`, then `.capstan.json`, then the default.
+`--auto-triage` is an allowed override that sets it to `true` for that invocation.
+Like `evidence.delete_pile`, an invalid value is called out and is `false`, not a lower precedence value, and an invalid or missing value never resolves to `true`.
+[triage](triage.md) ("Auto-triage:") owns what `true` enables; `false` enables nothing.
+[telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
+
+`triage.pause_categories` is a list of non-empty strings.
+It is a repository setting, so it is the exception to the invocation and environment steps of the field order above: precedence is `.capstan.json`, then the default.
+An invocation or environment value for it is called out and ignored.
+A `.capstan.json` value replaces the default list; the empty list `[]` is valid.
+A value that is not a list of non-empty strings is called out and the default list applies; it is the exception to the salvage rule above, so no entry of it is salvaged.
+The default list is: scope changes; schema or data migrations; anything that touches staging or production; cost or vendor decisions; removal or replacement of an existing user-visible surface.
+[triage](triage.md) ("Auto-triage:") owns what a matching question does.
+[telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
+
 `features` is the optional feature-map field. Resolution order is invocation,
 then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
 `.capstan/features` when that directory contains `README.md`. `features: null`
@@ -356,9 +378,9 @@ run_wall_timeout_min 360;
 worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
 review_policy block_threshold medium, min_confidence 0.70,
 max_review_fix_rounds 3, surface_recurrence_rounds 3,
-residual_effect_approval false; boundary_pass false.
+residual_effect_approval false; boundary_pass false; triage.auto_accept_recommended false, triage.pause_categories the default list.
 Timeouts must be positive; retry counts nonnegative integers;
-unsafe_autonomy boolean; residual_effect_approval boolean; boundary_pass boolean. Review threshold
+unsafe_autonomy boolean; residual_effect_approval boolean; boundary_pass boolean; triage.auto_accept_recommended boolean. Review threshold
 must be critical/high/medium/low,
 confidence from 0 through 1, max rounds a positive integer, and recurrence rounds
 a nonnegative integer where 0 disables that early guard. Null model/effort uses the harness default and is
@@ -414,10 +436,10 @@ from that checkout.
 If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
 replace, or use `--force`. Report that the file already exists.
 
-Ensure these ten labels exist: `capstan:triage`, `capstan:ready`,
+Ensure these eleven labels exist: `capstan:triage`, `capstan:ready`,
 `capstan:planning`, `capstan:plan-review`, `capstan:implementing`, `capstan:review`,
-`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`, and
-`capstan:blocked`. Create only absent labels with the stage-projection command
+`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`,
+`capstan:needs-human`, and `capstan:blocked`. Create only absent labels with the stage-projection command
 above. Re-read a race. Do not add or remove any other label.
 
 Init writes no secrets, evidence directory, worktree, feature map, or `features`

@@ -131,12 +131,13 @@ Optional `.capstan.json` in the target repository:
     "retain_replay": false
   },
   "boundary_pass": false,
+  "triage": {"auto_accept_recommended": false},
   "features": null
 }
 ```
 
 The coordinator interprets each value.
-Precedence is invocation, environment, file, defaults, except for `heavy_checks.max_concurrent`, a per-host setting read only from the invocation or `CAPSTAN_HEAVY_CHECKS_MAX_CONCURRENT`; [contract](references/contract.md) ("`heavy_checks.max_concurrent` is a positive integer") owns it.
+Precedence is invocation, environment, file, defaults, except for `heavy_checks.max_concurrent`, a per-host setting read only from the invocation or `CAPSTAN_HEAVY_CHECKS_MAX_CONCURRENT`; [contract](references/contract.md) ("`heavy_checks.max_concurrent` is a positive integer") owns it; and except for `triage.pause_categories`, whose order [contract](references/contract.md) ("`triage.pause_categories` is a list") owns.
 Environment keys use uppercase paths joined by underscores, such
 as `CAPSTAN_PRIMARY_HARNESS` or `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`.
 Unknown/malformed values are called out and ignored individually. Review findings
@@ -155,6 +156,14 @@ acting through a human account looks like a person to this gate.
 `boundary_pass` opts in to the boundary pass;
 [boundary pass](references/modes/boundary-pass.md) owns it, and
 [contract](references/contract.md) ("`boundary_pass` is a boolean") owns its resolution.
+
+`triage.auto_accept_recommended`, or the `--auto-triage` invocation override,
+opts in to auto-triage; [triage](references/triage.md) ("Auto-triage:") owns it,
+and [contract](references/contract.md)
+("`triage.auto_accept_recommended` is a boolean") owns its resolution.
+`triage.pause_categories` names the pause categories;
+[contract](references/contract.md) ("`triage.pause_categories` is a list") owns
+the field and its default list.
 
 [contract](references/contract.md) owns feature-map resolution and heading shape.
 

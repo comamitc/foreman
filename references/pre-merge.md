@@ -170,7 +170,12 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    operator-authorized scope change that
    [one-pass planning](plan-convergence.md) requires ("Only an explicit
    operator-authorized scope or architectural change can reopen it"); record
-   what that rule names, with the comment URL and the answer URL. An answer
+   what that rule names, with the comment URL and the answer URL. With
+   auto-triage, a question settled `Ask, auto-accepted` under
+   [triage.md](triage.md) ("Auto-triage:") is such an answer: the operator
+   authorized it through the resolved `triage.auto_accept_recommended` and
+   `triage.pause_categories`, and its answer URL is the round's `auto-answer`
+   comment URL. An answer
    that leaves every requirement, decision, and acceptance criterion as it was
    is not that change: the republished spec records the answer, and nothing is
    re-planned or re-reviewed. Route by what changed. An added or changed

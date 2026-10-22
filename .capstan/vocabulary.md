@@ -84,6 +84,10 @@
 
 **Invoker ask**: a triage question. The rule owner is `references/triage.md`. Rejected: a second copy of that rule.
 
+**Auto-triage**: the opt-in triage policy, `triage.auto_accept_recommended`. The rule owner is `references/triage.md` ("Auto-triage:"). Rejected: a keyword matcher or script logic in `scripts/launch.sh`.
+
+**Pause category**: one entry of `triage.pause_categories`. The rule owner is `references/contract.md` ("`triage.pause_categories` is a list"); `references/triage.md` ("Auto-triage:") owns what a matching question does. Rejected: an environment or invocation list; a file list merged with the default list, which cannot remove a category.
+
 **Silent check**: a declared check that can stay silent longer than the selected harness's command-log window. The rule owner is `references/harnesses/shared.md`. Rejected: missing streamed output treated as a stall, or a second copy of that rule.
 
 **Preflight proof**: the proof preflight runs for the brief's command before worker launch. The rule owner is `references/toolchain.md`. Rejected: a second copy of that procedure.

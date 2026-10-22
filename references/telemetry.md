@@ -13,7 +13,8 @@ Write the ledger row directly. Record delivery
 identity, spec revision,
 effective nonsecret configuration with the source of `heavy_checks.max_concurrent`
 and the resolved `boundary_pass` with its source,
-each ignored unknown or retired configuration field or ignored file value by name and source (file, environment, or
+the resolved `triage.auto_accept_recommended` with its source and the resolved `triage.pause_categories` with its source,
+each ignored unknown or retired configuration field or ignored file, environment, or invocation value by name and source (file, environment, or
 invocation override) apart from effective configuration and without its value,
 budget start, the
 resolved deletion switch, and
