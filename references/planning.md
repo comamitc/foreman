@@ -64,7 +64,9 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    [ladder](ladder.md). Do not restate the ladder.
    For each behavior it changes, the plan names the module that owns it and
    that module's interface in the existing "Current behavior and data shape"
-   section, before implementation mechanics. When the change adds or reshapes
+   section, before implementation mechanics.
+   The "Current behavior and data shape" section also lists each contract surface the plan changes, as [.capstan/vocabulary.md](../.capstan/vocabulary.md) ("**Contract surface**") defines one, with each caller and gap line the planning pack names for it under [references/pack.md](pack.md) ("refers to that contract surface") and ("cannot settle a surface's callers").
+   When the change adds or reshapes
    a module, that section writes the caller's usage first, then names at least
    two structurally distinct designs, chooses one, and gives the reason.
    Those designs are compared at equal reuse: each may reuse every existing
@@ -88,6 +90,7 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    Lint, typecheck, and targeted tests are not heavy.
    When the repository has a test runner, the plan declares a targeted test: the repository's own test runner on a subset scoped to the change, either the runner's related-files mode with the changed source files, for example `vitest related <files>`, or the test files that cover the change, for example `pytest <test files>`.
    The invocation writes each path out literally.
+   A plan that changes a contract surface includes the repository's type check among its declared checks when the repository conventions name one.
    Plan review checks the marks and that no plan item's verification command is a heavy check.
    List the declared checks in this order: lint, typecheck, targeted tests, then heavy checks last.
    Every run of the declared checks, by a worker at any station or by the coordinator, follows that order and stops at the first failing check.
