@@ -63,6 +63,55 @@
    coordinator waits only while an asked node is unanswered.
    A question whose answer depends on an open question in the same round waits for
    the next round. Do not ask the user to find files or diagnose technical errors.
+   Auto-triage: this paragraph applies only when `triage.auto_accept_recommended`
+   resolves to `true` under [contract](contract.md)
+   ("`triage.auto_accept_recommended` is a boolean"). With `false`, this
+   paragraph does not apply, and every Ask is asked as this step states. It
+   covers only Ask rounds of this walk, including the round
+   [pre-merge](pre-merge.md) ("Newer trusted comments") asks. It does not cover
+   the cycle round of [batch invocation](modes/batch-invocation.md) ("A cycle
+   among in-set edges is one triage Ask round"), the class round of
+   [correction](modes/correction.md) ("Ask and filing."), the round of
+   [boundary pass](modes/boundary-pass.md) ("**Ask round.**"), or the trust
+   confirmation of [security](security.md) ("Ask the user to confirm another
+   issue author's trust"); those stay host-session questions. Before asking a
+   round, the coordinator decides whether each question matches a category of
+   the resolved `triage.pause_categories` ([contract](contract.md)
+   ("`triage.pause_categories` is a list")). A question pauses when it matches
+   one, or when the coordinator cannot decide whether it matches one. Under any
+   list, including an empty list, a question also pauses when it has no
+   recommended answer, when the recommendation does not answer the node, or
+   when it is the Ask for a `Depends on` entry that does not resolve
+   ([contract](contract.md) ("An M that resolves to neither is an Ask")). Every
+   other question in the round is auto-accepted. Next, publish one marked
+   `auto-answer` issue comment for the round under [contract](contract.md)
+   ("## Marked Markdown artifacts"), and read it back. The comment names the
+   round and lists, for each auto-accepted question, the question, the chosen
+   option, and the reason it matches no pause category, and, for each paused
+   question, the category or rule that paused it. If the publish or the
+   readback fails, settle and ask nothing in the round: inspect the issue
+   comments as [contract](contract.md) ("Inspect all paginated comments and
+   exact markers before publishing") requires, then take the URL of a comment
+   this run published for the round whose body matches, edit one whose body
+   differs to the composed body, or publish again when none exists, and read it
+   back. A denied publish is a [recovery](recovery.md) ("## Denied coordinator
+   step") outcome; any other failure that persists is recovered under
+   [recovery](recovery.md) ("## Observe, diagnose, retry"). Until a comment for
+   the round reads back with these classifications, no question in the round is
+   settled, and the round is not complete. Then record the comment URL in
+   `ledger.md`, and settle each auto-accepted question as Ask with its
+   recommended answer without asking it in the host session. Its Decisions
+   entry records `Ask, auto-accepted`, the answer, and the comment URL, which
+   is its answer URL. A rule above that requires an Ask settlement is met by
+   that settlement. If the round has a paused question, run
+   `gh issue edit N --repo OWNER/REPO --add-label capstan:needs-human` and read
+   the labels back with `gh issue view N --repo OWNER/REPO --json labels`; ask
+   the paused questions only after that readback shows the label. Then ask them
+   and wait as this step states. After every paused question in the round has
+   an answer, run
+   `gh issue edit N --repo OWNER/REPO --remove-label capstan:needs-human` and
+   read the removal back with the same view. A round with no paused question
+   adds no label.
 4. Write the smallest complete admitted spec with [spec](../templates/spec.md).
    Preserve the original request verbatim inside a backtick fence longer than any
    backtick run in the request. The fence is at least three backticks long. Every
@@ -100,6 +149,7 @@ asked or defaulted. It is not admitted unchanged.
 Visit every stated outcome as a node and classify it as an acceptance criterion or a post-merge check. A post-merge check is a stated outcome that needs a merge, a deploy, an operator action, or elapsed time to observe; every other stated outcome is an acceptance criterion, verifiable before merge. This classification runs before the repository visit in the next paragraph, which visits only acceptance criteria. Classifying a stated outcome as a post-merge check is an Ask when it narrows what "done" means for the issue, and also an Ask when no acceptance criterion would remain; otherwise it is a Default, and its Decisions entry records the reason. It narrows "done" when the issue states that outcome as its definition of done or as part of it, even when other acceptance criteria remain. A supplementary observation stated alongside the definition of done, and not as part of it, does not narrow it. When no acceptance criterion would remain, the Ask recommends one that the delivery can verify before merge; the recommendation does not answer the node, which stays unanswered until the invoker answers. Post-merge checks go in the admitted spec's `## Post-merge checks` section of [spec](../templates/spec.md), worded as an operator checklist; a spec with no post-merge check omits the section. A post-merge check is never an acceptance criterion and never blocks ready or `capstan:ready-to-deploy`. Capstan runs, waits for, and observes no post-merge check, and a post-merge check that names a merge or deploy does not authorize one; [contract](contract.md) ("Deployment stays forbidden") owns the endpoint.
 
 Visit every acceptance criterion as a node and ask whether it is verifiable in this repository. A criterion is verifiable in this repository when its pass or fail can be observed by changing and running only this repository. A criterion that needs a change or a run in another repository is not; a criterion that only mentions another repository can still be. A criterion that is not verifiable in this repository is an Ask. Evidence and Default are illegal for that criterion. The Ask recommends narrowing the spec to this repository's half and names the other half as a companion issue: its repository `owner/repo`, a one-line outcome, and the dependency direction, meaning which delivery must land first. When the invoker accepts, the admitted spec keeps only the narrowed criteria and adds the Decisions entry `Companion: owner/repo#M`, or `Companion: owner/repo (to be filed)` when the invoker will file it later; the entry carries the one-line outcome and the dependency direction. Capstan files, comments, labels, and writes nothing in the companion's repository; the invoker files the companion issue. Cross-repository scope never becomes an acceptance criterion of this delivery.
+A companion Ask settled `Ask, auto-accepted` as this file states ("settle each auto-accepted question as Ask") is that acceptance.
 
 A Decisions entry `Depends on #M` or `Depends on owner/repo#M` is walked like any other node. [contract](contract.md) ("## Start condition") owns resolving M and the Ask for an M that does not resolve.
 
