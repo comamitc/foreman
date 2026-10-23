@@ -19,7 +19,10 @@ invocation override) apart from effective configuration and without its value,
 budget start, the
 resolved deletion switch, and
 a chronological station/attempt table. Write
-one row per station attempt and one row per probe attempt.
+one row per station attempt and one row per probe attempt. At each risk tier
+computation in [pre-merge.md](pre-merge.md) ("Risk tier:"), record in
+`ledger.md` the tier, its basis, and the head SHA; a later computation adds a
+record.
 
 This file owns the attempt table. The attempt table has these columns, in this order:
 

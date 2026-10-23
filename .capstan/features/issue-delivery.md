@@ -10,6 +10,7 @@
 - Opt-in residual-effect approval; [pre-merge](../../references/pre-merge.md) owns it.
 - Opt-in boundary pass; [boundary pass](../../references/modes/boundary-pass.md) ("## Triggers") owns when it runs.
 - Opt-in auto-triage and its `capstan:needs-human` label; [triage](../../references/triage.md) ("Auto-triage:") owns both.
+- Risk tier labels `capstan:risk-low`, `capstan:risk-medium`, and `capstan:risk-high`; [pre-merge](../../references/pre-merge.md) ("Risk tier:") owns which one applies and [contract](../../references/contract.md) ("## Stage projection") owns their projection.
 - Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/` by default.
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
 

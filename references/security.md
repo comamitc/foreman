@@ -49,6 +49,14 @@
 8. [telemetry.md](telemetry.md) owns the ledger and pile deletion. Do not delete
    the ledger. Do not recurse over the evidence root.
 
+Security scope: a change is in security scope when it touches authentication,
+authorization, credentials or secrets, permission or sandbox settings, trust
+checks, or redaction, in any file. In the Capstan repository it also covers
+this file, the harness recipes under `references/harnesses/`, and
+`scripts/launch.sh`. The coordinator decides from the diff and the plan. When
+the coordinator cannot settle it, the change is in security scope.
+[pre-merge.md](pre-merge.md) ("Risk tier:") uses this definition.
+
 Use body files or stdin for issue-derived text and briefs; shell-quote path
 arguments. Avoid eval, command substitution of issue text, and long prompt argv.
 Manual log cleanup before ready-to-deploy must name an exact verified run
