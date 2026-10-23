@@ -113,7 +113,9 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    "review carefully" does not satisfy it. Add a compact before/after or
    diagram only where it clarifies the change. When
    `review_policy.residual_effect_approval` is `false`, Blast Radius is
-   decision support, not a risk score or an approval workflow. When it is
+   decision support, not a numeric risk score or an approval workflow.
+   [pre-merge.md](pre-merge.md) ("Risk tier:") owns the `Risk tier:` line,
+   which is decision support for the merger. When it is
    `true`, residual effects or unknown reversibility route readiness through
    the residual-effect approval in [pre-merge.md](pre-merge.md) step 4. A
    reversible change

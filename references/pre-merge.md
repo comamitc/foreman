@@ -13,7 +13,10 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    owns whether the coordinator runs one again; the repair worker records each
    check as [templates/result.md](../templates/result.md) ("## Checks") defines
    it; at a Claude write station, [references/harnesses/claude.md](harnesses/claude.md) ("A heavy check at a write station gets no allow entry") owns which declared checks the repair worker runs),
-   and clean tree; the coordinator pushes normally. Any new head or changed
+   and clean tree; the coordinator pushes normally.
+   That push, and a step 1 comparison that finds a head other than the tier's,
+   apply [contract.md](contract.md) "Stage projection" ("Head change:").
+   Any new head or changed
    reviewed diff returns through the confirmation review and ratchet in
    [code-review convergence](review-convergence.md) before completing this station.
 3. Read current checks with `gh pr checks PR --repo OWNER/REPO --required --json name,state,bucket,link`
@@ -91,6 +94,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    Withhold readiness for BLOCKED, BEHIND, DIRTY, UNKNOWN, DRAFT, UNSTABLE, pending,
    or an unrecognized status until its actual impediment is resolved. Never bypass
    rules, enable auto-merge, enqueue, or merge to obtain a passing state.
+   A `headRefOid` other than the tier's head applies
+   [contract.md](contract.md) "Stage projection" ("Head change:").
 
    Residual-effect re-check: when `review_policy.residual_effect_approval`
    resolves to `true`, every observation with this query, including the final
@@ -213,7 +218,62 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    supply is the `human capability` row, with the policy row as the blocker
    evidence. A repair that changes the head returns through step 2. The
    withhold is not review exhaustion. It ends only when that mandatory row is
-   `verified` at the current head. Project
+   `verified` at the current head.
+
+   Risk tier: before each ready projection, compute the risk tier `low`,
+   `medium`, or `high` for the current PR head from fresh reads, and never
+   reuse a tier computed at another head. The tier is decision support for the
+   merger. It withholds nothing, changes no step 4 or step 5 gate, and
+   never merges, deploys, or enables auto-merge. Its inputs and their owners:
+   Blast Radius reversibility and residual effects
+   ([implementing.md](implementing.md) ("Reversibility uses three states")),
+   from the PR body read with the `gh api` command of
+   "Residual-effect approval: when"; contract surfaces
+   ([.capstan/vocabulary.md](../.capstan/vocabulary.md) ("**Contract surface**")),
+   from the published plan's contract-surface list and the cumulative diff;
+   security scope ([security.md](security.md) ("Security scope:")), from the
+   cumulative diff and the plan; dependency changes and CI or workflow
+   changes, which this rule defines, from
+   `git diff --name-only BASE...HEAD`; and diff size, from
+   `git diff --shortstat BASE...HEAD`.
+
+   The tier is `high` when any of these holds: Blast Radius names a residual
+   effect; its reversibility is `unknown`, where a missing reversibility
+   statement counts as `unknown`, as step 4 ("A missing reversibility
+   statement counts as `unknown`.") counts it; the diff makes a security-scope
+   change; the diff changes a contract surface; or the diff makes a CI or
+   workflow change. With no high trigger, the tier is `low` when every changed
+   file is a documentation file, and `medium` otherwise. A documentation file
+   is one that no run, build, test, or agent loads as instructions or config;
+   a file not shown to be one is not one. In Capstan, files under
+   `references/`, `templates/`, `.capstan/`, and `SKILL.md` are not
+   documentation. A dependency change is a new or changed dependency, such as
+   a package manifest, a lockfile, or vendored code; with no high trigger it
+   is `medium`. A CI or workflow change is a change to a file that a CI
+   service or repository automation reads as configuration, such as a file
+   under `.github/workflows/`. Diff size goes in the basis and sets no tier.
+
+   In the Blast Radius section of the PR body just read, remove every line
+   that begins `Risk tier:` and write one line
+   `Risk tier: TIER at HEAD_SHA; basis: BASIS` in place of the first, or at
+   the section's end when none existed, where BASIS names each input that set
+   the tier and the diff size. Change no other line. When the body has no
+   Blast Radius section, add one holding only that line. Write the body from a
+   file with `gh pr edit PR --repo OWNER/REPO --body-file FILE` and read it
+   back with `gh pr view PR --repo OWNER/REPO --json body`. Success is a
+   read-back with exactly one `Risk tier:` line, naming this tier and
+   HEAD_SHA, and every other line as written. Otherwise rebuild the body from
+   that read-back the same way, write it once more, and read it back again. If
+   it still fails, do not project `capstan:ready-to-deploy`; the attempt fails
+   as "Failed attempts use shared recovery." states. A merger treats the tier
+   label as valid only while HEAD_SHA equals the pull request head. The tier
+   line is not a reversibility statement; step 4 does not read it. Project the
+   tier label with the ready label as [contract.md](contract.md)
+   "Stage projection" ("After a successful ready projection") states.
+   [telemetry.md](telemetry.md) ("risk tier computation") owns the ledger
+   record.
+
+   Project
    `capstan:ready-to-deploy` on the issue with the existing stage rules and on
    the marked pull request with [contract.md](contract.md) "Stage projection"
    ("After a successful ready projection"), through its issue and pull-request

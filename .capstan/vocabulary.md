@@ -182,6 +182,10 @@
 
 **Residual-effect approval**: the opt-in pre-merge gate that withholds `capstan:ready-to-deploy` until a human GitHub approval on the current head, when the PR's Blast Radius names residual effects or unknown reversibility. The field is `review_policy.residual_effect_approval`, default `false`. The rule owner is `references/pre-merge.md` (step 4). Rejected: a risk score or risk tier.
 
+**Risk tier**: `low`, `medium`, or `high`, assigned at pre-merge from the pull request's evidence and projected as one `capstan:risk-*` pull-request label. It is decision support for the merger, not a merge or approval gate. The rule owners are `references/pre-merge.md` ("Risk tier:") and `references/contract.md` ("## Stage projection"). Rejected: a numeric risk score, a tier label on the issue, or a tier that gates readiness, merge, or deploy.
+
+**Documentation file**: a file that no run, build, test, or agent loads as instructions or config. The rule owner is `references/pre-merge.md` ("Risk tier:"). Rejected: classifying a file as documentation by its extension.
+
 **Mistake class**: a recurring kind of review finding that occurred in two or more deliveries of one repository, cited by occurrence. The rule owner is `references/modes/correction.md` ("This file owns correction"). Rejected: a one-off finding.
 
 **Friction signal**: evidence that a worker struggled without a finding: a pack gap, a repeated permission denial, a ceiling hit, a recovery attempt, or a defective evidence check. The rule owner is `references/modes/correction.md` ("This file owns correction"). Rejected: worker prose without a recorded artifact.

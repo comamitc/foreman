@@ -137,7 +137,8 @@ never adds:
   #303 records it for the config field `boundary_pass`;
   #294 records it for the config fields `triage.auto_accept_recommended` and
   `triage.pause_categories`, the label `capstan:needs-human`, and the marker
-  kind `auto-answer`);
+  kind `auto-answer`; #302 records it for the labels `capstan:risk-low`,
+  `capstan:risk-medium`, and `capstan:risk-high`);
 - a daemon, scheduler, watcher, or recurring job;
 - a database, store, or state service;
 - a host-skill copy, per-host plugin, or marketplace directory;
@@ -168,6 +169,8 @@ paginated `/issues/N/comments` endpoint. Then inventory:
    Select the open PR with the exact marker and repository/head identity. Closed
    or merged PRs are evidence to inspect, not permission to recreate intent.
 4. Live PR base/head, checks, approvals, and mergeability; marked remote artifacts.
+   A live head other than the tier's applies [Stage projection](#stage-projection)
+   ("Head change:").
 5. Available local briefs, results, logs, `ledger.md`, and other telemetry.
    Recreate missing evidence directories and briefs from remote facts; missing
    files cannot strand a run. [telemetry.md](telemetry.md) owns `ledger.md`.
@@ -242,24 +245,53 @@ labels are repaired from evidence and recorded, never treated as a terminal erro
 After a successful ready projection, add `capstan:ready-to-deploy` to the marked
 pull request with
 `gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`, with no
-`--remove-label`. Read the issue labels back with
+`--remove-label`. In the same projection, add the tier label that
+[pre-merge.md](pre-merge.md) ("Risk tier:") computes. Create it when absent
+with the command above, with `risk-TIER` as STAGE, then run
+`gh pr edit PR --repo OWNER/REPO --add-label capstan:risk-TIER` with one
+`--remove-label` for each other `capstan:risk-*` label observed on the pull
+request. Read the issue labels back with
 `gh issue view N --repo OWNER/REPO --json labels` and the pull-request labels
-with `gh pr view PR --repo OWNER/REPO --json labels`. Then read remote heads,
+with `gh pr view PR --repo OWNER/REPO --json labels`. The pull-request
+read-back succeeds when it shows `capstan:ready-to-deploy` and exactly one
+`capstan:risk-*` label, the computed one. Then read remote heads,
 base heads, and live pull-request state again with the step 5 query and its
 residual-effect re-check in [pre-merge.md](pre-merge.md) ("Re-fetch base and
 query live PR state"), which owns that re-check.
-If the pull-request label
-is absent, run the same add again on that pull request and read the pull-request
-labels again. Do not open a second pull request. On the pull request, add or
-remove only `capstan:ready-to-deploy`. Preserve unrelated pull-request labels.
+If the pull-request read-back does not succeed, run both adds again on that
+pull request, with one `--remove-label` for each other `capstan:risk-*` label
+it shows, and read the pull-request labels again. If it still does not
+succeed, run the removal command below; the attempt fails as
+[pre-merge.md](pre-merge.md) ("Failed attempts use shared recovery.") states,
+and no ready is reported. Do not open a second pull request. On the pull
+request, add or remove only `capstan:ready-to-deploy` and the tier labels
+`capstan:risk-low`, `capstan:risk-medium`, and `capstan:risk-high`. Preserve
+unrelated pull-request labels.
 Do not copy `capstan:planning`, `capstan:review`, or `capstan:fix` onto the pull
 request. If a later observation shows the pull request is no longer immediately
 mergeable, or the pre-merge residual-effect re-check fails, run
-`gh pr edit PR --repo OWNER/REPO --remove-label capstan:ready-to-deploy`
-and read the removal back with `gh pr view PR --repo OWNER/REPO --json labels`.
-Success is a read-back that does not contain the label. If the label remains,
-remove it once more on that pull request and read it back again. Do not leave a
-stale ready label. Repair the issue label with the existing `gh issue edit` and
+`gh pr edit PR --repo OWNER/REPO --remove-label capstan:ready-to-deploy --remove-label capstan:risk-TIER`,
+repeating `--remove-label capstan:risk-TIER` once per `capstan:risk-*` label
+observed on the pull request and omitting it when none is observed, and read
+the removal back with `gh pr view PR --repo OWNER/REPO --json labels`.
+Success is a read-back that contains neither `capstan:ready-to-deploy` nor any
+`capstan:risk-*` label. If one remains, remove it once more on that pull
+request and read it back again. If one still remains, the attempt fails as
+[pre-merge.md](pre-merge.md) ("Failed attempts use shared recovery.") states.
+Every removal of `capstan:ready-to-deploy` from the pull request, under any
+rule, uses this command and read-back.
+
+Head change: when the marked pull request carries a `capstan:risk-*` label and
+Capstan observes or produces a pull-request head other than the SHA named in
+its Blast Radius `Risk tier:` line, or the body has no such line, run this
+removal command and read-back before any review, check, or CI wait at that
+head. This covers every observation and push: evidence and reconciliation at
+an invocation or resume, a pre-merge base integration and its push, a step 5
+query whose `headRefOid` differs, and any other push by Capstan. Capstan does
+not watch for pushes it does not observe; the line's head SHA shows a merger
+the label is stale, and the next invocation removes it.
+
+Do not leave a stale ready or tier label. Repair the issue label with the existing `gh issue edit` and
 `gh issue view` stage rules. Ready-label rollout evidence: #17.
 
 | Stage | Completion evidence | Next |
@@ -284,6 +316,10 @@ generic station retry rules. A blocker adds only `capstan:blocked`;
 `capstan:needs-human` is neither a stage label nor an overlay; [triage](triage.md)
 ("Auto-triage:") owns when it is added and removed. Create it when absent with
 the command above.
+`capstan:risk-low`, `capstan:risk-medium`, and `capstan:risk-high` are neither
+stage labels nor overlays and go only on the marked pull request;
+[pre-merge](pre-merge.md) ("Risk tier:") owns which one is projected. Create
+each when absent with the command above.
 `capstan:ready-to-deploy` means immediately mergeable, not merged or deployed,
 on the marked pull request and on the issue.
 
