@@ -68,8 +68,11 @@ Levels, highest first:
 1. architecture: a module shape that makes the mistake impossible; "## Module" owns that shape
 2. types
 3. a lint or CI check whose error names the fix
-4. a behavioral test
-5. standards or docs text, last
+4. a property-based or model-checked check
+5. a behavioral test
+6. standards or docs text, last
+
+The property-based or model-checked level applies when the mistake class concerns an invariant over many states or sequences, and the target repository already has a property-testing or model-checking tool, or can add one with one dev dependency that runs under its existing test runner or declared check. Hypothesis, fast-check, proptest, and TLA+ are examples, not a closed list; a model checker such as TLA+ qualifies only when the repository already has and runs it. The plan names the invariant in one sentence and the generator or model bound. Its check meets the fail-on-occurrence, pass-on-fix, and registration rule in [correction](modes/correction.md) ("Every new check fails on a real past occurrence") and ("Every new or repaired check is registered"). The rungs above ("already-installed dependency") pick its tool.
 
 These levels are not the rungs above. When [improvement](modes/improvement.md) also loads in a correction run, this order governs every correction class; improvement's routing ("Route each verified correction to the first artifact that holds") stays with the review corrections an explicit improvement invocation names, and its replay rules are unchanged.
 

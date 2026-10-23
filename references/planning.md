@@ -62,6 +62,7 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    both planning steps.
 2. Name input/output and data shapes before implementation mechanics. Apply
    [ladder](ladder.md). Do not restate the ladder.
+   [ladder](ladder.md) ("The property-based or model-checked level applies") owns what a plan names for that level.
    For each behavior it changes, the plan names the module that owns it and
    that module's interface in the existing "Current behavior and data shape"
    section, before implementation mechanics.

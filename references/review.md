@@ -73,9 +73,10 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
 3. Keep four separate sections: Spec (requested behavior/scope), Standards (repo
    rules and verification), Correctness (reachable failures/invariants), and
    Simplicity ([ladder](ladder.md)). Do not merge away disagreement. Do not
-   restate the ladder. A new dependency, a new file, or a reimplementation of
-   an existing function is unrequested scope and blocks. A pure "this could be
-   shorter" note stays minor. Keep one judge.
+   restate the ladder. A new file or a reimplementation of an existing function
+   is unrequested scope and blocks. A new dependency is unrequested scope and
+   blocks unless [ladder](ladder.md) ("The property-based or model-checked level applies")
+   admits it. A pure "this could be shorter" note stays minor. Keep one judge.
    On the Simplicity axis, a pass-through module, one behavior split by state
    across modules, or a red flag, in a module that the diff adds or reshapes,
    is a finding in the existing finding format;
