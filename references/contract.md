@@ -35,7 +35,7 @@ path. Do not use the surrounding transcript.
 The created issue is the delivery identity. This one create is the only added
 authority. An ordinary delivery does not create issues.
 
-An outcome mode files issues only where its mode file grants it: [improvement](modes/improvement.md) ("An issue is published only after an explicit improvement invocation"), [correction](modes/correction.md) ("This file owns correction"), and [boundary pass](modes/boundary-pass.md) ("This file owns the boundary pass").
+An outcome mode files issues only where its mode file grants it: [improvement](modes/improvement.md) ("An issue is published only after an explicit improvement invocation"), [correction](modes/correction.md) ("This file owns correction"), and [boundary pass](modes/boundary-pass.md) ("This file owns the boundary pass"). A delivery whose published initial plan proposes a decomposition files its child issues only where [decomposition](modes/decomposition.md) ("This file owns decomposition filing") grants it.
 
 The create-time title is the provisional title: the first non-empty line of the preserved original request, at most 256 characters. On the `gh issue edit` that publishes the admitted spec, pass `--title` only when the live title still equals that provisional title and the Problem cut is non-empty. Otherwise omit `--title` and still publish the spec body. A title a person already changed stays as it is. An issue opened by URL or number uses this same comparison. Do not read the surrounding transcript.
 
@@ -83,7 +83,7 @@ creates credentials, purchases quota, changes security settings, or performs
 destructive production actions. A required action outside these boundaries uses
 [recovery](recovery.md)'s typed handoff; authorization does not add a v1 merge mode.
 
-Completion means the requested, authorized endpoint. Capstan ends at a verified open merge-ready PR. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
+Completion means the requested, authorized endpoint. Capstan ends at a verified open merge-ready PR. A delivery whose published initial plan proposes a decomposition ends instead at the stop [decomposition](modes/decomposition.md) ("**Decomposition end.**") owns. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
 
 A host or user instruction file does not change a Capstan delivery's completion endpoint or its fetch-then-worktree order.
 
@@ -308,6 +308,7 @@ Do not leave a stale ready or tier label. Repair the issue label with the existi
 
 Use `capstan:` before each stage name. Failed attempts preserve the active label.
 The two planning rows share `capstan:planning`; evidence distinguishes them.
+A published initial plan that proposes a decomposition does not advance; [decomposition](modes/decomposition.md) ("**Decomposition end.**") owns its stop.
 [pre-merge.md](pre-merge.md) ("Newer trusted comments") owns the stage move of
 the newer-trusted-comments check. In [one-pass planning](plan-convergence.md)
 ("## Fixed sequence"), the interrupted-correction handoff takes precedence over
@@ -360,6 +361,7 @@ For an observed label combination that a row forbids, the repair record that [St
 | IC-12 | A station rerun on an issue with `capstan:blocked` while the blocker's resume condition is not observed | [recovery.md](recovery.md) ("## Blocked overlays"), ("do not rerun the station") | blocked resume condition not observed |
 | IC-13 | A delivery start at the ready station while a `Depends on` entry does not hold | [Start condition](#start-condition) ("If an entry does not hold, the dependent does not start") | `Depends on` entry does not hold |
 | IC-14 | A write worker launch while another coordinator on the same issue is visibly progressing | [Concurrent activity](#concurrent-activity) ("If another coordinator is visibly progressing"), ("overlapping write workers") | another coordinator is visibly progressing |
+| IC-15 | Project `capstan:plan-review` or start the plan-review station after the published initial plan for the admitted revision proposes a decomposition | [one-pass planning](plan-convergence.md) ("before any `capstan:plan-review` projection"), ("Initial plan that proposes a decomposition") | published initial plan proposes a decomposition |
 
 ## Configuration
 

@@ -9,6 +9,7 @@ disable-model-invocation: true
 You are the coordinator. Own observation, user decisions, worker delegation,
 GitHub mechanics, and verification. Workers author product changes and commits.
 Finish at an open, immediately mergeable PR. Never merge or deploy.
+A decomposing parent ends instead at the stop [decomposition](references/modes/decomposition.md) ("**Decomposition end.**") owns.
 
 Before step 1, read [contract](references/contract.md) "## Read-only invocations" and "### Init".
 
@@ -72,8 +73,9 @@ Before step 1, read [contract](references/contract.md) "## Read-only invocations
 [contract](references/contract.md) "## Identity and authority" owns the fetch-then-worktree order.
 
 Stop only at verified `capstan:ready-to-deploy`, a verified review-exhausted
-blocked overlay, a typed human capability or budget decision from recovery, or
-user cancellation. Pending infrastructure and
+blocked overlay, a typed human capability or budget decision from recovery,
+a verified decomposition end that [decomposition](references/modes/decomposition.md)
+("**Decomposition end.**") owns, or user cancellation. Pending infrastructure and
 activity markers call for bounded waiting and observation, not abandonment.
 A correction invoker's answer that picks nothing to fix now is user cancellation after filing; [correction](references/modes/correction.md) ("Filing-only end") owns that end.
 [boundary pass](references/modes/boundary-pass.md) ("**Stop fit.**") owns how a boundary pass relates to these stops.

@@ -6,7 +6,7 @@ This file owns the boundary pass.
 
 ## Triggers
 
-- **Batch end** (AC 1). After the final message that [batch invocation](batch-invocation.md) ("Emit the final message once, after the last issue's summary read-back") owns, the pass runs once, whether each issue ended ready or blocked. A batch the user cancels before every issue has a stop runs no pass.
+- **Batch end** (AC 1). After the final message that [batch invocation](batch-invocation.md) ("Emit the final message once, after the last issue's summary read-back") owns, the pass runs once, whether each issue ended ready, blocked, or at a decomposition end. A batch the user cancels before every issue has a stop runs no pass.
 - **Milestone** (AC 2). In a single delivery, after the final message, read the issue's milestone with `gh issue view N --json milestone`.
   - With no milestone, no pass runs.
   - Otherwise list the milestone's issues with `gh api --method GET "repos/O/R/issues?milestone=<number>&state=all&per_page=100" --paginate`, dropping pull requests. The predicate reads only each issue's `number`, `state` and label names; it reads no body.

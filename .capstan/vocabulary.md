@@ -211,3 +211,9 @@
 **Illegal combination**: a stage, label, start, or Capstan action paired with missing or contradicting evidence that the contract forbids. The rule owner is `references/contract.md` ("## Illegal combinations"). Rejected: a type or state machine in a Capstan executable.
 
 **Walkthrough**: the `## Walkthrough` section of a high-tier pull-request body, written by Capstan at the pull-request head, that explains how the change works, why the checks pass, and what could still go wrong. The rule owner is `references/pre-merge.md` ("Walkthrough:"). Rejected: a human-written sign-off, or a statement that CI is green.
+
+**Decomposition**: the initial plan's split of an issue into child issues under the separable-groups rule. The rule owner is `references/planning.md` ("proposes a decomposition only when"); `references/modes/decomposition.md` ("This file owns decomposition filing") owns filing. Rejected: a size threshold with no measured basis; free planner judgment; a triage-time split.
+
+**Child issue**: an issue the coordinator files for one group of a decomposition. It carries a `Parent:` line. The rule owner is `references/modes/decomposition.md` ("**Child body.**"). Rejected: the GitHub sub-issue API; a cross-repository child; a pre-admitted child.
+
+**Sink child**: the one child that depends, directly or through other children, on every other child. The rule owner is `references/modes/decomposition.md` ("**Sink child.**"). Rejected: the operator always closes the parent; a forced extra rollup child.

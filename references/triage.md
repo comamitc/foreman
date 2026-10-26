@@ -152,6 +152,7 @@ Visit every acceptance criterion as a node and ask whether it is verifiable in t
 A companion Ask settled `Ask, auto-accepted` as this file states ("settle each auto-accepted question as Ask") is that acceptance.
 
 A Decisions entry `Depends on #M` or `Depends on owner/repo#M` is walked like any other node. [contract](contract.md) ("## Start condition") owns resolving M and the Ask for an M that does not resolve.
+A body that [decomposition](modes/decomposition.md) ("**Child body.**") filed keeps in the admitted spec its `Depends on #M` entries, its `Closes parent: #P` entry, and its `Child:`, `Plan:`, and `Parent:` lines. The walk visits a `Closes parent: #P` entry like a `Depends on #M` entry and settles it by Evidence: the parent's plan comment that the `Plan:` line names.
 
 Trusted comments posted after the admitted spec: [pre-merge](pre-merge.md) ("Newer trusted comments") owns their check.
 

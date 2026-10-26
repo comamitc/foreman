@@ -127,6 +127,10 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    and every verification into Checks. Record a required new canonical page as
    a required change, not write-nothing. `discovery gap:` stays only for an
    unknown path.
+   The initial plan proposes a decomposition only when its ordered items form two or more groups, each group alone fully satisfies at least one acceptance criterion, each group can merge and be verified alone, and no two groups change the same file.
+   Otherwise the plan proposes no decomposition, and [contract](contract.md) ("## Stage projection") sends the run to plan-review unchanged.
+   A plan also proposes no decomposition when the admitted spec carries a `Parent:` line, or when the admitted issue or invocation states a correction, improvement, documentation backfill, feature-map adoption or audit, verification-path adoption, or lesson maintenance outcome.
+   [plan](../templates/plan.md) ("## Decomposition") owns the proposal's shape.
 4. In the single correction pass, the pack is the current plan text, all
    plan-review rows, the commands the plan names, and the rows' citations as Named
    files. [One-pass planning](plan-convergence.md) ("One correction means one pass over all N findings")

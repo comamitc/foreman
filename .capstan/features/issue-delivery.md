@@ -23,7 +23,7 @@ Prerequisites are git, authenticated `gh` with repository write access, and conf
 ## Driving it
 Invocation: invoke Capstan with the issue URL `https://github.com/OWNER/REPO/issues/N`, or with `N` from a checkout of that repository.
 End state: an open PR from branch `capstan/N` whose body has the line `Capstan: OWNER/REPO#N`, and the issue labeled `capstan:ready-to-deploy`, meaning GitHub says the PR can merge immediately.
-Other stops: `capstan:blocked` with reason `review-exhausted` (see [code-review convergence](../../references/review-convergence.md): "## Bounded rounds and recurrence", "## Coordinator-evidence findings"); one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; or user cancellation.
+Other stops: `capstan:blocked` with reason `review-exhausted` (see [code-review convergence](../../references/review-convergence.md): "## Bounded rounds and recurrence", "## Coordinator-evidence findings"); one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; a decomposition end after filing child issues, with no pull request (see [decomposition](../../references/modes/decomposition.md): "**Decomposition end.**"); or user cancellation.
 The work happens in the worktree `.worktrees/capstan+N` of the target repository.
 Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch builder `scripts/launch.sh`; CI runs that check from [.github/workflows/check.yml](../../.github/workflows/check.yml).
 

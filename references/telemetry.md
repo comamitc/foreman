@@ -98,7 +98,7 @@ Use these event kinds when their trigger occurs:
 | label-change | observed before/after labels, including projection repair |
 | blocker / unblock | typed capability or review exhaustion, and observed resume condition |
 | telemetry-gap | missing, malformed, or failed evidence capture |
-| run-end | ready, blocked handoff, or cancellation |
+| run-end | ready, blocked handoff, cancellation, or decomposition end |
 | tool-call | a coordinator worker process, check command, or wait ends; a worker tool call completes |
 
 Every event line is one JSON object with these fields: `time`, `kind`, `delivery`, `station`, and `attempt`, then the added fields of its kind. `time` is UTC `YYYY-MM-DDTHH:MM:SS[.ffffff]Z`; `delivery` is `owner/repo#N`; `station` is the stage name as in the attempt table; `attempt` is the Attempt cell, or `—` outside an attempt. The added fields:

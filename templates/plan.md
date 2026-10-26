@@ -21,6 +21,16 @@ An Ordered items row for non-trivial logic names, inside its "Verification comma
 | --- | --- | --- | --- | --- |
 | 1 | AC 1 | | | |
 
+## Decomposition
+
+[references/planning.md](../references/planning.md) step 3 ("proposes a decomposition only when") owns when a plan proposes one and its file condition. A plan that proposes none writes `none` in place of the table.
+
+| Child | Title | Parent criteria | Files | Depends on |
+| --- | --- | --- | --- | --- |
+| C1 | | AC 1 | | none |
+
+Each parent acceptance criterion appears in exactly one Parent criteria cell. Depends on lists other Child keys, or `none`.
+
 ## Sentences outside their rule owner
 
 Each row is a sentence the plan proposes to add outside the file that owns the rule the sentence concerns. [CONTRIBUTING.md](../CONTRIBUTING.md) ("**Restated rule.**") owns how review compares these rows with their owners.

@@ -6,6 +6,7 @@ At the publication boundary, push the exact reviewed `capstan/N` head once witho
 force, and find or create one non-draft PR on the resolved base whose written body
 contains both the identity marker `Capstan: owner/repo#N` and a separate line
 `Closes #N`. `N` is the delivery issue number in the pull request's repository.
+A sink child's admitted spec carries the Decisions entry `Closes parent: #P` that [decomposition](modes/decomposition.md) ("**Sink child.**") writes; its written body also contains a separate line `Closes #P`, and the `Closes #N` read-back and repair rules here apply to that line too.
 The created title is the subject, a space, then `(#N)`. `N` is not the
 pull-request number. Title-shape example: #16, AC 1. The keyword is
 `Closes #N` only. Do not use `Fixes`. Do not use `owner/repo#N` as the close keyword. Do not close the issue
