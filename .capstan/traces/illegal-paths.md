@@ -237,3 +237,16 @@ overlapping write workers; inspect and stop only a known process from this run
 ```
 
 Outcome: refused; no write worker launches. Reason: IC-14: another coordinator is visibly progressing; missing: an observation with no visible progress.
+
+## IC-15
+
+Observed: the issue has `capstan:planning`; the marked plan comment for the admitted revision is published and read back, and its "## Decomposition" section proposes a decomposition.
+Attempted step: project `capstan:plan-review` and start the plan-review station.
+
+Owner: [references/plan-convergence.md](../../references/plan-convergence.md) ("Initial plan that proposes a decomposition")
+
+```text
+| Initial plan that proposes a decomposition | The coordinator files the children and ends the run; [decomposition](modes/decomposition.md) ("This file owns decomposition filing") owns both |
+```
+
+Outcome: refused; the issue keeps `capstan:planning`, and the coordinator follows [references/modes/decomposition.md](../../references/modes/decomposition.md) ("This file owns decomposition filing"). Reason: IC-15: published initial plan proposes a decomposition; missing: a published initial plan that proposes no decomposition.
