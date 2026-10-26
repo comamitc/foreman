@@ -205,3 +205,5 @@
 **Preceding reviewed head**: the head SHA the previous code-review round reviewed. The rule owner is `references/pack.md` ("The preceding reviewed head is the head SHA"). Rejected: the base SHA.
 
 **Denied shape**: an entry in the list that `templates/brief.md` ("## Worker constraints") opens with "Do not use these denied shapes". The rule owner is `templates/brief.md` ("## Worker constraints"). Rejected: a copy of the list in a station procedure; launch-builder logic in `scripts/launch.sh`.
+
+**Procedure trace**: a Markdown fixture under `.capstan/traces/` that lists, station by station, the output shapes a happy-path delivery produces, each quoted verbatim from its owner file with a stable anchor. It is not a procedure file and owns no rule. Rejected: a captured transcript of a real run; a script that renders outputs.
