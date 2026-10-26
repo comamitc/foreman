@@ -75,7 +75,7 @@ Owner: [references/telemetry.md](../../references/telemetry.md) ("At the contrac
 
 ### Ledger
 
-Owner: [references/telemetry.md](../../references/telemetry.md) ("At the contract's delivery evidence root")
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Always write `ledger.md` at")
 
 ```text
 Always write `ledger.md` at
@@ -121,7 +121,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 
 ### Host status line
 
-Owner: [references/telemetry.md](../../references/telemetry.md) ("Host status line rule")
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
 `capstan OWNER/REPO#N · STATION · EVENT: FACT`
@@ -159,7 +159,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 
 ### Host status line
 
-Owner: [references/telemetry.md](../../references/telemetry.md) ("Host status line rule")
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
 `capstan OWNER/REPO#N · STATION · EVENT: FACT`
@@ -191,7 +191,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 
 ### Host status line
 
-Owner: [references/telemetry.md](../../references/telemetry.md) ("Host status line rule")
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
 `capstan OWNER/REPO#N · STATION · EVENT: FACT`
@@ -209,7 +209,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 
 ### Host status line
 
-Owner: [references/telemetry.md](../../references/telemetry.md) ("Host status line rule")
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
 `capstan OWNER/REPO#N · STATION · EVENT: FACT`
@@ -263,7 +263,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 
 ### Host status line
 
-Owner: [references/telemetry.md](../../references/telemetry.md) ("Host status line rule")
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
 `capstan OWNER/REPO#N · STATION · EVENT: FACT`
@@ -289,7 +289,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 
 ### Host status line
 
-Owner: [references/telemetry.md](../../references/telemetry.md) ("Host status line rule")
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
 `capstan OWNER/REPO#N · STATION · EVENT: FACT`
@@ -313,7 +313,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 
 ### Final ledger
 
-Owner: [references/end-of-run.md](../../references/end-of-run.md) ("this end-of-run order:")
+Owner: [references/end-of-run.md](../../references/end-of-run.md) ("Write the final `ledger.md` and read it back.")
 
 ```text
 the final `ledger.md`
@@ -333,7 +333,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdo
 `summary`,
 ```
 
-Owner: [references/end-of-run.md](../../references/end-of-run.md) ("this end-of-run order:")
+Owner: [references/end-of-run.md](../../references/end-of-run.md) ("Compose the summary from `ledger.md`")
 
 ```text
 publish a marked issue summary
@@ -341,7 +341,7 @@ publish a marked issue summary
 
 ### Host status line
 
-Owner: [references/telemetry.md](../../references/telemetry.md) ("Host status line rule")
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
 `capstan OWNER/REPO#N · STATION · EVENT: FACT`
