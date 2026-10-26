@@ -223,7 +223,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    Risk tier: before each ready projection, compute the risk tier `low`,
    `medium`, or `high` for the current PR head from fresh reads, and never
    reuse a tier computed at another head. The tier is decision support for the
-   merger. It withholds nothing, changes no step 4 or step 5 gate, and
+   merger. The tier itself withholds nothing except through "Walkthrough:"
+   below, changes no step 4 or step 5 gate, and
    never merges, deploys, or enables auto-merge. Its inputs and their owners:
    Blast Radius reversibility and residual effects
    ([implementing.md](implementing.md) ("Reversibility uses three states")),
@@ -267,15 +268,37 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    it still fails, do not project `capstan:ready-to-deploy`; the attempt fails
    as "Failed attempts use shared recovery." states. A merger treats the tier
    label as valid only while HEAD_SHA equals the pull request head. The tier
-   line is not a reversibility statement; step 4 does not read it. Project the
-   tier label with the ready label as [contract.md](contract.md)
-   "Stage projection" ("After a successful ready projection") states.
+   line is not a reversibility statement; step 4 does not read it.
    [telemetry.md](telemetry.md) ("risk tier computation") owns the ledger
    record.
 
-   Project
-   `capstan:ready-to-deploy` on the issue with the existing stage rules and on
-   the marked pull request with [contract.md](contract.md) "Stage projection"
+   Walkthrough: when the tier is `high`, check the PR body read back above for
+   a current walkthrough before any projection below. A current walkthrough
+   is one `## Walkthrough` section whose first line is `Head: HEAD_SHA`,
+   naming the tier's head, followed by three sections: `### How it works`,
+   which explains how the change works; `### Why the checks pass`, which names
+   each check that covers a changed behavior, the behavior it proves, and why
+   its pass shows that behavior holds; and `### What could still go wrong`,
+   which names what the checks do not cover, the remaining risks, and where a
+   human should look first. Each section holds one to five sentences or list
+   items specific to this diff; generic text such as "CI is green" or "review
+   carefully" does not satisfy a section. A walkthrough that is absent, lacks
+   a section or a section's prompt, or names another head is missing. A `low`
+   or `medium` tier needs no walkthrough. A missing walkthrough withholds
+   `capstan:ready-to-deploy` and the tier label; it is evidence an agent
+   supplies, the step 3 `in-diff` row, not a human-capability blocker or
+   review exhaustion. Capstan's fresh primary repair worker writes it and
+   returns it under `## PR content` with its head unchanged. Put it in the
+   body in place of any `## Walkthrough` section, or at the body's end,
+   changing no other line; write and read back the body with the commands,
+   success test, and one retry of the `Risk tier:` line above; then check the
+   walkthrough again. If the second write fails, project neither label; the
+   attempt fails as "Failed attempts use shared recovery." states.
+
+   Only then project
+   `capstan:ready-to-deploy` on the issue with the existing stage rules, and
+   project it with the tier label on the marked pull request with
+   [contract.md](contract.md) "Stage projection"
    ("After a successful ready projection"), through its issue and pull-request
    label read-backs and its live re-read with the step 5 query.
    If the pull-request label is missing, re-add it

@@ -182,7 +182,7 @@
 
 **Residual-effect approval**: the opt-in pre-merge gate that withholds `capstan:ready-to-deploy` until a human GitHub approval on the current head, when the PR's Blast Radius names residual effects or unknown reversibility. The field is `review_policy.residual_effect_approval`, default `false`. The rule owner is `references/pre-merge.md` (step 4). Rejected: a risk score or risk tier.
 
-**Risk tier**: `low`, `medium`, or `high`, assigned at pre-merge from the pull request's evidence and projected as one `capstan:risk-*` pull-request label. It is decision support for the merger, not a merge or approval gate. The rule owners are `references/pre-merge.md` ("Risk tier:") and `references/contract.md` ("## Stage projection"). Rejected: a numeric risk score, a tier label on the issue, or a tier that gates readiness, merge, or deploy.
+**Risk tier**: `low`, `medium`, or `high`, assigned at pre-merge from the pull request's evidence and projected as one `capstan:risk-*` pull-request label. It is decision support for the merger, not a merge or approval gate. The rule owners are `references/pre-merge.md` ("Risk tier:") and `references/contract.md` ("## Stage projection"); see also **Walkthrough** (`references/pre-merge.md` ("Walkthrough:")). Rejected: a numeric risk score, a tier label on the issue, or a tier that gates merge or deploy.
 
 **Documentation file**: a file that no run, build, test, or agent loads as instructions or config. The rule owner is `references/pre-merge.md` ("Risk tier:"). Rejected: classifying a file as documentation by its extension.
 
@@ -209,3 +209,5 @@
 **Procedure trace**: a Markdown fixture under `.capstan/traces/` that quotes owner text verbatim with a stable anchor. The happy-path trace lists, station by station, the output shapes a happy-path delivery produces; the illegal-path trace, `.capstan/traces/illegal-paths.md`, gives one example per illegal combination. It is not a procedure file and owns no rule. Rejected: a captured transcript of a real run; a script that renders outputs or runs the examples.
 
 **Illegal combination**: a stage, label, start, or Capstan action paired with missing or contradicting evidence that the contract forbids. The rule owner is `references/contract.md` ("## Illegal combinations"). Rejected: a type or state machine in a Capstan executable.
+
+**Walkthrough**: the `## Walkthrough` section of a high-tier pull-request body, written by Capstan at the pull-request head, that explains how the change works, why the checks pass, and what could still go wrong. The rule owner is `references/pre-merge.md` ("Walkthrough:"). Rejected: a human-written sign-off, or a statement that CI is green.

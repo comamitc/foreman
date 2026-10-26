@@ -11,6 +11,7 @@
 - Opt-in boundary pass; [boundary pass](../../references/modes/boundary-pass.md) ("## Triggers") owns when it runs.
 - Opt-in auto-triage and its `capstan:needs-human` label; [triage](../../references/triage.md) ("Auto-triage:") owns both.
 - Risk tier labels `capstan:risk-low`, `capstan:risk-medium`, and `capstan:risk-high`; [pre-merge](../../references/pre-merge.md) ("Risk tier:") owns which one applies and [contract](../../references/contract.md) ("## Stage projection") owns their projection.
+- High-tier walkthrough in the pull-request body; [pre-merge](../../references/pre-merge.md) ("Walkthrough:") owns it.
 - Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/` by default.
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
 
