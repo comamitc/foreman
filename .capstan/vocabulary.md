@@ -206,4 +206,6 @@
 
 **Denied shape**: an entry in the list that `templates/brief.md` ("## Worker constraints") opens with "Do not use these denied shapes". The rule owner is `templates/brief.md` ("## Worker constraints"). Rejected: a copy of the list in a station procedure; launch-builder logic in `scripts/launch.sh`.
 
-**Procedure trace**: a Markdown fixture under `.capstan/traces/` that lists, station by station, the output shapes a happy-path delivery produces, each quoted verbatim from its owner file with a stable anchor. It is not a procedure file and owns no rule. Rejected: a captured transcript of a real run; a script that renders outputs.
+**Procedure trace**: a Markdown fixture under `.capstan/traces/` that quotes owner text verbatim with a stable anchor. The happy-path trace lists, station by station, the output shapes a happy-path delivery produces; the illegal-path trace, `.capstan/traces/illegal-paths.md`, gives one example per illegal combination. It is not a procedure file and owns no rule. Rejected: a captured transcript of a real run; a script that renders outputs or runs the examples.
+
+**Illegal combination**: a stage, label, start, or Capstan action paired with missing or contradicting evidence that the contract forbids. The rule owner is `references/contract.md` ("## Illegal combinations"). Rejected: a type or state machine in a Capstan executable.
