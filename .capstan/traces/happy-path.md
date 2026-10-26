@@ -279,6 +279,14 @@ Owner: [references/pre-merge.md](../../references/pre-merge.md) ("Risk tier:")
 `Risk tier: TIER at HEAD_SHA; basis: BASIS`
 ```
 
+### Walkthrough section (`high` tier)
+
+Owner: [references/pre-merge.md](../../references/pre-merge.md) ("Walkthrough:")
+
+```text
+`## Walkthrough`
+```
+
 ### Stage-label move
 
 Owner: [references/contract.md](../../references/contract.md) ("## Stage projection")
