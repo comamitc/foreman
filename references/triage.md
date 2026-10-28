@@ -105,7 +105,7 @@
    entry records `Ask, auto-accepted`, the answer, and the comment URL, which
    is its answer URL. A rule above that requires an Ask settlement is met by
    that settlement. If the round has a paused question, run
-   `gh issue edit N --repo OWNER/REPO --add-label foreman:needs-human` and read
+   `gh issue edit N --repo OWNER/REPO --add-label foreman:needs-human`, plus `--remove-label capstan:needs-human` when the issue carries it, and read
    the labels back with `gh issue view N --repo OWNER/REPO --json labels`; ask
    the paused questions only after that readback shows the label. Then ask them
    and wait as this step states. After every paused question in the round has
