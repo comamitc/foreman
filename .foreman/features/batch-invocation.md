@@ -13,7 +13,7 @@ Install Foreman as [README](../../README.md) ("Install and invoke") describes.
 
 ## Driving it
 Invocation: invoke Foreman with two or more distinct issues as issue URLs or issue numbers, separated by spaces or commas, with nothing else but allowed overrides, for example `12, 14`.
-End state: the issues are delivered one at a time in dependency order. Each stops at `capstan:ready-to-deploy` or a `capstan:blocked` overlay and gets its own summary. One final message lists every issue with its outcome and attempt table.
+End state: the issues are delivered one at a time in dependency order. Each stops at `foreman:ready-to-deploy` or a `foreman:blocked` overlay and gets its own summary. One final message lists every issue with its outcome and attempt table.
 
 ## Gotchas
 - Prose that mentions issues is not a batch; [contract](../../references/contract.md) ("## Identity and authority") governs it.

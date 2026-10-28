@@ -43,7 +43,7 @@ A launch that uses `-` and produces no output and no `thread.started` event beca
 
 For a commit, the verified metadata grant on Codex 0.153.4 is
 `-s workspace-write` plus `--add-dir` on both git paths: `<repo>/.git` and
-`<repo>/.git/worktrees/capstan+N`. Metadata-grant probe evidence: #22.
+`<repo>/.git/worktrees/foreman+N`, or `capstan+N` under [contract](../contract.md) ("## Compat read path"). Metadata-grant probe evidence: #22.
 `--add-dir` on `.git` alone is not the grant.
 Help-check evidence: `references/harnesses/codex.md` at `cd38fa1`. Add `--model MODEL` and
 `-c model_reasoning_effort='"EFFORT"'` when configured. For pure inspection,

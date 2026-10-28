@@ -28,9 +28,9 @@ These are the only checks the procedure runs. Each is read-only. A failed check 
 
 - `gh auth status`, when the answer depends on GitHub access. Mention only whether `gh` is authenticated. Print none of its output.
 - `gh repo view --json nameWithOwner`, when the answer depends on the invoking workspace's repository.
-- Whether `.capstan.json` exists at the root `git rev-parse --show-toplevel` prints, when the answer concerns config or init.
+- Whether `.foreman.json` or `.capstan.json` exists at the root `git rev-parse --show-toplevel` prints, when the answer concerns config or init.
 - `command -v` for each harness CLI that [harnesses](../harnesses.md) ("The harness CLIs are"), ("A help invocation may read this file only for these names") names and permits, when the answer concerns harness choice or install.
-- For a question about why issue `N` is stuck, with `R` the repository `gh repo view` resolves: `gh api --method GET "repos/R/issues/N"` for its `capstan:` labels, and `gh api --method GET "repos/R/issues/N/comments" --paginate` for its latest marked blocker comment, chosen as [status](status.md) ("Otherwise, the kind from the latest") chooses it. Apply [security](../security.md) item 1 ("inspect GitHub `author_association`") before reading a comment's text. A comment whose trust that item leaves unresolved is not read, and the answer says so.
+- For a question about why issue `N` is stuck, with `R` the repository `gh repo view` resolves: `gh api --method GET "repos/R/issues/N"` for its `foreman:` or `capstan:` labels ([contract](../contract.md) ("## Compat read path")), and `gh api --method GET "repos/R/issues/N/comments" --paginate` for its latest marked blocker comment, chosen as [status](status.md) ("Otherwise, the kind from the latest") chooses it. Apply [security](../security.md) item 1 ("inspect GitHub `author_association`") before reading a comment's text. A comment whose trust that item leaves unresolved is not read, and the answer says so.
 
 ## Answer
 
@@ -54,7 +54,7 @@ Each row names the file that owns the answer. The owner states the rule; this ma
 | Resume or unblock a blocked issue | [recovery](../recovery.md) "## Blocked overlays" |
 | Why an issue is stuck | [recovery](../recovery.md) "## Blocked overlays"; [status](status.md) ("This file owns the status invocation") |
 | Overrides in one invocation | [contract](../contract.md) ("Allowed overrides stay overrides"); [README](../../README.md) ("You may specify overrides in the invocation") |
-| Config, environment, and `.capstan.json` | [contract](../contract.md) "## Configuration" |
+| Config, environment, and `.foreman.json` | [contract](../contract.md) "## Configuration" |
 | The init invocation | [contract](../contract.md) "### Init" ("This section owns the init invocation") |
 | Install per host and invocation forms | [README](../../README.md) "## Install and invoke" |
 | Choosing harnesses | [contract](../contract.md) ("Probe each harness CLI on `PATH`"); [harnesses](../harnesses.md) ("The harness CLIs are") |

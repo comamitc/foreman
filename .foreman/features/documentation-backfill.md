@@ -19,4 +19,4 @@ Without a settled audience and workflow, nothing is written.
 - A normal feature delivery, init, or resume does not enter backfill.
 - A page that states a valid expectation the product breaks is a product defect, not a stale page.
 - No map does not block backfill, and backfill does not seed a map.
-- A custom documentation layout is preserved and not moved to `docs/` or `.capstan/features`.
+- A custom documentation layout is preserved and not moved to `docs/` or `.foreman/features`.

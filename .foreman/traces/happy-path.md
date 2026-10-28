@@ -1,6 +1,6 @@
 # Happy-path procedure trace
 
-This file is a procedure trace ([.capstan/vocabulary.md](../vocabulary.md) ("**Procedure trace**")). [CONTRIBUTING.md](../../CONTRIBUTING.md) ("**Procedure trace.**") governs its upkeep and its review. Each fenced block quotes one shape from the owner file and stable anchor on the Owner line above it.
+This file is a procedure trace ([.foreman/vocabulary.md](../vocabulary.md) ("**Procedure trace**")). [CONTRIBUTING.md](../../CONTRIBUTING.md) ("**Procedure trace.**") governs its upkeep and its review. Each fenced block quotes one shape from the owner file and stable anchor on the Owner line above it.
 
 ## Inputs
 
@@ -18,7 +18,7 @@ No fix station runs on this path.
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
 
 ```text
-`<!-- capstan:KIND owner/repo#N -->`
+`<!-- foreman:KIND owner/repo#N -->`
 ```
 
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
@@ -30,7 +30,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdo
 Owner: [references/triage.md](../../references/triage.md) ("Keep the existing issue-body spec marker")
 
 ```text
-`<!-- capstan:spec owner/repo#N -->`
+`<!-- foreman:spec owner/repo#N -->`
 ```
 
 ### Stage label form
@@ -38,7 +38,7 @@ Owner: [references/triage.md](../../references/triage.md) ("Keep the existing is
 Owner: [references/contract.md](../../references/contract.md) ("## Stage projection")
 
 ```text
-`capstan:` before each stage name
+`foreman:` before each stage name
 ```
 
 ### Stage-label move
@@ -56,7 +56,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 Owner: [references/contract.md](../../references/contract.md) ("| Local evidence root |")
 
 ```text
-`${CAPSTAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/capstan}/owner/repo/N/`
+`${FOREMAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/foreman}/owner/repo/N/`
 ```
 
 ### Evidence files at run acceptance
@@ -100,7 +100,7 @@ Owner: [references/telemetry.md](../../references/telemetry.md) ("The pile is ex
 Owner: [references/contract.md](../../references/contract.md) ("| Item | Stable identity |")
 
 ```text
-| Branch | `capstan/N` |
+| Branch | `foreman/N` |
 ```
 
 ### Worktree
@@ -108,7 +108,7 @@ Owner: [references/contract.md](../../references/contract.md) ("| Item | Stable 
 Owner: [references/contract.md](../../references/contract.md) ("| Item | Stable identity |")
 
 ```text
-| Worktree | `<repo>/.worktrees/capstan+N` |
+| Worktree | `<repo>/.worktrees/foreman+N` |
 ```
 
 ### Stage-label move
@@ -124,7 +124,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
-`capstan OWNER/REPO#N · STATION · EVENT: FACT`
+`foreman OWNER/REPO#N · STATION · EVENT: FACT`
 ```
 
 ## planning
@@ -134,7 +134,7 @@ Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
 
 ```text
-`<!-- capstan:KIND owner/repo#N -->`
+`<!-- foreman:KIND owner/repo#N -->`
 ```
 
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
@@ -143,10 +143,10 @@ Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdo
 `plan`,
 ```
 
-Owner: [templates/plan.md](../../templates/plan.md) ("`<!-- capstan:plan OWNER/REPO#N -->`")
+Owner: [templates/plan.md](../../templates/plan.md) ("<!-- foreman:plan OWNER/REPO#N -->")
 
 ```text
-<!-- capstan:plan OWNER/REPO#N -->
+<!-- foreman:plan OWNER/REPO#N -->
 ```
 
 ### Stage-label move
@@ -162,7 +162,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
-`capstan OWNER/REPO#N · STATION · EVENT: FACT`
+`foreman OWNER/REPO#N · STATION · EVENT: FACT`
 ```
 
 ## plan-review
@@ -172,7 +172,7 @@ Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
 
 ```text
-`<!-- capstan:KIND owner/repo#N -->`
+`<!-- foreman:KIND owner/repo#N -->`
 ```
 
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
@@ -194,7 +194,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
-`capstan OWNER/REPO#N · STATION · EVENT: FACT`
+`foreman OWNER/REPO#N · STATION · EVENT: FACT`
 ```
 
 ## implementing
@@ -212,7 +212,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
-`capstan OWNER/REPO#N · STATION · EVENT: FACT`
+`foreman OWNER/REPO#N · STATION · EVENT: FACT`
 ```
 
 ## review
@@ -222,7 +222,7 @@ Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
 
 ```text
-`<!-- capstan:KIND owner/repo#N -->`
+`<!-- foreman:KIND owner/repo#N -->`
 ```
 
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
@@ -231,10 +231,10 @@ Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdo
 `review`,
 ```
 
-Owner: [templates/review.md](../../templates/review.md) ("`<!-- capstan:review OWNER/REPO#N -->`")
+Owner: [templates/review.md](../../templates/review.md) ("<!-- foreman:review OWNER/REPO#N -->")
 
 ```text
-<!-- capstan:review OWNER/REPO#N -->
+<!-- foreman:review OWNER/REPO#N -->
 ```
 
 ### Pull-request identity line
@@ -242,7 +242,7 @@ Owner: [templates/review.md](../../templates/review.md) ("`<!-- capstan:review O
 Owner: [references/contract.md](../../references/contract.md) ("| Item | Stable identity |")
 
 ```text
-| PR | exact head `capstan/N` and body line `Capstan: owner/repo#N` |
+| PR | exact head `foreman/N` and body line `Foreman: owner/repo#N` |
 ```
 
 ### Pull-request close line
@@ -266,7 +266,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
-`capstan OWNER/REPO#N · STATION · EVENT: FACT`
+`foreman OWNER/REPO#N · STATION · EVENT: FACT`
 ```
 
 ## pre-merge
@@ -300,7 +300,7 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
-`capstan OWNER/REPO#N · STATION · EVENT: FACT`
+`foreman OWNER/REPO#N · STATION · EVENT: FACT`
 ```
 
 ## ready-to-deploy
@@ -310,13 +310,13 @@ Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 Owner: [references/contract.md](../../references/contract.md) ("## Stage projection")
 
 ```text
-shows `capstan:ready-to-deploy` and exactly one
+shows `foreman:ready-to-deploy` and exactly one
 ```
 
 Owner: [references/contract.md](../../references/contract.md) ("## Stage projection")
 
 ```text
-`capstan:risk-*` label, the computed one
+`foreman:risk-*` label, the computed one
 ```
 
 ### Final ledger
@@ -332,7 +332,7 @@ the final `ledger.md`
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
 
 ```text
-`<!-- capstan:KIND owner/repo#N -->`
+`<!-- foreman:KIND owner/repo#N -->`
 ```
 
 Owner: [references/contract.md](../../references/contract.md) ("## Marked Markdown artifacts")
@@ -352,5 +352,5 @@ publish a marked issue summary
 Owner: [references/telemetry.md](../../references/telemetry.md) ("Shape:")
 
 ```text
-`capstan OWNER/REPO#N · STATION · EVENT: FACT`
+`foreman OWNER/REPO#N · STATION · EVENT: FACT`
 ```

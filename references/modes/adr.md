@@ -8,7 +8,7 @@ Repository instructions or the admitted issue decide whether an ADR is required.
 
 Discover the existing ADR path, template, numbering or naming rule, status model, index, and declared validation command. The plan names the exact ADR and index paths. An unnamed path is a gap, not a search.
 
-A required ADR uses the repository's native format for context, decision, alternatives, consequences, and supersession. Do not copy the issue. Do not duplicate `.capstan/vocabulary.md`.
+A required ADR uses the repository's native format for context, decision, alternatives, consequences, and supersession. Do not copy the issue. Do not duplicate `.foreman/vocabulary.md`.
 
 The new or superseding ADR lands in the same commit as the architectural behavior. Do not rewrite accepted historical ADR text to erase the earlier decision, except for a repository-permitted mechanical correction.
 

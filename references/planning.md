@@ -17,7 +17,7 @@ to paths is a gap. The sweep covers:
 - merged PRs, dated by `merged_at`, and PRs closed without merging, dated by
   `closed_at`, whose changed files touch the scope;
 - earlier Foreman blocker and review artifacts: comments whose first line starts
-  with `<!-- capstan:`, dated by `created_at`, on in-scope issues and PRs,
+  with `<!-- foreman:` or `<!-- capstan:`, dated by `created_at`, on in-scope issues and PRs,
   including an issue with no PR;
 - issues that report the same symptom, dated by `created_at`.
 
@@ -66,7 +66,7 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    For each behavior it changes, the plan names the module that owns it and
    that module's interface in the existing "Current behavior and data shape"
    section, before implementation mechanics.
-   The "Current behavior and data shape" section also lists each contract surface the plan changes, as [.capstan/vocabulary.md](../.capstan/vocabulary.md) ("**Contract surface**") defines one, with each caller and gap line the planning pack names for it under [references/pack.md](pack.md) ("refers to that contract surface") and ("cannot settle a surface's callers").
+   The "Current behavior and data shape" section also lists each contract surface the plan changes, as [.foreman/vocabulary.md](../.foreman/vocabulary.md) ("**Contract surface**") defines one, with each caller and gap line the planning pack names for it under [references/pack.md](pack.md) ("refers to that contract surface") and ("cannot settle a surface's callers").
    When the change adds or reshapes
    a module, that section writes the caller's usage first, then names at least
    two structurally distinct designs, chooses one, and gives the reason.

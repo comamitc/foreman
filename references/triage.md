@@ -1,15 +1,16 @@
 # Triage — coordinator
 
 1. Apply contract identity and security trust checks. Read the trusted original
-   request, comments, repository instructions, and relevant code/tests. When
-   `.capstan/vocabulary.md` exists, read it after repository instructions and
-   before a question. A term already defined there is evidence. Do not ask it
+   request, comments, repository instructions, and relevant code/tests.
+   When `.foreman/vocabulary.md` exists, read it after repository instructions and before a question.
+   [contract](contract.md) ("## Compat read path") resolves which vocabulary file this is.
+   A term already defined there is evidence. Do not ask it
    again unless this issue contradicts it. A missing file is recorded and does
    not block. Evidence is the committed file on the resolved integration base. An
    unmerged vocabulary edit is not evidence for a different issue.
    Repository-scoped terms name a standing behavior, role, or artifact that
    later deliveries need. Delivery-scoped decisions bind only this issue, this
-   pull request, or this change. Triage does not create `.capstan/vocabulary.md`
+   pull request, or this change. Triage does not create a vocabulary file
    and does not write it. Do not open a docs pull request. Do not edit
    `CONTEXT.md`. Settle discoverable facts yourself.
 2. Walk a design tree before ready. Each node is one decision. The node records
@@ -104,12 +105,12 @@
    entry records `Ask, auto-accepted`, the answer, and the comment URL, which
    is its answer URL. A rule above that requires an Ask settlement is met by
    that settlement. If the round has a paused question, run
-   `gh issue edit N --repo OWNER/REPO --add-label capstan:needs-human` and read
+   `gh issue edit N --repo OWNER/REPO --add-label foreman:needs-human`, plus `--remove-label capstan:needs-human` when the issue carries it, and read
    the labels back with `gh issue view N --repo OWNER/REPO --json labels`; ask
    the paused questions only after that readback shows the label. Then ask them
    and wait as this step states. After every paused question in the round has
    an answer, run
-   `gh issue edit N --repo OWNER/REPO --remove-label capstan:needs-human` and
+   `gh issue edit N --repo OWNER/REPO --remove-label foreman:needs-human`, plus `--remove-label capstan:needs-human` when the issue carries it, and
    read the removal back with the same view. A round with no paused question
    adds no label.
 4. Write the smallest complete admitted spec with [spec](../templates/spec.md).
@@ -121,15 +122,15 @@
    omit internal orchestration detail and execution provenance.
    The admitted spec's Decisions section lists every visited node and its
    settlement. Vocabulary for a new term goes in the spec. A delivery-scoped
-   decision stays in that spec and is not copied into `.capstan/vocabulary.md`.
+   decision stays in that spec and is not copied into `.foreman/vocabulary.md`.
 5. Re-read the issue before replacing its body; incorporate concurrent trusted
    edits rather than overwriting them. Publish the spec with its hidden marker,
    read it back, and record its GitHub body revision/time for later plan evidence.
-   Keep the existing issue-body spec marker `<!-- capstan:spec owner/repo#N -->`.
+   Keep the existing issue-body spec marker, `<!-- foreman:spec owner/repo#N -->` or `<!-- capstan:spec owner/repo#N -->`.
    Do not remove it. Do not delete `spec`.
    On that same publish edit, apply the publication title rule in `references/contract.md`. Do not restate it here.
    Write the complete body file before you run the publish. Run `gh issue edit N --repo OWNER/REPO --body-file FILE` as its own command, with `--title` only as that title rule allows. Chain no local file edit, readback, diff, or other command to it. Read the spec back with a separate command after it.
-   A denied spec publish is a host permission refusal to run that command, and [recovery](recovery.md) ("## Denied coordinator step") owns its outcome. Its blocker's evidence path names the local spec draft, and it does not carry the spec text. Its resume condition is a spec publish to the issue body whose readback matches. Label it as [contract](contract.md) ("A blocker adds only `capstan:blocked`") states.
+   A denied spec publish is a host permission refusal to run that command, and [recovery](recovery.md) ("## Denied coordinator step") owns its outcome. Its blocker's evidence path names the local spec draft, and it does not carry the spec text. Its resume condition is a spec publish to the issue body whose readback matches. Label it as [contract](contract.md) ("A blocker adds only `foreman:blocked`") states.
    On a later invocation, [recovery](recovery.md) ("## Denied coordinator step") owns the resume observation. Running this publish once is that observation, not a station rerun.
 6. Do not invoke the grilling skill, `pipeline grill`, `grill-with-docs`, or any
    host grill command. Do not add a taxonomy module or an envelope.
@@ -146,7 +147,7 @@ still walked. Reuse is allowed only after the walk matches that body. The match
 is that walk. It is not a byte-for-byte copy. A branch with no settlement is
 asked or defaulted. It is not admitted unchanged.
 
-Visit every stated outcome as a node and classify it as an acceptance criterion or a post-merge check. A post-merge check is a stated outcome that needs a merge, a deploy, an operator action, or elapsed time to observe; every other stated outcome is an acceptance criterion, verifiable before merge. This classification runs before the repository visit in the next paragraph, which visits only acceptance criteria. Classifying a stated outcome as a post-merge check is an Ask when it narrows what "done" means for the issue, and also an Ask when no acceptance criterion would remain; otherwise it is a Default, and its Decisions entry records the reason. It narrows "done" when the issue states that outcome as its definition of done or as part of it, even when other acceptance criteria remain. A supplementary observation stated alongside the definition of done, and not as part of it, does not narrow it. When no acceptance criterion would remain, the Ask recommends one that the delivery can verify before merge; the recommendation does not answer the node, which stays unanswered until the invoker answers. Post-merge checks go in the admitted spec's `## Post-merge checks` section of [spec](../templates/spec.md), worded as an operator checklist; a spec with no post-merge check omits the section. A post-merge check is never an acceptance criterion and never blocks ready or `capstan:ready-to-deploy`. Foreman runs, waits for, and observes no post-merge check, and a post-merge check that names a merge or deploy does not authorize one; [contract](contract.md) ("Deployment stays forbidden") owns the endpoint.
+Visit every stated outcome as a node and classify it as an acceptance criterion or a post-merge check. A post-merge check is a stated outcome that needs a merge, a deploy, an operator action, or elapsed time to observe; every other stated outcome is an acceptance criterion, verifiable before merge. This classification runs before the repository visit in the next paragraph, which visits only acceptance criteria. Classifying a stated outcome as a post-merge check is an Ask when it narrows what "done" means for the issue, and also an Ask when no acceptance criterion would remain; otherwise it is a Default, and its Decisions entry records the reason. It narrows "done" when the issue states that outcome as its definition of done or as part of it, even when other acceptance criteria remain. A supplementary observation stated alongside the definition of done, and not as part of it, does not narrow it. When no acceptance criterion would remain, the Ask recommends one that the delivery can verify before merge; the recommendation does not answer the node, which stays unanswered until the invoker answers. Post-merge checks go in the admitted spec's `## Post-merge checks` section of [spec](../templates/spec.md), worded as an operator checklist; a spec with no post-merge check omits the section. A post-merge check is never an acceptance criterion and never blocks ready or `foreman:ready-to-deploy`. Foreman runs, waits for, and observes no post-merge check, and a post-merge check that names a merge or deploy does not authorize one; [contract](contract.md) ("Deployment stays forbidden") owns the endpoint.
 
 Visit every acceptance criterion as a node and ask whether it is verifiable in this repository. A criterion is verifiable in this repository when its pass or fail can be observed by changing and running only this repository. A criterion that needs a change or a run in another repository is not; a criterion that only mentions another repository can still be. A criterion that is not verifiable in this repository is an Ask. Evidence and Default are illegal for that criterion. The Ask recommends narrowing the spec to this repository's half and names the other half as a companion issue: its repository `owner/repo`, a one-line outcome, and the dependency direction, meaning which delivery must land first. When the invoker accepts, the admitted spec keeps only the narrowed criteria and adds the Decisions entry `Companion: owner/repo#M`, or `Companion: owner/repo (to be filed)` when the invoker will file it later; the entry carries the one-line outcome and the dependency direction. Foreman files, comments, labels, and writes nothing in the companion's repository; the invoker files the companion issue. Cross-repository scope never becomes an acceptance criterion of this delivery.
 A companion Ask settled `Ask, auto-accepted` as this file states ("settle each auto-accepted question as Ask") is that acceptance.

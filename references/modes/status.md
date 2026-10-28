@@ -11,20 +11,20 @@ Every `gh api` read in this procedure is a GET with the query in the URL and inc
 1. **Parse.** The trimmed invocation equals `status`, byte for byte, in lowercase.
 2. **Repository.** Run `gh repo view --json nameWithOwner` in the invoking workspace. If that fails, print `Foreman status: no repository resolved.` and stop. Ask for nothing and parse no name. Below, `R` is the resolved `nameWithOwner` and `OWNER` is its owner.
 3. **Issues.**
-   - Run one read for each stage label (triage, ready, planning, plan-review, implementing, review, fix, pre-merge, ready-to-deploy) and for `capstan:blocked`: `gh api --paginate "repos/R/issues?state=open&labels=capstan:X&per_page=100" --jq '.[] | select(.pull_request | not) | [.number, .html_url, ([.labels[].name] | join(","))] | @tsv'`.
+   - Run one read for each stage label (triage, ready, planning, plan-review, implementing, review, fix, pre-merge, ready-to-deploy) and for the blocked overlay, once with `labels=foreman:X` and once with `labels=capstan:X` ([contract](../contract.md) ("## Compat read path")): `gh api --paginate "repos/R/issues?state=open&labels=foreman:X&per_page=100" --jq '.[] | select(.pull_request | not) | [.number, .html_url, ([.labels[].name] | join(","))] | @tsv'`.
    - Take the union of the results by issue number.
-   - Keep an issue that has at least one stage label, or that has `capstan:blocked` and no stage label (contradictory). Closed issues are never listed.
-   - If the union is empty, print ``Foreman status — R: no open issue carries a Foreman stage label or `capstan:blocked`.`` and stop.
+   - Keep an issue that has at least one stage label, or that has `foreman:blocked` or `capstan:blocked` and no stage label (contradictory). Closed issues are never listed.
+   - If the union is empty, print ``Foreman status — R: no open issue carries a Foreman stage label or `foreman:blocked`.`` and stop.
 4. **Per-issue fields and their sources.**
-   - **Comments.** Read the issue's comments with `gh api --paginate "repos/R/issues/N/comments?per_page=100" --jq '.[] | {id, created_at, updated_at, body}'`. Choose a marker only after every page has been read. A marked comment is one whose first line is exactly `<!-- capstan:KIND R#N -->`.
-   - **Stage.** The stage label names without `capstan:`. The stage is contradictory when there are two or more stage labels, or when `capstan:blocked` has no stage label (shown as `none`).
+   - **Comments.** Read the issue's comments with `gh api --paginate "repos/R/issues/N/comments?per_page=100" --jq '.[] | {id, created_at, updated_at, body}'`. Choose a marker only after every page has been read. A marked comment is one whose first line is exactly `<!-- foreman:KIND R#N -->` or `<!-- capstan:KIND R#N -->`.
+   - **Stage.** The stage names are the stage labels without `foreman:` or `capstan:`, each distinct name once, so `foreman:planning` and `capstan:planning` give `planning`. The stage is contradictory when there are two or more distinct stage names, or when the blocked overlay has no stage label (shown as `none`).
    - **Blocked.**
-     - `no` when the issue does not carry `capstan:blocked`.
-     - Otherwise, the kind from the latest `<!-- capstan:blocker R#N -->` comment: greatest `created_at`, with ties broken by the greater `id`. The kind and the action are copied verbatim from its "Blocker kind:" and "Requested/qualifying resume action:" lines.
+     - `no` when the issue carries neither `foreman:blocked` nor `capstan:blocked`.
+     - Otherwise, the kind from the latest `<!-- foreman:blocker R#N -->` or `<!-- capstan:blocker R#N -->` comment: greatest `created_at`, with ties broken by the greater `id`. The kind and the action are copied verbatim from its "Blocker kind:" and "Requested/qualifying resume action:" lines.
      - With no marked blocker comment, the cell is `yes` and the line under the table reads "no marked blocker comment".
    - **PR.**
-     - Read `gh api --paginate "repos/R/pulls?state=open&head=OWNER:capstan/N&per_page=100" --jq '.[] | [.number, .html_url, .body] | @json'`.
-     - Keep only a PR whose body has the exact line `Capstan: R#N`. Otherwise the cell is `none`.
+     - Read `gh api --paginate "repos/R/pulls?state=open&head=OWNER:foreman/N&per_page=100" --jq '.[] | [.number, .html_url, .body] | @json'`, and the same with `head=OWNER:capstan/N`.
+     - Keep only a PR whose body has the exact line `Foreman: R#N` or `Capstan: R#N`. Otherwise the cell is `none`.
      - Closed and merged PRs are never shown.
    - **Last activity.** The maximum of two sources:
      - The first source is the latest `updated_at` among marked issue comments of kind plan, plan-review, blocker, activity or summary. It also includes marked `review` comments on the marked PR, read with `gh api --paginate "repos/R/issues/PR/comments?per_page=100"` under the same selection rule.

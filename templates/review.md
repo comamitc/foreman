@@ -1,5 +1,5 @@
-<!-- capstan:review OWNER/REPO#N -->
-<!-- Use capstan:plan-review for a plan review. -->
+<!-- foreman:review OWNER/REPO#N -->
+<!-- Use foreman:plan-review for a plan review. -->
 # Review census
 
 Specification / plan revision:

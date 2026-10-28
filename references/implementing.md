@@ -67,16 +67,16 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
 3. Run each item's verification. Keep scope narrow; commit coherent changes.
    Write only the paths the plan names. A path the plan does not name is a gap
    reported under Risks and unresolved items, not a write.
-   [triage](triage.md) ("When `.capstan/vocabulary.md` exists, read it after repository instructions") owns how triage reads `.capstan/vocabulary.md`.
+   [triage](triage.md) ("When `.foreman/vocabulary.md` exists, read it after repository instructions") owns how triage reads `.foreman/vocabulary.md`, and [contract](contract.md) ("## Compat read path") owns the old-form file.
    Implementation writes the file.
    A settlement is repository-scoped when the term names a standing behavior,
    role, or artifact of the repository, and later deliveries need the same
    meaning. A settlement is delivery-scoped when it binds only this issue, this
    pull request, or this change. Keep a delivery-scoped decision in the admitted
-   spec. Do not copy it into `.capstan/vocabulary.md`. The plan names
-   `.capstan/vocabulary.md` when the delivery settles a repository-scoped term.
+   spec. Do not copy it into `.foreman/vocabulary.md`. The plan names
+   `.foreman/vocabulary.md` when the delivery settles a repository-scoped term.
    The implementation commit for a repository-scoped term creates or updates
-   `.capstan/vocabulary.md` in the same commit as the behavior. Use one `**Term**:` entry per term. Include
+   `.foreman/vocabulary.md` in the same commit as the behavior. Use one `**Term**:` entry per term. Include
    the meaning and the rejected alternative that the triage walk recorded.
    Do not edit `CONTEXT.md`.
    Keep #20's per-issue

@@ -13,7 +13,7 @@ The worker does not discover a command, a runner, or a tool path.
 
 Preflight proof runs the exact command the brief names. When that command cannot run as the proof, preflight runs the smallest probe that shows that command's real entry point exists. A check of an empty path is not that proof. When that command comes from the project's dev dependencies, preflight installs those dependencies before the proof. The text `All dependencies are now up-to-date` is not success when the entry point is missing. A lock-hash mismatch is a visible preflight failure. A lock-hash mismatch does not fall through to a sync that omits dev packages. A version probe does not create a virtualenv.
 
-A heavy check's exact invocation is `flock <state root>/heavy.lock <declared invocation>`, where `<state root>` is `${CAPSTAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/capstan}`, written out in full with no `owner/repo/N` part ([references/contract.md](contract.md) ("| Local evidence root |")); with N above 1 the slot rule below chooses the slot file.
+A heavy check's exact invocation is `flock <state root>/heavy.lock <declared invocation>`, where `<state root>` is `${FOREMAN_STATE:-${CAPSTAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/foreman}}`, written out in full with no `owner/repo/N` part ([references/contract.md](contract.md) ("| Local evidence root |"), ("## Compat read path")); with N above 1 the slot rule below chooses the slot file.
 N is `heavy_checks.max_concurrent` ([references/contract.md](contract.md) ("`heavy_checks.max_concurrent` is a positive integer")).
 The lock has N slot files: slot 1 is `<state root>/heavy.lock` and slot K, for K from 2 to N, is `<state root>/heavy-K.lock`.
 A check that is not heavy keeps its declared invocation, with no lock.
@@ -32,7 +32,7 @@ The preparation probe does not wait.
 With no `flock` on `PATH`, the brief carries the declared invocation, the check runs unlocked, and the run does not stop; [references/telemetry.md](telemetry.md) ("The ledger notes keep the raw usage.") owns the notes line.
 The lock is shared by every session that resolves the same state root.
 Sessions that resolve the same state root and different values of N share the slots they have in common, so the bound among them is the largest N.
-A session with its own `CAPSTAN_STATE` gets its own lock and can overlap with others.
+A session with its own `FOREMAN_STATE`, or its own `CAPSTAN_STATE` with no `FOREMAN_STATE`, gets its own lock and can overlap with others.
 
 The three-step precedence is this order.
 First, use the recorded toolchain when the identity matches.

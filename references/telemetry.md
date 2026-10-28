@@ -16,6 +16,7 @@ and the resolved `boundary_pass` with its source,
 the resolved `triage.auto_accept_recommended` with its source and the resolved `triage.pause_categories` with its source,
 each ignored unknown or retired configuration field or ignored file, environment, or invocation value by name and source (file, environment, or
 invocation override) apart from effective configuration and without its value,
+each old name whose value was used, as deprecated, and each old name ignored because its Foreman name is present, as ignored ([contract](contract.md) ("## Compat read path")), by name and source and without its value,
 budget start, the
 resolved deletion switch, and
 a chronological station/attempt table. Write
@@ -28,7 +29,7 @@ This file owns the attempt table. The attempt table has these columns, in this o
 
 `| Stage | Attempt | Start | End | Worker | Coord | Harness | Tokens |`
 
-- Stage: one stage name from the [contract](contract.md) stage table ("Stage projection"), without `capstan:`. Both planning rows of the stage table write `planning`, the name in `capstan:planning`; the Attempt cell tells them apart. Nothing else goes in this cell.
+- Stage: one stage name from the [contract](contract.md) stage table ("Stage projection"), without `foreman:`. Both planning rows of the stage table write `planning`, the name in `foreman:planning`; the Attempt cell tells them apart. Nothing else goes in this cell.
 - Attempt: the qualifier and nothing else. `N` for station attempt N; `rR · N` for review and fix round R, attempt N; `probe KIND` for a launch probe, where KIND is `read` or `write`, followed by ` N` when N > 1 and ` fail` when it failed, in the row of the stage at which the probe ran; `correction` for the single planning correction; in pre-merge, `N`, `CI wait N`, and `repair N`. N and R count from 1.
 - Start, End: `HH:MM:SS` UTC. The coordinator's observed attempt start and end (station-start/worker-start, station-end/worker-end). When the coordinator did not observe one, that cell is the supervisor record's process start or exit when a worker ran, else `unknown`. Read the time cells in table order, row by row, Start before End, with the Total row last. The current date starts as the date line's date. A known cell whose UTC date differs from the current date is written `YYYY-MM-DD HH:MM:SS`, and its date becomes the current date. An `unknown` cell leaves the current date unchanged. Reconstruct each time cell as a UTC instant: its own date when written, else the current date at that cell, with its time, as `YYYY-MM-DDTHH:MM:SSZ`. An `unknown` cell has no instant. Coord and End-to-end use these instants. A ledger written before this table shape keeps its `YYYY-MM-DDTHH:MM:SSZ` time cells; each is its own instant, and the ledger is not rewritten.
 - Worker: the row's Worker wall: process exit minus process start from the supervisor record. `—` when the row has no worker process. `unknown` only when that record is gone.
@@ -129,8 +130,8 @@ gap. Continue.
 
 Host status line rule: while a run is active, the coordinator posts one line in
 the invoking host session when an event-table event occurs. Shape:
-`capstan OWNER/REPO#N · STATION · EVENT: FACT`, for example
-`capstan owner/repo#N · review · finding-census round 1: 2 blocking, 3 advisory → fix`.
+`foreman OWNER/REPO#N · STATION · EVENT: FACT`, for example
+`foreman owner/repo#N · review · finding-census round 1: 2 blocking, 3 advisory → fix`.
 FACT is one observed value from that event's evidence. A value not observed is
 `unknown`. No estimates. A blocker line or a typed human decision line ends with
 what the operator must do. This rule (#134) narrows #34 decision 3. A `tool-call` event posts no host status line.
@@ -141,7 +142,7 @@ changes something the line reports. For a worker, that is a new worktree head,
 a new commit, or the result file appearing. The line gives elapsed time,
 worktree head, new commits since the last line, and whether the result file
 exists, for example
-`capstan owner/repo#N · implementing · observation: 19m elapsed, head 1a2b3c4, 1 new commit, result absent`.
+`foreman owner/repo#N · implementing · observation: 19m elapsed, head 1a2b3c4, 1 new commit, result absent`.
 For a silent-check or CI wait, a snapshot is an observation while the silent
 check still runs or a required CI check is still pending. The first snapshot
 and each changed check state post an observation line with elapsed time, the
@@ -166,7 +167,7 @@ GitHub summary, or withholds ready-to-deploy.
 
 This section owns earlier deliveries, their mistake and friction kinds, classes, the recurrence comparison, and the `Recurrence:` line.
 
-Earlier deliveries are this repository's issues whose body carries the marked `spec`. List open and closed issues with `gh`, every page, and keep those whose body contains the exact spec marker; do not rely on search to find the marker. Each earlier delivery is read in two kinds:
+Earlier deliveries are this repository's issues whose body carries the marked `spec`, `<!-- foreman:spec owner/repo#N -->` or `<!-- capstan:spec owner/repo#N -->`. List open and closed issues with `gh`, every page, and keep those whose body contains the exact spec marker; do not rely on search to find the marker. Each earlier delivery is read in two kinds:
 
 - Mistakes: actionable findings in marked `plan-review` comments and marked `review` censuses, fix rounds in the attempt table, reverts of a delivery's commits on the integration base, and PR review comments from trusted authors under [security](security.md).
 - Friction: (1) pack gaps naming the same file or fact a worker could not reach; (2) repeated permission denials for the same command; (3) read stations hitting their operation ceiling; (4) recovery attempts; (5) evidence checks reported defective. Read them from the `ledger.md` each marked summary publishes verbatim, the local `ledger.md` when its evidence root survives, and the marked station artifacts.
@@ -258,10 +259,10 @@ keeps the pile and the worktree, and the gap is recorded, even when the switch
 is `true`. When the switch is `false`, the pile stays and the ledger says
 deletion was skipped. Name each deleted path in `ledger.md` and read it back
 before the digest. Do not recurse over the evidence root,
-`$HOME/.local/state/capstan`, or any other issue directory. If the ready label
+`$HOME/.local/state/foreman`, `$HOME/.local/state/capstan`, or any other issue directory. If the ready label
 was removed because the live gate no longer holds, do not delete.
 
-The same step may remove only `.worktrees/capstan+N` created by this run, and
+The same step may remove only `.worktrees/foreman+N`, or `.worktrees/capstan+N` under [contract](contract.md) ("## Compat read path"), created by this run, and
 only when the switch is `true`, the ledger is complete, and the pushed head
 equals the ledger head. It does not remove a worktree this run did not create,
 and it does not remove the shared checkout. When the switch is `false` or the

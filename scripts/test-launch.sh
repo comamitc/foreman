@@ -1004,8 +1004,8 @@ cat >"$T/pc/claude.stdout" <<'EOF'
 {"type":"system","subtype":"init","session_id":"s1","model":"m1","cwd":"/somewhere","tools":["Bash","Read"]}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"git add --refresh -- .","description":"Refresh the index"}}]},"session_id":"s1"}
 {"type":"user","message":{"role":"user","content":[{"tool_use_id":"tu1","type":"tool_result","content":"","is_error":false}]},"session_id":"s1"}
-{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"CAPSTAN_PROBE_OK"}]},"session_id":"s1"}
-{"type":"result","subtype":"success","is_error":false,"num_turns":2,"result":"CAPSTAN_PROBE_OK","session_id":"s1","permission_denials":[],"usage":{"input_tokens":10,"output_tokens":4}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"FOREMAN_PROBE_OK"}]},"session_id":"s1"}
+{"type":"result","subtype":"success","is_error":false,"num_turns":2,"result":"FOREMAN_PROBE_OK","session_id":"s1","permission_denials":[],"usage":{"input_tokens":10,"output_tokens":4}}
 EOF
 printf 'warning: a plain diagnostic\n' >"$T/pc/claude.stderr"
 cat >"$T/exp/PC1-claude-write-probe.stdout" <<'EOF'
@@ -1013,13 +1013,13 @@ cat >"$T/exp/PC1-claude-write-probe.stdout" <<'EOF'
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"git add --refresh -- .","description":"[removed]"}}]},"session_id":"s1"}
 {"type":"user","message":{"role":"user","content":[{"tool_use_id":"tu1","type":"tool_result","content":"[removed]","is_error":false}]},"session_id":"s1"}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"[removed]"}]},"session_id":"s1"}
-{"type":"result","subtype":"success","is_error":false,"num_turns":2,"result":"CAPSTAN_PROBE_OK","session_id":"s1","permission_denials":[],"usage":{"input_tokens":10,"output_tokens":4}}
+{"type":"result","subtype":"success","is_error":false,"num_turns":2,"result":"FOREMAN_PROBE_OK","session_id":"s1","permission_denials":[],"usage":{"input_tokens":10,"output_tokens":4}}
 EOF
 printf '[removed]\n' >"$T/exp/PC1-claude-write-probe.stderr"
 cat >"$T/pc/codex.stdout" <<'EOF'
 {"type":"thread.started","thread_id":"th-1"}
 {"type":"turn.started"}
-{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"CAPSTAN_PROBE_OK"}}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"FOREMAN_PROBE_OK"}}
 {"type":"turn.completed","usage":{"input_tokens":5,"cached_input_tokens":0,"output_tokens":2}}
 EOF
 printf 'warning: a plain diagnostic\n' >"$T/pc/codex.stderr"
@@ -1036,7 +1036,7 @@ cat >"$T/pc/pc2.stdout" <<EOF
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu3","name":"Probe","params":{"note":"ARGTEXT-$P","command":"ARGCMD-$P"}}]}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"CHATTER-$P tok-$P-secretvalue"}]}}
 {"type":"system","subtype":"note","id":"tok-$P-secretvalue","name":"x Zq7 y","model":"dbc-$P-x","session_id":"$ESC_SECRET","uuid":"pre-4242$P","n":4242$P,"list":[4242$P, 7]}
-{"type":"result","subtype":"success","is_error":false,"num_turns":3,"result":"CAPSTAN_PROBE_OK","permission_denials":[],"usage":{"input_tokens":12,"output_tokens":3}}
+{"type":"result","subtype":"success","is_error":false,"num_turns":3,"result":"FOREMAN_PROBE_OK","permission_denials":[],"usage":{"input_tokens":12,"output_tokens":3}}
 EOF
 cat >"$T/pc/pc2.stderr" <<EOF
 {"type":"user","message":{"content":[{"tool_use_id":"tu2","type":"tool_result","content":"HOSTTEXT-$P","is_error":false}]}}
@@ -1051,7 +1051,7 @@ cat >"$T/exp/PC2.stdout" <<EOF
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu3","name":"Probe","params":{"note":"[removed]","command":"[removed]"}}]}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"[removed]"}]}}
 {"type":"system","subtype":"note","id":"[redacted]","name":"x [redacted] y","model":"[redacted]","session_id":"[redacted]","uuid":"pre-[redacted]","n":"[redacted]","list":["[redacted]", 7]}
-{"type":"result","subtype":"success","is_error":false,"num_turns":3,"result":"CAPSTAN_PROBE_OK","permission_denials":[],"usage":{"input_tokens":12,"output_tokens":3}}
+{"type":"result","subtype":"success","is_error":false,"num_turns":3,"result":"FOREMAN_PROBE_OK","permission_denials":[],"usage":{"input_tokens":12,"output_tokens":3}}
 EOF
 cat >"$T/exp/PC2.stderr" <<'EOF'
 {"type":"user","message":{"content":[{"tool_use_id":"tu2","type":"tool_result","content":"[removed]","is_error":false}]}}
@@ -1270,7 +1270,7 @@ cat >"$T/pc/pc8.stdout" <<EOF
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu9","name":"Bash","input":{"command":"git add --refresh -- .","timeout":1200$P,"run_in_background":false}}]}}
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu10","name":"Read","input":{"file_path":"/h/x.md","limit":4$P}}]}}
 {"type":"system","subtype":"hook","tool_name":"Probe","tool_input":{"name":"HOOKNAME-$P","n":5$P},"wire_tool_inputs":[{"id":"WIRE-$P"}]}
-{"type":"result","subtype":"success","is_error":false,"result":"CAPSTAN_PROBE_OK","permission_denials":[{"tool_name":"Bash","tool_use_id":"tu11","tool_input":{"command":"git push","timeout":9}}]}
+{"type":"result","subtype":"success","is_error":false,"result":"FOREMAN_PROBE_OK","permission_denials":[{"tool_name":"Bash","tool_use_id":"tu11","tool_input":{"command":"git push","timeout":9}}]}
 EOF
 : >"$T/pc/pc8.stderr"
 cat >"$T/exp/PC8.stdout" <<'EOF'
@@ -1278,7 +1278,7 @@ cat >"$T/exp/PC8.stdout" <<'EOF'
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu9","name":"Bash","input":{"command":"git add --refresh -- .","timeout":"[removed]","run_in_background":"[removed]"}}]}}
 {"type":"assistant","message":{"content":[{"type":"tool_use","id":"tu10","name":"Read","input":{"file_path":"/h/x.md","limit":"[removed]"}}]}}
 {"type":"system","subtype":"hook","tool_name":"Probe","tool_input":{"name":"[removed]","n":"[removed]"},"wire_tool_inputs":[{"id":"[removed]"}]}
-{"type":"result","subtype":"success","is_error":false,"result":"CAPSTAN_PROBE_OK","permission_denials":[{"tool_name":"Bash","tool_use_id":"tu11","tool_input":{"command":"git push","timeout":"[removed]"}}]}
+{"type":"result","subtype":"success","is_error":false,"result":"FOREMAN_PROBE_OK","permission_denials":[{"tool_name":"Bash","tool_use_id":"tu11","tool_input":{"command":"git push","timeout":"[removed]"}}]}
 EOF
 : >"$T/exp/PC8.stderr"
 
