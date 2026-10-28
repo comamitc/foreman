@@ -64,13 +64,14 @@ A denied coordinator step is a host permission refusal to run a coordinator comm
 
 ## Blocked overlays
 
-An explicit invocation of an issue that has `foreman:blocked`, or `capstan:blocked` as [contract](contract.md) ("## Compat read path") reads it, starts. Do not
+An explicit invocation of an issue that has `foreman:blocked` starts. Do not
 refuse because of that label. Do not ask the operator to remove it first.
 Before removing the overlay, observe the existing resume condition. Remove a human-capability overlay only when the missing capability, decision, or budget is observed. Remove a review-exhausted overlay only when one of the published
 review-convergence resume conditions is observed. Keep the stage label. If that
 condition is not observed, leave `foreman:blocked`, leave the blocker handoff,
-and do not rerun the station. A label that is not `foreman:blocked` or `capstan:blocked`, including
+and do not rerun the station. A label that is not `foreman:blocked`, including
 a label named `blocked`, does not refuse the invocation and is not removed.
+This section reads `capstan:blocked` as `foreman:blocked`, as [contract](contract.md) ("## Compat read path") states.
 
 Review exhaustion is the one technical blocked overlay.
 [Code-review convergence](review-convergence.md) states when it applies
