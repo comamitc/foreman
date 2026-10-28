@@ -5,14 +5,14 @@
 - Resume: the same invocation resumes the delivery.
 - Overrides in the invocation, such as the worker roles or a wall budget.
 - Triage questions; [triage](../../references/triage.md) ("An ask is one numbered round of the current frontier.") owns them.
-- Stage labels from `capstan:triage` to `capstan:ready-to-deploy`, and the `capstan:blocked` overlay.
-- Optional `.capstan.json` configuration; [README](../../README.md) ("Configuration") lists the fields.
+- Stage labels from `foreman:triage` to `foreman:ready-to-deploy`, and the `foreman:blocked` overlay.
+- Optional `.foreman.json` configuration; [README](../../README.md) ("Configuration") lists the fields.
 - Opt-in residual-effect approval; [pre-merge](../../references/pre-merge.md) owns it.
 - Opt-in boundary pass; [boundary pass](../../references/modes/boundary-pass.md) ("## Triggers") owns when it runs.
-- Opt-in auto-triage and its `capstan:needs-human` label; [triage](../../references/triage.md) ("Auto-triage:") owns both.
-- Risk tier labels `capstan:risk-low`, `capstan:risk-medium`, and `capstan:risk-high`; [pre-merge](../../references/pre-merge.md) ("Risk tier:") owns which one applies and [contract](../../references/contract.md) ("## Stage projection") owns their projection.
+- Opt-in auto-triage and its `foreman:needs-human` label; [triage](../../references/triage.md) ("Auto-triage:") owns both.
+- Risk tier labels `foreman:risk-low`, `foreman:risk-medium`, and `foreman:risk-high`; [pre-merge](../../references/pre-merge.md) ("Risk tier:") owns which one applies and [contract](../../references/contract.md) ("## Stage projection") owns their projection.
 - High-tier walkthrough in the pull-request body; [pre-merge](../../references/pre-merge.md) ("Walkthrough:") owns it.
-- Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/` by default.
+- Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/foreman/OWNER/REPO/N/` by default.
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
 
 ## How to get to it (user POV)
@@ -22,13 +22,14 @@ Prerequisites are git, authenticated `gh` with repository write access, and conf
 
 ## Driving it
 Invocation: invoke Foreman with the issue URL `https://github.com/OWNER/REPO/issues/N`, or with `N` from a checkout of that repository.
-End state: an open PR from branch `capstan/N` whose body has the line `Capstan: OWNER/REPO#N`, and the issue labeled `capstan:ready-to-deploy`, meaning GitHub says the PR can merge immediately.
-Other stops: `capstan:blocked` with reason `review-exhausted` (see [code-review convergence](../../references/review-convergence.md): "## Bounded rounds and recurrence", "## Coordinator-evidence findings"); one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; a decomposition end after filing child issues, with no pull request (see [decomposition](../../references/modes/decomposition.md): "**Decomposition end.**"); or user cancellation.
-The work happens in the worktree `.worktrees/capstan+N` of the target repository.
+End state: an open PR from branch `foreman/N` whose body has the line `Foreman: OWNER/REPO#N`, and the issue labeled `foreman:ready-to-deploy`, meaning GitHub says the PR can merge immediately.
+Other stops: `foreman:blocked` with reason `review-exhausted` (see [code-review convergence](../../references/review-convergence.md): "## Bounded rounds and recurrence", "## Coordinator-evidence findings"); one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; a decomposition end after filing child issues, with no pull request (see [decomposition](../../references/modes/decomposition.md): "**Decomposition end.**"); or user cancellation.
+The work happens in the worktree `.worktrees/foreman+N` of the target repository.
 Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch builder `scripts/launch.sh`; CI runs that check from [.github/workflows/check.yml](../../.github/workflows/check.yml).
 
 ## Gotchas
-- Foreman never merges or deploys; `capstan:ready-to-deploy` is the live gate, not a deploy step.
+- Foreman never merges or deploys; `foreman:ready-to-deploy` is the live gate, not a deploy step.
+- Deliveries started under the `capstan` names: [contract](../../references/contract.md) ("## Compat read path") owns them.
 - Run only one coordinator per issue at a time.
 - Changing the issue title does not change the branch, the worktree, or the marked PR lookup.
 - Issues by authors other than OWNER, MEMBER, or COLLABORATOR need confirmation; untrusted comments are excluded by default.

@@ -3,7 +3,7 @@
 ## Sub-features
 - An inventory of the repository's authoritative sources before any file is named.
 - Adoption of an existing conforming map, or a thin adapter map that links to the authoritative pages.
-- A new map at a repo-native path, by default `.capstan/features`.
+- A new map at a repo-native path, by default `.foreman/features`.
 
 ## How to get to it (user POV)
 Install Foreman as [README](../../README.md) ("Install and invoke") describes, and state in an issue or in a text invocation that the outcome is feature-map adoption.
@@ -17,6 +17,6 @@ The map then resolves as [contract](../../references/contract.md) ("`features` i
 
 ## Gotchas
 - A normal feature delivery, init, or resume does not enter adoption.
-- The chosen path and any `.capstan.json` change land in the same reviewed commit.
+- The chosen path and any `.foreman.json` change land in the same reviewed commit.
 - Adoption installs no documentation generator and no other skill.
 - An unverifiable claim is omitted or reported as a gap.

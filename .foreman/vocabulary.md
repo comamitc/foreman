@@ -1,8 +1,8 @@
 **Repository-scoped term**: a meaning later deliveries in this repository will need. Rejected: a decision that binds only this issue.
 
-**Delivery-scoped decision**: a settlement that binds only this issue or this change. Rejected: copying it into `.capstan/vocabulary.md`.
+**Delivery-scoped decision**: a settlement that binds only this issue or this change. Rejected: copying it into `.foreman/vocabulary.md`.
 
-**Vocabulary file**: `.capstan/vocabulary.md`. Rejected: `CONTEXT.md` or a host skill.
+**Vocabulary file**: `.foreman/vocabulary.md`. Rejected: `CONTEXT.md` or a host skill.
 
 **Rung**: one step on the ladder. The first rung that holds is the one that gets written. Rejected: writing a lower rung and justifying it.
 
@@ -20,7 +20,7 @@
 
 **Provenance**: which precedence step supplied the invocation. Rejected: a model judgment with no recorded step.
 
-**Init**: the explicit setup procedure that writes an absent `.capstan.json` and ensures the Foreman label set. The init invocation is exactly `init`. The rule owner is `references/contract.md` ("### Init"). Rejected: a Foreman binary, a delivery station, or a read-only invocation.
+**Init**: the explicit setup procedure that writes an absent `.foreman.json` and ensures the Foreman label set. The init invocation is exactly `init`. The rule owner is `references/contract.md` ("### Init"). Rejected: a Foreman binary, a delivery station, or a read-only invocation.
 
 **Observed harness**: a harness CLI that answered its documented help command on `PATH` during this init. Rejected: a harness named without that answer.
 
@@ -40,7 +40,7 @@
 
 **Unknown**: the required state when a number was never reported, or was deleted before the ledger contained it. Not zero. Rejected: an estimate.
 
-**Linked worktree git directory**: `<repo>/.git/worktrees/capstan+N`, where Git writes `index.lock` for `capstan/N`. Rejected: the worktree root.
+**Linked worktree git directory**: `<repo>/.git/worktrees/foreman+N`, where Git writes `index.lock` for `foreman/N`. Rejected: the worktree root.
 
 **Common git directory**: the directory `git rev-parse --git-common-dir` prints, where objects are written. Rejected: the worktree's `.git` file.
 
@@ -66,7 +66,7 @@
 
 **Delivery identity**: `owner/repo#N` of the issue the delivery runs. A text invocation does not replace it. Rejected: a hashed text branch name.
 
-**Blocked overlay**: the `capstan:blocked` label Foreman adds beside the stage label. Rejected: a label named `blocked`, or a GitHub issue dependency.
+**Blocked overlay**: the `foreman:blocked` label Foreman adds beside the stage label. Rejected: a label named `blocked`, or a GitHub issue dependency.
 
 **Denied coordinator step**: a host permission refusal to run a coordinator command, such as an auto-mode classifier denial. The rule owner is `references/recovery.md` ("## Denied coordinator step"). Rejected: a GitHub API error from a command that ran.
 
@@ -132,7 +132,7 @@
 
 **Post-merge check**: a stated outcome that needs a merge, deploy, operator action, or elapsed time to observe. It is recorded for the operator. The rule owner is `references/triage.md` ("Visit every stated outcome as a node"). Rejected: a start condition; a step Foreman runs.
 
-**Status invocation**: the explicit invocation `status`. It prints a read-only report of open issues that carry a Foreman stage label or the `capstan:blocked` overlay, and mutates nothing. The rule owner is `references/modes/status.md` ("This file owns the status invocation"). Rejected: a host status line (one event line during a run); a delivery.
+**Status invocation**: the explicit invocation `status`. It prints a read-only report of open issues that carry a Foreman stage label or the `foreman:blocked` overlay, and mutates nothing. The rule owner is `references/modes/status.md` ("This file owns the status invocation"). Rejected: a host status line (one event line during a run); a delivery.
 
 **Read-only invocation**: an explicit invocation that a row in the keyword table of `references/contract.md` ("## Read-only invocations") names. It prints one report and mutates nothing. The rule owner is `references/contract.md` ("## Read-only invocations"). Rejected: a delivery, a text invocation, or a host status line.
 
@@ -150,7 +150,7 @@
 
 **Coordinator-evidence finding**: a code-review finding in evidence the coordinator produced. The rule owner is `references/review-convergence.md` ("## Coordinator-evidence findings"). Rejected: "evidence-check finding".
 
-**Verified delivery**: a delivery that reached `capstan:ready-to-deploy` with its live gate verified. The rule owner is `references/modes/improvement.md` ("Resource comparison."). Rejected: a merged PR, a draft, or an attempt that stopped blocked.
+**Verified delivery**: a delivery that reached `foreman:ready-to-deploy` with its live gate verified. The rule owner is `references/modes/improvement.md` ("Resource comparison."). Rejected: a merged PR, a draft, or an attempt that stopped blocked.
 
 **Launch builder**: `scripts/launch.sh`. It writes and checks the run script for one Claude or Codex worker launch from structured inputs, and checks the pack that launch uses. Rejected: a builder that launches or supervises workers.
 
@@ -180,9 +180,9 @@
 
 **Ledger digest**: the SHA-256 of the final `ledger.md` bytes, published as `Ledger sha256: <hex>` in the marked summary. It is tamper-evident, not tamper-proof. The rule owner is `references/end-of-run.md`. Rejected: signing or attestation.
 
-**Residual-effect approval**: the opt-in pre-merge gate that withholds `capstan:ready-to-deploy` until a human GitHub approval on the current head, when the PR's Blast Radius names residual effects or unknown reversibility. The field is `review_policy.residual_effect_approval`, default `false`. The rule owner is `references/pre-merge.md` (step 4). Rejected: a risk score or risk tier.
+**Residual-effect approval**: the opt-in pre-merge gate that withholds `foreman:ready-to-deploy` until a human GitHub approval on the current head, when the PR's Blast Radius names residual effects or unknown reversibility. The field is `review_policy.residual_effect_approval`, default `false`. The rule owner is `references/pre-merge.md` (step 4). Rejected: a risk score or risk tier.
 
-**Risk tier**: `low`, `medium`, or `high`, assigned at pre-merge from the pull request's evidence and projected as one `capstan:risk-*` pull-request label. It is decision support for the merger, not a merge or approval gate. The rule owners are `references/pre-merge.md` ("Risk tier:") and `references/contract.md` ("## Stage projection"); see also **Walkthrough** (`references/pre-merge.md` ("Walkthrough:")). Rejected: a numeric risk score, a tier label on the issue, or a tier that gates merge or deploy.
+**Risk tier**: `low`, `medium`, or `high`, assigned at pre-merge from the pull request's evidence and projected as one `foreman:risk-*` pull-request label. It is decision support for the merger, not a merge or approval gate. The rule owners are `references/pre-merge.md` ("Risk tier:") and `references/contract.md` ("## Stage projection"); see also **Walkthrough** (`references/pre-merge.md` ("Walkthrough:")). Rejected: a numeric risk score, a tier label on the issue, or a tier that gates merge or deploy.
 
 **Documentation file**: a file that no run, build, test, or agent loads as instructions or config. The rule owner is `references/pre-merge.md` ("Risk tier:"). Rejected: classifying a file as documentation by its extension.
 
@@ -206,7 +206,7 @@
 
 **Denied shape**: an entry in the list that `templates/brief.md` ("## Worker constraints") opens with "Do not use these denied shapes". The rule owner is `templates/brief.md` ("## Worker constraints"). Rejected: a copy of the list in a station procedure; launch-builder logic in `scripts/launch.sh`.
 
-**Procedure trace**: a Markdown fixture under `.capstan/traces/` that quotes owner text verbatim with a stable anchor. The happy-path trace lists, station by station, the output shapes a happy-path delivery produces; the illegal-path trace, `.capstan/traces/illegal-paths.md`, gives one example per illegal combination. It is not a procedure file and owns no rule. Rejected: a captured transcript of a real run; a script that renders outputs or runs the examples.
+**Procedure trace**: a Markdown fixture under `.foreman/traces/` that quotes owner text verbatim with a stable anchor. The happy-path trace lists, station by station, the output shapes a happy-path delivery produces; the illegal-path trace, `.foreman/traces/illegal-paths.md`, gives one example per illegal combination. It is not a procedure file and owns no rule. Rejected: a captured transcript of a real run; a script that renders outputs or runs the examples.
 
 **Illegal combination**: a stage, label, start, or Foreman action paired with missing or contradicting evidence that the contract forbids. The rule owner is `references/contract.md` ("## Illegal combinations"). Rejected: a type or state machine in a Foreman executable.
 
@@ -217,3 +217,11 @@
 **Child issue**: an issue the coordinator files for one group of a decomposition. It carries a `Parent:` line. The rule owner is `references/modes/decomposition.md` ("**Child body.**"). Rejected: the GitHub sub-issue API; a cross-repository child; a pre-admitted child.
 
 **Sink child**: the one child that depends, directly or through other children, on every other child. The rule owner is `references/modes/decomposition.md` ("**Sink child.**"). Rejected: the operator always closes the parent; a forced extra rollup child.
+
+**Compat read path**: Foreman's reading of an old `capstan` form as its Foreman form until the v0.2.0 cutover. The rule owner is `references/contract.md` ("## Compat read path"). Rejected: a mapping helper script, or dual-token acceptance in `scripts/launch.sh`.
+
+**Old form**: a `capstan` spelling that the compat table lists. The rule owner is `references/contract.md` ("## Compat read path"). Rejected: a historical citation, such as a `comamitc/capstan` issue URL, which keeps its text.
+
+**Cutover**: the v0.2.0 removal of the compat read path, by a separate issue. The rule owner is `references/contract.md` ("## Compat read path"). Rejected: a date-based or per-repository cutover.
+
+**Migrate on touch**: replacing an old-form label with its Foreman form in the same label edit that touches the issue or pull request. The rule owner is `references/contract.md` ("Migrate on touch:"). Rejected: a relabel script.

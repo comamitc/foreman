@@ -1,7 +1,7 @@
 # Foreman
 
 Issue in, merge-ready PR out. One coordinator works with fresh headless workers,
-records evidence, and recovers from technical failures. `capstan:ready-to-deploy`
+records evidence, and recovers from technical failures. `foreman:ready-to-deploy`
 means an open PR that GitHub says can merge immediately. Foreman never merges or
 deploys.
 
@@ -12,7 +12,7 @@ launch builder `scripts/launch.sh` and its test script `scripts/test-launch.sh`,
 run with `bash` by the coordinator. There is no installer or wrapper. The coordinator reads GitHub/git facts. Local evidence and labels help
 resume; they cannot overrule current facts.
 
-Foreman was named Capstan before the public release. Labels, markers, branches, paths, and environment variables keep the `capstan` spelling.
+Foreman was named Capstan before the public release. Its labels, markers, branches, worktrees, paths, configuration, and environment variables are spelled `foreman`; [contract](references/contract.md) ("## Compat read path") owns the compat read path for their `capstan` spellings and its v0.2.0 cutover.
 
 ## Install and invoke
 
@@ -56,17 +56,17 @@ references: [Codex](https://learn.chatgpt.com/docs/build-skills),
 
 The completion endpoint is a verified open merge-ready PR. Foreman does not deploy. A fresh task inspects and resolves the base, fetches that branch, records the SHA, and creates the worktree before product edits. [contract](references/contract.md) owns that order, the host exceptions, and the rule that a host or user instruction file does not change a Foreman delivery's completion endpoint or its fetch-then-worktree order. This section adds no installer and no precedence system.
 
-The same invocation resumes. Issue-title changes do not change branch `capstan/N`,
-worktree `.worktrees/capstan+N`, or marked PR lookup. You may specify overrides in
+The same invocation resumes. Issue-title changes do not change branch `foreman/N`,
+worktree `.worktrees/foreman+N`, or marked PR lookup. You may specify overrides in
 the invocation, for example: “primary codex, secondary claude, wall budget 90 minutes.”
 Only one coordinator should work on an issue at a time. These delivery forms do not
 enter init.
-The invocation `status` alone, for example `/foreman status`, prints a read-only report of this repository's open issues that carry a Foreman stage label or the `capstan:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
+The invocation `status` alone, for example `/foreman status`, prints a read-only report of this repository's open issues that carry a Foreman stage label or the `foreman:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
 The invocation `architect`, alone or followed by paths in this repository, for example `/foreman architect` or `/foreman architect src`, prints a read-only report that grades the repository, or those paths, against rules Foreman ships, and changes nothing. [architect](references/modes/architect.md) owns its argument grammar.
 The invocation `guardrails`, alone or followed by paths in this repository, for example `/foreman guardrails` or `/foreman guardrails tests`, prints a read-only report that inventories this repository's guardrails with whether each runs and grades its test files, or those under the paths, against Foreman's check rules, and changes nothing. [guardrails](references/modes/guardrails.md) owns its argument grammar.
 The invocation `learn`, alone or followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs, for example `/foreman learn` or `/foreman learn since 2026-10-04`, prints a read-only report from every Foreman run on this machine that groups mistakes and friction into classes across repositories and ranks Foreman-process proposals, with target-product learnings apart, and changes nothing. It runs from any workspace. [learn](references/modes/learn.md) owns its argument grammar.
 The invocation `help`, alone or followed by a question, for example `/foreman help` or `/foreman help how do I resume a blocked issue`, prints a menu of topics, or an answer from the installed Foreman package that cites the file that owns it and the invocation to send next, and changes nothing. It starts no work; every invocation whose first word is `help` is a help invocation. [help](references/modes/help.md) owns its argument grammar.
-The invocation `init` alone, for example `/foreman init` in Claude Code or Grok Build, `$foreman init` in Codex CLI, or `/skill:foreman init` in Oh My Pi, writes an absent `.capstan.json` in this repository's checkout, leaves it uncommitted, and ensures the Foreman labels. `init` with other words is a text invocation.
+The invocation `init` alone, for example `/foreman init` in Claude Code or Grok Build, `$foreman init` in Codex CLI, or `/skill:foreman init` in Oh My Pi, writes an absent `.foreman.json` in this repository's checkout, leaves it uncommitted, and ensures the Foreman labels. `init` with other words is a text invocation.
 
 ### Text invocation
 
@@ -106,7 +106,7 @@ backfill, and backfill does not seed a map.
 
 ## Configuration
 
-Optional `.capstan.json` in the target repository:
+Optional `.foreman.json` in the target repository:
 
 ```json
 {
@@ -139,14 +139,14 @@ Optional `.capstan.json` in the target repository:
 ```
 
 The coordinator interprets each value.
-Precedence is invocation, environment, file, defaults, except for `heavy_checks.max_concurrent`, a per-host setting read only from the invocation or `CAPSTAN_HEAVY_CHECKS_MAX_CONCURRENT`; [contract](references/contract.md) ("`heavy_checks.max_concurrent` is a positive integer") owns it; and except for `triage.pause_categories`, whose order [contract](references/contract.md) ("`triage.pause_categories` is a list") owns.
+Precedence is invocation, environment, file, defaults, except for `heavy_checks.max_concurrent`, a per-host setting read only from the invocation or `FOREMAN_HEAVY_CHECKS_MAX_CONCURRENT`; [contract](references/contract.md) ("`heavy_checks.max_concurrent` is a positive integer") owns it; and except for `triage.pause_categories`, whose order [contract](references/contract.md) ("`triage.pause_categories` is a list") owns.
 Environment keys use uppercase paths joined by underscores, such
-as `CAPSTAN_PRIMARY_HARNESS` or `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`.
+as `FOREMAN_PRIMARY_HARNESS` or `FOREMAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`.
 Unknown/malformed values are called out and ignored individually. Review findings
 block only when they meet both the configured severity and confidence floors;
 other supported findings remain visible as advisory. Model/effort
 null uses the harness default; unsupported explicit effort fails visibly.
-`fallback: null` disables fallback. `CAPSTAN_STATE` overrides evidence storage.
+`fallback: null` disables fallback. `FOREMAN_STATE` overrides evidence storage.
 [contract](references/contract.md) owns `evidence.delete_pile` and `evidence.retain_replay`. [telemetry](references/telemetry.md) owns the ledger and deletion.
 
 `review_policy.residual_effect_approval` opts in to the residual-effect
@@ -192,7 +192,7 @@ hypothesis; only a distinct failure scenario is new.
 
 Code re-review is a ratchet, not a fresh unlimited scan: it verifies prior blockers
 and the repair delta. Counted review censuses are capped by
-`review_policy.max_review_fix_rounds`. For the `capstan:blocked` stop with reason
+`review_policy.max_review_fix_rounds`. For the `foreman:blocked` stop with reason
 `review-exhausted`, see
 [code-review convergence](references/review-convergence.md)
 ("## Bounded rounds and recurrence", "## Coordinator-evidence findings").
@@ -221,7 +221,7 @@ protection. No hostile-input sandbox or distributed lock is provided in v1.
 
 ## Evidence and cleanup
 
-Evidence defaults to `${XDG_STATE_HOME:-$HOME/.local/state}/capstan/OWNER/REPO/N/`.
+Evidence defaults to `${XDG_STATE_HOME:-$HOME/.local/state}/foreman/OWNER/REPO/N/`.
 Owner-only briefs, results, worker/check logs, and events.jsonl
 record observed commands and usage. Secrets are redacted before persistence or
 publication. [references/telemetry.md](references/telemetry.md) owns the ledger,
