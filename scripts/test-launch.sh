@@ -1620,7 +1620,7 @@ EOF
     'CONTRIBUTING.md:1-13' '## Rules' '.capstan/vocabulary.md:79-114' '**Rule owner**' >>"$T/pk/259.md"
   pk_pass PK1b "$T/pk/259.md"
 }
-PK2() {   # #281 review r1 · 1 pack at head f2dbbd4, verbatim; bare-path citations and absolute named paths
+PK2() {   # #281 review r1 · 1 pack at head f2dbbd4, verbatim except the generic home /home/u/; bare-path citations and absolute named paths
   cat >"$T/pk/281.md" <<'EOF'
 # #281 review r1 · 1 pack (head f2dbbd4, base 2a69df1): ## Rules that apply and ## Named files, verbatim
 ## Rules that apply
@@ -1646,8 +1646,8 @@ Effective code-review policy (`references/review-convergence.md`, quoted; config
 - `references/pack.md:1-120` ("An evidence check the initial plan writes") — owner for G5a-C4
 - `SKILL.md:1-90` ("## Coordinator loop") — owner for steps 3–5 (G5a-C8, C10, C16)
 - `references/triage.md:1-30` ("When `.capstan/vocabulary.md` exists, read it after repository instructions") — owner for G5a-C17
-- `/home/mcomardo/.local/state/capstan/comamitc/capstan/281/checks/spike-g5a-rows.md:1-40` ("Spike #257 G5a rows") — each cut's anchor, class, bytes, owner after cut, guarded failure, why kept.
-- `/home/mcomardo/.local/state/capstan/comamitc/capstan/281/checks/spike-g5a.diff:1-244` ("diff --git") — the spike candidate's applied text (cd38fa1 → 45534b2) for these files, to re-derive against current main.
+- `/home/u/.local/state/capstan/comamitc/capstan/281/checks/spike-g5a-rows.md:1-40` ("Spike #257 G5a rows") — each cut's anchor, class, bytes, owner after cut, guarded failure, why kept.
+- `/home/u/.local/state/capstan/comamitc/capstan/281/checks/spike-g5a.diff:1-244` ("diff --git") — the spike candidate's applied text (cd38fa1 → 45534b2) for these files, to re-derive against current main.
 EOF
   pk_fail PK2 "$T/pk/281.md" CONTRIBUTING.md .capstan/vocabulary.md AGENTS.md || return 1
   printf -- '- `%s` ("%s") — quoted rule.\n' 'CONTRIBUTING.md:1-13' '## Rules' \
