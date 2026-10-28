@@ -93,7 +93,7 @@ a secondary review merely to discover incomplete primary work.
 
 When the cumulative diff from the base to the candidate head changes a contract surface, as [.capstan/vocabulary.md](../.capstan/vocabulary.md) ("**Contract surface**") defines one, the gate also requires the coordinator's own green run of the repository's declared type check at the candidate head, recorded with command, head, and exit.
 Without that green run the gate keeps the finding `unresolved`, as for an absent row.
-When the repository conventions name no type check, the gate records `no declared type check` in place of that run, that absence keeps no finding open, and Capstan invents no type-check command.
+When the repository conventions name no type check, the gate records `no declared type check` in place of that run, that absence keeps no finding open, and Foreman invents no type-check command.
 A worker's check record, including a same-head check record that [references/harnesses/shared.md](harnesses/shared.md) ("The coordinator accepts a same-head check record") accepts, does not satisfy this gate or that type-check run.
 
 A later review finding is `new` only when its reachable failure scenario and

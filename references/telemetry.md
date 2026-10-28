@@ -69,7 +69,7 @@ The ledger notes keep the raw usage. In `ledger.md`, after the date line, write 
 
 After the attempt lines, write one line for each heavy check that ran unlocked, after its first observed unlocked run: ``- unlocked CHECK: ran unlocked because `flock` is not on `PATH` ``. CHECK is the declared invocation. An observed run is that check's entry under a captured result's `## Checks`, or the coordinator's own run. A heavy check the stop skipped writes no line. These lines are not attempt lines.
 
-Fields use the harness's own names and values, as reported. List only reported fields; when the harness reported no usage, write `usage=unknown`. A field is listed once. On a failed attempt, `exit=N error=REDACTED;` follows EFFORT, with the exit status and the redacted raw error. The summary and the final message do not copy the notes. The one exception is the verbatim `ledger.md` block the end-of-run order publishes in the summary; the summary's ordinary narrative still does not copy them. Capstan captures no cost. Record no spent, reported, or estimated cost figure or price in `ledger.md`, the summary, a host status line, or a benchmark or improvement comparison, even when the harness reports one.
+Fields use the harness's own names and values, as reported. List only reported fields; when the harness reported no usage, write `usage=unknown`. A field is listed once. On a failed attempt, `exit=N error=REDACTED;` follows EFFORT, with the exit status and the redacted raw error. The summary and the final message do not copy the notes. The one exception is the verbatim `ledger.md` block the end-of-run order publishes in the summary; the summary's ordinary narrative still does not copy them. Foreman captures no cost. Record no spent, reported, or estimated cost figure or price in `ledger.md`, the summary, a host status line, or a benchmark or improvement comparison, even when the harness reports one.
 
 For planning, record the initial plan, single review, correction launch/outcome,
 and full finding handoff into implementing. Record any operator-authorized reopening
@@ -150,7 +150,7 @@ silent check exits, or no required CI check is pending. It posts the `check`
 line only, not an observation line. A change that is itself an event-table
 event posts that event's line only. An unchanged observation posts nothing.
 Lines come from observations the coordinator already makes, not from a new
-timer. This rule adds no Capstan number or timeout. Workers do
+timer. This rule adds no Foreman number or timeout. Workers do
 not post status lines.
 
 Same-figures rule: copy the published summary's figures. Do not recompute.
@@ -206,7 +206,7 @@ compact `Rule:` line, in any pack of the delivery. The row is keyed by the
 quoted `path:line` at the resolved base SHA. The row states applicability,
 `applies` or `not-applicable` with a reason; how the rule was satisfied; the
 evidence command, artifact, or review-census entry and the head it applies to;
-and `verified`, `unresolved`, or `not-applicable`. Capstan's own policy text in
+and `verified`, `unresolved`, or `not-applicable`. Foreman's own policy text in
 a pack gets no row. A rule is mandatory when its quoted sentence contains
 `must`, `must not`, `shall`, `required`, `never`, `do not`, or `don't`, case-insensitive, as whole words.
 The lifecycle paragraph that follows applies to policy rows; for a policy row,

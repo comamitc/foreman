@@ -33,7 +33,7 @@ Do not create a docs tree or a generator. A README section is allowed when the p
 
 The new page rule does not override the agent-instruction section rule or the ban on creating `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`.
 
-Do not create `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`. Do not write `CONTEXT.md` or a host skill. Do not add a pre-merge docs harness, an OpenSpec dependency, or a Capstan-owned docs generator. A target repository's already-declared docs check stays a declared check.
+Do not create `CONTEXT.md`, `CLAUDE.md`, or `AGENTS.md`. Do not write `CONTEXT.md` or a host skill. Do not add a pre-merge docs harness, an OpenSpec dependency, or a Foreman-owned docs generator. A target repository's already-declared docs check stays a declared check.
 
 The coordinator runs [toolchain](toolchain.md) before this worker launches.
 
@@ -120,7 +120,7 @@ The coordinator runs [toolchain](toolchain.md) before this worker launches.
    the residual-effect approval in [pre-merge.md](pre-merge.md) step 4. A
    reversible change
    does not bypass required approval, existing checks, independent secondary
-   review, or Capstan's prohibition on merge and deploy.
+   review, or Foreman's prohibition on merge and deploy.
    Report risks honestly.
    Finish everything the pack supports; the result cites the pack.
 

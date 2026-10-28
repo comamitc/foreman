@@ -36,7 +36,7 @@ rejected or unsupported proposal does not manufacture a product change.
 Resource comparison. A comparison that weighs resource use changes one lever
 per candidate. Its baseline is the last kept configuration, not an original
 baseline that later kept changes superseded. Pin the cohort's members, the
-input and target revisions, the Capstan revision, the harness and version, the
+input and target revisions, the Foreman revision, the harness and version, the
 reported model and effort, and the environment. Report materially different
 task classes and station roles apart. Name the selection bias and the missing
 evidence. Count failed attempts, retries, corrections, and probes, so that
@@ -108,9 +108,9 @@ Keep a comment that explains a legitimate constraint or rationale. Reject a
 comment used instead of meeting an acceptance criterion. No blanket comment
 ban, universal framework, automatic gardener, or second lint stack.
 
-Separate Capstan-process improvements from target-product learning. A
-Capstan-process improvement found in another repository is reported. It is
-not published there and not written to the Capstan package. A standards,
+Separate Foreman-process improvements from target-product learning. A
+Foreman-process improvement found in another repository is reported. It is
+not published there and not written to the Foreman package. A standards,
 navigation, lesson, or check change enters only through admitted scope, with
 evidence and normal review. The invocation does not edit the installed or
 running skill or host-global files. The endpoint is unchanged: analysis-only

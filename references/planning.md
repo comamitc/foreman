@@ -16,7 +16,7 @@ to paths is a gap. The sweep covers:
   a revert with none of these is not identified, and that limit is a gap;
 - merged PRs, dated by `merged_at`, and PRs closed without merging, dated by
   `closed_at`, whose changed files touch the scope;
-- earlier Capstan blocker and review artifacts: comments whose first line starts
+- earlier Foreman blocker and review artifacts: comments whose first line starts
   with `<!-- capstan:`, dated by `created_at`, on in-scope issues and PRs,
   including an issue with no PR;
 - issues that report the same symptom, dated by `created_at`.

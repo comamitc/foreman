@@ -16,19 +16,19 @@
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
 
 ## How to get to it (user POV)
-Install Capstan as [README](../../README.md) ("Install and invoke") describes, then invoke it explicitly from the host's skill menu.
+Install Foreman as [README](../../README.md) ("Install and invoke") describes, then invoke it explicitly from the host's skill menu.
 Frontmatter disables model invocation; if a host version ignores invocation metadata, verify its discovery behavior before use.
 Prerequisites are git, authenticated `gh` with repository write access, and configured harness CLIs on `PATH`.
 
 ## Driving it
-Invocation: invoke Capstan with the issue URL `https://github.com/OWNER/REPO/issues/N`, or with `N` from a checkout of that repository.
+Invocation: invoke Foreman with the issue URL `https://github.com/OWNER/REPO/issues/N`, or with `N` from a checkout of that repository.
 End state: an open PR from branch `capstan/N` whose body has the line `Capstan: OWNER/REPO#N`, and the issue labeled `capstan:ready-to-deploy`, meaning GitHub says the PR can merge immediately.
 Other stops: `capstan:blocked` with reason `review-exhausted` (see [code-review convergence](../../references/review-convergence.md): "## Bounded rounds and recurrence", "## Coordinator-evidence findings"); one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; a decomposition end after filing child issues, with no pull request (see [decomposition](../../references/modes/decomposition.md): "**Decomposition end.**"); or user cancellation.
 The work happens in the worktree `.worktrees/capstan+N` of the target repository.
 Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch builder `scripts/launch.sh`; CI runs that check from [.github/workflows/check.yml](../../.github/workflows/check.yml).
 
 ## Gotchas
-- Capstan never merges or deploys; `capstan:ready-to-deploy` is the live gate, not a deploy step.
+- Foreman never merges or deploys; `capstan:ready-to-deploy` is the live gate, not a deploy step.
 - Run only one coordinator per issue at a time.
 - Changing the issue title does not change the branch, the worktree, or the marked PR lookup.
 - Issues by authors other than OWNER, MEMBER, or COLLABORATOR need confirmation; untrusted comments are excluded by default.
@@ -53,7 +53,7 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Shared red runs in implementing: [implementing](../../references/implementing.md) ("One run of a check is the red observation") owns that rule.
 - A delivery's summary discloses finding classes and friction that recurred in two or more earlier deliveries and suggests the correction mode; [telemetry](../../references/telemetry.md) ("This section owns earlier deliveries") owns that rule.
 - A spec dependency can stop a delivery before it starts; [contract](../../references/contract.md) ("## Start condition") owns that rule.
-- Illegal combinations of stage, label, start, and Capstan action: [contract](../../references/contract.md) ("## Illegal combinations") owns the table and when the coordinator checks it.
+- Illegal combinations of stage, label, start, and Foreman action: [contract](../../references/contract.md) ("## Illegal combinations") owns the table and when the coordinator checks it.
 - Cross-repository requests: [triage](../../references/triage.md) ("A criterion that is not verifiable in this repository is an Ask") owns the criterion rule; [contract](../../references/contract.md) ("## Start condition") owns dependencies.
 - Post-merge checks: [triage](../../references/triage.md) ("Visit every stated outcome as a node") owns the classification; [end of run](../../references/end-of-run.md) ("`## Post-merge checks` section contains that section copied verbatim") owns the ready-to-deploy summary heading.
 - Trusted comments after the spec: [pre-merge](../../references/pre-merge.md) ("Newer trusted comments") owns the check.

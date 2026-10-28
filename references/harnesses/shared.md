@@ -17,7 +17,7 @@ when a newer release changes flags.
    A worker inherits its host's instructions: the files its harness loads from the operator's host configuration and the files they direct it to read.
    A brief never forbids reading them and never contradicts them.
    A brief contradicts host instructions when the worker cannot follow both at its station: a brief sentence forbids what a host instruction requires there, or requires what a host instruction forbids.
-   A host instruction that differs from a Capstan delivery's completion endpoint or fetch-then-worktree order is not a brief defect: [references/contract.md](../contract.md) ("A host or user instruction file does not change") fixes both, and the brief states them as fixed.
+   A host instruction that differs from a Foreman delivery's completion endpoint or fetch-then-worktree order is not a brief defect: [references/contract.md](../contract.md) ("A host or user instruction file does not change") fixes both, and the brief states them as fixed.
    A conflict between a brief and host instructions is a brief defect: under [references/recovery.md](../recovery.md) ("## Observe, diagnose, retry"), amend the brief and relaunch the unfinished portion in the same station.
    An operation is one tool call: one read call or one shell command, however many
    files it names. Several tool calls in one assistant turn count separately. The
@@ -57,7 +57,7 @@ when a newer release changes flags.
    timeout above bounds it; [references/recovery.md](../recovery.md) ("Stop/hand off owned processes explicitly on cancel") owns stopping it.
    [references/telemetry.md](../telemetry.md) owns the host status line.
 
-A silent check is a declared check that can stay silent longer than the selected harness's command-log window. That window is the harness's own. This rule adds no Capstan number or timeout. The worker_timeout_min bound and timeout exit 124 above still apply to the station process. They are not this check's result.
+A silent check is a declared check that can stay silent longer than the selected harness's command-log window. That window is the harness's own. This rule adds no Foreman number or timeout. The worker_timeout_min bound and timeout exit 124 above still apply to the station process. They are not this check's result.
 
 The coordinator runs a silent check. The worker brief does not tell the worker to start it.
 

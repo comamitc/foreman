@@ -1,16 +1,18 @@
-# Capstan
+# Foreman
 
 Issue in, merge-ready PR out. One coordinator works with fresh headless workers,
 records evidence, and recovers from technical failures. `capstan:ready-to-deploy`
-means an open PR that GitHub says can merge immediately. Capstan never merges or
+means an open PR that GitHub says can merge immediately. Foreman never merges or
 deploys.
 
-The product is Markdown. Capstan's own behavior is a skill procedure executed
-by the coordinator. A Capstan executable, parser, or controller is forbidden
+The product is Markdown. Foreman's own behavior is a skill procedure executed
+by the coordinator. A Foreman executable, parser, or controller is forbidden
 unless an admitted issue records the exception. Issue #181 records one: the
 launch builder `scripts/launch.sh` and its test script `scripts/test-launch.sh`,
 run with `bash` by the coordinator. There is no installer or wrapper. The coordinator reads GitHub/git facts. Local evidence and labels help
 resume; they cannot overrule current facts.
+
+Foreman was named Capstan before the public release. Labels, markers, branches, paths, and environment variables keep the `capstan` spelling.
 
 ## Install and invoke
 
@@ -23,7 +25,7 @@ with an absolute path to a reviewed checkout:
 
 ```sh
 mkdir -p "$HOME/.agents/skills"
-ln -s /absolute/path/to/capstan "$HOME/.agents/skills/capstan"
+ln -s /absolute/path/to/foreman "$HOME/.agents/skills/foreman"
 ```
 
 Inspect an existing destination first; do not replace another installation blindly.
@@ -33,15 +35,15 @@ alternatives and explicit invocation forms are:
 
 | Host | User skill directory | Invocation |
 | --- | --- | --- |
-| Claude Code | `~/.claude/skills/capstan/` | `/capstan https://github.com/OWNER/REPO/issues/N` |
-| Codex CLI | `~/.agents/skills/capstan/` | `$capstan https://github.com/OWNER/REPO/issues/N` |
-| Grok Build | `~/.grok/skills/capstan/` | `/capstan https://github.com/OWNER/REPO/issues/N` |
-| Oh My Pi | `~/.agents/skills/capstan/` | `/skill:capstan https://github.com/OWNER/REPO/issues/N` |
+| Claude Code | `~/.claude/skills/foreman/` | `/foreman https://github.com/OWNER/REPO/issues/N` |
+| Codex CLI | `~/.agents/skills/foreman/` | `$foreman https://github.com/OWNER/REPO/issues/N` |
+| Grok Build | `~/.grok/skills/foreman/` | `/foreman https://github.com/OWNER/REPO/issues/N` |
+| Oh My Pi | `~/.agents/skills/foreman/` | `/skill:foreman https://github.com/OWNER/REPO/issues/N` |
 
 Install is this directory symlinked or copied into the host skill path already
-listed. Capstan does not ship a marketplace manifest or a converter.
+listed. Foreman does not ship a marketplace manifest or a converter.
 
-Restart the host or use its documented reload after installation. Confirm Capstan
+Restart the host or use its documented reload after installation. Confirm Foreman
 appears in its explicit skill menu. Frontmatter disables model invocation; Codex
 also receives `policy.allow_implicit_invocation: false` presentation metadata.
 If a host version ignores invocation metadata, do not claim automatic invocation
@@ -52,19 +54,19 @@ references: [Codex](https://learn.chatgpt.com/docs/build-skills),
 
 ### Compatibility with host instructions
 
-The completion endpoint is a verified open merge-ready PR. Capstan does not deploy. A fresh task inspects and resolves the base, fetches that branch, records the SHA, and creates the worktree before product edits. [contract](references/contract.md) owns that order, the host exceptions, and the rule that a host or user instruction file does not change a Capstan delivery's completion endpoint or its fetch-then-worktree order. This section adds no installer and no precedence system.
+The completion endpoint is a verified open merge-ready PR. Foreman does not deploy. A fresh task inspects and resolves the base, fetches that branch, records the SHA, and creates the worktree before product edits. [contract](references/contract.md) owns that order, the host exceptions, and the rule that a host or user instruction file does not change a Foreman delivery's completion endpoint or its fetch-then-worktree order. This section adds no installer and no precedence system.
 
 The same invocation resumes. Issue-title changes do not change branch `capstan/N`,
 worktree `.worktrees/capstan+N`, or marked PR lookup. You may specify overrides in
 the invocation, for example: “primary codex, secondary claude, wall budget 90 minutes.”
 Only one coordinator should work on an issue at a time. These delivery forms do not
 enter init.
-The invocation `status` alone, for example `/capstan status`, prints a read-only report of this repository's open issues that carry a Capstan stage label or the `capstan:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
-The invocation `architect`, alone or followed by paths in this repository, for example `/capstan architect` or `/capstan architect src`, prints a read-only report that grades the repository, or those paths, against rules Capstan ships, and changes nothing. [architect](references/modes/architect.md) owns its argument grammar.
-The invocation `guardrails`, alone or followed by paths in this repository, for example `/capstan guardrails` or `/capstan guardrails tests`, prints a read-only report that inventories this repository's guardrails with whether each runs and grades its test files, or those under the paths, against Capstan's check rules, and changes nothing. [guardrails](references/modes/guardrails.md) owns its argument grammar.
-The invocation `learn`, alone or followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs, for example `/capstan learn` or `/capstan learn since 2026-10-04`, prints a read-only report from every Capstan run on this machine that groups mistakes and friction into classes across repositories and ranks Capstan-process proposals, with target-product learnings apart, and changes nothing. It runs from any workspace. [learn](references/modes/learn.md) owns its argument grammar.
-The invocation `help`, alone or followed by a question, for example `/capstan help` or `/capstan help how do I resume a blocked issue`, prints a menu of topics, or an answer from the installed Capstan package that cites the file that owns it and the invocation to send next, and changes nothing. It starts no work; every invocation whose first word is `help` is a help invocation. [help](references/modes/help.md) owns its argument grammar.
-The invocation `init` alone, for example `/capstan init` in Claude Code or Grok Build, `$capstan init` in Codex CLI, or `/skill:capstan init` in Oh My Pi, writes an absent `.capstan.json` in this repository's checkout, leaves it uncommitted, and ensures the Capstan labels. `init` with other words is a text invocation.
+The invocation `status` alone, for example `/foreman status`, prints a read-only report of this repository's open issues that carry a Foreman stage label or the `capstan:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
+The invocation `architect`, alone or followed by paths in this repository, for example `/foreman architect` or `/foreman architect src`, prints a read-only report that grades the repository, or those paths, against rules Foreman ships, and changes nothing. [architect](references/modes/architect.md) owns its argument grammar.
+The invocation `guardrails`, alone or followed by paths in this repository, for example `/foreman guardrails` or `/foreman guardrails tests`, prints a read-only report that inventories this repository's guardrails with whether each runs and grades its test files, or those under the paths, against Foreman's check rules, and changes nothing. [guardrails](references/modes/guardrails.md) owns its argument grammar.
+The invocation `learn`, alone or followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs, for example `/foreman learn` or `/foreman learn since 2026-10-04`, prints a read-only report from every Foreman run on this machine that groups mistakes and friction into classes across repositories and ranks Foreman-process proposals, with target-product learnings apart, and changes nothing. It runs from any workspace. [learn](references/modes/learn.md) owns its argument grammar.
+The invocation `help`, alone or followed by a question, for example `/foreman help` or `/foreman help how do I resume a blocked issue`, prints a menu of topics, or an answer from the installed Foreman package that cites the file that owns it and the invocation to send next, and changes nothing. It starts no work; every invocation whose first word is `help` is a help invocation. [help](references/modes/help.md) owns its argument grammar.
+The invocation `init` alone, for example `/foreman init` in Claude Code or Grok Build, `$foreman init` in Codex CLI, or `/skill:foreman init` in Oh My Pi, writes an absent `.capstan.json` in this repository's checkout, leaves it uncommitted, and ensures the Foreman labels. `init` with other words is a text invocation.
 
 ### Text invocation
 
@@ -169,7 +171,7 @@ the field and its default list.
 
 Read [contract](references/contract.md) for field rules and
 [harnesses](references/harnesses.md) for version-checked launch guidance.
-Capstan does not capture cost. The only run budget is wall time; [contract](references/contract.md) owns it and the retired cost fields. The coordinator never invents prices or usage.
+Foreman does not capture cost. The only run budget is wall time; [contract](references/contract.md) owns it and the retired cost fields. The coordinator never invents prices or usage.
 
 Planning follows one fixed sequence: initial plan, independent review, one
 correction pass addressing the entire feedback set, then implementation. A review
@@ -207,7 +209,7 @@ untrusted comments are excluded by default. A worktree is not a security sandbox
 Host permissions and repository instructions still apply.
 
 The coordinator may push its branch, create/update its PR and issue artifacts,
-change Capstan labels, and rerun eligible CI. Workers may edit/commit only their
+change Foreman labels, and rerun eligible CI. Workers may edit/commit only their
 worktree at write stations. Human commits are preserved; published branches are
 never force-pushed. Missing credentials, permissions, purchase decisions, required
 approvals, consequential product choices, and budget decisions produce one typed
@@ -239,7 +241,7 @@ Reviewer evidence on the diff is the proof.
 CI runs the declared check, `bash scripts/test-launch.sh`, from [.github/workflows/check.yml](.github/workflows/check.yml).
 
 Historical ideas came from ponytail, firstmate, Matt Pocock's skills, and pstack.
-This attribution is provenance only. All shipped instructions are Capstan-owned;
+This attribution is provenance only. All shipped instructions are Foreman-owned;
 no third-party skill is installed, copied, invoked, or needed. MIT licensed.
 
 [references/publication.md](references/publication.md) owns publication.

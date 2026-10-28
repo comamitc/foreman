@@ -41,7 +41,7 @@ Red flags:
 
 ## Check
 
-Non-trivial logic leaves one runnable check that fails if the logic breaks. A one-liner does not grow a framework, a fixture, or a per-function suite. An existing repository test convention still applies when that repository already has one. Do not invent a second test stack. Capstan has no test runner. Do not add one.
+Non-trivial logic leaves one runnable check that fails if the logic breaks. A one-liner does not grow a framework, a fixture, or a per-function suite. An existing repository test convention still applies when that repository already has one. Do not invent a second test stack. Foreman has no test runner. Do not add one.
 
 Test tiers, highest first:
 
