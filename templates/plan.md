@@ -1,4 +1,4 @@
-<!-- capstan:plan OWNER/REPO#N -->
+<!-- foreman:plan OWNER/REPO#N -->
 # Plan
 
 Specification revision / issue body updatedAt:

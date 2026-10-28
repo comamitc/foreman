@@ -77,7 +77,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    approval for this gate. A bot or agent approval does not satisfy it. Until a
    counting approval exists, use `authority-required` with the one requested
    action "approve PR #N at head SHA" and do not project
-   `capstan:ready-to-deploy`. Resume when the approval is observed. Step 5
+   `foreman:ready-to-deploy`. Resume when the approval is observed. Step 5
    evaluates this gate again at every live observation. When the field resolves
    to `false`, skip this paragraph and the step 5 re-check.
 5. Re-fetch base and query live PR state:
@@ -119,10 +119,10 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    reason: noise, out of scope, already fixed, or not reproducible on the
    current head. Dismissal is not silence. A dismissed claim does not enter
    fix, does not consume a review-fix round, and does not block
-   `capstan:ready-to-deploy`. An undismissed, untraced bot claim blocks ready.
+   `foreman:ready-to-deploy`. An undismissed, untraced bot claim blocks ready.
    Do not project ready while a bot thread on the marked pull request has
    neither a trace nor a dismissal. Publish the trace or dismissal on the pull
-   request in a comment marked `<!-- capstan:review-disposition owner/repo#N -->`.
+   request in a comment marked `<!-- foreman:review-disposition owner/repo#N -->`.
    Name the bot comment URL, the head SHA, and either the finding or the
    dismissal reason. A later head change requires
    open bot claims to be traced again. A dismissal that names an older head
@@ -134,7 +134,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
 
    Newer trusted comments: run this check after every push that reaches
    pre-merge and again immediately before step 7 projects
-   `capstan:ready-to-deploy`. Read every page of the comments on the issue and
+   `foreman:ready-to-deploy`. Read every page of the comments on the issue and
    on the marked pull request: issue comments with
    `gh api repos/OWNER/REPO/issues/N/comments --paginate`, pull-request
    conversation comments with
@@ -151,7 +151,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    spec ([triage.md](triage.md) "record its GitHub body revision/time").
 
    A comment is Foreman's own marked artifact, and is excluded, only when its
-   first line is exactly `<!-- capstan:KIND owner/repo#N -->` for this
+   first line is exactly `<!-- foreman:KIND owner/repo#N -->` or `<!-- capstan:KIND owner/repo#N -->` for this
    delivery with a KIND that [contract.md](contract.md) "Marked Markdown
    artifacts" lists, and its URL is one this run records as published by
    Foreman, in `ledger.md` or its recorded artifact URLs. A comment that
@@ -160,12 +160,12 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    traces above are also excluded.
 
    A kept comment that adds, changes, or withdraws a requirement, decision, or
-   acceptance criterion changes scope: project `capstan:triage` on the issue
+   acceptance criterion changes scope: project `foreman:triage` on the issue
    with the [contract.md](contract.md) "Stage projection" commands, and ask
    one round under [triage.md](triage.md) ("An ask is one numbered round of
    the current frontier.") that links the comment. If the marked pull request
-   carries `capstan:ready-to-deploy`, remove it and read it back as that
-   section states. Do not project `capstan:ready-to-deploy` until the round is
+   carries `foreman:ready-to-deploy`, remove it and read it back as that
+   section states. Do not project `foreman:ready-to-deploy` until the round is
    answered, the spec is republished under [triage.md](triage.md) ("Re-read
    the issue before replacing its body"), and the head is re-planned or
    re-reviewed as the scope-change route requires.
@@ -207,7 +207,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    [contract.md](contract.md) "Evidence and reconciliation" names the owner of
    `ledger.md`. An untrusted comment is handled as [security.md](security.md)
    item 1 states and never changes scope.
-7. Withhold `capstan:ready-to-deploy`
+7. Withhold `foreman:ready-to-deploy`
    while an applicable policy row for a mandatory rule is not `verified`;
    [telemetry.md](telemetry.md) owns the policy row and the mandatory-rule test.
    A non-mandatory row that is not `verified` is disclosed in the summary and
@@ -230,7 +230,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    ([implementing.md](implementing.md) ("Reversibility uses three states")),
    from the PR body read with the `gh api` command of
    "Residual-effect approval: when"; contract surfaces
-   ([.capstan/vocabulary.md](../.capstan/vocabulary.md) ("**Contract surface**")),
+   ([.foreman/vocabulary.md](../.foreman/vocabulary.md) ("**Contract surface**")),
    from the published plan's contract-surface list and the cumulative diff;
    security scope ([security.md](security.md) ("Security scope:")), from the
    cumulative diff and the plan; dependency changes and CI or workflow
@@ -247,7 +247,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    file is a documentation file, and `medium` otherwise. A documentation file
    is one that no run, build, test, or agent loads as instructions or config;
    a file not shown to be one is not one. In Foreman, files under
-   `references/`, `templates/`, `.capstan/`, and `SKILL.md` are not
+   `references/`, `templates/`, `.foreman/`, and `SKILL.md` are not
    documentation. A dependency change is a new or changed dependency, such as
    a package manifest, a lockfile, or vendored code; with no high trigger it
    is `medium`. A CI or workflow change is a change to a file that a CI
@@ -265,7 +265,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    read-back with exactly one `Risk tier:` line, naming this tier and
    HEAD_SHA, and every other line as written. Otherwise rebuild the body from
    that read-back the same way, write it once more, and read it back again. If
-   it still fails, do not project `capstan:ready-to-deploy`; the attempt fails
+   it still fails, do not project `foreman:ready-to-deploy`; the attempt fails
    as "Failed attempts use shared recovery." states. A merger treats the tier
    label as valid only while HEAD_SHA equals the pull request head. The tier
    line is not a reversibility statement; step 4 does not read it.
@@ -285,7 +285,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    carefully" does not satisfy a section. A walkthrough that is absent, lacks
    a section or a section's prompt, or names another head is missing. A `low`
    or `medium` tier needs no walkthrough. A missing walkthrough withholds
-   `capstan:ready-to-deploy` and the tier label; it is evidence an agent
+   `foreman:ready-to-deploy` and the tier label; it is evidence an agent
    supplies, the step 3 `in-diff` row, not a human-capability blocker or
    review exhaustion. Foreman's fresh primary repair worker writes it and
    returns it under `## PR content` with its head unchanged. Put it in the
@@ -296,7 +296,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    attempt fails as "Failed attempts use shared recovery." states.
 
    Only then project
-   `capstan:ready-to-deploy` on the issue with the existing stage rules, and
+   `foreman:ready-to-deploy` on the issue with the existing stage rules, and
    project it with the tier label on the marked pull request with
    [contract.md](contract.md) "Stage projection"
    ("After a successful ready projection"), through its issue and pull-request
@@ -304,6 +304,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    If the pull-request label is missing, re-add it
    once and read it back as that section states. If the live gate no longer
    holds, remove the pull-request label and read it back as that section states.
+   Read `capstan:ready-to-deploy` and `capstan:risk-*` as [contract.md](contract.md) ("## Compat read path") reads them.
 
    [telemetry.md](telemetry.md) owns the attempt-table field rules and the end-to-end wall.
    [end-of-run.md](end-of-run.md) owns emission and the end-of-run order. After the ready-label read-back,

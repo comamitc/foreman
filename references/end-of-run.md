@@ -10,7 +10,7 @@ blocker stands. Pre-merge owns the gate. This record is the summary source for
 it.
 
 At terminal readiness, project the ready label and read it back. At review
-exhaustion, do not project `capstan:ready-to-deploy`; the order starts after the
+exhaustion, do not project `foreman:ready-to-deploy`; the order starts after the
 review-exhaustion decision. Then run the recurrence comparison under "Earlier
 deliveries and recurrence" and write its lines into `ledger.md`. Then follow
 this end-of-run order:
@@ -40,7 +40,7 @@ disclosures, applicable policy rows whose state is not `verified`, the ledger's
 `Residual-effect approval:` stating the facts of the latest ledger
 residual-effect approval record when one exists, and gaps. It
 also contains the line `Ledger sha256: <hex>`, or `Ledger sha256: unknown` when
-the digest fails. At `capstan:ready-to-deploy`, a summary whose admitted spec
+the digest fails. At `foreman:ready-to-deploy`, a summary whose admitted spec
 has a `## Post-merge checks` section contains that section copied verbatim,
 heading included; the final `ledger.md` records it verbatim, so step 4 composes
 it from the ledger.
@@ -82,7 +82,7 @@ not an unrecoverable run. A failed GitHub summary publication uses normal transi
 recovery; do not pretend it published.
 
 Emission follows the summary read-back. The coordinator's final message in the host session contains the attempt table with its Total row and the date line, copied unchanged from the published summary in the summary's columns, order, and formats. A URL may follow. The URL alone does not satisfy this. Trigger only at
-verified `capstan:ready-to-deploy` or review exhaustion. The table stays terminal-only.
+verified `foreman:ready-to-deploy` or review exhaustion. The table stays terminal-only.
 In a batch invocation, each issue's summary also publishes at a human-capability blocked overlay, and the final message waits for batch end; [batch invocation](modes/batch-invocation.md) ("Emit the final message once, after the last issue's summary read-back") owns both.
 The surface is that final message on Claude Code, Codex, Grok, and Oh My Pi.
 No plugin, notification command, or status-line API. Workers do

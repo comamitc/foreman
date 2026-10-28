@@ -37,8 +37,8 @@ Grade only these rows. Each row's owner states the rule; this file names it and 
 | Module | [ladder](../ladder.md) "## Module": "Red flags:", "Apply the deletion test", "Add a seam only where something actually varies", and "Assume the next contributor is an agent" | each module in scope |
 | Enforcement | [ladder](../ladder.md) "## Enforcement" ("Pick the highest level that works") | each mistake class the scope lets an agent make, with the highest level that would rule it out |
 | Toolchain | [toolchain](../toolchain.md) "Take commands from the plan's named checks, then the repository's documented runner." and "The worker does not discover a command, a runner, or a tool path." | whether one declared runner exists that covers the scope |
-| Navigation: pointers | [vocabulary](../../.capstan/vocabulary.md) "Rule owner" ("Other files name it and do not restate the rule.") | whether the instruction files that apply to the scope hold pointers rather than rule bodies |
-| Navigation: vocabulary | [triage](../triage.md) "# Triage — coordinator" ("When `.capstan/vocabulary.md` exists, read it after repository instructions" and "A missing file is recorded and does not block.") | whether `W/.capstan/vocabulary.md` exists |
+| Navigation: pointers | [vocabulary](../../.foreman/vocabulary.md) "Rule owner" ("Other files name it and do not restate the rule.") | whether the instruction files that apply to the scope hold pointers rather than rule bodies |
+| Navigation: vocabulary | [triage](../triage.md) "# Triage — coordinator" ("When `.foreman/vocabulary.md` exists, read it after repository instructions" and "A missing file is recorded and does not block.") | whether `W/.foreman/vocabulary.md`, or `W/.capstan/vocabulary.md` under [contract](../contract.md) ("## Compat read path"), exists |
 | Verification path | [verification-path adoption](verification-path.md) "Record these seven steps" | whether a recorded verification path exists that covers the scope |
 
 The Navigation: vocabulary row keeps triage's qualification that a missing vocabulary file does not block: its finding has the lowest severity in the calibration that Procedure step 6 cites, and its title says it does not block. A present vocabulary file makes no finding in this row.
@@ -47,7 +47,7 @@ The ladder's "This section applies only to a module the change adds or reshapes"
 
 ## Feature map
 
-Resolve the map as [contract](../contract.md) ("`features` is the optional feature-map field") specifies, from the environment and `W/.capstan.json`. This invocation carries no override. Exactly one case applies:
+Resolve the map as [contract](../contract.md) ("`features` is the optional feature-map field") specifies, from the environment and `W/.foreman.json`. This invocation carries no override. Exactly one case applies:
 
 - **No map resolves**, including a missing explicit path: one Navigation finding. Its Fix is a ready-to-paste Foreman text invocation, in the host's explicit form from [README](../../README.md) "Install and invoke", stating that the outcome is feature-map adoption for this repository. [feature-map adoption](feature-map-adoption.md) ("This file owns feature-map adoption") owns that run.
 - **Disabled** (`features: null`): the report's feature-map line says it is disabled by configuration. No adoption finding is made.

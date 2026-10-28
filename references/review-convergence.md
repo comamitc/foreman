@@ -76,7 +76,7 @@ An operator disposition must come from the explicit invocation or a trusted
 OWNER/MEMBER/COLLABORATOR comment, name each finding's origin review and local ID,
 state `accepted-risk`, `out-of-scope`, or `superseded`, and give a reason. The
 coordinator republishes it on the PR with
-`<!-- capstan:review-disposition OWNER/REPO#N -->`, source author/comment URL,
+`<!-- foreman:review-disposition OWNER/REPO#N -->`, source author/comment URL,
 effective head and policy, then reads it back before repartitioning. Never infer a
 disposition from approval, silence, labels, or ambiguous prose. A disposition for
 one lineage does not cover a renamed distinct scenario.
@@ -125,7 +125,7 @@ it gives `review-exhausted`. At the round ceiling, the coordinator also repairs
 each blocking-grade coordinator-evidence finding that partition leaves advisory,
 and one confirmation review of those repairs follows without consuming a round.
 If that confirmation review finds a coordinator-evidence finding at blocking
-grade still open, the run adds `capstan:blocked` with blocker kind
+grade still open, the run adds `foreman:blocked` with blocker kind
 `review-exhausted`.
 
 A census with both product effective blockers and a blocking-grade
@@ -172,12 +172,12 @@ After publishing `max_review_fix_rounds` counted censuses:
 
 - zero effective blockers advances to pre-merge, regardless of advisories,
   subject to the pre-merge requirement in "## Coordinator-evidence findings" above;
-- remaining effective blockers add `capstan:blocked` with blocker kind
+- remaining effective blockers add `foreman:blocked` with blocker kind
   `review-exhausted` and end ordinary automation.
 
 Review exhaustion is a technical blocker, not readiness. Publish the exact
 remaining blockers, advisories, reviewed head/base, round history, prior repair
-hypotheses, and evidence. Keep the `capstan:review` stage label under the blocked
+hypotheses, and evidence. Keep the `foreman:review` stage label under the blocked
 overlay. Do not launch another reviewer or fixer against the same head automatically.
 
 Resume a review-exhausted run only after observing one of:

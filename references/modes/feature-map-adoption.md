@@ -12,7 +12,7 @@ When a conforming map already exists, adopt that map. Do not create a second map
 
 When existing documentation is useful and does not match the feature-map shape, create a thin adapter map. Link the adapter to the authoritative pages. Name the relevant source, tests, and checks in the adapter. Do not rewrite the repository's documentation system.
 
-When no map and no suitable location exist, propose the repo-native path. The default path may be `.capstan/features`. An existing documentation convention may justify another configured path. Put the chosen path and any `.capstan.json` change in the same reviewed commit.
+When no map and no suitable location exist, propose the repo-native path. The default path may be `.foreman/features`. An existing documentation convention may justify another configured path. Put the chosen path and any `.foreman.json` change in the same reviewed commit; an existing old-form config follows [contract](../contract.md) ("## Compat read path").
 
 The index contains only user-facing features. Each feature file uses the heading shape that [contract](../contract.md) owns. State a real reach path, the exact repository command or interaction that drives the feature, the observable end state, and the material gotchas. An internal-only feature file is a feature file for an internal module that has no user-facing reach path. Do not add an internal-only feature file.
 

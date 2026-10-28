@@ -8,7 +8,7 @@ Replay-selection rule: a run is selected only when capture records a bundle of
 admitted inputs, pack content, check bodies, setup references, and outcomes.
 The bundle has no credentials and no unrestricted raw traces. Redaction removes
 a credential. A bundle that still contains a credential is not selected. The
-rule is not a script in `.capstan.json`. An unselected run has no replay
+rule is not a script in `.foreman.json`. An unselected run has no replay
 bundle. A missing capture is recorded in `ledger.md` and is not replayable. A
 failed capture is recorded in `ledger.md` and is not replayable. Benchmark
 capture is not a ready gate.

@@ -72,7 +72,7 @@ Before step 1, read [contract](references/contract.md) "## Read-only invocations
 
 [contract](references/contract.md) "## Identity and authority" owns the fetch-then-worktree order.
 
-Stop only at verified `capstan:ready-to-deploy`, a verified review-exhausted
+Stop only at verified `foreman:ready-to-deploy`, a verified review-exhausted
 blocked overlay, a typed human capability or budget decision from recovery,
 a verified decomposition end that [decomposition](references/modes/decomposition.md)
 ("**Decomposition end.**") owns, or user cancellation. Pending infrastructure and

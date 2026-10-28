@@ -1,4 +1,4 @@
-<!-- capstan:blocker OWNER/REPO#N -->
+<!-- foreman:blocker OWNER/REPO#N -->
 # Delivery blocked
 
 - Blocker kind: one human-capability kind from recovery, or `review-exhausted`.

@@ -1,4 +1,4 @@
-<!-- capstan:spec OWNER/REPO#N -->
+<!-- foreman:spec OWNER/REPO#N -->
 # Problem
 
 The user-visible problem.
