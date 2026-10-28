@@ -46,13 +46,13 @@ Read the title back after that edit. It must equal the sent `--title`, or, when 
 | Item | Stable identity |
 | --- | --- |
 | Delivery | `owner/repo#N` |
-| Branch | `capstan/N` |
-| Worktree | `<repo>/.worktrees/capstan+N` |
-| PR | exact head `capstan/N` and body line `Capstan: owner/repo#N` |
-| Local evidence root | `${CAPSTAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/capstan}/owner/repo/N/` |
+| Branch | `foreman/N` |
+| Worktree | `<repo>/.worktrees/foreman+N` |
+| PR | exact head `foreman/N` and body line `Foreman: owner/repo#N` |
+| Local evidence root | `${FOREMAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/foreman}/owner/repo/N/` |
 
-`capstan:ready-to-deploy` is not a substitute for `Capstan: owner/repo#N`, branch
-`capstan/N`, or the worktree.
+`foreman:ready-to-deploy` is not a substitute for `Foreman: owner/repo#N`, branch
+`foreman/N`, or the worktree.
 
 Titles never participate in identity. Resolve the primary repository location
 from `git worktree list --porcelain` rather than nesting worktrees in worktrees.
@@ -60,11 +60,11 @@ Never switch, fast-forward, or edit the shared checkout or the integration branc
 there. OpenClaw stays in the original checkout. Read-only research that edits no
 product file does not need a new worktree.
 
-Inspect and resolve the base first. Before creating `capstan/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run; a repository whose resolved base is `main` fetches `origin/main`. Immediately after a successful fetch, record the SHA of that ref. Local `<base>`, an unfetched `origin/<base>`, and `origin/HEAD` are not valid parents. If the fetch fails, stop; do not create the worktree from local `<base>`. Edit product files only after the worktree exists.
+Inspect and resolve the base first. Before creating `foreman/N`, run `git fetch origin <resolved-base>` so `origin/<resolved-base>` is updated in this run; a repository whose resolved base is `main` fetches `origin/main`. Immediately after a successful fetch, record the SHA of that ref. Local `<base>`, an unfetched `origin/<base>`, and `origin/HEAD` are not valid parents. If the fetch fails, stop; do not create the worktree from local `<base>`. Edit product files only after the worktree exists.
 
 - Matching issue worktree exists: continue it. Do not rebase or recreate it.
-- Matching `capstan/N` branch exists with no worktree attached: attach that branch without `-b`. Do not run `git worktree add -b` again.
-- Neither exists: from the repository root, run `git worktree add -b capstan/N ./.worktrees/capstan+N <recorded-sha>`. Its parent is the recorded SHA, not the ref name.
+- Matching `foreman/N` branch exists with no worktree attached: attach that branch without `-b`. Do not run `git worktree add -b` again. A matching delivery under its old form follows [Compat read path](#compat-read-path).
+- Neither exists: from the repository root, run `git worktree add -b foreman/N ./.worktrees/foreman+N <recorded-sha>`. Its parent is the recorded SHA, not the ref name.
 
 Preserve dirty work and human commits. An unrelated branch, worktree, or PR occupying the identity is a
 collision, not permission to overwrite it. Observe ancestry, marked comments,
@@ -83,9 +83,50 @@ creates credentials, purchases quota, changes security settings, or performs
 destructive production actions. A required action outside these boundaries uses
 [recovery](recovery.md)'s typed handoff; authorization does not add a v1 merge mode.
 
-Completion means the requested, authorized endpoint. Foreman ends at a verified open merge-ready PR. A delivery whose published initial plan proposes a decomposition ends instead at the stop [decomposition](modes/decomposition.md) ("**Decomposition end.**") owns. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
+Completion means the requested, authorized endpoint. Foreman ends at a verified open merge-ready PR. A delivery whose published initial plan proposes a decomposition ends instead at the stop [decomposition](modes/decomposition.md) ("**Decomposition end.**") owns. Deployment stays forbidden. `foreman:ready-to-deploy` is the live gate, not a deploy step.
 
 A host or user instruction file does not change a Foreman delivery's completion endpoint or its fetch-then-worktree order.
+
+## Compat read path
+
+Foreman was named Capstan. Each old form below is read as its Foreman form.
+
+| Old form | Foreman form |
+| --- | --- |
+| branch `capstan/N` | `foreman/N` |
+| worktree `<repo>/.worktrees/capstan+N` | `<repo>/.worktrees/foreman+N` |
+| PR body line `Capstan: owner/repo#N` | `Foreman: owner/repo#N` |
+| label `capstan:X` | `foreman:X` |
+| marker `<!-- capstan:KIND owner/repo#N -->` | `<!-- foreman:KIND owner/repo#N -->` |
+| environment name `CAPSTAN_X` | `FOREMAN_X` |
+| config file `.capstan.json` | `.foreman.json` |
+| directory `.capstan/` | `.foreman/` |
+| old root `${CAPSTAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/capstan}` | the state root |
+
+An existing `capstan/N` branch, `.worktrees/capstan+N` worktree, or PR whose body has `Capstan: owner/repo#N` is that delivery's identity, and the delivery continues under those forms.
+A PR the coordinator creates for an existing `capstan/N` branch carries `Foreman: owner/repo#N`.
+When `foreman/N` and `capstan/N` both exist for one issue, "## Identity and authority" ("collision, not permission to overwrite it") applies.
+
+Foreman reads `capstan:X` as `foreman:X` in stage selection, `status`, the ready gate, blocked-overlay checks, and the risk-tier rules.
+Migrate on touch: a label edit on an issue or pull request that carries `capstan:X` removes it in the same `gh issue edit` or `gh pr edit` command that adds `foreman:X`.
+Foreman deletes no label definition and runs no bulk relabel.
+
+Every marker read also accepts `<!-- capstan:KIND owner/repo#N -->`.
+[triage](triage.md) ("Keep the existing issue-body spec marker") owns the issue-body spec marker on republish.
+
+For environment names, the config file, and the directory:
+A Foreman name beats its old name.
+An old name whose value is used is called out in `ledger.md` as deprecated.
+When both are present, the old one is called out in `ledger.md` as ignored.
+`CAPSTAN_STATE` supplies `FOREMAN_STATE` when `FOREMAN_STATE` is unset, so the state root is `${FOREMAN_STATE:-${CAPSTAN_STATE:-${XDG_STATE_HOME:-$HOME/.local/state}/foreman}}`.
+
+When the state root has no `owner/repo/N/` directory for an issue and the old root has one, resume reads that issue's evidence there, and the in-flight delivery keeps writing there.
+Nothing under either root is moved or deleted.
+
+Foreman never creates an old form; a write to the repository config or vocabulary file goes to the Foreman form, or to the existing old-form file when only it exists. "### Init" keeps its own exclusive-create rule.
+
+This read path holds through v0.1.x.
+A separate issue removes it at v0.2.0.
 
 ## Read-only invocations
 
@@ -136,9 +177,10 @@ never adds:
   #297 records it for the config field `heavy_checks.max_concurrent`;
   #303 records it for the config field `boundary_pass`;
   #294 records it for the config fields `triage.auto_accept_recommended` and
-  `triage.pause_categories`, the label `capstan:needs-human`, and the marker
-  kind `auto-answer`; #302 records it for the labels `capstan:risk-low`,
-  `capstan:risk-medium`, and `capstan:risk-high`);
+  `triage.pause_categories`, the label `foreman:needs-human`, and the marker
+  kind `auto-answer`; #302 records it for the labels `foreman:risk-low`,
+  `foreman:risk-medium`, and `foreman:risk-high`;
+  #355 records it for the renamed `foreman:*` labels, the `foreman:` marker prefix, the `FOREMAN_` environment prefix, `.foreman.json`, `.foreman/`, and the state root `${XDG_STATE_HOME:-$HOME/.local/state}/foreman`);
 - a daemon, scheduler, watcher, or recurring job;
 - a database, store, or state service;
 - a host-skill copy, per-host plugin, or marketplace directory;
@@ -165,8 +207,9 @@ paginated `/issues/N/comments` endpoint. Then inventory:
 1. Issue body, admitted specification revision, trusted comments, and labels.
 2. `git worktree list --porcelain`, worktree status, local/remote heads, ancestry,
    commits, and cumulative diff against the resolved base.
-3. `gh pr list --repo OWNER/REPO --head capstan/N --state all --json number,body,state,headRefName,url`.
-   Select the open PR with the exact marker and repository/head identity. Closed
+3. `gh pr list --repo OWNER/REPO --head foreman/N --state all --json number,body,state,headRefName,url`,
+   and the same with `--head capstan/N` ([Compat read path](#compat-read-path)).
+   Select the open PR whose body has `Foreman: owner/repo#N` or `Capstan: owner/repo#N` and whose head is the one it was read with. Closed
    or merged PRs are evidence to inspect, not permission to recreate intent.
 4. Live PR base/head, checks, approvals, and mergeability; marked remote artifacts.
    A live head other than the tier's applies [Stage projection](#stage-projection)
@@ -193,8 +236,9 @@ observed live.
 
 ## Marked Markdown artifacts
 
-Use `<!-- capstan:KIND owner/repo#N -->` for `spec`, `plan`, `plan-review`,
-`review`, `review-disposition`, `blocker`, `activity`, `summary`, and `auto-answer`. Put the spec marker in the issue
+Use `<!-- foreman:KIND owner/repo#N -->` for `spec`, `plan`, `plan-review`,
+`review`, `review-disposition`, `blocker`, `activity`, `summary`, and `auto-answer`;
+a read also accepts `<!-- capstan:KIND owner/repo#N -->` ([Compat read path](#compat-read-path)). Put the spec marker in the issue
 body, plans/plan reviews/blockers/activity/summaries/auto-answer comments in issue comments, and code
 review censuses and dispositions in PR comments. Human-readable revision, UTC time, head/base,
 and attempt lines disambiguate artifacts; no digest or schema protocol is needed.
@@ -233,55 +277,54 @@ Inside a batch, [batch invocation](modes/batch-invocation.md) ("This file owns b
 
 ## Stage projection
 
-Exactly one stage label should exist, with optional `capstan:blocked` overlay.
+Exactly one stage label should exist, with optional `foreman:blocked` overlay.
 Create missing labels idempotently: inspect `gh label list --repo OWNER/REPO`,
-then `gh label create capstan:STAGE --repo OWNER/REPO --color 1d76db --description 'Foreman: STAGE'`
+then `gh label create foreman:STAGE --repo OWNER/REPO --color 1d76db --description 'Foreman: STAGE'`
 only when absent. If creation races, re-read instead of treating it as fatal.
-Use `gh issue edit N --repo OWNER/REPO --add-label capstan:NEXT --remove-label capstan:OLD`
-for observed old Foreman stage labels. Preserve every unrelated label. Read back
+Use `gh issue edit N --repo OWNER/REPO --add-label foreman:NEXT --remove-label foreman:OLD --remove-label capstan:OLD`,
+with one `--remove-label` for each observed old stage label of either spelling. Preserve every unrelated label. Read back
 with `gh issue view N --repo OWNER/REPO --json labels`. Multiple or stale stage
 labels are repaired from evidence and recorded, never treated as a terminal error.
 
-After a successful ready projection, add `capstan:ready-to-deploy` to the marked
+After a successful ready projection, add `foreman:ready-to-deploy` to the marked
 pull request with
-`gh pr edit PR --repo OWNER/REPO --add-label capstan:ready-to-deploy`, with no
+`gh pr edit PR --repo OWNER/REPO --add-label foreman:ready-to-deploy`, plus `--remove-label capstan:ready-to-deploy` when the pull request carries it, and no other
 `--remove-label`. In the same projection, add the tier label that
 [pre-merge.md](pre-merge.md) ("Risk tier:") computes. Create it when absent
 with the command above, with `risk-TIER` as STAGE, then run
-`gh pr edit PR --repo OWNER/REPO --add-label capstan:risk-TIER` with one
-`--remove-label` for each other `capstan:risk-*` label observed on the pull
+`gh pr edit PR --repo OWNER/REPO --add-label foreman:risk-TIER` with one `--remove-label` for each other `foreman:risk-*` or `capstan:risk-*` label observed on the pull
 request. Read the issue labels back with
 `gh issue view N --repo OWNER/REPO --json labels` and the pull-request labels
 with `gh pr view PR --repo OWNER/REPO --json labels`. The pull-request
-read-back succeeds when it shows `capstan:ready-to-deploy` and exactly one
-`capstan:risk-*` label, the computed one. Then read remote heads,
+read-back succeeds when it shows `foreman:ready-to-deploy` and exactly one
+`foreman:risk-*` label, the computed one. Then read remote heads,
 base heads, and live pull-request state again with the step 5 query and its
 residual-effect re-check in [pre-merge.md](pre-merge.md) ("Re-fetch base and
 query live PR state"), which owns that re-check.
 If the pull-request read-back does not succeed, run both adds again on that
-pull request, with one `--remove-label` for each other `capstan:risk-*` label
+pull request, with one `--remove-label` for each other `foreman:risk-*` or `capstan:risk-*` label
 it shows, and read the pull-request labels again. If it still does not
 succeed, run the removal command below; the attempt fails as
 [pre-merge.md](pre-merge.md) ("Failed attempts use shared recovery.") states,
 and no ready is reported. Do not open a second pull request. On the pull
-request, add or remove only `capstan:ready-to-deploy` and the tier labels
-`capstan:risk-low`, `capstan:risk-medium`, and `capstan:risk-high`. Preserve
+request, add or remove only `foreman:ready-to-deploy` and the tier labels
+`foreman:risk-low`, `foreman:risk-medium`, and `foreman:risk-high`, and remove their `capstan:` forms. Preserve
 unrelated pull-request labels.
-Do not copy `capstan:planning`, `capstan:review`, or `capstan:fix` onto the pull
+Do not copy `foreman:planning`, `foreman:review`, or `foreman:fix` onto the pull
 request. If a later observation shows the pull request is no longer immediately
 mergeable, or the pre-merge residual-effect re-check fails, run
-`gh pr edit PR --repo OWNER/REPO --remove-label capstan:ready-to-deploy --remove-label capstan:risk-TIER`,
-repeating `--remove-label capstan:risk-TIER` once per `capstan:risk-*` label
-observed on the pull request and omitting it when none is observed, and read
+`gh pr edit PR --repo OWNER/REPO --remove-label foreman:ready-to-deploy --remove-label foreman:risk-TIER`,
+repeating `--remove-label` once for each observed `foreman:risk-*`, `capstan:risk-*`, and `capstan:ready-to-deploy` label
+on the pull request and omitting it when none is observed, and read
 the removal back with `gh pr view PR --repo OWNER/REPO --json labels`.
-Success is a read-back that contains neither `capstan:ready-to-deploy` nor any
-`capstan:risk-*` label. If one remains, remove it once more on that pull
+Success is a read-back that contains neither `foreman:ready-to-deploy` nor any
+`foreman:risk-*` label, nor their `capstan:` forms. If one remains, remove it once more on that pull
 request and read it back again. If one still remains, the attempt fails as
 [pre-merge.md](pre-merge.md) ("Failed attempts use shared recovery.") states.
-Every removal of `capstan:ready-to-deploy` from the pull request, under any
+Every removal of `foreman:ready-to-deploy` from the pull request, under any
 rule, uses this command and read-back.
 
-Head change: when the marked pull request carries a `capstan:risk-*` label and
+Head change: when the marked pull request carries a `foreman:risk-*` or `capstan:risk-*` label and
 Foreman observes or produces a pull-request head other than the SHA named in
 its Blast Radius `Risk tier:` line, or the body has no such line, run this
 removal command and read-back before any review, check, or CI wait at that
@@ -306,22 +349,22 @@ Do not leave a stale ready or tier label. Repair the issue label with the existi
 | fix | effective blocking census resolved or refuted; closure proof gate passed; verified resulting head (unchanged is valid after refutation) | review |
 | pre-merge | strict live ready gate in pre-merge reference | ready-to-deploy |
 
-Use `capstan:` before each stage name. Failed attempts preserve the active label.
-The two planning rows share `capstan:planning`; evidence distinguishes them.
+Use `foreman:` before each stage name. Failed attempts preserve the active label.
+The two planning rows share `foreman:planning`; evidence distinguishes them.
 A published initial plan that proposes a decomposition does not advance; [decomposition](modes/decomposition.md) ("**Decomposition end.**") owns its stop.
 [pre-merge.md](pre-merge.md) ("Newer trusted comments") owns the stage move of
 the newer-trusted-comments check. In [one-pass planning](plan-convergence.md)
 ("## Fixed sequence"), the interrupted-correction handoff takes precedence over
-generic station retry rules. A blocker adds only `capstan:blocked`;
+generic station retry rules. A blocker adds only `foreman:blocked`;
 [references/recovery.md](recovery.md) ("## Blocked overlays") owns blocked-overlay removal.
-`capstan:needs-human` is neither a stage label nor an overlay; [triage](triage.md)
+`foreman:needs-human` is neither a stage label nor an overlay; [triage](triage.md)
 ("Auto-triage:") owns when it is added and removed. Create it when absent with
 the command above.
-`capstan:risk-low`, `capstan:risk-medium`, and `capstan:risk-high` are neither
+`foreman:risk-low`, `foreman:risk-medium`, and `foreman:risk-high` are neither
 stage labels nor overlays and go only on the marked pull request;
 [pre-merge](pre-merge.md) ("Risk tier:") owns which one is projected. Create
 each when absent with the command above.
-`capstan:ready-to-deploy` means immediately mergeable, not merged or deployed,
+`foreman:ready-to-deploy` means immediately mergeable, not merged or deployed,
 on the marked pull request and on the issue.
 
 ## Concurrent activity
@@ -339,7 +382,7 @@ before replacing it. Never kill processes by broad name or PID guesses.
 
 This section owns this table and when the coordinator checks it. Each row names one combination that the linked owner forbids; the owner states the rule and what follows a refusal.
 
-Check the table before you project a stage label, before you add `capstan:ready-to-deploy`, before you start a station, and before you launch a write worker. On a match, do not take that step and stay in the current station.
+Check the table before you project a stage label, before you add `foreman:ready-to-deploy`, before you start a station, and before you launch a write worker. On a match, do not take that step and stay in the current station.
 
 Record the refusal as a `recovery` event ([telemetry.md](telemetry.md) ("failure, semantic progress comparison, hypothesis, next attempt")) whose failure reads `IC-N: REASON; missing: EVIDENCE`, with the row's ID and Reason and the evidence not observed. Its host status line ([telemetry.md](telemetry.md) ("Host status line rule")) and its `ledger.md` row carry that text.
 
@@ -356,27 +399,28 @@ For an observed label combination that a row forbids, the repair record that [St
 | IC-7 | Advance from review to fix, pre-merge, or blocked review-exhausted without that row's completion evidence | [Stage projection](#stage-projection) ("exact-head policy partition: effective blockers / none / round ceiling") | review completion evidence not observed |
 | IC-8 | Advance from fix to review without that row's completion evidence | [Stage projection](#stage-projection) ("effective blocking census resolved or refuted") | fix completion evidence not observed |
 | IC-9 | Advance from pre-merge to ready-to-deploy without that row's completion evidence | [Stage projection](#stage-projection) ("strict live ready gate in pre-merge reference") | pre-merge completion evidence not observed |
-| IC-10 | `capstan:ready-to-deploy` on the marked pull request or the issue without the live gate, including an open non-draft PR, local reviewed head equal to the PR head, required checks passing, and affirmative `MERGEABLE` and `CLEAN` | [pre-merge.md](pre-merge.md) ("Complete only if the PR is open/non-draft"), ("Require affirmative `MERGEABLE` and `CLEAN`."); [Stage projection](#stage-projection) ("Do not leave a stale ready or tier label.") | ready-to-deploy without the live gate |
+| IC-10 | `foreman:ready-to-deploy` on the marked pull request or the issue without the live gate, including an open non-draft PR, local reviewed head equal to the PR head, required checks passing, and affirmative `MERGEABLE` and `CLEAN` | [pre-merge.md](pre-merge.md) ("Complete only if the PR is open/non-draft"), ("Require affirmative `MERGEABLE` and `CLEAN`."); [Stage projection](#stage-projection) ("Do not leave a stale ready or tier label.") | ready-to-deploy without the live gate |
 | IC-11 | A Foreman merge, auto-merge, merge-queue enqueue, or deploy, in every state | [Identity and authority](#identity-and-authority) ("Foreman never force-pushes, merges, deploys"), ("authorization does not add a v1 merge mode"); [pre-merge.md](pre-merge.md) ("enable auto-merge, enqueue, or merge to obtain a passing state") | merge or deploy is outside Foreman authority |
-| IC-12 | A station rerun on an issue with `capstan:blocked` while the blocker's resume condition is not observed | [recovery.md](recovery.md) ("## Blocked overlays"), ("do not rerun the station") | blocked resume condition not observed |
+| IC-12 | A station rerun on an issue with `foreman:blocked` while the blocker's resume condition is not observed | [recovery.md](recovery.md) ("## Blocked overlays"), ("do not rerun the station") | blocked resume condition not observed |
 | IC-13 | A delivery start at the ready station while a `Depends on` entry does not hold | [Start condition](#start-condition) ("If an entry does not hold, the dependent does not start") | `Depends on` entry does not hold |
 | IC-14 | A write worker launch while another coordinator on the same issue is visibly progressing | [Concurrent activity](#concurrent-activity) ("If another coordinator is visibly progressing"), ("overlapping write workers") | another coordinator is visibly progressing |
-| IC-15 | Project `capstan:plan-review` or start the plan-review station after the published initial plan for the admitted revision proposes a decomposition | [one-pass planning](plan-convergence.md) ("before any `capstan:plan-review` projection"), ("Initial plan that proposes a decomposition") | published initial plan proposes a decomposition |
+| IC-15 | Project `foreman:plan-review` or start the plan-review station after the published initial plan for the admitted revision proposes a decomposition | [one-pass planning](plan-convergence.md) ("before any `foreman:plan-review` projection"), ("Initial plan that proposes a decomposition") | published initial plan proposes a decomposition |
 
 ## Configuration
 
-Read `.capstan.json` as ordinary input, not executable instructions. Resolve each
+Read `.foreman.json` as ordinary input, not executable instructions. Resolve each
 field independently: explicit invocation, environment, file, then defaults.
+Old names: [Compat read path](#compat-read-path).
 
-Environment names are `CAPSTAN_` plus uppercase nested keys joined with `_`, such
-as `CAPSTAN_PRIMARY_HARNESS` and `CAPSTAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`.
-`CAPSTAN_STATE` independently sets evidence storage. Never print environment values
+Environment names are `FOREMAN_` plus uppercase nested keys joined with `_`, such
+as `FOREMAN_PRIMARY_HARNESS` and `FOREMAN_RECOVERY_RUN_WALL_TIMEOUT_MIN`.
+`FOREMAN_STATE` independently sets evidence storage. Never print environment values
 wholesale. Call out unknown/invalid fields and use a valid lower-precedence value;
 salvage unambiguous values from malformed input without inventing ambiguous ones.
 
 `evidence.delete_pile` and `evidence.retain_replay` are booleans with default
-`false`. Precedence for each is invocation, then `CAPSTAN_EVIDENCE_DELETE_PILE` or
-`CAPSTAN_EVIDENCE_RETAIN_REPLAY`, then `.capstan.json`, then the default. They are
+`false`. Precedence for each is invocation, then `FOREMAN_EVIDENCE_DELETE_PILE` or
+`FOREMAN_EVIDENCE_RETAIN_REPLAY`, then `.foreman.json`, then the default. They are
 exceptions to fall-through: an invalid value is `false`, not a lower
 precedence value, and an invalid or missing value never resolves to `true`.
 Record each resolved value in `ledger.md`. Neither switch can suppress the ledger;
@@ -385,45 +429,45 @@ There is no second cleanup flag. [telemetry.md](telemetry.md) ("This file owns t
 owns the ledger, deletion, retention, and provenance. This file owns `evidence.retain_replay`.
 
 `review_policy.residual_effect_approval` is a boolean with default `false`.
-Precedence is invocation, then `CAPSTAN_REVIEW_POLICY_RESIDUAL_EFFECT_APPROVAL`,
-then `.capstan.json`, then the default; an invalid value is called out and falls
+Precedence is invocation, then `FOREMAN_REVIEW_POLICY_RESIDUAL_EFFECT_APPROVAL`,
+then `.foreman.json`, then the default; an invalid value is called out and falls
 through. [pre-merge.md](pre-merge.md) step 4 owns the residual-effect approval
 `true` enables; `false` enables nothing.
 
 `boundary_pass` is a boolean with default `false`.
-Precedence is invocation, then `CAPSTAN_BOUNDARY_PASS`, then `.capstan.json`,
+Precedence is invocation, then `FOREMAN_BOUNDARY_PASS`, then `.foreman.json`,
 then the default; an invalid value is called out and falls through.
 [boundary pass](modes/boundary-pass.md) ("This file owns the boundary pass") owns
 what `true` enables; `false` enables nothing.
 [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 
 `heavy_checks.max_concurrent` is a positive integer with default `1`.
-It is a host setting, so it is the exception to the file step in the field order above: precedence is invocation, then `CAPSTAN_HEAVY_CHECKS_MAX_CONCURRENT`, then the default.
-A `.capstan.json` value for it is called out and ignored, because a repository file cannot know a host's capacity.
+It is a host setting, so it is the exception to the file step in the field order above: precedence is invocation, then `FOREMAN_HEAVY_CHECKS_MAX_CONCURRENT`, then the default.
+A `.foreman.json` value for it is called out and ignored, because a repository file cannot know a host's capacity.
 An invalid value for it is called out and falls through to the next source; `0`, `-1`, and `two` are invalid.
 [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 [toolchain.md](toolchain.md) ("A heavy check's exact invocation is") owns the slots the value sets.
 
 `triage.auto_accept_recommended` is a boolean with default `false`.
-Precedence is invocation, then `CAPSTAN_TRIAGE_AUTO_ACCEPT_RECOMMENDED`, then `.capstan.json`, then the default.
+Precedence is invocation, then `FOREMAN_TRIAGE_AUTO_ACCEPT_RECOMMENDED`, then `.foreman.json`, then the default.
 `--auto-triage` is an allowed override that sets it to `true` for that invocation.
 Like `evidence.delete_pile`, an invalid value is called out and is `false`, not a lower precedence value, and an invalid or missing value never resolves to `true`.
 [triage](triage.md) ("Auto-triage:") owns what `true` enables; `false` enables nothing.
 [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 
 `triage.pause_categories` is a list of non-empty strings.
-It is a repository setting, so it is the exception to the invocation and environment steps of the field order above: precedence is `.capstan.json`, then the default.
+It is a repository setting, so it is the exception to the invocation and environment steps of the field order above: precedence is `.foreman.json`, then the default.
 An invocation or environment value for it is called out and ignored.
-A `.capstan.json` value replaces the default list; the empty list `[]` is valid.
+A `.foreman.json` value replaces the default list; the empty list `[]` is valid.
 A value that is not a list of non-empty strings is called out and the default list applies; it is the exception to the salvage rule above, so no entry of it is salvaged.
 The default list is: scope changes; schema or data migrations; anything that touches staging or production; cost or vendor decisions; removal or replacement of an existing user-visible surface.
 [triage](triage.md) ("Auto-triage:") owns what a matching question does.
 [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 
 `features` is the optional feature-map field. Resolution order is invocation,
-then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
-`.capstan/features` when that directory contains `README.md`. `features: null`
-disables the map. It does not fall through to `.capstan/features`. An absent
+then `FOREMAN_FEATURES`, then the `.foreman.json` field `features`, then
+`.foreman/features` when that directory contains `README.md`. `features: null`
+disables the map. It does not fall through to `.foreman/features`. An absent
 `features` field is not `features: null`. A missing explicit path is recorded in
 `ledger.md`, and the run continues with no map.
 Foreman does not generate a map during an ordinary issue. Do not copy the map into a host skill
@@ -455,7 +499,7 @@ requested unavailable setting fails visibly and enters recovery; never silently
 drop an effort setting. Record effective nonsecret configuration in `ledger.md`.
 
 `recovery.plan_revision_attempts`, `recovery.max_cost_usd`, and their
-`CAPSTAN_RECOVERY_PLAN_REVISION_ATTEMPTS` and `CAPSTAN_RECOVERY_MAX_COST_USD`
+`FOREMAN_RECOVERY_PLAN_REVISION_ATTEMPTS` and `FOREMAN_RECOVERY_MAX_COST_USD`
 variables are retired and handled like any unknown field: called out and ignored.
 A retired cost field, including an invocation override, is also recorded in
 `ledger.md` and never triggers a budget decision.
@@ -470,8 +514,8 @@ earliest reliable run evidence. Do not invent prices or usage.
 Init is outside the delivery loop and runs only on an explicit init invocation;
 a delivery, a resume, and an issue number do not enter init. Init is not a binary,
 a station, or a gate. Delivery remains valid without init: a missing
-`.capstan.json` still delivers, and label creation during delivery remains
-required.
+`.foreman.json` still delivers, and label creation during delivery remains
+required. Old names: [Compat read path](#compat-read-path) ("## Compat read path").
 
 This section owns the init invocation. An invocation that, trimmed and split on
 whitespace as "## Read-only invocations" does, is the single token `init`, byte
@@ -488,7 +532,7 @@ it without asking. Ask only when the probe is ambiguous: ask that one pair and
 recommend an observed answer. The invoking host does not become
 primary merely because it ran init.
 
-If `.capstan.json` is absent, exclusive-create it in the named checkout: if the
+Exclusive-create `.foreman.json` in the named checkout only when neither `.foreman.json` nor `.capstan.json` exists: if the
 file is present before the write finishes, do not replace it. Write only
 `primary`, `secondary`, and `fallback`, plus the documented recovery defaults.
 Set model and effort to null, `fallback` to null when no third observed harness
@@ -498,15 +542,16 @@ uncommitted; do not switch branches, commit, push, or open a pull request.
 Resolve the repository with `gh repo view --json nameWithOwner,defaultBranchRef`
 from that checkout.
 
-If `.capstan.json` exists, leave the bytes unchanged. Do not merge, reformat,
+If `.foreman.json` exists, leave the bytes unchanged. Do not merge, reformat,
 replace, or use `--force`. Report that the file already exists.
+When only `.capstan.json` exists, init reports it and leaves its bytes unchanged.
 
-Ensure these eleven labels exist: `capstan:triage`, `capstan:ready`,
-`capstan:planning`, `capstan:plan-review`, `capstan:implementing`, `capstan:review`,
-`capstan:fix`, `capstan:pre-merge`, `capstan:ready-to-deploy`,
-`capstan:needs-human`, and `capstan:blocked`. Create only absent labels with the stage-projection command
+Ensure these eleven labels exist: `foreman:triage`, `foreman:ready`,
+`foreman:planning`, `foreman:plan-review`, `foreman:implementing`, `foreman:review`,
+`foreman:fix`, `foreman:pre-merge`, `foreman:ready-to-deploy`,
+`foreman:needs-human`, and `foreman:blocked`. Create only absent labels with the stage-projection command
 above. Re-read a race. Do not add or remove any other label.
 
 Init writes no secrets, evidence directory, worktree, feature map, or `features`
-field, and edits no product source. The `.capstan.json` write is init
+field, and edits no product source. The `.foreman.json` write is init
 configuration, not a product-source edit and not a delivery commit.
