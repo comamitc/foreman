@@ -176,7 +176,7 @@ Attempted step: enable auto-merge on the pull request.
 Owner: [references/contract.md](../../references/contract.md) ("## Identity and authority")
 
 ```text
-Workers never push or mutate GitHub. Capstan never force-pushes, merges, deploys,
+Workers never push or mutate GitHub. Foreman never force-pushes, merges, deploys,
 creates credentials, purchases quota, changes security settings, or performs
 destructive production actions. A required action outside these boundaries uses
 [recovery](recovery.md)'s typed handoff; authorization does not add a v1 merge mode.
@@ -189,11 +189,11 @@ or an unrecognized status until its actual impediment is resolved. Never bypass
 rules, enable auto-merge, enqueue, or merge to obtain a passing state.
 ```
 
-Outcome: refused; no merge, auto-merge, enqueue, or deploy runs. Reason: IC-11: merge or deploy is outside Capstan authority; missing: none, the row holds in every state.
+Outcome: refused; no merge, auto-merge, enqueue, or deploy runs. Reason: IC-11: merge or deploy is outside Foreman authority; missing: none, the row holds in every state.
 
 ## IC-12
 
-Observed: the issue has `capstan:review` and `capstan:blocked` with blocker `review-exhausted`; since the blocker, no materially different candidate repair, policy or spec change, or trusted disposition appeared. The operator invokes Capstan on the issue.
+Observed: the issue has `capstan:review` and `capstan:blocked` with blocker `review-exhausted`; since the blocker, no materially different candidate repair, policy or spec change, or trusted disposition appeared. The operator invokes Foreman on the issue.
 Attempted step: rerun the review station.
 
 Owner: [references/recovery.md](../../references/recovery.md) ("## Blocked overlays")

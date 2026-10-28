@@ -22,6 +22,6 @@ Name every file that adoption writes. [implementing](../implementing.md) ("Write
 
 Do not install OpenSpec, AgentLens, a documentation generator, or another skill. Do not add a generated architecture encyclopedia.
 
-Use the normal Capstan pipeline for implementation and review. The final pull request is non-draft. The final pull request is mergeable under the existing ready gate.
+Use the normal Foreman pipeline for implementation and review. The final pull request is non-draft. The final pull request is mergeable under the existing ready gate.
 
 Acceptance is the normal pipeline and reviewer evidence on the diff.

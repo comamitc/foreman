@@ -9,12 +9,12 @@ This file owns the status invocation.
 Every `gh api` read in this procedure is a GET with the query in the URL and includes `--paginate`; it sets no request method and passes no request fields.
 
 1. **Parse.** The trimmed invocation equals `status`, byte for byte, in lowercase.
-2. **Repository.** Run `gh repo view --json nameWithOwner` in the invoking workspace. If that fails, print `Capstan status: no repository resolved.` and stop. Ask for nothing and parse no name. Below, `R` is the resolved `nameWithOwner` and `OWNER` is its owner.
+2. **Repository.** Run `gh repo view --json nameWithOwner` in the invoking workspace. If that fails, print `Foreman status: no repository resolved.` and stop. Ask for nothing and parse no name. Below, `R` is the resolved `nameWithOwner` and `OWNER` is its owner.
 3. **Issues.**
    - Run one read for each stage label (triage, ready, planning, plan-review, implementing, review, fix, pre-merge, ready-to-deploy) and for `capstan:blocked`: `gh api --paginate "repos/R/issues?state=open&labels=capstan:X&per_page=100" --jq '.[] | select(.pull_request | not) | [.number, .html_url, ([.labels[].name] | join(","))] | @tsv'`.
    - Take the union of the results by issue number.
    - Keep an issue that has at least one stage label, or that has `capstan:blocked` and no stage label (contradictory). Closed issues are never listed.
-   - If the union is empty, print ``Capstan status — R: no open issue carries a Capstan stage label or `capstan:blocked`.`` and stop.
+   - If the union is empty, print ``Foreman status — R: no open issue carries a Foreman stage label or `capstan:blocked`.`` and stop.
 4. **Per-issue fields and their sources.**
    - **Comments.** Read the issue's comments with `gh api --paginate "repos/R/issues/N/comments?per_page=100" --jq '.[] | {id, created_at, updated_at, body}'`. Choose a marker only after every page has been read. A marked comment is one whose first line is exactly `<!-- capstan:KIND R#N -->`.
    - **Stage.** The stage label names without `capstan:`. The stage is contradictory when there are two or more stage labels, or when `capstan:blocked` has no stage label (shown as `none`).
@@ -40,15 +40,15 @@ Every `gh api` read in this procedure is a GET with the query in the URL and inc
 7. **Read-only.** This procedure is a read-only invocation. [contract](../contract.md) "## Read-only invocations" owns the rules it follows; rule 8 is the stricter rule this file states for an incomplete read.
 8. **Incomplete retrieval.**
    - This rule applies to any read in rules 3–5 except the ledger, when the read exits non-zero, returns output that is not JSON or TSV, or stops before its last page.
-   - It stops the report with `Capstan status — R: retrieval incomplete (<read>: <error, redacted>); no report.`
+   - It stops the report with `Foreman status — R: retrieval incomplete (<read>: <error, redacted>); no report.`
    - No partial table is printed.
 
 ## Report
 
-- The first line is `Capstan status — R`, then one blank line, then a table with the columns Issue, Stage, Blocked, PR and Last activity: one row per listed issue, in ascending issue number.
+- The first line is `Foreman status — R`, then one blank line, then a table with the columns Issue, Stage, Blocked, PR and Last activity: one row per listed issue, in ascending issue number.
 - The Issue cell is `#N`. A contradictory Stage cell lists the stage names, or `none`, followed by `(contradictory)`.
 - Under the table, each issue gets its lines in the same order, each starting with `- #N`:
-  - `labels: <its Capstan labels> — contradictory; not repaired.` when its labels are contradictory.
+  - `labels: <its Foreman labels> — contradictory; not repaired.` when its labels are contradictory.
   - `blocker: <kind> — action: <action>` when it is blocked, or `blocker: no marked blocker comment.`
   - `live gate: holds (OPEN, MERGEABLE, CLEAN).`, `live gate: fails — <field> <value>` for each failing field, or `live gate: no open marked PR.` when its stage is `ready-to-deploy`.
   - `resume: ` followed by the resume invocation in code.

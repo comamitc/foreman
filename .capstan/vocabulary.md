@@ -12,7 +12,7 @@
 
 **Ceiling comment**: one line naming a known limit and the condition that would justify replacing it. Rejected: a new abstraction for that limit.
 
-**Declared check**: a verification command the plan or the repository conventions already name. Rejected: a command Capstan invents from a file extension; an evidence check the coordinator writes from plan text, even when the plan quotes its command.
+**Declared check**: a verification command the plan or the repository conventions already name. Rejected: a command Foreman invents from a file extension; an evidence check the coordinator writes from plan text, even when the plan quotes its command.
 
 **Toolchain**: the resolved invocation for a declared check, plus the task environment when the repo's own tool requires one. Rejected: a global package manager assumed to be on `PATH`.
 
@@ -20,7 +20,7 @@
 
 **Provenance**: which precedence step supplied the invocation. Rejected: a model judgment with no recorded step.
 
-**Init**: the explicit setup procedure that writes an absent `.capstan.json` and ensures the Capstan label set. The init invocation is exactly `init`. The rule owner is `references/contract.md` ("### Init"). Rejected: a Capstan binary, a delivery station, or a read-only invocation.
+**Init**: the explicit setup procedure that writes an absent `.capstan.json` and ensures the Foreman label set. The init invocation is exactly `init`. The rule owner is `references/contract.md` ("### Init"). Rejected: a Foreman binary, a delivery station, or a read-only invocation.
 
 **Observed harness**: a harness CLI that answered its documented help command on `PATH` during this init. Rejected: a harness named without that answer.
 
@@ -28,7 +28,7 @@
 
 **User-facing feature**: a behavior a person reaches through a screen, a command, or a job. Rejected: an internal module with no person-facing reach path.
 
-**Estimate**: a usage figure produced from a price table, a credit balance delta, or an operator default. Capstan records none. Rejected: writing an estimate into a usage cell.
+**Estimate**: a usage figure produced from a price table, a credit balance delta, or an operator default. Foreman records none. Rejected: writing an estimate into a usage cell.
 
 **Ledger**: `ledger.md`, the retained local record of totals and check outcomes. Always written. The rule owner is `references/telemetry.md`. Rejected: a switch that disables it.
 
@@ -56,23 +56,23 @@
 
 **Dismissal**: a published reason that the claim is noise, out of scope, already fixed, or not reproducible on the current head. Rejected: silence.
 
-**Host session**: the interactive session that invoked Capstan. Its interface is the coordinator's visible final message. Rejected: a worker transcript or a host plugin.
+**Host session**: the interactive session that invoked Foreman. Its interface is the coordinator's visible final message. Rejected: a worker transcript or a host plugin.
 
 **Stage analysis**: the station-attempt table and two wall totals defined by #29. Rejected: a second host-specific wording.
 
-**Text invocation**: an explicit Capstan invocation that is prose, not an issue URL, not an in-repo issue number, not another GitHub URL, and not a batch invocation's issue list, not the status invocation, not the init invocation, not a help invocation. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
+**Text invocation**: an explicit Foreman invocation that is prose, not an issue URL, not an in-repo issue number, not another GitHub URL, and not a batch invocation's issue list, not the status invocation, not the init invocation, not a help invocation. It creates one issue and then starts that issue's delivery. Rejected: a filesystem path or the surrounding transcript.
 
 **Provisional title**: the issue title set to the first non-empty line of a text invocation, kept only while the live title still equals that line. Rejected: a title taken from the surrounding transcript, or a title a person already changed.
 
 **Delivery identity**: `owner/repo#N` of the issue the delivery runs. A text invocation does not replace it. Rejected: a hashed text branch name.
 
-**Blocked overlay**: the `capstan:blocked` label Capstan adds beside the stage label. Rejected: a label named `blocked`, or a GitHub issue dependency.
+**Blocked overlay**: the `capstan:blocked` label Foreman adds beside the stage label. Rejected: a label named `blocked`, or a GitHub issue dependency.
 
 **Denied coordinator step**: a host permission refusal to run a coordinator command, such as an auto-mode classifier denial. The rule owner is `references/recovery.md` ("## Denied coordinator step"). Rejected: a GitHub API error from a command that ran.
 
 **Denied spec publish**: an outcome of the triage spec publish. The rule owner is `references/triage.md` ("A denied spec publish is a host permission refusal"). Rejected: a GitHub API error from a command that ran.
 
-**Publication boundary**: the point after local code review converges and base freshness is confirmed, when Capstan first pushes the exact reviewed candidate and creates or reconciles the pull request. Rejected: every implementing or fix completion.
+**Publication boundary**: the point after local code review converges and base freshness is confirmed, when Foreman first pushes the exact reviewed candidate and creates or reconciles the pull request. Rejected: every implementing or fix completion.
 
 **Local CI**: the declared checks run on the local machine during the local loop, including tests and the other commands the plan or repository conventions already name. Rejected: a GitHub Actions replay or a workflow parser.
 
@@ -102,11 +102,11 @@
 
 **Residual effect**: a consequence of a change that reverting its code does not undo, such as an applied migration, changed or deleted data, a sent message, or another external write. The rule owner is `references/implementing.md`. Rejected: leaving the term undefined, or a numeric or tiered risk score.
 
-**Review correction**: a trusted human reviewer's request to change a Capstan-delivered pull request, cited by URL and verified against its revision. The rule owner is `references/modes/improvement.md` ("This file owns the improvement invocation"). Rejected: untrusted or unverified feedback, a scan of repository history, or repetition treated as authority.
+**Review correction**: a trusted human reviewer's request to change a Foreman-delivered pull request, cited by URL and verified against its revision. The rule owner is `references/modes/improvement.md` ("This file owns the improvement invocation"). Rejected: untrusted or unverified feedback, a scan of repository history, or repetition treated as authority.
 
 **No-new-violations guard**: a repository-native check that fails on any new violation and lists each grandfathered existing violation with its rationale. It is not a count ceiling. The rule owner is `references/modes/improvement.md` ("This file owns the improvement invocation"). Rejected: a count-only ceiling, an enlarged baseline, or a second lint stack.
 
-**Verification path**: a target repository's documented, repeatable way to set up isolated state, drive one user operation, assert the observable result, capture evidence, and reset. It is not a generic Capstan driver. The rule owner is `references/modes/verification-path.md` ("This file owns verification-path adoption"). Rejected: a Capstan executable, runner, or driver, a new feature-map heading, or a tool registry.
+**Verification path**: a target repository's documented, repeatable way to set up isolated state, drive one user operation, assert the observable result, capture evidence, and reset. It is not a generic Foreman driver. The rule owner is `references/modes/verification-path.md` ("This file owns verification-path adoption"). Rejected: a Foreman executable, runner, or driver, a new feature-map heading, or a tool registry.
 
 **Performance requirement**: an admitted acceptance criterion, or an applicable existing repository budget, that names a user operation, a metric, and a threshold. The rule owner is `references/modes/performance-proof.md` ("This file owns performance proof"). Rejected: a universal frame, latency, or memory limit, or agent wall time or cost.
 
@@ -118,7 +118,7 @@
 
 **Mode file**: a file under `references/modes/` that holds one mode's rules and states its trigger in its first paragraph. The coordinator loads it only when that trigger holds. Rejected: a station, a stage, or a file workers read directly.
 
-**Global non-goals**: the one contract section that lists the generic things Capstan never adds. It applies to every Capstan file and mode file. Rejected: per-paragraph non-goal tails.
+**Global non-goals**: the one contract section that lists the generic things Foreman never adds. It applies to every Foreman file and mode file. Rejected: per-paragraph non-goal tails.
 
 **Batch invocation**: one invocation that names two or more issues in one repository and delivers them sequentially in dependency order. The rule owner is `references/modes/batch-invocation.md` ("This file owns batch invocation order"). Rejected: parallel delivery; stacked PRs.
 
@@ -130,23 +130,23 @@
 
 **Companion issue**: the issue in another repository that carries the half of a request this repository cannot verify. The rule owner is `references/triage.md` ("A criterion that is not verifiable in this repository is an Ask").
 
-**Post-merge check**: a stated outcome that needs a merge, deploy, operator action, or elapsed time to observe. It is recorded for the operator. The rule owner is `references/triage.md` ("Visit every stated outcome as a node"). Rejected: a start condition; a step Capstan runs.
+**Post-merge check**: a stated outcome that needs a merge, deploy, operator action, or elapsed time to observe. It is recorded for the operator. The rule owner is `references/triage.md` ("Visit every stated outcome as a node"). Rejected: a start condition; a step Foreman runs.
 
-**Status invocation**: the explicit invocation `status`. It prints a read-only report of open issues that carry a Capstan stage label or the `capstan:blocked` overlay, and mutates nothing. The rule owner is `references/modes/status.md` ("This file owns the status invocation"). Rejected: a host status line (one event line during a run); a delivery.
+**Status invocation**: the explicit invocation `status`. It prints a read-only report of open issues that carry a Foreman stage label or the `capstan:blocked` overlay, and mutates nothing. The rule owner is `references/modes/status.md` ("This file owns the status invocation"). Rejected: a host status line (one event line during a run); a delivery.
 
 **Read-only invocation**: an explicit invocation that a row in the keyword table of `references/contract.md` ("## Read-only invocations") names. It prints one report and mutates nothing. The rule owner is `references/contract.md` ("## Read-only invocations"). Rejected: a delivery, a text invocation, or a host status line.
 
-**Architect invocation**: the explicit read-only invocation `architect`, optionally followed by paths. It grades the repository's agent-readiness against Capstan-owned rules and prints one ranked report. The rule owner is `references/modes/architect.md` ("This file owns the architect invocation"). Rejected: a delivery, a feature-map audit, or rules from outside Capstan.
+**Architect invocation**: the explicit read-only invocation `architect`, optionally followed by paths. It grades the repository's agent-readiness against Foreman-owned rules and prints one ranked report. The rule owner is `references/modes/architect.md` ("This file owns the architect invocation"). Rejected: a delivery, a feature-map audit, or rules from outside Foreman.
 
-**Guardrails invocation**: the explicit read-only invocation `guardrails`, optionally followed by paths. It inventories the repository's CI workflows, declared checks, and hooks with whether each runs, grades its tests against Capstan's check rules, and prints one ranked report. The rule owner is `references/modes/guardrails.md` ("This file owns the guardrails invocation"). Rejected: running the checks, a coverage percentage, or a Capstan test runner.
+**Guardrails invocation**: the explicit read-only invocation `guardrails`, optionally followed by paths. It inventories the repository's CI workflows, declared checks, and hooks with whether each runs, grades its tests against Foreman's check rules, and prints one ranked report. The rule owner is `references/modes/guardrails.md` ("This file owns the guardrails invocation"). Rejected: running the checks, a coverage percentage, or a Foreman test runner.
 
-**Learn invocation**: the explicit read-only invocation `learn`, optionally followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs. It reads every Capstan run on this machine across repositories and prints ranked Capstan-process proposals, with target-product learnings apart. The rule owner is `references/modes/learn.md` ("This file owns the learn invocation"). Rejected: filing issues, publishing anywhere, or a replay benchmark.
+**Learn invocation**: the explicit read-only invocation `learn`, optionally followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs. It reads every Foreman run on this machine across repositories and prints ranked Foreman-process proposals, with target-product learnings apart. The rule owner is `references/modes/learn.md` ("This file owns the learn invocation"). Rejected: filing issues, publishing anywhere, or a replay benchmark.
 
 **Help invocation**: the explicit read-only invocation `help`, optionally followed by a question. It answers from the installed package and cites the owning file. The rule owner is `references/modes/help.md` ("This file owns the help invocation"). Rejected: starting the work a question asks for, filing an issue, or a GitHub-hosted guide.
 
 **Host instructions**: instruction files a worker's harness loads from the operator's host configuration whatever the brief says, such as `~/.codex/AGENTS.md` or `~/.claude/CLAUDE.md`, and files they direct the worker to read. A brief does not forbid or contradict them. Rejected: a contributor instruction file; pack content.
 
-**Evidence check**: a script or multi-step command the coordinator writes for a pack's `## Checks` from plan text, kept outside the repository; it stays an evidence check when the plan quotes its command. It is bitten against known-good text and a planted defect before a worker depends on it. The rule owner is `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches"); `references/pack.md` ("An evidence check the initial plan writes") owns the bite at plan publication. Rejected: a declared check; a Capstan test runner.
+**Evidence check**: a script or multi-step command the coordinator writes for a pack's `## Checks` from plan text, kept outside the repository; it stays an evidence check when the plan quotes its command. It is bitten against known-good text and a planted defect before a worker depends on it. The rule owner is `references/pack.md` ("An evidence check is bitten before the brief that depends on it launches"); `references/pack.md` ("An evidence check the initial plan writes") owns the bite at plan publication. Rejected: a declared check; a Foreman test runner.
 
 **Coordinator-evidence finding**: a code-review finding in evidence the coordinator produced. The rule owner is `references/review-convergence.md` ("## Coordinator-evidence findings"). Rejected: "evidence-check finding".
 
@@ -192,9 +192,9 @@
 
 **Same-head check record**: a write worker's declared-check record that the coordinator accepts instead of running the check again. The rule owner is `references/harnesses/shared.md` ("The coordinator accepts a same-head check record"). Rejected: a worker sentence that checks passed.
 
-**Heavy check**: a declared check that runs a full test suite, marked heavy in the plan. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: Capstan parses a command or counts test files.
+**Heavy check**: a declared check that runs a full test suite, marked heavy in the plan. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: Foreman parses a command or counts test files.
 
-**Targeted test**: a declared check that runs the repository's own test runner on a subset of tests scoped to the change, with its paths written literally. Not a heavy check. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: a full suite per item; command substitution such as `$(git diff --name-only)`; Capstan detecting the runner.
+**Targeted test**: a declared check that runs the repository's own test runner on a subset of tests scoped to the change, with its paths written literally. Not a heavy check. The rule owner is `references/planning.md` ("Mark each declared check heavy or not heavy"). Rejected: a full suite per item; command substitution such as `$(git diff --name-only)`; Foreman detecting the runner.
 
 **Check log**: the file in a write-station worker's result directory that holds one check's complete output. The rule owner is `templates/brief.md` ("## Worker constraints"). Rejected: a byte-capped excerpt in context; a log in the product worktree.
 
@@ -208,9 +208,9 @@
 
 **Procedure trace**: a Markdown fixture under `.capstan/traces/` that quotes owner text verbatim with a stable anchor. The happy-path trace lists, station by station, the output shapes a happy-path delivery produces; the illegal-path trace, `.capstan/traces/illegal-paths.md`, gives one example per illegal combination. It is not a procedure file and owns no rule. Rejected: a captured transcript of a real run; a script that renders outputs or runs the examples.
 
-**Illegal combination**: a stage, label, start, or Capstan action paired with missing or contradicting evidence that the contract forbids. The rule owner is `references/contract.md` ("## Illegal combinations"). Rejected: a type or state machine in a Capstan executable.
+**Illegal combination**: a stage, label, start, or Foreman action paired with missing or contradicting evidence that the contract forbids. The rule owner is `references/contract.md` ("## Illegal combinations"). Rejected: a type or state machine in a Foreman executable.
 
-**Walkthrough**: the `## Walkthrough` section of a high-tier pull-request body, written by Capstan at the pull-request head, that explains how the change works, why the checks pass, and what could still go wrong. The rule owner is `references/pre-merge.md` ("Walkthrough:"). Rejected: a human-written sign-off, or a statement that CI is green.
+**Walkthrough**: the `## Walkthrough` section of a high-tier pull-request body, written by Foreman at the pull-request head, that explains how the change works, why the checks pass, and what could still go wrong. The rule owner is `references/pre-merge.md` ("Walkthrough:"). Rejected: a human-written sign-off, or a statement that CI is green.
 
 **Decomposition**: the initial plan's split of an issue into child issues under the separable-groups rule. The rule owner is `references/planning.md` ("proposes a decomposition only when"); `references/modes/decomposition.md` ("This file owns decomposition filing") owns filing. Rejected: a size threshold with no measured basis; free planner judgment; a triage-time split.
 

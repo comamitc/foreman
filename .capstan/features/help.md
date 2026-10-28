@@ -6,12 +6,12 @@
 - Read-only checks of local and GitHub state, mentioned only when they change the answer; [help](../../references/modes/help.md) ("## State checks") owns them.
 
 ## How to get to it (user POV)
-Install Capstan as [README](../../README.md) ("Install and invoke") describes, and invoke it from any workspace.
+Install Foreman as [README](../../README.md) ("Install and invoke") describes, and invoke it from any workspace.
 [help](../../references/modes/help.md) ("This file owns the help invocation") owns the procedure.
 
 ## Driving it
-Invocation: invoke Capstan with `help`, alone or followed by a question, for example `help how do I resume a blocked issue` or `help fix #42`.
-End state: Capstan prints one menu or one answer and stops. An answer names the owning file by a path inside the installed package and the invocation to send next. The menu and the answer each end with a `Coverage:` line that says what was read, what was sampled, and what was not read. The run changed no file and no label, issue, comment, pull request, or branch on GitHub, and started no delivery.
+Invocation: invoke Foreman with `help`, alone or followed by a question, for example `help how do I resume a blocked issue` or `help fix #42`.
+End state: Foreman prints one menu or one answer and stops. An answer names the owning file by a path inside the installed package and the invocation to send next. The menu and the answer each end with a `Coverage:` line that says what was read, what was sampled, and what was not read. The run changed no file and no label, issue, comment, pull request, or branch on GitHub, and started no delivery.
 
 ## Gotchas
 - Every invocation whose first word is `help`, in lowercase, is a help invocation, so such prose does not create an issue; to deliver from text, start the text with another word. `Help` and `helpme` are not help invocations; see [text invocation](text-invocation.md).

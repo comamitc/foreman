@@ -17,7 +17,7 @@ A heavy check's exact invocation is `flock <state root>/heavy.lock <declared inv
 N is `heavy_checks.max_concurrent` ([references/contract.md](contract.md) ("`heavy_checks.max_concurrent` is a positive integer")).
 The lock has N slot files: slot 1 is `<state root>/heavy.lock` and slot K, for K from 2 to N, is `<state root>/heavy-K.lock`.
 A check that is not heavy keeps its declared invocation, with no lock.
-Every local run of a heavy check that Capstan makes uses that invocation: worker runs at any station that runs one and coordinator runs.
+Every local run of a heavy check that Foreman makes uses that invocation: worker runs at any station that runs one and coordinator runs.
 Each such run holds exactly one slot through its `flock` invocation, so at most N heavy checks run at once among sessions that resolve the same state root and the same N.
 When the plan marks a heavy check, preflight prepares the lock before each worker launch whose brief carries that check: it runs `flock -n SLOT true` for every slot from 1 to N, which with N = 1 is `flock -n <state root>/heavy.lock true`.
 Each probe creates its slot file and does not wait for another holder.

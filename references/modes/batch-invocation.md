@@ -32,7 +32,7 @@ This file owns batch invocation order.
    - No issue is left without a stop.
 8. **Sequential delivery.** One coordinator. The next issue starts only after the current one reaches a stop. No concurrent write workers.
 9. **Launch probe.** Owned by [shared](../harnesses/shared.md) ("Run it once per invocation"). Run it once for the batch, in the first delivered issue's worktree, before its first worker launch. Do not run it for later issues.
-10. **End and final message.** Each issue's Capstan stop is `capstan:ready-to-deploy`, the decomposition end that [decomposition](decomposition.md) ("**Decomposition end.**") owns, or a `capstan:blocked` overlay: review exhaustion, or a reason in [recovery](../recovery.md) "## Blocked overlays".
+10. **End and final message.** Each issue's Foreman stop is `capstan:ready-to-deploy`, the decomposition end that [decomposition](decomposition.md) ("**Decomposition end.**") owns, or a `capstan:blocked` overlay: review exhaustion, or a reason in [recovery](../recovery.md) "## Blocked overlays".
     - Publish each issue's summary at that issue's stop. Use the summary rule in [end of run](../end-of-run.md) ("publish a marked issue summary"). This includes an issue stopped by a human-capability overlay before or during delivery.
     - Do not project `capstan:ready-to-deploy` for a blocked issue.
     - An issue that never started has a table of the stages it ran; bounds that were not observed are `unknown`.

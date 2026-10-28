@@ -1665,7 +1665,7 @@ PK3() {   # compact form: the pre-change example fails; the new example passes
   pk_pass PK3b "$T/pk/compact.md"
 }
 PK4() {   # range hints, ./ and in-worktree absolute paths; an outside absolute path; input errors
-  printf '%s\n' '## Rules that apply' '- `references/contract.md:131-132` — "a Capstan executable"' '- `./README.md:11` — "Issue #181"' \
+  printf '%s\n' '## Rules that apply' '- `references/contract.md:131-132` — "a Foreman executable"' '- `./README.md:11` — "Issue #181"' \
     '## Named files' "- \`$T/pk/references/contract.md:126-153\` (\"## Global non-goals\") — exception" \
     '- `README.md:1-20` ("launch builder") — builder' >"$T/pk/abs.md"
   pk_pass PK4 "$T/pk/abs.md" || return 1
@@ -1683,7 +1683,7 @@ PK5() {   # PR1: unbulleted, * bullet, numbered, and blockquote quotes, an inlin
     '> `README.md:11` — "blockquote"' \
     '- Correction review blocks (references/modes/correction.md:40-54, quoted): "Block a class."' \
     '- `none` — no further rule; spec revision 2026-10-20T15:12:49Z' \
-    '## Named files' '- `scripts/launch.sh:1-69` ("Capstan launch builder") — builder' >"$T/pk/forms.md"
+    '## Named files' '- `scripts/launch.sh:1-69` ("Foreman launch builder") — builder' >"$T/pk/forms.md"
   pk_fail PK5 "$T/pk/forms.md" CONTRIBUTING.md AGENTS.md SKILL.md README.md references/modes/correction.md || return 1
   printf -- '- `%s` ("%s") — quoted rule.\n' 'CONTRIBUTING.md:1-13' '## Rules' 'AGENTS.md:1-10' 'integration base' \
     'SKILL.md:1-90' 'Stop only at' 'README.md:1-20' 'launch builder' \
@@ -1699,7 +1699,7 @@ PK6() {   # PR2: candidate text, fenced or under an unclosed fence, is not pack 
     '## Rules that apply' '- `AGENTS.md:3` — "The integration base is `main`."' \
     '## Checks' '- `README.md:11` under Checks is not a rule citation' \
     '~~~~~' \
-    '## Named files' '- `scripts/launch.sh:1-69` ("Capstan launch builder") — builder' >"$T/pk/cand.md"
+    '## Named files' '- `scripts/launch.sh:1-69` ("Foreman launch builder") — builder' >"$T/pk/cand.md"
   pk_fail PK6 "$T/pk/cand.md" AGENTS.md || return 1
   printf -- '- `AGENTS.md:1-10` ("integration base") — quoted rule.\n' >>"$T/pk/cand.md"
   pk_pass PK6b "$T/pk/cand.md" || return 1

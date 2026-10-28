@@ -3,14 +3,14 @@
 ## Sub-features
 - An absent `.capstan.json` is created and left uncommitted.
 - An existing `.capstan.json` keeps its bytes unchanged, and init reports that it exists.
-- The Capstan labels are ensured; [contract](../../references/contract.md) ("Ensure these eleven labels exist") lists them.
+- The Foreman labels are ensured; [contract](../../references/contract.md) ("Ensure these eleven labels exist") lists them.
 
 ## How to get to it (user POV)
-Install Capstan as [README](../../README.md) ("Install and invoke") describes, and invoke it from a workspace inside the repository's git work tree.
+Install Foreman as [README](../../README.md) ("Install and invoke") describes, and invoke it from a workspace inside the repository's git work tree.
 [contract](../../references/contract.md) ("### Init") owns the init invocation and the procedure.
 
 ## Driving it
-Invocation: invoke Capstan with exactly `init`, lowercase, and nothing else.
+Invocation: invoke Foreman with exactly `init`, lowercase, and nothing else.
 End state: the repository has a `.capstan.json`, either created and left uncommitted or with its bytes unchanged, and every label [contract](../../references/contract.md) ("Ensure these eleven labels exist") lists. No branch switch, commit, push, or pull request results.
 
 ## Gotchas

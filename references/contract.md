@@ -72,20 +72,20 @@ and ownership; ask for disposition only if both intents cannot be preserved.
 
 The coordinator may create its worktree/branch, push normally, create/update its
 PR, publish issue/PR comments, replace the admitted issue specification, change
-Capstan labels, and rerun eligible checks. Observe before every external mutation
+Foreman labels, and rerun eligible checks. Observe before every external mutation
 and read back afterward. On ambiguous exit, observe effects before retrying.
 The coordinator does not edit product files or author product commits.
 
 Workers may edit and commit product files only at write stations, inside the
 issue worktree. Read stations may write only their assigned evidence result.
-Workers never push or mutate GitHub. Capstan never force-pushes, merges, deploys,
+Workers never push or mutate GitHub. Foreman never force-pushes, merges, deploys,
 creates credentials, purchases quota, changes security settings, or performs
 destructive production actions. A required action outside these boundaries uses
 [recovery](recovery.md)'s typed handoff; authorization does not add a v1 merge mode.
 
-Completion means the requested, authorized endpoint. Capstan ends at a verified open merge-ready PR. A delivery whose published initial plan proposes a decomposition ends instead at the stop [decomposition](modes/decomposition.md) ("**Decomposition end.**") owns. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
+Completion means the requested, authorized endpoint. Foreman ends at a verified open merge-ready PR. A delivery whose published initial plan proposes a decomposition ends instead at the stop [decomposition](modes/decomposition.md) ("**Decomposition end.**") owns. Deployment stays forbidden. `capstan:ready-to-deploy` is the live gate, not a deploy step.
 
-A host or user instruction file does not change a Capstan delivery's completion endpoint or its fetch-then-worktree order.
+A host or user instruction file does not change a Foreman delivery's completion endpoint or its fetch-then-worktree order.
 
 ## Read-only invocations
 
@@ -115,7 +115,7 @@ A [boundary pass](modes/boundary-pass.md) ("## Procedure") dispatches the `archi
 
 A read-only report other than `status` or `help` states each finding with:
 
-1. **Rule:** the Capstan rule applied, as its file and quoted heading.
+1. **Rule:** the Foreman rule applied, as its file and quoted heading.
 2. **Evidence:** `path:line`, or a URL plus its commit SHA.
 3. **Consequence:** what it leads an agent contributor to do.
 4. **Fix:** the recommended fix and its level in [ladder](ladder.md) "## Enforcement".
@@ -125,10 +125,10 @@ Findings are ranked by severity, highest first. The report states its coverage l
 
 ## Global non-goals
 
-These global non-goals apply to every Capstan file and every mode file. Capstan
+These global non-goals apply to every Foreman file and every mode file. Foreman
 never adds:
 
-- a Capstan executable, parser, or controller (unless an admitted issue records
+- a Foreman executable, parser, or controller (unless an admitted issue records
   the exception; #181 records it for `scripts/launch.sh` and its test script);
 - a new stage, station, label, config field, or marker kind (unless an admitted
   issue records the exception; #185 records it for the config field
@@ -144,10 +144,10 @@ never adds:
 - a host-skill copy, per-host plugin, or marketplace directory;
 - an external skill dependency.
 
-Capstan's own behavior is a skill procedure executed by the coordinator.
+Foreman's own behavior is a skill procedure executed by the coordinator.
 Init-binary evidence: `references/contract.md` at `cd38fa1`.
 The executable non-goal does not apply to a target
-repository unless that repository is Capstan. A delivery reads the target
+repository unless that repository is Foreman. A delivery reads the target
 repository's own conventions. It does not import this rule into that
 repository. Permit only `git`, `gh`, existing harness CLIs, the coordinator's
 launch builder `scripts/launch.sh` (workers never run it), `sha256sum` or
@@ -206,7 +206,7 @@ in review convergence, in telemetry, and in triage; add no template.
 Inspect all paginated comments and exact markers before publishing. Preserve
 history by appending a new revision comment when judgment changes. On an
 ambiguous publication, compare marker, revision/SHAs, and content before repeating.
-Only update Capstan-authored artifacts; never replace another author's comment.
+Only update Foreman-authored artifacts; never replace another author's comment.
 Use body files with `gh issue edit/comment`, `gh pr create/edit/comment`, or
 `gh api ... -F body=@FILE`; never interpolate issue text into shell command code.
 Read back the body/comment after writing. Markers locate claims, not proof.
@@ -235,10 +235,10 @@ Inside a batch, [batch invocation](modes/batch-invocation.md) ("This file owns b
 
 Exactly one stage label should exist, with optional `capstan:blocked` overlay.
 Create missing labels idempotently: inspect `gh label list --repo OWNER/REPO`,
-then `gh label create capstan:STAGE --repo OWNER/REPO --color 1d76db --description 'Capstan: STAGE'`
+then `gh label create capstan:STAGE --repo OWNER/REPO --color 1d76db --description 'Foreman: STAGE'`
 only when absent. If creation races, re-read instead of treating it as fatal.
 Use `gh issue edit N --repo OWNER/REPO --add-label capstan:NEXT --remove-label capstan:OLD`
-for observed old Capstan stage labels. Preserve every unrelated label. Read back
+for observed old Foreman stage labels. Preserve every unrelated label. Read back
 with `gh issue view N --repo OWNER/REPO --json labels`. Multiple or stale stage
 labels are repaired from evidence and recorded, never treated as a terminal error.
 
@@ -282,12 +282,12 @@ Every removal of `capstan:ready-to-deploy` from the pull request, under any
 rule, uses this command and read-back.
 
 Head change: when the marked pull request carries a `capstan:risk-*` label and
-Capstan observes or produces a pull-request head other than the SHA named in
+Foreman observes or produces a pull-request head other than the SHA named in
 its Blast Radius `Risk tier:` line, or the body has no such line, run this
 removal command and read-back before any review, check, or CI wait at that
 head. This covers every observation and push: evidence and reconciliation at
 an invocation or resume, a pre-merge base integration and its push, a step 5
-query whose `headRefOid` differs, and any other push by Capstan. Capstan does
+query whose `headRefOid` differs, and any other push by Foreman. Foreman does
 not watch for pushes it does not observe; the line's head SHA shows a merger
 the label is stale, and the next invocation removes it.
 
@@ -357,7 +357,7 @@ For an observed label combination that a row forbids, the repair record that [St
 | IC-8 | Advance from fix to review without that row's completion evidence | [Stage projection](#stage-projection) ("effective blocking census resolved or refuted") | fix completion evidence not observed |
 | IC-9 | Advance from pre-merge to ready-to-deploy without that row's completion evidence | [Stage projection](#stage-projection) ("strict live ready gate in pre-merge reference") | pre-merge completion evidence not observed |
 | IC-10 | `capstan:ready-to-deploy` on the marked pull request or the issue without the live gate, including an open non-draft PR, local reviewed head equal to the PR head, required checks passing, and affirmative `MERGEABLE` and `CLEAN` | [pre-merge.md](pre-merge.md) ("Complete only if the PR is open/non-draft"), ("Require affirmative `MERGEABLE` and `CLEAN`."); [Stage projection](#stage-projection) ("Do not leave a stale ready or tier label.") | ready-to-deploy without the live gate |
-| IC-11 | A Capstan merge, auto-merge, merge-queue enqueue, or deploy, in every state | [Identity and authority](#identity-and-authority) ("Capstan never force-pushes, merges, deploys"), ("authorization does not add a v1 merge mode"); [pre-merge.md](pre-merge.md) ("enable auto-merge, enqueue, or merge to obtain a passing state") | merge or deploy is outside Capstan authority |
+| IC-11 | A Foreman merge, auto-merge, merge-queue enqueue, or deploy, in every state | [Identity and authority](#identity-and-authority) ("Foreman never force-pushes, merges, deploys"), ("authorization does not add a v1 merge mode"); [pre-merge.md](pre-merge.md) ("enable auto-merge, enqueue, or merge to obtain a passing state") | merge or deploy is outside Foreman authority |
 | IC-12 | A station rerun on an issue with `capstan:blocked` while the blocker's resume condition is not observed | [recovery.md](recovery.md) ("## Blocked overlays"), ("do not rerun the station") | blocked resume condition not observed |
 | IC-13 | A delivery start at the ready station while a `Depends on` entry does not hold | [Start condition](#start-condition) ("If an entry does not hold, the dependent does not start") | `Depends on` entry does not hold |
 | IC-14 | A write worker launch while another coordinator on the same issue is visibly progressing | [Concurrent activity](#concurrent-activity) ("If another coordinator is visibly progressing"), ("overlapping write workers") | another coordinator is visibly progressing |
@@ -426,7 +426,7 @@ then `CAPSTAN_FEATURES`, then the `.capstan.json` field `features`, then
 disables the map. It does not fall through to `.capstan/features`. An absent
 `features` field is not `features: null`. A missing explicit path is recorded in
 `ledger.md`, and the run continues with no map.
-Capstan does not generate a map during an ordinary issue. Do not copy the map into a host skill
+Foreman does not generate a map during an ordinary issue. Do not copy the map into a host skill
 directory.
 
 Each feature file uses only these four H2 headings and no harness name:

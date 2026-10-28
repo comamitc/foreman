@@ -150,11 +150,11 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    than the publication time triage recorded in `ledger.md` for the admitted
    spec ([triage.md](triage.md) "record its GitHub body revision/time").
 
-   A comment is Capstan's own marked artifact, and is excluded, only when its
+   A comment is Foreman's own marked artifact, and is excluded, only when its
    first line is exactly `<!-- capstan:KIND owner/repo#N -->` for this
    delivery with a KIND that [contract.md](contract.md) "Marked Markdown
    artifacts" lists, and its URL is one this run records as published by
-   Capstan, in `ledger.md` or its recorded artifact URLs. A comment that
+   Foreman, in `ledger.md` or its recorded artifact URLs. A comment that
    quotes a marker anywhere else, or whose URL this run did not publish, is a
    human comment and is checked like any other. The bot claims this step
    traces above are also excluded.
@@ -246,7 +246,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    workflow change. With no high trigger, the tier is `low` when every changed
    file is a documentation file, and `medium` otherwise. A documentation file
    is one that no run, build, test, or agent loads as instructions or config;
-   a file not shown to be one is not one. In Capstan, files under
+   a file not shown to be one is not one. In Foreman, files under
    `references/`, `templates/`, `.capstan/`, and `SKILL.md` are not
    documentation. A dependency change is a new or changed dependency, such as
    a package manifest, a lockfile, or vendored code; with no high trigger it
@@ -287,7 +287,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    or `medium` tier needs no walkthrough. A missing walkthrough withholds
    `capstan:ready-to-deploy` and the tier label; it is evidence an agent
    supplies, the step 3 `in-diff` row, not a human-capability blocker or
-   review exhaustion. Capstan's fresh primary repair worker writes it and
+   review exhaustion. Foreman's fresh primary repair worker writes it and
    returns it under `## PR content` with its head unchanged. Put it in the
    body in place of any `## Walkthrough` section, or at the body's end,
    changing no other line; write and read back the body with the commands,

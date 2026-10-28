@@ -8,10 +8,10 @@
 - No-new-violations guard; [improvement](../../references/modes/improvement.md) ("This file owns the improvement invocation") owns these rules.
 
 ## How to get to it (user POV)
-Install Capstan as [README](../../README.md) ("Install and invoke") describes, and state in an issue or in a text invocation that the outcome is an improvement invocation.
+Install Foreman as [README](../../README.md) ("Install and invoke") describes, and state in an issue or in a text invocation that the outcome is an improvement invocation.
 
 ## Driving it
-Invocation: invoke Capstan with the URL or number of an issue that states the improvement outcome, or with text that states it.
+Invocation: invoke Foreman with the URL or number of an issue that states the improvement outcome, or with text that states it.
 End state: a published proposal stops at an open pull request; an analysis-only request stays a report.
 
 ## Gotchas

@@ -11,7 +11,7 @@ This file owns the boundary pass.
   - With no milestone, no pass runs.
   - Otherwise list the milestone's issues with `gh api --method GET "repos/O/R/issues?milestone=<number>&state=all&per_page=100" --paginate`, dropping pull requests. The predicate reads only each issue's `number`, `state` and label names; it reads no body.
   - The milestone is complete when every issue is closed, for any reason, or carries `capstan:ready-to-deploy`. Any other open issue means no pass runs.
-  - In a single delivery only, a failed or partial milestone read (the view or the listing) runs no pass and prints one host-session line: `Capstan boundary pass: not run; milestone <title> listing failed: <redacted error>`.
+  - In a single delivery only, a failed or partial milestone read (the view or the listing) runs no pass and prints one host-session line: `Foreman boundary pass: not run; milestone <title> listing failed: <redacted error>`.
 - **One pass per invocation.** Inside a batch, no issue's own end checks its milestone. The batch-end pass reads each distinct milestone of the batch's issues with the same view, listing and predicate, and adds each complete milestone's issues to the window. A failed or partial read for one milestone never suppresses the batch pass. It becomes the line `Gap: milestone <title, or the issue number whose milestone could not be read> — listing failed: <redacted error>` under the report's `Gaps:`, that milestone adds nothing to the window, and the pass continues with the batch's issues and every other complete milestone.
 - **Stop fit.** The pass follows the run's final message and is not a stop: [SKILL.md](../../SKILL.md) ("Stop only at") owns the stops, and [end of run](../end-of-run.md) ("Event cutoff:") governs every record after end-of-run step 1. Beyond that rule, the pass changes no label, stage, ready gate or summary, and blocks nothing.
 
@@ -45,7 +45,7 @@ The batch's issues and the complete milestones' spec-marked issues, or the miles
 
 ## Report
 
-- First line: `Capstan boundary pass — <owner/repo>; trigger: batch end | milestone <title>`.
+- First line: `Foreman boundary pass — <owner/repo>; trigger: batch end | milestone <title>`.
 - `Window: #a, #b…` (with the milestone titles).
 - The `architect` report or its gap line, then the `guardrails` report or its gap line.
 - The `Recurrence:` block, or `Recurrence: no class recurs in window <list>`, with the telemetry limitations, including each `trust unresolved` item.

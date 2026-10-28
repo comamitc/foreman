@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capstan launch builder. The coordinator runs it; workers never do. It writes
+# Foreman launch builder. The coordinator runs it; workers never do. It writes
 # and checks the run script for one Claude or Codex worker launch. It does not
 # launch or supervise. references/harnesses/shared.md ("A run script that
 # `scripts/launch.sh write` writes takes `--capture DIR`") owns the capture.
@@ -57,7 +57,7 @@ READ_RE='^Read\(/(/.*)\)$'
 SAFE_RE='^/[A-Za-z0-9._+@-]+(/[A-Za-z0-9._+@-]+)*$'
 EFFORT_RE='^model_reasoning_effort="[^"]*"$'
 PATHPOL_RE='^shell_environment_policy\.set\.PATH="([^"\\]*)"$'
-HEAD_RE='^# Capstan launch \((claude-write|claude-read|claude-write-probe|codex-write|codex-read|codex-read-probe)\)\. Written by scripts/launch\.sh; verify with scripts/launch\.sh check\.$'
+HEAD_RE='^# Foreman launch \((claude-write|claude-read|claude-write-probe|codex-write|codex-read|codex-read-probe)\)\. Written by scripts/launch\.sh; verify with scripts/launch\.sh check\.$'
 CD_RE="^cd -- '(/[^']*)'\$"
 EXEC0='exec "${argv[@]}"'
 NAME_RE='^[A-Za-z_][A-Za-z0-9_]*$'
@@ -901,7 +901,7 @@ check_file() {
 render() { # KIND START_DIR LAUNCH_FILE WORD...; also reads CAP, RENV, EVENTS, DELIVERY, STATION and ATTEMPT
   local k=$1 w=$2 l=$3
   shift 3
-  printf '#!/usr/bin/env bash\n# Capstan launch (%s). Written by scripts/launch.sh; verify with scripts/launch.sh check.\nset -eu\nargv=(\n' "$k"
+  printf '#!/usr/bin/env bash\n# Foreman launch (%s). Written by scripts/launch.sh; verify with scripts/launch.sh check.\nset -eu\nargv=(\n' "$k"
   printf "'%s'\n" "$@"
   printf ")\ncd -- '%s'\nlf='%s'\ncap='%s'\nredact_env='%s'\n" "$w" "$l" "$CAP" "$RENV"
   printf "events='%s'\ndelivery='%s'\nstation='%s'\nattempt='%s'\n" "$EVENTS" "$DELIVERY" "$STATION" "$ATTEMPT"

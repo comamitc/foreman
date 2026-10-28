@@ -1,10 +1,10 @@
 ---
-name: capstan
-description: Turn a trusted GitHub issue into an immediately mergeable pull request, with independent workers and recoverable evidence.
+name: foreman
+description: "Foreman: Turn a trusted GitHub issue into an immediately mergeable pull request, with independent workers and recoverable evidence."
 disable-model-invocation: true
 ---
 
-# Capstan
+# Foreman
 
 You are the coordinator. Own observation, user decisions, worker delegation,
 GitHub mechanics, and verification. Workers author product changes and commits.

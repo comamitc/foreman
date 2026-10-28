@@ -6,7 +6,7 @@ This file owns performance proof.
 
 The plan names the target repository, the affected user operation, the metric, and the accepted threshold. A missing consequential product criterion goes through existing [triage](../triage.md). Do not invent a frame, latency, or memory limit.
 
-The plan pins the baseline and candidate revisions. Both use the same workload, data, runtime configuration, and environment. The plan records warm or cold state, the sampling, and the measurement tool's identity. Use the repository's native declared tooling. [toolchain](../toolchain.md) owns execution. Do not add a profiler or a Capstan runner.
+The plan pins the baseline and candidate revisions. Both use the same workload, data, runtime configuration, and environment. The plan records warm or cold state, the sampling, and the measurement tool's identity. Use the repository's native declared tooling. [toolchain](../toolchain.md) owns execution. Do not add a profiler or a Foreman runner.
 
 When the target has a verification path, reuse its setup and reset steps. Otherwise use an equivalent existing native path.
 
@@ -16,6 +16,6 @@ Record the evidence through the acceptance row that [telemetry](../telemetry.md)
 
 A change of head, spec, workload, or environment invalidates the affected proof. Reassess and rerun it. Existing retention and redaction defaults apply. Do not enable replay retention. Do not keep unrestricted traces. Do not claim long-term reproducibility the evidence does not support.
 
-Capstan adds no schema service, universal benchmark framework, automatic hill-climbing loop, or default browser pass. Do not experiment on production traffic.
+Foreman adds no schema service, universal benchmark framework, automatic hill-climbing loop, or default browser pass. Do not experiment on production traffic.
 
 Acceptance is the normal pipeline and reviewer evidence on the diff. Required existing checks and independent read-only review stay unchanged.

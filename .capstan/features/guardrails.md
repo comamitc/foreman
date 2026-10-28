@@ -2,16 +2,16 @@
 
 ## Sub-features
 - A read-only inventory of this repository's guardrails, each with whether it runs and its run evidence or the reason none exists, plus observations of CI jobs that run the same command on the same trigger; [guardrails](../../references/modes/guardrails.md) ("## Procedure") owns the inventory step.
-- A tier summary and grading of this repository's test files, or those under named paths, against Capstan's check rules, including user-facing behaviors with no end-to-end path; [guardrails](../../references/modes/guardrails.md) ("## Finding sources") owns the finding sources.
+- A tier summary and grading of this repository's test files, or those under named paths, against Foreman's check rules, including user-facing behaviors with no end-to-end path; [guardrails](../../references/modes/guardrails.md) ("## Finding sources") owns the finding sources.
 - Findings ranked by severity, then the coverage limits; [guardrails](../../references/modes/guardrails.md) ("## Report") owns the report shape.
 
 ## How to get to it (user POV)
-Install Capstan as [README](../../README.md) ("Install and invoke") describes, and invoke it from a workspace inside the repository's git work tree.
+Install Foreman as [README](../../README.md) ("Install and invoke") describes, and invoke it from a workspace inside the repository's git work tree.
 [guardrails](../../references/modes/guardrails.md) ("This file owns the guardrails invocation") owns the procedure.
 
 ## Driving it
-Invocation: invoke Capstan with `guardrails`, alone or followed by paths in the repository, for example `guardrails tests`.
-End state: Capstan prints one report and stops. Its first line names the work tree and its HEAD SHA. No test suite, build, hook, or workflow ran, and `git status --porcelain` output, labels, issues, comments, branches, worktrees, workflow runs, and evidence files are unchanged.
+Invocation: invoke Foreman with `guardrails`, alone or followed by paths in the repository, for example `guardrails tests`.
+End state: Foreman prints one report and stops. Its first line names the work tree and its HEAD SHA. No test suite, build, hook, or workflow ran, and `git status --porcelain` output, labels, issues, comments, branches, worktrees, workflow runs, and evidence files are unchanged.
 
 ## Gotchas
 - A path that does not exist prints an unknown-path line, and nothing is graded.

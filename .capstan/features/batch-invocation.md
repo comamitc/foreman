@@ -8,11 +8,11 @@
 - Opt-in boundary pass; [boundary pass](../../references/modes/boundary-pass.md) ("## Triggers") owns when it runs.
 
 ## How to get to it (user POV)
-Install Capstan as [README](../../README.md) ("Install and invoke") describes.
+Install Foreman as [README](../../README.md) ("Install and invoke") describes.
 [batch invocation](../../references/modes/batch-invocation.md) ("This file owns batch invocation order") owns the procedure.
 
 ## Driving it
-Invocation: invoke Capstan with two or more distinct issues as issue URLs or issue numbers, separated by spaces or commas, with nothing else but allowed overrides, for example `12, 14`.
+Invocation: invoke Foreman with two or more distinct issues as issue URLs or issue numbers, separated by spaces or commas, with nothing else but allowed overrides, for example `12, 14`.
 End state: the issues are delivered one at a time in dependency order. Each stops at `capstan:ready-to-deploy` or a `capstan:blocked` overlay and gets its own summary. One final message lists every issue with its outcome and attempt table.
 
 ## Gotchas

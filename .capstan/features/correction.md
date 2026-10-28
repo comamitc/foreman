@@ -10,11 +10,11 @@
 
 ## How to get to it (user POV)
 
-Install Capstan as [README](../../README.md) ("Install and invoke") describes, and state in an issue or in a text invocation that the outcome is correction.
+Install Foreman as [README](../../README.md) ("Install and invoke") describes, and state in an issue or in a text invocation that the outcome is correction.
 
 ## Driving it
 
-Invocation: invoke Capstan with the URL or number of an issue that states the correction outcome, or with text that states it.
+Invocation: invoke Foreman with the URL or number of an issue that states the correction outcome, or with text that states it.
 End state: after you answer the triage question, items picked to file later are open issues with their evidence, and items picked to fix now pass the normal pipeline, which ends at the merge-ready PR gate. With nothing picked to fix now, the run stops after filing with no PR; the issue keeps its triage stage label, and a marked summary on it lists the filed issues.
 
 ## Gotchas
