@@ -447,7 +447,7 @@ function keep(i,   k) {
   k = VKEY[i]
   if (argof(i)) return TK[i] == "s" && (k == "file_path" || (k == "command" && ATOOL == "\"Bash\""))
   if (k in KEEP) return 1
-  return k == "result" && TT[i] == "\"CAPSTAN_PROBE_OK\""
+  return k == "result" && TT[i] == "\"FOREMAN_PROBE_OK\""
 }
 function hostpass(   i, ok) {
   for (i = 1; i <= NT; i++)
