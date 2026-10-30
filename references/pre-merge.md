@@ -253,6 +253,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    is `medium`. A CI or workflow change is a change to a file that a CI
    service or repository automation reads as configuration, such as a file
    under `.github/workflows/`. Diff size goes in the basis and sets no tier.
+   Files under `.foreman/proof/` are documentation files in every repository, including Foreman; this is the one exception to the `.foreman/` rule above.
 
    In the Blast Radius section of the PR body just read, remove every line
    that begins `Risk tier:` and write one line
