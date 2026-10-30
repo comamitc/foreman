@@ -225,3 +225,7 @@
 **Cutover**: the v0.2.0 removal of the compat read path, by a separate issue. The rule owner is `references/contract.md` ("## Compat read path"). Rejected: a date-based or per-repository cutover.
 
 **Migrate on touch**: replacing an old-form label with its Foreman form in the same label edit that touches the issue or pull request. The rule owner is `references/contract.md` ("Migrate on touch:"). Rejected: a relabel script.
+
+**Visual proof**: screenshots, a terminal transcript, or a recording of a user-visible surface. The rule owner is `references/implementing.md` ("Visual proof:"). Rejected: a separate evidence branch, release assets, or text only; a required recording.
+
+**Capture path**: the target repository's documented commands that produce visual proof. The rule owner is `references/implementing.md` ("Visual proof:"). Rejected: a Foreman default tool.

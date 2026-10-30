@@ -12,6 +12,7 @@
 - Opt-in auto-triage and its `foreman:needs-human` label; [triage](../../references/triage.md) ("Auto-triage:") owns both.
 - Risk tier labels `foreman:risk-low`, `foreman:risk-medium`, and `foreman:risk-high`; [pre-merge](../../references/pre-merge.md) ("Risk tier:") owns which one applies and [contract](../../references/contract.md) ("## Stage projection") owns their projection.
 - High-tier walkthrough in the pull-request body; [pre-merge](../../references/pre-merge.md) ("Walkthrough:") owns it.
+- Visual proof in the pull-request Verification section; [implementing](../../references/implementing.md) ("Visual proof:") owns it.
 - Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/foreman/OWNER/REPO/N/` by default.
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
 
