@@ -3,6 +3,7 @@
 User-facing Foreman features, one file each. [contract](../../references/contract.md) ("Each feature file uses only these four H2 headings") owns the heading shape and map resolution.
 
 - [Issue delivery](issue-delivery.md): invoke Foreman with an issue URL or number; it ends at an open merge-ready PR unless it stops for review exhaustion, a human action, or cancellation.
+- [Visual proof](visual-proof.md): deliver an issue whose change touches a screen, a command's output, or a running app; it ends at a PR Verification section with captures under `.foreman/proof/N/` or a stated gap.
 - [Text invocation](text-invocation.md): invoke Foreman with prose; it creates one issue, then delivers it.
 - [Batch invocation](batch-invocation.md): invoke Foreman with two or more issues; it delivers them one at a time in dependency order.
 - [Status](status.md): invoke Foreman with exactly `status`; it prints a read-only report.
