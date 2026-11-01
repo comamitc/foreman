@@ -235,3 +235,5 @@
 **Door**: the one-line reversibility call in a delivery pull-request body. The rule owner is `references/implementing.md` ("Door line:"); see also `references/pre-merge.md` ("Door line:"). Rejected: a third value `Door: unknown`; a place inside the Blast Radius section; a risk-tier input or a new gate for a one-way door.
 
 **How to revert**: the one-line revert instruction in a delivery pull-request body. The rule owner is `references/implementing.md` ("Door line:"). Rejected: a mechanical check for a vague line.
+
+**Evidence section**: the `## Evidence` section of a delivery PR body. It holds one plain-language Before line and one After line, written from the runs Verification records. It is not an evidence check, and it does not replace the Verification audit trail. The rule owner is `references/implementing.md` ("Evidence section:"). Rejected: a generated script or template.
