@@ -299,18 +299,22 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    Door line: before any projection below, at any tier, check the latest PR
    body read back above for the Door line and the `How to revert:` line that
    [implementing.md](implementing.md) ("Door line:") requires. A body with no
-   Door line or no `How to revert:` line withholds `foreman:ready-to-deploy`
-   and the tier label; a line that does not have the Door shape, such as
+   Door line or no `How to revert:` line, or whose `How to revert:` line is
+   not directly after its Door line, withholds `foreman:ready-to-deploy` and
+   the tier label; a line that does not have the Door shape, such as
    `Door: unknown`, is no Door line. This is evidence an agent supplies, the
    step 3 `in-diff` row, not a human-capability blocker or review exhaustion.
    Foreman's fresh primary repair worker writes each missing line from the
    PR's Blast Radius and the cumulative diff and returns it under
    `## PR content` with its head unchanged. Put a missing Door line directly
    after the last of the `Foreman:` and `Closes` lines and a missing
-   `How to revert:` line directly after the Door line,
-   changing no other line; write and read back the body as "Walkthrough:"
-   states, with its success test and one retry; then check both lines again.
-   If the second write fails, project neither label; the attempt fails as
+   `How to revert:` line directly after the Door line. Replace a line that
+   begins `Door:` without the Door shape with the Door line instead of adding
+   a second one, and move an existing `How to revert:` line that is not
+   directly after the Door line to directly after it. Change no other line;
+   write and read back the body as "Walkthrough:" states, with its success
+   test and one retry; then check both lines again. If the second write
+   fails, project neither label; the attempt fails as
    "Failed attempts use shared recovery." states. The Door line is not a
    reversibility statement; step 4 and "Risk tier:" read Blast Radius, not
    the Door line.
