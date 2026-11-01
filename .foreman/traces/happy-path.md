@@ -269,6 +269,20 @@ Owner: [references/implementing.md](../../references/implementing.md) ("Door lin
 `How to revert:`
 ```
 
+### Divergence line
+
+Owner: [references/implementing.md](../../references/implementing.md) ("Divergence line:")
+
+```text
+`Divergence from issue: None`
+```
+
+Owner: [references/implementing.md](../../references/implementing.md) ("Divergence line:")
+
+```text
+`Divergence from issue:` followed by a short bullet list
+```
+
 ### Behavior diff section
 
 Owner: [references/implementing.md](../../references/implementing.md) ("Behavior diff:")
@@ -377,6 +391,14 @@ Owner: [references/end-of-run.md](../../references/end-of-run.md) ("Compose the 
 
 ```text
 publish a marked issue summary
+```
+
+### Summary divergence line
+
+Owner: [references/end-of-run.md](../../references/end-of-run.md) ("The summary also contains")
+
+```text
+the marked PR body's `Divergence from issue:` line, copied unchanged with any bullet list under it
 ```
 
 ### Host status line
