@@ -72,6 +72,8 @@
 
 **Denied spec publish**: an outcome of the triage spec publish. The rule owner is `references/triage.md` ("A denied spec publish is a host permission refusal"). Rejected: a GitHub API error from a command that ran.
 
+**Expired harness login**: a worker harness's sign-in on the host that is missing, expired, or revoked, as the harness reports in its captured output. The rule owner is `references/recovery.md` ("expired harness login"). Rejected: a rate limit, a provider outage, or a coordinator `gh` failure.
+
 **Publication boundary**: the point after local code review converges and base freshness is confirmed, when Foreman first pushes the exact reviewed candidate and creates or reconciles the pull request. Rejected: every implementing or fix completion.
 
 **Local CI**: the declared checks run on the local machine during the local loop, including tests and the other commands the plan or repository conventions already name. Rejected: a GitHub Actions replay or a workflow parser.

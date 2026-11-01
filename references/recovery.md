@@ -27,6 +27,7 @@ preserve the active stage while recovering.
    | network/rate limit/temporary GitHub failure | use resolved transient_retries (default 3), 5/15/30 second backoff then 30 seconds for additional configured retries, honoring longer server guidance within budget |
    | crash/timeout | inspect effects and live processes; fresh worker for unfinished work |
    | failed launch probe | no station worker launches and the run does not advance until a re-probe or a recovery-selected fallback's probe passes; diagnosis only under a recipe whose probe passed in this invocation ([launch probe](harnesses/shared.md)) |
+   | expired harness login: the redacted capture of a launch probe or of a station worker of any role (exit status, stderr, stdout tail, final error event) reports that harness's sign-in missing, expired, or revoked, for example `not logged in`, `OAuth refresh failed`, `invalid_grant`, `refresh_token_invalidated`, or `Please log in again`; a capture that does not report this follows the other rows | stop: in this invocation do not relaunch that worker, do not re-probe that harness, launch no diagnosis worker, and select no fallback harness, even when one is configured; publish a `credential-required` blocker as "## Blocked overlays" states, with [blocker](../templates/blocker.md) ("# Delivery blocked"), naming the harness and the role, or keep the one already standing for that harness and publish no second blocker; its one action is to sign in to that harness again on the host, then re-invoke; its resume condition is a passing launch probe of that harness on a later invocation; add `foreman:blocked` and keep the stage label; the delivery stops; no other row applies |
    | missing/weak/malformed result | precise corrective feedback, up to 2 corrective prompts, then a fresh worker |
    | failed behavior/test/type/lint/build | primary repairs using original command/logs, diff, spec and plan; rerun under [references/planning.md](planning.md) ("Mark each declared check heavy or not heavy") |
    | unknown technical failure | fresh diagnosis worker; unknown does not mean human-required |
@@ -72,6 +73,7 @@ condition is not observed, leave `foreman:blocked`, leave the blocker handoff,
 and do not rerun the station. A label that is not `foreman:blocked`, including
 a label named `blocked`, does not refuse the invocation and is not removed.
 This section reads `capstan:blocked` as `foreman:blocked`, as [contract](contract.md) ("## Compat read path") states.
+For a `credential-required` blocker from the "expired harness login" row above, the observation is that invocation's launch probe of that harness ([launch probe](harnesses/shared.md) ("Run it once per invocation")); running it is not a station rerun; remove the overlay only when that probe passes.
 
 Review exhaustion is the one technical blocked overlay.
 [Code-review convergence](review-convergence.md) states when it applies
