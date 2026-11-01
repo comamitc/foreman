@@ -253,6 +253,14 @@ Owner: [references/publication.md](../../references/publication.md) ("At the pub
 `Closes #N`
 ```
 
+### Behavior diff section
+
+Owner: [references/implementing.md](../../references/implementing.md) ("Behavior diff:")
+
+```text
+`## Behavior diff`
+```
+
 ### Stage-label move
 
 Owner: [references/contract.md](../../references/contract.md) ("## Stage projection")
