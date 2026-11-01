@@ -229,3 +229,5 @@
 **Visual proof**: screenshots, a terminal transcript, or a recording of a user-visible surface. The rule owner is `references/implementing.md` ("Visual proof:"). Rejected: a separate evidence branch, release assets, or text only; a required recording.
 
 **Capture path**: the target repository's documented commands that produce visual proof. The rule owner is `references/implementing.md` ("Visual proof:"). Rejected: a Foreman default tool.
+
+**Behavior diff**: a section of a delivery pull-request body. The rule owner is `references/implementing.md` ("Behavior diff:"). Rejected: a summary taken from the plan; a generated script or template; a pre-merge check, risk-tier input, or readiness gate.
