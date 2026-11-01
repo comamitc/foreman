@@ -45,7 +45,7 @@ has a `## Post-merge checks` section contains that section copied verbatim,
 heading included; the final `ledger.md` records it verbatim, so step 4 composes
 it from the ledger.
 A summary for a spec without that section has no such heading.
-The summary also contains the marked PR body's `Divergence from issue:` line, copied unchanged with any bullet list under it; before step 1, read the marked PR body with `gh pr view PR --repo OWNER/REPO --json body` and record that line, with any bullet list under it, in `ledger.md`, so step 4 composes it from the ledger. A marked PR body with no such line is a gap.
+The summary also contains the marked PR body's `Divergence from issue:` line, copied unchanged with any bullet list under it; before step 1, read the marked PR body with `gh pr view PR --repo OWNER/REPO --json body` and record that line, with any bullet list under it, in `ledger.md`, so step 4 composes it from the ledger. A marked PR body with no such line is a gap. With no marked pull request, such as at review exhaustion before publication, the coordinator reads no PR body, records no line in `ledger.md`, and the summary has no `Divergence from issue:` line.
 Last, it contains the final `ledger.md` verbatim:
 
 ~~~
