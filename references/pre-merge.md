@@ -296,6 +296,25 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    walkthrough again. If the second write fails, project neither label; the
    attempt fails as "Failed attempts use shared recovery." states.
 
+   Door line: before any projection below, at any tier, check the latest PR
+   body read back above for the Door line and the `How to revert:` line that
+   [implementing.md](implementing.md) ("Door line:") requires. A body with no
+   Door line or no `How to revert:` line withholds `foreman:ready-to-deploy`
+   and the tier label; a line that does not have the Door shape, such as
+   `Door: unknown`, is no Door line. This is evidence an agent supplies, the
+   step 3 `in-diff` row, not a human-capability blocker or review exhaustion.
+   Foreman's fresh primary repair worker writes each missing line from the
+   PR's Blast Radius and the cumulative diff and returns it under
+   `## PR content` with its head unchanged. Put a missing Door line directly
+   after the last of the `Foreman:` and `Closes` lines and a missing
+   `How to revert:` line directly after the Door line,
+   changing no other line; write and read back the body as "Walkthrough:"
+   states, with its success test and one retry; then check both lines again.
+   If the second write fails, project neither label; the attempt fails as
+   "Failed attempts use shared recovery." states. The Door line is not a
+   reversibility statement; step 4 and "Risk tier:" read Blast Radius, not
+   the Door line.
+
    Only then project
    `foreman:ready-to-deploy` on the issue with the existing stage rules, and
    project it with the tier label on the marked pull request with
