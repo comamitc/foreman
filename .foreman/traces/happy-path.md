@@ -253,6 +253,22 @@ Owner: [references/publication.md](../../references/publication.md) ("At the pub
 `Closes #N`
 ```
 
+### Door line
+
+Owner: [references/implementing.md](../../references/implementing.md) ("Door line:")
+
+```text
+`Door: two-way · Blast radius: WORDS`
+```
+
+### How to revert line
+
+Owner: [references/implementing.md](../../references/implementing.md) ("Door line:")
+
+```text
+`How to revert:`
+```
+
 ### Behavior diff section
 
 Owner: [references/implementing.md](../../references/implementing.md) ("Behavior diff:")

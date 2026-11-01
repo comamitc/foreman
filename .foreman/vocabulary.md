@@ -231,3 +231,7 @@
 **Capture path**: the target repository's documented commands that produce visual proof. The rule owner is `references/implementing.md` ("Visual proof:"). Rejected: a Foreman default tool.
 
 **Behavior diff**: a section of a delivery pull-request body. The rule owner is `references/implementing.md` ("Behavior diff:"). Rejected: a summary taken from the plan; a generated script or template; a pre-merge check, risk-tier input, or readiness gate.
+
+**Door**: the one-line reversibility call in a delivery pull-request body. The rule owner is `references/implementing.md` ("Door line:"); see also `references/pre-merge.md` ("Door line:"). Rejected: a third value `Door: unknown`; a place inside the Blast Radius section; a risk-tier input or a new gate for a one-way door.
+
+**How to revert**: the one-line revert instruction in a delivery pull-request body. The rule owner is `references/implementing.md` ("Door line:"). Rejected: a mechanical check for a vague line.
