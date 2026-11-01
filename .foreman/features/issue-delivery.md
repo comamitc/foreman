@@ -16,6 +16,7 @@
 - Behavior diff in the pull-request body; [implementing](../../references/implementing.md) ("Behavior diff:") owns it.
 - Door line and `How to revert:` line in the pull-request body; [implementing](../../references/implementing.md) ("Door line:") owns them and [pre-merge](../../references/pre-merge.md) ("Door line:") owns their pre-merge check.
 - Evidence section in the pull-request body; [implementing](../../references/implementing.md) ("Evidence section:") owns it.
+- Divergence line in the pull-request body; [implementing](../../references/implementing.md) ("Divergence line:") owns it.
 - Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/foreman/OWNER/REPO/N/` by default.
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
 
