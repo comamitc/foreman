@@ -277,6 +277,14 @@ Owner: [references/implementing.md](../../references/implementing.md) ("Behavior
 `## Behavior diff`
 ```
 
+### Evidence section
+
+Owner: [references/implementing.md](../../references/implementing.md) ("Evidence section:")
+
+```text
+`## Evidence`
+```
+
 ### Stage-label move
 
 Owner: [references/contract.md](../../references/contract.md) ("## Stage projection")
