@@ -20,6 +20,7 @@ worker's task reading is the brief and the pack; [references/harnesses/shared.md
    scope for this change, and that finding alone does not make the verdict
    revise. When it quotes one, the finding is in scope with its existing
    severity and confidence.
+   Apply each review-file rule the pack quotes on its axes, as [references/review.md](review.md) ("Apply each review-file rule the pack quotes") and ("names that rule by its path and a verbatim anchor") state for code review.
    A design comparison that does not meet [references/planning.md](planning.md) ("Those designs are compared at equal reuse") is a Simplicity finding, in scope or out of scope as the module finding above is.
 
    | Axis | Question |

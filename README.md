@@ -204,6 +204,12 @@ and the repair delta. Counted review censuses are capped by
 
 [contract](references/contract.md) owns init.
 
+## Review file
+
+A good review file ([.foreman/vocabulary.md](.foreman/vocabulary.md) ("**Review file**")) is short: one sentence for each of what failure looks like in that repository, the paths to skip, a cap on nits, and the areas that always need a deeper look, so a review can quote the line it applies.
+Start from [templates/repo-review.md](templates/repo-review.md) ("# Review guide").
+[pack](references/pack.md) ("each nested `REVIEW.md`") owns which review files a review quotes, and [code-review convergence](references/review-convergence.md) ("A review file can add review depth") owns what a review file can and cannot change.
+
 ## Trust and authority
 
 Use repositories you control and trusted collaborators' issues. OWNER, MEMBER,
