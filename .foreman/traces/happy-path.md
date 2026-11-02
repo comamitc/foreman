@@ -365,6 +365,32 @@ Owner: [references/contract.md](../../references/contract.md) ("## Stage project
 `foreman:risk-*` label, the computed one
 ```
 
+### Review-noise rollup
+
+Owner: [references/end-of-run.md](../../references/end-of-run.md) ("Review-noise rollup.")
+
+```text
+`Review noise totals: raised <n>; fixed <n>; refuted <n>; accepted-risk <n>; out-of-scope <n>; superseded <n>; advisory <n>; open <n>; coordinator-evidence <n>`
+```
+
+Owner: [references/end-of-run.md](../../references/end-of-run.md) ("Review-noise rollup.")
+
+```text
+`Review noise shares: fixed <share>; refuted <share>; accepted-risk or out-of-scope <share>; noise rate <share>`
+```
+
+Owner: [references/end-of-run.md](../../references/end-of-run.md) ("Review-noise rollup.")
+
+```text
+`Review noise rounds to pass: <R>`
+```
+
+Owner: [references/end-of-run.md](../../references/end-of-run.md) ("Review-noise rollup.")
+
+```text
+`Review noise severity <severity>: fixed <n>; refuted <n>; accepted-risk <n>; out-of-scope <n>; superseded <n>; advisory <n>; open <n>`
+```
+
 ### Final ledger
 
 Owner: [references/end-of-run.md](../../references/end-of-run.md) ("Write the final `ledger.md` and read it back.")
@@ -399,6 +425,14 @@ Owner: [references/end-of-run.md](../../references/end-of-run.md) ("The summary 
 
 ```text
 the marked PR body's `Divergence from issue:` line, copied unchanged with any bullet list under it
+```
+
+### Summary review-noise lines
+
+Owner: [references/end-of-run.md](../../references/end-of-run.md) ("The summary contains")
+
+```text
+the ledger's `Review noise` lines, copied unchanged
 ```
 
 ### Host status line

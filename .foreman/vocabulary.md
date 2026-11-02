@@ -241,3 +241,5 @@
 **Evidence section**: the `## Evidence` section of a delivery PR body. It holds one plain-language Before line and one After line, written from the runs Verification records. It is not an evidence check, and it does not replace the Verification audit trail. The rule owner is `references/implementing.md` ("Evidence section:"). Rejected: a generated script or template.
 
 **Divergence line**: the one `Divergence from issue:` line in a delivery PR body. The rule owner is `references/implementing.md` ("Divergence line:"); see also `references/end-of-run.md` ("The summary also contains") and `templates/blocker.md` ("- Divergence from issue:"). Rejected: a separate `##` section or a line inside Scope; free prose or a third value such as `unknown`.
+
+**Review noise rate**: the share of raised code-review findings that the review-noise rollup counts as noise, for one delivery or for one `learn` scope (`references/modes/learn.md` ("## Report")). The rule owner is `references/end-of-run.md` ("Review-noise rollup."), which states its formula and its effects. Rejected: a recall figure.

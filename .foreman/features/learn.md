@@ -4,6 +4,7 @@
 - A read-only reading of every Foreman run recorded on this machine, across repositories, with each run's marked GitHub artifacts; [learn](../../references/modes/learn.md) ("## Sources") owns the sources and [learn](../../references/modes/learn.md) ("## Procedure") owns the reads.
 - Mistake and friction classes pooled across repositories, with Foreman-process proposals apart from target-product learnings, each proposal checked against open `comamitc/foreman` issues; [learn](../../references/modes/learn.md) ("## Finding sources") owns the finding sources.
 - Proposals ranked by severity, then by deliveries and repositories spanned, followed by limitations and coverage; [learn](../../references/modes/learn.md) ("## Report") owns the report shape.
+- A review noise block; [learn](../../references/modes/learn.md) ("## Report") owns the block.
 - A reviewer case candidates block; [learn](../../references/modes/learn.md) ("## Report") owns the block.
 
 ## How to get to it (user POV)

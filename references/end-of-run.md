@@ -12,8 +12,9 @@ it.
 At terminal readiness, project the ready label and read it back. At review
 exhaustion, do not project `foreman:ready-to-deploy`; the order starts after the
 review-exhaustion decision. Then run the recurrence comparison under "Earlier
-deliveries and recurrence" and write its lines into `ledger.md`. Then follow
-this end-of-run order:
+deliveries and recurrence" and write its lines into `ledger.md`.
+Then write the review-noise rollup under "Review-noise rollup." into `ledger.md`.
+Then follow this end-of-run order:
 
 1. Write the final `ledger.md` and read it back.
 2. At ready-to-deploy only, apply the deletion rule under "Ledger, pile, and deletion", write its records into `ledger.md`, and read it back.
@@ -36,7 +37,7 @@ PR URL, current head/base, observed ready-gate or exhaustion facts, the ledger's
 attempt table with its Total row and the date line (copied unchanged: the same columns, order, and cell formats), findings addressed/refuted,
 recovery history, human interventions, same-harness independence or unsafe mode
 disclosures, applicable policy rows whose state is not `verified`, the ledger's
-`Recurrence:` lines, the line
+`Recurrence:` lines, the ledger's `Review noise` lines, copied unchanged, the line
 `Residual-effect approval:` stating the facts of the latest ledger
 residual-effect approval record when one exists, and gaps. It
 also contains the line `Ledger sha256: <hex>`, or `Ledger sha256: unknown` when
@@ -108,3 +109,37 @@ Read each earlier delivery's marked `plan-review` comments and marked summaries 
 `Recurrence: <class or signal> — #A <occurrence URL>, #B <occurrence URL>[, …]; suggest a correction issue (correction mode, [modes/correction.md](modes/correction.md)).`
 
 When none recurs, write `Recurrence comparison: no recurrence; scope: <K> earlier deliveries #X–#Y; <sources read>.` A failed, truncated, or partial read is a telemetry gap: write `Recurrence comparison: gap: <source>: <redacted error>` in `ledger.md` and continue. A gap does not block and is not zero. Do not invent a result. A recurrence line is disclosure only: it does not block ready, open an issue, change a blocking/advisory partition, or change the review-exhaustion decision. "Any other marked summary" does not run the comparison. The within-delivery `surface_recurrence_rounds` diagnosis under [review convergence](review-convergence.md) is separate and unchanged.
+
+Review-noise rollup. At terminal readiness after the ready-label read-back, or at the review-exhaustion decision, after the recurrence comparison and before end-of-run step 1, write the rollup lines below into `ledger.md`, replacing any rollup lines an earlier terminal point wrote. "Any other marked summary" does not write them. This paragraph owns the rollup line shape.
+
+The counted unit is each code-review finding lineage, the origin review plus local ID as [finding resolution](findings.md) ("lineage is the original review revision/URL plus its local ID") defines it, in the delivery's marked code-review censuses.
+Read those censuses, and the dispositions published with them, wherever [publication](publication.md) ("Before the pull request exists, marked code-review censuses and dispositions are issue comments.") puts them: the marked `review` comments on the delivery issue, and, once the marked pull request exists, the marked `review` comments on it and the issue history they link.
+A census found on both surfaces, or reached again through a link, is read once.
+With no marked pull request, such as at review exhaustion before publication, the issue comments are the whole source; that alone makes no figure `unknown`.
+Each lineage is counted once, at its final state, under its severity in the latest census that lists it. A renamed, split, or recurrent finding is not counted as a second finding. Plan-review findings, including plan findings carried into code review, are not counted. Coordinator-evidence findings ([review convergence](review-convergence.md) ("## Coordinator-evidence findings")) are not in the raised count or any bucket; the totals line states their number.
+
+Each final state falls in exactly one bucket. A trusted operator disposition for the lineage, as [review convergence](review-convergence.md) ("An operator disposition must come from") states it, decides the bucket before the lineage's census state:
+
+- `fixed`: `verified-fixed`.
+- `refuted`: `verified-refuted`, or `refuted-by-vote` from the verification vote. A primary's proposed refutation that no independent review verified is not `refuted`.
+- `accepted-risk`: a trusted operator disposition `accepted-risk`.
+- `out-of-scope`: a trusted operator disposition `out-of-scope`, or an advisory whose partition reason is out of scope or pre-existing.
+- `superseded`: `superseded`, from finding resolution or from a trusted operator disposition.
+- `advisory`: any other advisory that was never routed to fix, such as below threshold or `late-discovered`.
+- `open`: `unresolved` or `reopened` at run end, or any other finding that is still an effective blocker at run end.
+
+The lines, in this order:
+
+- `Review noise totals: raised <n>; fixed <n>; refuted <n>; accepted-risk <n>; out-of-scope <n>; superseded <n>; advisory <n>; open <n>; coordinator-evidence <n>`
+- `Review noise shares: fixed <share>; refuted <share>; accepted-risk or out-of-scope <share>; noise rate <share>`
+- `Review noise rounds to pass: <R>`, or at review exhaustion `Review noise rounds to pass: not passed after <R>`
+- `Review noise severity <severity>: fixed <n>; refuted <n>; accepted-risk <n>; out-of-scope <n>; superseded <n>; advisory <n>; open <n>`, one line each for `critical`, `high`, `medium`, and `low`, in that order
+- `Review noise gap: <census URL or source>: <redacted error>`, one line for each census that cannot be read
+
+`<n>` is a count. The noise rate is `refuted` plus `out-of-scope`, as a share of raised. A share is a count over raised as a whole percent rounded half up, written like `40%`. With zero findings raised, each share and the noise rate is `n/a`, not `0%`. Rounds to pass is the number of counted code-review censuses, counted as [review convergence](review-convergence.md) ("## Bounded rounds and recurrence") counts them, up to and including the census whose partition advanced the delivery to pre-merge for the final time; at review exhaustion, R is the number of counted censuses.
+A census that cannot be read is a telemetry gap: write its gap line and continue.
+A census that is read is never a gap, whichever surface holds it.
+An unreadable census can hold any lineage and is a possible counted round, so every count, share, and rounds to pass is then `unknown`, never zero.
+A gap does not block.
+
+The rollup is disclosure only: it changes no blocking or advisory partition, routing, round count, `surface_recurrence_rounds` diagnosis, ready gate, risk tier, or review-exhaustion decision.
