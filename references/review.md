@@ -146,6 +146,9 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    [telemetry.md](telemetry.md) owns the policy row. An applicable rule with no
    evidence is a finding in the existing finding format;
    [references/review-convergence.md](review-convergence.md) partitions it.
+   Apply each review-file rule the pack quotes under `## Rules that apply`, which [references/pack.md](pack.md) ("each nested `REVIEW.md`") places there: what failure looks like in that repository, paths to skip, a cap on nits, and areas that always need a deeper look.
+   A finding that relies on a review-file rule names that rule by its path and a verbatim anchor.
+   [references/review-convergence.md](review-convergence.md) ("A review file can add review depth") owns what a review-file rule can and cannot change.
 4. For every actionable finding, record axis, severity, confidence, category,
    file/symbol or plan item, claim, evidence, and correction in
    [review](../templates/review.md). Blocking

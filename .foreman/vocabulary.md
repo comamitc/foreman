@@ -166,6 +166,8 @@
 
 **Policy row**: the `ledger.md` row that records one quoted repository rule, its applicability, how it was satisfied, its evidence and head, and its state. The rule owner is `references/telemetry.md`. Rejected: a policy-register file.
 
+**Review file**: a `REVIEW.md` in a target repository, at its root or in a subdirectory, written and owned by that repository. Repository-scoped term. [references/pack.md](../references/pack.md) ("each nested `REVIEW.md`") owns which review files a pack quotes, [references/review.md](../references/review.md) ("Apply each review-file rule the pack quotes") owns what a reviewer applies from one, and [references/review-convergence.md](../references/review-convergence.md) ("A review file can add review depth") owns what one can and cannot change. Rejected: a Foreman config field; a file Foreman writes; `templates/review.md`, the review census template.
+
 **Mandatory rule**: a quoted repository rule whose sentence contains one of the words `references/telemetry.md` lists. The rule owner is `references/telemetry.md`. Rejected: a risk score.
 
 **Test tier**: the level at which a check exercises the change, highest first: end-to-end through the real entry point with real dependencies; integration at an API or data boundary against a real service; unit. The rule owner is `references/ladder.md` ("## Check"). Rejected: a tier the repository could reach only by adding infrastructure, a coverage target, or a mutation score.

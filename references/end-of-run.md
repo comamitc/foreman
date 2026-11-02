@@ -108,6 +108,12 @@ Read each earlier delivery's marked `plan-review` comments and marked summaries 
 
 `Recurrence: <class or signal> — #A <occurrence URL>, #B <occurrence URL>[, …]; suggest a correction issue (correction mode, [modes/correction.md](modes/correction.md)).`
 
+For a class of this delivery's plan-review or code-review findings, the line instead reads:
+
+`Recurrence: <class> — #A <occurrence URL>, #B <occurrence URL>[, …]; suggest a correction issue (correction mode, [modes/correction.md](modes/correction.md)); suggest a review-file line for the target repository: "<one sentence for its REVIEW.md that names what failure of this class looks like>".`
+
+A friction-signal line keeps the shape above. Foreman writes the suggested review-file line into no file of the target repository.
+
 When none recurs, write `Recurrence comparison: no recurrence; scope: <K> earlier deliveries #X–#Y; <sources read>.` A failed, truncated, or partial read is a telemetry gap: write `Recurrence comparison: gap: <source>: <redacted error>` in `ledger.md` and continue. A gap does not block and is not zero. Do not invent a result. A recurrence line is disclosure only: it does not block ready, open an issue, change a blocking/advisory partition, or change the review-exhaustion decision. "Any other marked summary" does not run the comparison. The within-delivery `surface_recurrence_rounds` diagnosis under [review convergence](review-convergence.md) is separate and unchanged.
 
 Review-noise rollup. At terminal readiness after the ready-label read-back, or at the review-exhaustion decision, after the recurrence comparison and before end-of-run step 1, write the rollup lines below into `ledger.md`, replacing any rollup lines an earlier terminal point wrote. "Any other marked summary" does not write them. This paragraph owns the rollup line shape.

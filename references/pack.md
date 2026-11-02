@@ -34,6 +34,13 @@ carry reads `none` plus the reason.
    Repository instructions include the standards file whose rule table names
    each rule's enforcer. Quote each of its rules that applies;
    [correction](modes/correction.md) ("This file owns correction") places that file.
+   In a plan-review or code-review pack, repository instructions also include each review file ([.foreman/vocabulary.md](../.foreman/vocabulary.md) ("**Review file**")): the target repository's root `REVIEW.md`, and each nested `REVIEW.md` whose directory contains a path that `git diff --name-only <fetched base SHA>...<HEAD>` lists (code review, every round) or a path the plan names (plan review).
+   The coordinator lists them with `git ls-tree -r --name-only <fetched base SHA>` and quotes each sentence of theirs that applies, read at the fetched base SHA with `git show <fetched base SHA>:<path>`, not at the candidate head.
+   A quoted review-file sentence is a quoted repository rule like any other, with its `path:line` and its policy row; when the candidate changes or deletes that file, the base-SHA quote governs.
+   A repository with no `REVIEW.md` at the fetched base gets no quote and no gap.
+   A pack that quotes a review-file sentence also carries the review-file precedence that [references/review-convergence.md](review-convergence.md) ("A review file can add review depth") owns, with the resolved `block_threshold` and `min_confidence`.
+   When the candidate changes or deletes a quoted review file, the coordinator writes its text at the fetched base SHA with `git show <fetched base SHA>:<path>` into an evidence subdirectory that the pack names for reading, names that copy under `## Named files` in its own entry whose reason names the review file, and keeps the review file's own entry that "Pack check:" requires, whose reason says the file is changed or deleted at HEAD and names the copy.
+   A worker reads that file's quoted anchors in the copy and does not open the head file for them; [references/harnesses/claude.md](harnesses/claude.md) ("each evidence subdirectory the pack names for reading") owns the read grant for that subdirectory.
    This is a content rule, not a reading ban; [references/harnesses/shared.md](harnesses/shared.md) ("A worker inherits its host's instructions") owns host instructions.
    Each quoted repository rule, here or on a compact `Rule:` line, carries its policy row from `ledger.md` as
    carried evidence, not a verdict; [references/telemetry.md](telemetry.md) owns the policy row.
