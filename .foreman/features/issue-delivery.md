@@ -19,6 +19,7 @@
 - Divergence line in the pull-request body; [implementing](../../references/implementing.md) ("Divergence line:") owns it.
 - Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/foreman/OWNER/REPO/N/` by default.
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
+- Review-noise rollup in the ledger and the issue summary; [end of run](../../references/end-of-run.md) ("Review-noise rollup.") owns it.
 
 ## How to get to it (user POV)
 Install Foreman as [README](../../README.md) ("Install and invoke") describes, then invoke it explicitly from the host's skill menu.
