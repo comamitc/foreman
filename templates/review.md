@@ -51,6 +51,8 @@ dispositions; counted round and remaining allowance. Coordinator-evidence findin
 [code-review convergence](../references/review-convergence.md) ("## Coordinator-evidence findings")
 owns what this section records for them. Use “not applicable” for plan review.
 
+Verification vote: the resolved `verify_voters`; for each voted candidate, its local ID, each voter's attempt, vote, and reason, and its outcome. [code-review convergence](../references/review-convergence.md) ("## Verification vote") owns the vote.
+
 ## Verdict
 
 Plan review: approve or one correction of the complete feedback set; list actual

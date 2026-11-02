@@ -47,6 +47,10 @@ The head SHA is the `HEAD` the check ran at, not a head from a later commit. [re
 ## Policy partition
 ## Verdict
 
+## Vote
+
+## Votes
+
 ## Pre-merge
 
 ## Original failure verification

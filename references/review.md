@@ -159,6 +159,7 @@ every verification into Checks. Unknown paths stay `discovery gap:`.
    and verdict. Confirm no tree/head mutation.
 
 Use [templates/result.md](../templates/result.md) for common and review result headings.
+A verification voter uses the common and vote result headings of [templates/result.md](../templates/result.md); for a voter attempt these are the headings this file names, in place of the review result headings. [references/review-convergence.md](review-convergence.md) ("## Verification vote") owns the vote.
 
 Review names [telemetry.md](telemetry.md) as the owner of the ledger row.
 
