@@ -123,7 +123,8 @@ Optional `.foreman.json` in the target repository:
     "min_confidence": 0.7,
     "max_review_fix_rounds": 3,
     "surface_recurrence_rounds": 3,
-    "residual_effect_approval": false
+    "residual_effect_approval": false,
+    "verify_voters": 0
   },
   "worker_timeout_min": 60,
   "ci_timeout_min": 45,
@@ -154,6 +155,8 @@ approval; [pre-merge](references/pre-merge.md) owns it. GitHub forbids approving
 one's own PR, so a solo repository that opts in needs a second human account.
 GitHub reports an account type, not who operates the account, so automation
 acting through a human account looks like a person to this gate.
+
+`review_policy.verify_voters`: [code-review convergence](references/review-convergence.md) ("## Verification vote") owns it, and [contract](references/contract.md) ("`review_policy.verify_voters` is a nonnegative integer") owns its resolution.
 
 `boundary_pass` opts in to the boundary pass;
 [boundary pass](references/modes/boundary-pass.md) owns it, and

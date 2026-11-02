@@ -176,6 +176,7 @@ never adds:
   `review_policy.residual_effect_approval`;
   #297 records it for the config field `heavy_checks.max_concurrent`;
   #303 records it for the config field `boundary_pass`;
+  #367 records it for the config field `review_policy.verify_voters`;
   #294 records it for the config fields `triage.auto_accept_recommended` and
   `triage.pause_categories`, the label `foreman:needs-human`, and the marker
   kind `auto-answer`; #302 records it for the labels `foreman:risk-low`,
@@ -434,6 +435,11 @@ then `.foreman.json`, then the default; an invalid value is called out and falls
 through. [pre-merge.md](pre-merge.md) step 4 owns the residual-effect approval
 `true` enables; `false` enables nothing.
 
+`review_policy.verify_voters` is a nonnegative integer with default `0`.
+Precedence is invocation, then `FOREMAN_REVIEW_POLICY_VERIFY_VOTERS`, then `.foreman.json`, then the default; an invalid value, such as `-1` or `three`, is called out and falls through.
+[code-review convergence](review-convergence.md) ("## Verification vote") owns what the value enables.
+[telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
+
 `boundary_pass` is a boolean with default `false`.
 Precedence is invocation, then `FOREMAN_BOUNDARY_PASS`, then `.foreman.json`,
 then the default; an invalid value is called out and falls through.
@@ -487,7 +493,7 @@ run_wall_timeout_min 360;
 worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
 review_policy block_threshold medium, min_confidence 0.70,
 max_review_fix_rounds 3, surface_recurrence_rounds 3,
-residual_effect_approval false; boundary_pass false; triage.auto_accept_recommended false, triage.pause_categories the default list.
+residual_effect_approval false, verify_voters 0; boundary_pass false; triage.auto_accept_recommended false, triage.pause_categories the default list.
 Timeouts must be positive; retry counts nonnegative integers;
 unsafe_autonomy boolean; residual_effect_approval boolean; boundary_pass boolean; triage.auto_accept_recommended boolean. Review threshold
 must be critical/high/medium/low,
