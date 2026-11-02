@@ -58,7 +58,7 @@ for carried effective blockers.
 At write stations, every commit you author, including a base-integration merge commit, carries the Foreman trailers `Foreman-Delivery: owner/repo#N` and `Foreman-Station: STATION`, where `owner/repo#N` is this brief's delivery and STATION is your station name: `implementing`, `fix`, or `pre-merge`. Add them with `git commit --trailer 'Foreman-Delivery: owner/repo#N' --trailer 'Foreman-Station: STATION'`; for a base-integration merge, run `git merge --no-ff --no-commit <base>` and conclude it with that `git commit --trailer` command.
 At read stations preserve head and tree.
 Write only to authorized paths. Do not push, mutate GitHub, open PRs, change labels,
-merge, deploy, force-push, or invoke external skills. Return raw errors redacted.
+merge into the base, deploy, force-push, or invoke external skills. Return raw errors redacted.
 
 Run each shell command as one plain command, at every station.
 Do not use these denied shapes: `&&`, `||`, `;`, a pipe, an appended `echo` of the exit status, a `for` or `while` loop, an `awk` or `sed` command that reads several files or line ranges, `git -C`, a heredoc, and shell probes such as `cat`, `ls`, or `stat` where the Read tool or a named check serves.
