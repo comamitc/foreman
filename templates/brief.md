@@ -54,7 +54,9 @@ ladder: need, existing code, standard library, platform, installed dependency, o
 line, minimum new code. Preserve human work and stay within scope. Report only
 observed commands/outcomes. At write stations commit coherent changes and provide
 meaningful regression proof for defects, including discriminating bite evidence
-for carried effective blockers. At read stations preserve head and tree.
+for carried effective blockers.
+At write stations, every commit you author, including a base-integration merge commit, carries the Foreman trailers `Foreman-Delivery: owner/repo#N` and `Foreman-Station: STATION`, where `owner/repo#N` is this brief's delivery and STATION is your station name: `implementing`, `fix`, or `pre-merge`. Add them with `git commit --trailer 'Foreman-Delivery: owner/repo#N' --trailer 'Foreman-Station: STATION'`; for a base-integration merge, run `git merge --no-ff --no-commit <base>` and conclude it with that `git commit --trailer` command.
+At read stations preserve head and tree.
 Write only to authorized paths. Do not push, mutate GitHub, open PRs, change labels,
 merge, deploy, force-push, or invoke external skills. Return raw errors redacted.
 
