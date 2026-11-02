@@ -157,8 +157,10 @@ not post status lines.
 Same-figures rule: copy the published summary's figures. Do not recompute.
 `unknown` stays `unknown`.
 
-Gap rule: a failed event append, a malformed event, a missed status line, and a
-missed host message are each a `telemetry-gap`. Record it in `ledger.md` before
+Gap rule: a failed event append, a malformed event, a missed status line, a
+missed host message, and a write-station commit whose Foreman trailer is missing
+or differs from its expected value ([references/harnesses/shared.md](harnesses/shared.md)
+("reads back the Foreman trailers") owns the readback) are each a `telemetry-gap`. Record it in `ledger.md` before
 the end-of-run order; after that, per its event cutoff. None of these gaps, nor
 a gap in the attempt table, blocks a station or a label projection, skips the
 GitHub summary, or withholds ready-to-deploy.
