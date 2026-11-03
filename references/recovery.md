@@ -33,6 +33,7 @@ preserve the active stage while recovering.
    | unknown technical failure | fresh diagnosis worker; unknown does not mean human-required |
    | resolved same_failure_attempts reached (default 2) | fresh secondary independent diagnosis, then fresh primary repair |
    | same failure after diagnosis and repair | one configured fallback attempt per original failure scenario per run; if unavailable or already attempted, fresh primary with a materially different hypothesis |
+   | failed seat: a voter or a launch probe of a seat of a non-empty `review_policy.voters` fails, including an unavailable harness or model | the other rows that match the failure apply to that same seat, with its harness, model, effort, and recipe, up to and including the "resolved same_failure_attempts reached" row, whose repair changes no seat setting; the seat is never dropped and never swapped to a fallback or to another harness or model; in place of the "same failure after diagnosis and repair" row, the seat is exhausted: the vote stays incomplete, and the coordinator publishes a `review-exhausted` blocker as "## Blocked overlays" states, with [blocker](../templates/blocker.md) ("# Delivery blocked"), naming the seat index, harness, model, and redacted raw error and the resume conditions that [code-review convergence](review-convergence.md) ("## Verification vote") publishes for an exhausted seat; add `foreman:blocked` and keep the stage label; the delivery stops; an expired login follows its own row |
    | actionable plan findings | single correction against the complete census, then implementing with every obligation; apply plan-convergence.md |
    | actionable code review findings | bounded review/fix loop with review-convergence.md partitioning, findings.md reconciliation, and the pre-push closure proof gate |
    | recurrent/reopened scenario after a claimed fix | record the insufficient red/green/bite proof, obtain fresh secondary diagnosis, then use a materially different primary repair hypothesis |
@@ -77,10 +78,10 @@ For a `credential-required` blocker from the "expired harness login" row above, 
 
 Review exhaustion is the one technical blocked overlay.
 [Code-review convergence](review-convergence.md) states when it applies
-("## Bounded rounds and recurrence", "## Coordinator-evidence findings").
+("## Bounded rounds and recurrence", "## Coordinator-evidence findings", "## Verification vote").
 It is not evidence that a person must diagnose or
 repair the code. Its published resume conditions are a materially different
-candidate repair, a policy/spec change, or an explicit trusted disposition.
+candidate repair, a policy/spec change, or an explicit trusted disposition, and, for an exhausted seat, the one more that "## Verification vote" publishes.
 
 All other blocked overlays identify a missing human capability:
 

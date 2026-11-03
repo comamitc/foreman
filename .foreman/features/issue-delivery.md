@@ -21,6 +21,7 @@
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
 - Review-noise rollup in the ledger and the issue summary; [end of run](../../references/end-of-run.md) ("Review-noise rollup.") owns it.
 - Review files ([vocabulary](../vocabulary.md) ("**Review file**")): [pack](../../references/pack.md) ("each nested `REVIEW.md`") owns which are quoted, [code-review convergence](../../references/review-convergence.md) ("A review file can add review depth") owns what one can change, and [end of run](../../references/end-of-run.md) ("suggest a review-file line for the target repository") owns the suggested line on a recurring review finding class.
+- Opt-in verification vote and its council; [code-review convergence](../../references/review-convergence.md) ("## Verification vote") owns the vote, and [contract](../../references/contract.md) ("`review_policy.voters` is a list of seat objects") owns the seats.
 
 ## How to get to it (user POV)
 Install Foreman as [README](../../README.md) ("Install and invoke") describes, then invoke it explicitly from the host's skill menu.
@@ -30,7 +31,7 @@ Prerequisites are git, authenticated `gh` with repository write access, and conf
 ## Driving it
 Invocation: invoke Foreman with the issue URL `https://github.com/OWNER/REPO/issues/N`, or with `N` from a checkout of that repository.
 End state: an open PR from branch `foreman/N` whose body has the line `Foreman: OWNER/REPO#N`, and the issue labeled `foreman:ready-to-deploy`, meaning GitHub says the PR can merge immediately.
-Other stops: `foreman:blocked` with reason `review-exhausted` (see [code-review convergence](../../references/review-convergence.md): "## Bounded rounds and recurrence", "## Coordinator-evidence findings"); one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; a decomposition end after filing child issues, with no pull request (see [decomposition](../../references/modes/decomposition.md): "**Decomposition end.**"); or user cancellation.
+Other stops: `foreman:blocked` with reason `review-exhausted` (see [code-review convergence](../../references/review-convergence.md): "## Bounded rounds and recurrence", "## Coordinator-evidence findings", "## Verification vote"); one typed human action for missing credentials, permissions, purchase decisions, required approvals, a prerequisite to merge, consequential product choices, or budget decisions; a decomposition end after filing child issues, with no pull request (see [decomposition](../../references/modes/decomposition.md): "**Decomposition end.**"); or user cancellation.
 The work happens in the worktree `.worktrees/foreman+N` of the target repository.
 Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch builder `scripts/launch.sh`; CI runs that check from [.github/workflows/check.yml](../../.github/workflows/check.yml).
 

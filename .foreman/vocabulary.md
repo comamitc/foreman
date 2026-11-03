@@ -114,7 +114,11 @@
 
 **Host status line**: one coordinator-posted line in the invoking host session for one event-table event or one changed supervision observation. It names the delivery, station, event, and one observed fact. The rule owner is `references/telemetry.md`. Rejected: a plugin, a notification command, a status-line API, or a worker-posted line.
 
-**Launch probe**: one run of a role's exact launch recipe with a trivial prompt, in the issue worktree with the real grants, before an invocation's first worker launch, or before a fallback's first launch after recovery selects it. The rule owner is `references/harnesses/shared.md` ("## Launch probe"). Rejected: a help or version check; the toolchain preflight.
+**Launch probe**: one run of a role's or a seat's exact launch recipe with a trivial prompt, in the issue worktree with the real grants, before an invocation's first worker launch, before a fallback's first launch after recovery selects it, or before a seat's first voter launch. The rule owner is `references/harnesses/shared.md` ("## Launch probe"). Rejected: a help or version check; the toolchain preflight.
+
+**Seat**: one entry of `review_policy.voters`; one voter launch per voted census. The rule owner is `references/contract.md` ("`review_policy.voters` is a list of seat objects") for the seat and `references/review-convergence.md` ("The coordinator launches one voter per seat of the council for that census.") for its voter launch. Rejected: a per-seat model for the finder reviewer or plan review; a router.
+
+**Council**: the seats that vote on one census. The rule owner is `references/contract.md` ("A non-empty `voters` is the council of the verification vote"). Rejected: a lens panel with a lead judge (#50).
 
 **Stable anchor**: a heading's exact text or a verbatim phrase of the target rule, named next to the owner-file link. Rejected: a line number.
 

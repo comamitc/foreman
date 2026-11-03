@@ -11,7 +11,7 @@ omp --cwd WORKTREE -p --mode json --approval-mode write \
   --max-time 60m @LAUNCH_FILE
 ```
 
-Help verified on 18.2.8. Add `--model MODEL` and `--thinking EFFORT` when configured;
+Help verified on 18.4.2. Add `--model MODEL` and `--thinking EFFORT` when configured;
 help lists off/minimal/low/medium/high/xhigh/max/auto. With discovery disabled,
 the pack carries the rule extract; do not paste conventions into the brief. Allow
 the result directory with `--add-dir RESULT_DIR` if needed. Explicitly choose write
