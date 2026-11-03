@@ -19,7 +19,7 @@ mode, which permits file writes but prompts for exec. For unattended test/git co
 use a temporary evidence-only `--config` overlay with exact task-specific
 `bash: patterns:` rules, where each overlay item is `match` plus `approval`
 (`allow`, `prompt`, `deny`) with `*` wildcards only, and a narrow `--tools` list. Read stations use
-`--tools=read,bash` and an evidence-only overlay. Never use auto-approve or yolo
+`--tools=read,bash` and an evidence-only overlay. For a seat of a non-empty `review_policy.voters`, that overlay also sets `retry.modelFallback: false`, because omp's model fallback (`retry.fallbackChains` in the operator's omp configuration) otherwise answers with another model. A seat launch whose events include `retry_fallback_applied`, or whose last assistant message reports a model or provider other than the seat's, is a failed seat under [recovery](../recovery.md) ("failed seat:"), never a vote or a passed probe. Never use auto-approve or yolo
 without unsafe_autonomy, including an inherited yolo default.
 
 Observed NDJSON includes `session`, `message_end`, `turn_end`, `tool_execution_start`,
