@@ -177,6 +177,7 @@ never adds:
   #297 records it for the config field `heavy_checks.max_concurrent`;
   #303 records it for the config field `boundary_pass`;
   #367 records it for the config field `review_policy.verify_voters`;
+  #377 records it for the config field `review_policy.voters`;
   #294 records it for the config fields `triage.auto_accept_recommended` and
   `triage.pause_categories`, the label `foreman:needs-human`, and the marker
   kind `auto-answer`; #302 records it for the labels `foreman:risk-low`,
@@ -440,6 +441,15 @@ Precedence is invocation, then `FOREMAN_REVIEW_POLICY_VERIFY_VOTERS`, then `.for
 [code-review convergence](review-convergence.md) ("## Verification vote") owns what the value enables.
 [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 
+`review_policy.voters` is a list of seat objects with default `[]`.
+A seat object has exactly the keys `harness`, one of `claude`, `codex`, `grok`, or `omp`, `model`, a non-empty string or `null`, and `effort`, a non-empty string or `null`; seats may repeat, and a seat may name the primary's harness.
+Precedence is invocation, then `FOREMAN_REVIEW_POLICY_VOTERS` holding a JSON array, then `.foreman.json`, then the default.
+A value that is not a list of valid seat objects is called out and the whole value falls through to the next source; it is the exception to the salvage rule above, so no seat of it is salvaged.
+A non-empty `voters` is the council of the verification vote, and a set `review_policy.verify_voters` is then ignored and called out in `ledger.md`; with `voters` `[]`, the council is `verify_voters` seats, each with the secondary's harness, model, and effort.
+A seat's set `model` or `effort` is an explicitly requested setting.
+[code-review convergence](review-convergence.md) ("## Verification vote") owns what the council enables.
+[telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
+
 `boundary_pass` is a boolean with default `false`.
 Precedence is invocation, then `FOREMAN_BOUNDARY_PASS`, then `.foreman.json`,
 then the default; an invalid value is called out and falls through.
@@ -493,9 +503,9 @@ run_wall_timeout_min 360;
 worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
 review_policy block_threshold medium, min_confidence 0.70,
 max_review_fix_rounds 3, surface_recurrence_rounds 3,
-residual_effect_approval false, verify_voters 0; boundary_pass false; triage.auto_accept_recommended false, triage.pause_categories the default list.
+residual_effect_approval false, verify_voters 0, voters []; boundary_pass false; triage.auto_accept_recommended false, triage.pause_categories the default list.
 Timeouts must be positive; retry counts nonnegative integers;
-unsafe_autonomy boolean; residual_effect_approval boolean; boundary_pass boolean; triage.auto_accept_recommended boolean. Review threshold
+unsafe_autonomy boolean; residual_effect_approval boolean; boundary_pass boolean; voters a list of seat objects; triage.auto_accept_recommended boolean. Review threshold
 must be critical/high/medium/low,
 confidence from 0 through 1, max rounds a positive integer, and recurrence rounds
 a nonnegative integer where 0 disables that early guard. Null model/effort uses the harness default and is

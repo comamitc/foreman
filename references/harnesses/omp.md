@@ -11,7 +11,7 @@ omp --cwd WORKTREE -p --mode json --approval-mode write \
   --max-time 60m @LAUNCH_FILE
 ```
 
-Help verified on 18.2.8. Add `--model MODEL` and `--thinking EFFORT` when configured;
+Help verified on 18.4.2. Add `--model MODEL` and `--thinking EFFORT` when configured;
 help lists off/minimal/low/medium/high/xhigh/max/auto. With discovery disabled,
 the pack carries the rule extract; do not paste conventions into the brief. Allow
 the result directory with `--add-dir RESULT_DIR` if needed. Explicitly choose write
@@ -19,7 +19,7 @@ mode, which permits file writes but prompts for exec. For unattended test/git co
 use a temporary evidence-only `--config` overlay with exact task-specific
 `bash: patterns:` rules, where each overlay item is `match` plus `approval`
 (`allow`, `prompt`, `deny`) with `*` wildcards only, and a narrow `--tools` list. Read stations use
-`--tools=read,bash` and an evidence-only overlay. Never use auto-approve or yolo
+`--tools=read,bash` and an evidence-only overlay. For a seat of a non-empty `review_policy.voters`, that overlay also sets `retry.modelFallback: false`, because omp's model fallback (`retry.fallbackChains` in the operator's omp configuration) otherwise answers with another model. A seat launch whose events include `retry_fallback_applied`, or, for a seat with a set `model`, whose last assistant message reports a model or provider other than that model, is a failed seat under [recovery](../recovery.md) ("failed seat:"), never a vote or a passed probe. For a seat whose `model` is `null`, the model and provider that message reports are that seat's resolved model. Never use auto-approve or yolo
 without unsafe_autonomy, including an inherited yolo default.
 
 Observed NDJSON includes `session`, `message_end`, `turn_end`, `tool_execution_start`,

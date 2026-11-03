@@ -158,6 +158,8 @@ acting through a human account looks like a person to this gate.
 
 `review_policy.verify_voters`: [code-review convergence](references/review-convergence.md) ("## Verification vote") owns it, and [contract](references/contract.md) ("`review_policy.verify_voters` is a nonnegative integer") owns its resolution.
 
+`review_policy.voters`: [code-review convergence](references/review-convergence.md) ("## Verification vote") owns what its council does, and [contract](references/contract.md) ("`review_policy.voters` is a list of seat objects") owns the seat shape, its resolution, and its relationship to `verify_voters`.
+
 `boundary_pass` opts in to the boundary pass;
 [boundary pass](references/modes/boundary-pass.md) owns it, and
 [contract](references/contract.md) ("`boundary_pass` is a boolean") owns its resolution.
@@ -198,7 +200,7 @@ and the repair delta. Counted review censuses are capped by
 `review_policy.max_review_fix_rounds`. For the `foreman:blocked` stop with reason
 `review-exhausted`, see
 [code-review convergence](references/review-convergence.md)
-("## Bounded rounds and recurrence", "## Coordinator-evidence findings").
+("## Bounded rounds and recurrence", "## Coordinator-evidence findings", "## Verification vote").
 
 ## Init
 

@@ -14,6 +14,7 @@ identity, spec revision,
 effective nonsecret configuration with the source of `heavy_checks.max_concurrent`
 and the resolved `boundary_pass` with its source,
 the resolved `review_policy.verify_voters` with its source,
+the resolved `review_policy.voters` with its source, its seats, the number of seats, and the number of distinct harness and model pairs, where a `null` model counts as one value, and a set `review_policy.verify_voters` that a non-empty `voters` overrides, as ignored, by name and source,
 the resolved `triage.auto_accept_recommended` with its source and the resolved `triage.pause_categories` with its source,
 each ignored unknown or retired configuration field or ignored file, environment, or invocation value by name and source (file, environment, or
 invocation override) apart from effective configuration and without its value,
