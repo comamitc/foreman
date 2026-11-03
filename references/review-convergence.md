@@ -208,9 +208,10 @@ overlay. Do not launch another reviewer or fixer against the same head automatic
 Resume a review-exhausted run only after observing one of:
 
 - a new candidate head containing a materially different repair;
-- an admitted spec or policy change that changes the partition; or
+- an admitted spec or policy change that changes the partition;
 - an explicit trusted operator disposition for named finding lineages with a
-  reason, published in the next marked review/summary artifact.
+  reason, published in the next marked review/summary artifact; or
+- for an exhausted seat, the added resume condition that "## Verification vote" publishes.
 
 Repartition at the current policy. A disposition is audit evidence, never an
 implicit deletion. A new candidate head receives one fresh confirmation review;
