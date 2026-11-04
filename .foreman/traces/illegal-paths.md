@@ -250,3 +250,24 @@ Owner: [references/plan-convergence.md](../../references/plan-convergence.md) ("
 ```
 
 Outcome: refused; the issue keeps `foreman:planning`, and the coordinator follows [references/modes/decomposition.md](../../references/modes/decomposition.md) ("This file owns decomposition filing"). Reason: IC-15: published initial plan proposes a decomposition; missing: a published initial plan that proposes no decomposition.
+
+## IC-16
+
+Observed: the issue has `foreman:pre-merge`; the marked pull request's Blast Radius names "refunds issued by customer cancels", and the admitted spec settles that decision Default.
+Attempted step: project `foreman:ready-to-deploy` on the issue and on the marked pull request.
+
+Owner: [references/pre-merge.md](../../references/pre-merge.md) ("Ready backstop:")
+
+```text
+Ready backstop: before any projection below, at any tier and whatever
+`review_policy.residual_effect_approval` resolves to, read the Blast Radius
+of the PR body read back above. When it names a residual effect on refunds,
+payments, or authorization, or the coordinator cannot decide whether a
+named effect is one, withhold `foreman:ready-to-deploy` and the tier label
+unless the admitted spec has a Decisions entry for that effect settled by
+an invoker answer as [triage.md](triage.md) ("An invoker answer is")
+defines it. An `Ask, auto-accepted`, Default, or Evidence settlement does
+not count. With no such entry, ask one round under
+```
+
+Outcome: refused; the issue keeps `foreman:pre-merge`, no `foreman:ready-to-deploy` or tier label is projected, and the coordinator publishes a question blocker that asks the effect. Reason: IC-16: residual effect on money or authorization without an invoker answer; missing: a Decisions entry for that effect settled by an invoker answer.

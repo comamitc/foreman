@@ -410,6 +410,7 @@ For an observed label combination that a row forbids, the repair record that [St
 | IC-13 | A delivery start at the ready station while a `Depends on` entry does not hold | [Start condition](#start-condition) ("If an entry does not hold, the dependent does not start") | `Depends on` entry does not hold |
 | IC-14 | A write worker launch while another coordinator on the same issue is visibly progressing | [Concurrent activity](#concurrent-activity) ("If another coordinator is visibly progressing"), ("overlapping write workers") | another coordinator is visibly progressing |
 | IC-15 | Project `foreman:plan-review` or start the plan-review station after the published initial plan for the admitted revision proposes a decomposition | [one-pass planning](plan-convergence.md) ("before any `foreman:plan-review` projection"), ("Initial plan that proposes a decomposition") | published initial plan proposes a decomposition |
+| IC-16 | `foreman:ready-to-deploy` on the marked pull request or the issue while its Blast Radius names a residual effect on refunds, payments, or authorization and the admitted spec has no Decisions entry for that effect settled by an invoker answer | [pre-merge.md](pre-merge.md) ("Ready backstop:") | residual effect on money or authorization without an invoker answer |
 
 ## Configuration
 
@@ -479,7 +480,7 @@ It is a repository setting, so it is the exception to the invocation and environ
 An invocation or environment value for it is called out and ignored.
 A `.foreman.json` value replaces the default list; the empty list `[]` is valid.
 A value that is not a list of non-empty strings is called out and the default list applies; it is the exception to the salvage rule above, so no entry of it is salvaged.
-The default list is: scope changes; schema or data migrations; anything that touches staging or production; cost or vendor decisions; removal or replacement of an existing user-visible surface.
+The default list is: scope changes; schema or data migrations; anything that touches staging or production; cost or vendor decisions; removal or replacement of an existing user-visible surface; changes that widen who can move money (charges, payments, refunds, payouts, transfers) or who may perform a write.
 [triage](triage.md) ("Auto-triage:") owns what a matching question does.
 [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 

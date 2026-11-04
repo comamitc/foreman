@@ -81,6 +81,15 @@ Planning modes, each owned by its file and loaded through [SKILL.md](../SKILL.md
    callers must know.
    For each history item that shows a reverted or rejected approach, that
    section states how the plan differs or why the item does not apply.
+   When the planner finds an authority widening
+   ([triage](triage.md) ("If a visited decision is an authority widening"))
+   that the Decisions of the admitted spec do not settle by an invoker answer
+   ([triage](triage.md) ("An invoker answer is")), the plan does not settle it:
+   its "Current behavior and data shape" section names each such node in one
+   line that begins `Unsettled authority widening:` with the question and a
+   recommended answer, and no ordered item assumes an answer.
+   [one-pass planning](plan-convergence.md) ("`Unsettled authority widening:` line")
+   owns what the coordinator does next.
    [references/ladder.md](ladder.md) ("## Module") owns the red flags and the
    reader assumption.
 3. Produce [plan](../templates/plan.md). Map every acceptance criterion to ordered

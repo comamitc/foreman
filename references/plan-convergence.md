@@ -10,10 +10,12 @@ implementing and code review, not through repeated plan judgments.
 One initial plan → one independent plan review → one correction pass covering the
 entire feedback set → implementing. There is no second plan-review or planning escalation loop.
 After an initial plan is published and read back, and before any `foreman:plan-review` projection or plan-review launch, the coordinator checks whether its "## Decomposition" section proposes a decomposition, and resume checks in the same order. When it does, the coordinator loads [decomposition](modes/decomposition.md) ("This file owns decomposition filing") and follows it, and the run leaves this sequence before plan-review.
+The coordinator also checks the published initial plan for an `Unsettled authority widening:` line before any `foreman:plan-review` projection or plan-review launch, and before the decomposition check above; resume checks in the same order. When one exists, the coordinator asks each named node as one round through [triage](triage.md) ("publish each round as a question blocker"), keeps `foreman:planning`, and stops. On resume, [recovery](recovery.md) ("A question blocker's resume condition") settles each answered node, the spec is republished under [triage](triage.md) ("Re-read the issue before replacing its body"), and the published plan is no plan for the admitted revision, so the "No initial plan" row applies.
 
 | Observed evidence | Next action |
 | --- | --- |
 | No initial plan | Fresh primary produces the initial plan |
+| Initial plan that names an unsettled authority widening | The coordinator asks each named node and ends the run; the sentence above owns the round, the stop, and the resume |
 | Initial plan that proposes a decomposition | The coordinator files the children and ends the run; [decomposition](modes/decomposition.md) ("This file owns decomposition filing") owns both |
 | Initial plan with no decomposition, no complete review | Fresh secondary reviews once |
 | Complete review, no actionable findings | Enter implementing |

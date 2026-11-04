@@ -43,6 +43,7 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Issues by authors other than OWNER, MEMBER, or COLLABORATOR need confirmation; untrusted comments are excluded by default.
 - A worktree is not a security sandbox.
 - Removing or replacing a user-visible surface is asked in the run even when the issue states it; [triage](../../references/triage.md) ("removes or replaces an existing user-visible surface") owns that rule.
+- Authority widening and the ready backstop: [triage](../../references/triage.md) ("If a visited decision is an authority widening") owns the forced Ask, and [pre-merge](../../references/pre-merge.md) ("Ready backstop:") owns the ready withhold.
 - With residual-effect approval on, GitHub forbids approving your own PR, so a solo repository needs a second human account.
 - Triage runs a prototype instead of asking when running something answers a node; [triage](../../references/triage.md) ("settle it as Evidence by running a prototype") owns that rule.
 - The initial plan carries the touched files' recent history as evidence; [planning](../../references/planning.md) ("runs the history sweep once") owns that rule.
