@@ -60,10 +60,19 @@
    informs it; the question carries the observation as evidence.
 3. Maintain a frontier of unresolved product decisions. Ask numbered rounds only
    for consequential choices that evidence cannot settle. Recommend an answer and
-   explain its effect. An ask is one numbered round of the current frontier. The
-   coordinator waits only while an asked node is unanswered.
+   explain its effect. An ask is one numbered round of the current frontier.
    A question whose answer depends on an open question in the same round waits for
    the next round. Do not ask the user to find files or diagnose technical errors.
+   Before the delivery's final message, publish each round as a question blocker:
+   one `blocker` comment from [blocker](../templates/blocker.md) with blocker kind
+   `product-decision`, whose reason lists each numbered question with
+   `Recommended:` and its recommended answer and `Effect:` and the effect of that
+   answer. Add `foreman:blocked` and keep the stage label, as
+   [contract](contract.md) ("A blocker adds only `foreman:blocked`") states. Read
+   the comment and the labels back. Write the `ledger.md` row with the blocker URL
+   and the `blocker` and `run-end` events, and stop; nothing waits in the host
+   session. [recovery](recovery.md) ("A question blocker's resume condition")
+   owns its resume.
    Auto-triage: this paragraph applies only when `triage.auto_accept_recommended`
    resolves to `true` under [contract](contract.md)
    ("`triage.auto_accept_recommended` is a boolean"). With `false`, this
@@ -75,7 +84,8 @@
    [correction](modes/correction.md) ("Ask and filing."), the round of
    [boundary pass](modes/boundary-pass.md) ("**Ask round.**"), or the trust
    confirmation of [security](security.md) ("Ask the user to confirm another
-   issue author's trust"); those stay host-session questions. Before asking a
+   issue author's trust"); auto-triage does not accept those rounds; each is
+   asked as this step states. Before asking a
    round, the coordinator decides whether each question matches a category of
    the resolved `triage.pause_categories` ([contract](contract.md)
    ("`triage.pause_categories` is a list")). A question pauses when it matches
@@ -107,8 +117,9 @@
    that settlement. If the round has a paused question, run
    `gh issue edit N --repo OWNER/REPO --add-label foreman:needs-human`, plus `--remove-label capstan:needs-human` when the issue carries it, and read
    the labels back with `gh issue view N --repo OWNER/REPO --json labels`; ask
-   the paused questions only after that readback shows the label. Then ask them
-   and wait as this step states. After every paused question in the round has
+   the paused questions only after that readback shows the label. Then publish
+   the paused questions as this step's question blocker; it lists only the paused
+   questions. After every paused question in the round has
    an answer, run
    `gh issue edit N --repo OWNER/REPO --remove-label foreman:needs-human`, plus `--remove-label capstan:needs-human` when the issue carries it, and
    read the removal back with the same view. A round with no paused question

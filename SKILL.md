@@ -32,7 +32,8 @@ Before step 1, read [contract](references/contract.md) "## Read-only invocations
    one pack per launch, sized to the unit (compact for a one-file, one-check unit)
    and named in the brief as the worker's task reading.
    Extract the applicable rules into the pack; never paste a conventions file.
-4. **Delegate.** Triage is interactive coordinator work. Before you dispatch a
+4. **Delegate.** Triage is coordinator work; [triage](references/triage.md)
+   ("publish each round as a question blocker") owns how it asks. Before you dispatch a
    write station (implementing or fix) or a review station (plan-review or
    review), load [ladder](references/ladder.md). For each other judgment
    or write station, start a fresh headless worker using
@@ -73,7 +74,9 @@ Before step 1, read [contract](references/contract.md) "## Read-only invocations
 [contract](references/contract.md) "## Identity and authority" owns the fetch-then-worktree order.
 
 Stop only at verified `foreman:ready-to-deploy`, a verified review-exhausted
-blocked overlay, a typed human capability or budget decision from recovery,
+blocked overlay, a verified question blocker that [triage](references/triage.md)
+("publish each round as a question blocker") owns, a typed human capability or
+budget decision from recovery,
 a verified decomposition end that [decomposition](references/modes/decomposition.md)
 ("**Decomposition end.**") owns, or user cancellation. Pending infrastructure and
 activity markers call for bounded waiting and observation, not abandonment.
