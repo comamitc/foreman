@@ -158,6 +158,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    quotes a marker anywhere else, or whose URL this run did not publish, is a
    human comment and is checked like any other. The bot claims this step
    traces above are also excluded.
+   An answer to a question blocker that "Ready backstop:" below published is also excluded; that paragraph routes it.
 
    A kept comment that adds, changes, or withdraws a requirement, decision, or
    acceptance criterion changes scope: project `foreman:triage` on the issue
@@ -335,9 +336,11 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    blocker that [triage.md](triage.md) ("publish each round as a question blocker")
    states; keep `foreman:pre-merge`, do not project `foreman:ready-to-deploy`,
    and stop. [triage.md](triage.md) ("Auto-triage:") owns whether auto-triage
-   covers this round. On resume, republish the spec under
+   covers this round.
+   On resume, run "Newer trusted comments" before republishing the spec, then
+   republish it under
    [triage.md](triage.md) ("Re-read the issue before replacing its body") with
-   each answer before "Newer trusted comments" runs again. Route every answer,
+   each answer. Route every answer,
    including an acceptance, by "Scope-change route"; this paragraph adds no
    shortcut. An answer that rejects the effect does not cover it. This
    paragraph runs again before the next projection.
