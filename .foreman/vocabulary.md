@@ -249,3 +249,5 @@
 **Divergence line**: the one `Divergence from issue:` line in a delivery PR body. The rule owner is `references/implementing.md` ("Divergence line:"); see also `references/end-of-run.md` ("The summary also contains") and `templates/blocker.md` ("- Divergence from issue:"). Rejected: a separate `##` section or a line inside Scope; free prose or a third value such as `unknown`.
 
 **Review noise rate**: the share of raised code-review findings that the review-noise rollup counts as noise, for one delivery or for one `learn` scope (`references/modes/learn.md` ("## Report")). The rule owner is `references/end-of-run.md` ("Review-noise rollup."), which states its formula and its effects. Rejected: a recall figure.
+
+**Question blocker**: a `product-decision` blocker comment on the issue that carries one numbered Ask round with recommended answers. The rule owner is `references/triage.md` ("publish each round as a question blocker"); `references/recovery.md` ("A question blocker's resume condition") owns its resume. Rejected: a `question` marker kind, or a host-session wait.

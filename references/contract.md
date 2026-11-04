@@ -69,6 +69,9 @@ Inspect and resolve the base first. Before creating `foreman/N`, run `git fetch 
 Preserve dirty work and human commits. An unrelated branch, worktree, or PR occupying the identity is a
 collision, not permission to overwrite it. Observe ancestry, marked comments,
 and ownership; ask for disposition only if both intents cannot be preserved.
+That disposition ask is a question blocker ([triage](triage.md) ("publish each
+round as a question blocker")), and the collision is left untouched until the
+answer.
 
 The coordinator may create its worktree/branch, push normally, create/update its
 PR, publish issue/PR comments, replace the admitted issue specification, change
