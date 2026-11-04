@@ -63,8 +63,8 @@
    explain its effect. An ask is one numbered round of the current frontier.
    A question whose answer depends on an open question in the same round waits for
    the next round. Do not ask the user to find files or diagnose technical errors.
-   Before the delivery's final message, publish each round as a question blocker:
-   one `blocker` comment from [blocker](../templates/blocker.md) with blocker kind
+   Each round is asked on the issue: before the delivery's final message, publish
+   each round as a question blocker, which is one `blocker` comment from [blocker](../templates/blocker.md) with blocker kind
    `product-decision`, whose reason lists each numbered question with
    `Recommended:` and its recommended answer and `Effect:` and the effect of that
    answer. Add `foreman:blocked` and keep the stage label, as
