@@ -158,7 +158,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    quotes a marker anywhere else, or whose URL this run did not publish, is a
    human comment and is checked like any other. The bot claims this step
    traces above are also excluded.
-   An answer to a question blocker that "Ready backstop:" below published is also excluded; that paragraph routes it.
+   An answer that "Ready backstop:" below routes on its resume is also excluded at that resume; an answer created or edited after that resume is checked like any other comment.
 
    A kept comment that adds, changes, or withdraws a requirement, decision, or
    acceptance criterion changes scope: project `foreman:triage` on the issue
