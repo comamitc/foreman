@@ -158,6 +158,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    quotes a marker anywhere else, or whose URL this run did not publish, is a
    human comment and is checked like any other. The bot claims this step
    traces above are also excluded.
+   An answer that "Ready backstop:" below routes on its resume is also excluded at that resume; an answer created or edited after that resume is checked like any other comment.
 
    A kept comment that adds, changes, or withdraws a requirement, decision, or
    acceptance criterion changes scope: project `foreman:triage` on the issue
@@ -224,8 +225,9 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    `medium`, or `high` for the current PR head from fresh reads, and never
    reuse a tier computed at another head. The tier is decision support for the
    merger. The tier itself withholds nothing except through "Walkthrough:"
-   below, changes no step 4 or step 5 gate, and
-   never merges, deploys, or enables auto-merge. Its inputs and their owners:
+   below; "Ready backstop:" below withholds by residual effect at any tier.
+   The tier changes no step 4 or step 5 gate and never merges, deploys, or
+   enables auto-merge. Its inputs and their owners:
    Blast Radius reversibility and residual effects
    ([implementing.md](implementing.md) ("Reversibility uses three states")),
    from the PR body read with the `gh api` command of
@@ -318,6 +320,30 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    "Failed attempts use shared recovery." states. The Door line is not a
    reversibility statement; step 4 and "Risk tier:" read Blast Radius, not
    the Door line.
+
+   Ready backstop: before any projection below, at any tier and whatever
+   `review_policy.residual_effect_approval` resolves to, read the Blast Radius
+   of the PR body read back above. When it names a residual effect on refunds,
+   payments, or authorization, or the coordinator cannot decide whether a
+   named effect is one, withhold `foreman:ready-to-deploy` and the tier label
+   unless the admitted spec has a Decisions entry for that effect settled by
+   an invoker answer as [triage.md](triage.md) ("An invoker answer is")
+   defines it. An `Ask, auto-accepted`, Default, or Evidence settlement does
+   not count. With no such entry, ask one round under
+   [triage.md](triage.md) ("An ask is one numbered round of the current frontier."),
+   with one question per uncovered effect that quotes it and recommends
+   accepting it as the head delivers it, and publish it as the question
+   blocker that [triage.md](triage.md) ("publish each round as a question blocker")
+   states; keep `foreman:pre-merge`, do not project `foreman:ready-to-deploy`,
+   and stop. [triage.md](triage.md) ("Auto-triage:") owns whether auto-triage
+   covers this round.
+   On resume, run "Newer trusted comments" before republishing the spec, then
+   republish it under
+   [triage.md](triage.md) ("Re-read the issue before replacing its body") with
+   each answer. Route every answer,
+   including an acceptance, by "Scope-change route"; this paragraph adds no
+   shortcut. An answer that rejects the effect does not cover it. This
+   paragraph runs again before the next projection.
 
    Only then project
    `foreman:ready-to-deploy` on the issue with the existing stage rules, and

@@ -190,7 +190,7 @@
 
 **Residual-effect approval**: the opt-in pre-merge gate that withholds `foreman:ready-to-deploy` until a human GitHub approval on the current head, when the PR's Blast Radius names residual effects or unknown reversibility. The field is `review_policy.residual_effect_approval`, default `false`. The rule owner is `references/pre-merge.md` (step 4). Rejected: a risk score or risk tier.
 
-**Risk tier**: `low`, `medium`, or `high`, assigned at pre-merge from the pull request's evidence and projected as one `foreman:risk-*` pull-request label. It is decision support for the merger, not a merge or approval gate. The rule owners are `references/pre-merge.md` ("Risk tier:") and `references/contract.md` ("## Stage projection"); see also **Walkthrough** (`references/pre-merge.md` ("Walkthrough:")). Rejected: a numeric risk score, a tier label on the issue, or a tier that gates merge or deploy.
+**Risk tier**: `low`, `medium`, or `high`, assigned at pre-merge from the pull request's evidence and projected as one `foreman:risk-*` pull-request label. It is decision support for the merger, not a merge or approval gate. The rule owners are `references/pre-merge.md` ("Risk tier:") and `references/contract.md` ("## Stage projection"); see also **Walkthrough** (`references/pre-merge.md` ("Walkthrough:")); see also `references/pre-merge.md` ("Ready backstop:"). Rejected: a numeric risk score, a tier label on the issue, or a tier that gates merge or deploy.
 
 **Documentation file**: a file that no run, build, test, or agent loads as instructions or config. The rule owner is `references/pre-merge.md` ("Risk tier:"). Rejected: classifying a file as documentation by its extension.
 
@@ -249,5 +249,7 @@
 **Divergence line**: the one `Divergence from issue:` line in a delivery PR body. The rule owner is `references/implementing.md` ("Divergence line:"); see also `references/end-of-run.md` ("The summary also contains") and `templates/blocker.md` ("- Divergence from issue:"). Rejected: a separate `##` section or a line inside Scope; free prose or a third value such as `unknown`.
 
 **Review noise rate**: the share of raised code-review findings that the review-noise rollup counts as noise, for one delivery or for one `learn` scope (`references/modes/learn.md` ("## Report")). The rule owner is `references/end-of-run.md` ("Review-noise rollup."), which states its formula and its effects. Rejected: a recall figure.
+
+**Authority widening**: a term that `references/triage.md` ("If a visited decision is an authority widening") defines and owns; `references/pre-merge.md` ("Ready backstop:") owns the ready withhold. Rejected: two pause categories, which a `.foreman.json` list could split; a `money` marker or label.
 
 **Question blocker**: a `product-decision` blocker comment on the issue that carries one numbered Ask round with recommended answers. The rule owner is `references/triage.md` ("publish each round as a question blocker"); `references/recovery.md` ("A question blocker's resume condition") owns its resume. Rejected: a `question` marker kind, or a host-session wait.

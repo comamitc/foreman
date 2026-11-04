@@ -33,6 +33,20 @@
    issue text is not Evidence that the invoker confirmed the deletion in this
    run. The question recommends the issue's answer and names what the removal
    deletes. This rule does not ask the invoker for every decision.
+   If a visited decision is an authority widening, a change that lets an actor
+   move money (charge, pay, refund, pay out, transfer) or perform a write that
+   the actor could not perform before, the settlement is Ask in this run even
+   when the issue Decisions section states its answer, whatever
+   `triage.auto_accept_recommended` resolves to. Evidence, Default, and a
+   prototype observation are illegal for that node; a prototype informs the
+   question as "Prototype:" below states. Only an invoker answer settles it.
+   An invoker answer is an Ask settlement whose Decisions entry records the
+   invoker's own answer: the answer URL of a comment that
+   [recovery](recovery.md) ("A question blocker's resume condition") accepts,
+   or a host-session answer that the admitted spec records with its round,
+   question number, date, and quoted answer. `Ask, auto-accepted`, Default,
+   and Evidence are not invoker answers. The question recommends the issue's
+   answer and names who gains the authority and over what.
    Prototype: when a node's answer is a fact observable by running something
    (behavior, output, timing, a tool's actual flags), settle it as Evidence by
    running a prototype instead of asking. The coordinator runs it. First fetch
@@ -79,7 +93,7 @@
    paragraph does not apply, and every Ask is asked as this step states. It
    covers only Ask rounds of this walk, including the round
    [pre-merge](pre-merge.md) ("Newer trusted comments") asks. It does not cover
-   the cycle round of [batch invocation](modes/batch-invocation.md) ("A cycle
+   the round [pre-merge](pre-merge.md) ("Ready backstop:") asks, the cycle round of [batch invocation](modes/batch-invocation.md) ("A cycle
    among in-set edges is one triage Ask round"), the class round of
    [correction](modes/correction.md) ("Ask and filing."), the round of
    [boundary pass](modes/boundary-pass.md) ("**Ask round.**"), or the trust
@@ -91,9 +105,10 @@
    ("`triage.pause_categories` is a list")). A question pauses when it matches
    one, or when the coordinator cannot decide whether it matches one. Under any
    list, including an empty list, a question also pauses when it has no
-   recommended answer, when the recommendation does not answer the node, or
+   recommended answer, when the recommendation does not answer the node,
    when it is the Ask for a `Depends on` entry that does not resolve
-   ([contract](contract.md) ("An M that resolves to neither is an Ask")). Every
+   ([contract](contract.md) ("An M that resolves to neither is an Ask")),
+   or when it is the authority-widening Ask of step 2. Every
    other question in the round is auto-accepted. Next, publish one marked
    `auto-answer` issue comment for the round under [contract](contract.md)
    ("## Marked Markdown artifacts"), and read it back. The comment names the
