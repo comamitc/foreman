@@ -75,17 +75,23 @@
 3. Maintain a frontier of unresolved product decisions. Ask numbered rounds only
    for consequential choices that evidence cannot settle. Recommend an answer and
    explain its effect. An ask is one numbered round of the current frontier.
+   A published round's number counts from 1 across the delivery's Ask rounds,
+   auto-accepted rounds included, as its published blocker and `auto-answer`
+   comments show. Each question has its own number in the round, from 1, and
+   keeps it in every comment and event of that round.
    A question whose answer depends on an open question in the same round waits for
    the next round. Do not ask the user to find files or diagnose technical errors.
    Each round is asked on the issue: before the delivery's final message, publish
    each round as a question blocker, which is one `blocker` comment from [blocker](../templates/blocker.md) with blocker kind
-   `product-decision`, whose reason lists each numbered question with
+   `product-decision`, whose reason names the round number and lists each numbered question with
    `Recommended:` and its recommended answer and `Effect:` and the effect of that
    answer. Add `foreman:blocked` and keep the stage label, as
    [contract](contract.md) ("A blocker adds only `foreman:blocked`") states. Read
    the comment and the labels back. Write the `ledger.md` row with the blocker URL
-   and the `blocker` and `run-end` events, and stop; nothing waits in the host
-   session. [recovery](recovery.md) ("A question blocker's resume condition")
+   and the `blocker`, `question`, and `run-end` events, and stop; nothing waits in the host
+   session. [telemetry](telemetry.md) ("Every Ask round a delivery run asks")
+   owns the `question` and `answer` events.
+   [recovery](recovery.md) ("A question blocker's resume condition")
    owns its resume.
    Auto-triage: this paragraph applies only when `triage.auto_accept_recommended`
    resolves to `true` under [contract](contract.md)
@@ -112,7 +118,8 @@
    other question in the round is auto-accepted. Next, publish one marked
    `auto-answer` issue comment for the round under [contract](contract.md)
    ("## Marked Markdown artifacts"), and read it back. The comment names the
-   round and lists, for each auto-accepted question, the question, the chosen
+   round by its number, gives each question of the round its number, and lists,
+   for each auto-accepted question, the question, the chosen
    option, and the reason it matches no pause category, and, for each paused
    question, the category or rule that paused it. If the publish or the
    readback fails, settle and ask nothing in the round: inspect the issue
@@ -124,7 +131,8 @@
    step") outcome; any other failure that persists is recovered under
    [recovery](recovery.md) ("## Observe, diagnose, retry"). Until a comment for
    the round reads back with these classifications, no question in the round is
-   settled, and the round is not complete. Then record the comment URL in
+   settled, and the round is not complete. Then write the `question` and
+   `answer` events of each auto-accepted question, record the comment URL in
    `ledger.md`, and settle each auto-accepted question as Ask with its
    recommended answer without asking it in the host session. Its Decisions
    entry records `Ask, auto-accepted`, the answer, and the comment URL, which
@@ -133,8 +141,8 @@
    `gh issue edit N --repo OWNER/REPO --add-label foreman:needs-human`, plus `--remove-label capstan:needs-human` when the issue carries it, and read
    the labels back with `gh issue view N --repo OWNER/REPO --json labels`; ask
    the paused questions only after that readback shows the label. Then publish
-   the paused questions as this step's question blocker; it lists only the paused
-   questions. After every paused question in the round has
+   the paused questions as this step's question blocker; it carries that comment's round number, and it lists only the paused
+   questions, each with its number from that comment. After every paused question in the round has
    an answer, run
    `gh issue edit N --repo OWNER/REPO --remove-label foreman:needs-human`, plus `--remove-label capstan:needs-human` when the issue carries it, and
    read the removal back with the same view. A round with no paused question

@@ -111,6 +111,14 @@ Owner: [references/contract.md](../../references/contract.md) ("| Item | Stable 
 | Worktree | `<repo>/.worktrees/foreman+N` |
 ```
 
+### Artifact event
+
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Every event line is one JSON object")
+
+```text
+- artifact: `type`, `ref`.
+```
+
 ### Stage-label move
 
 Owner: [references/contract.md](../../references/contract.md) ("## Stage projection")
@@ -147,6 +155,14 @@ Owner: [templates/plan.md](../../templates/plan.md) ("<!-- foreman:plan OWNER/RE
 
 ```text
 <!-- foreman:plan OWNER/REPO#N -->
+```
+
+### Worker event fields
+
+Owner: [references/telemetry.md](../../references/telemetry.md) ("Every event line is one JSON object")
+
+```text
+- worker-start, worker-end: `harness`, `model`, `process_start`, `process_exit`, `exit`. worker-start adds `brief`, the brief's path as launched. worker-end adds `result`, the path of the file that holds the attempt's result.
 ```
 
 ### Stage-label move

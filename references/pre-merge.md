@@ -337,6 +337,7 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    states; keep `foreman:pre-merge`, do not project `foreman:ready-to-deploy`,
    and stop. [triage.md](triage.md) ("Auto-triage:") owns whether auto-triage
    covers this round.
+   [telemetry.md](telemetry.md) ("Every Ask round a delivery run asks") owns this round's events.
    On resume, run "Newer trusted comments" before republishing the spec, then
    republish it under
    [triage.md](triage.md) ("Re-read the issue before replacing its body") with

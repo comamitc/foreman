@@ -253,3 +253,11 @@
 **Authority widening**: a term that `references/triage.md` ("If a visited decision is an authority widening") defines and owns; `references/pre-merge.md` ("Ready backstop:") owns the ready withhold. Rejected: two pause categories, which a `.foreman.json` list could split; a `money` marker or label.
 
 **Question blocker**: a `product-decision` blocker comment on the issue that carries one numbered Ask round with recommended answers. The rule owner is `references/triage.md` ("publish each round as a question blocker"); `references/recovery.md` ("A question blocker's resume condition") owns its resume. Rejected: a `question` marker kind, or a host-session wait.
+
+**Action timeline**: a delivery's `events.jsonl`, read in time order. The rule owners are `references/telemetry.md` ("Create `events.jsonl` at run acceptance") and `references/modes/timeline.md` ("file order is not time order"). Rejected: a second timeline file.
+
+**Timeline invocation**: the explicit read-only invocation `timeline N`. The rule owner is `references/modes/timeline.md` ("This file owns the timeline invocation"). Rejected: a generated `timeline.md`; extending `status`.
+
+**Question and answer events**: `events.jsonl` lines with kind `question` or `answer`. The rule owner is `references/telemetry.md` ("Every Ask round a delivery run asks"). Rejected: reusing `blocker`, which has no answer record.
+
+**Artifact event**: an `events.jsonl` line with kind `artifact`. The rule owner is `references/telemetry.md` ("The coordinator writes one `artifact` event"). Rejected: timing each coordinator `git` or `gh` call.
