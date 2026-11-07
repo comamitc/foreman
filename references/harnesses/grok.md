@@ -37,3 +37,5 @@ Observed JSON fields: `text`, `stopReason`, `sessionId`, `usage`, `modelUsage`,
 Probe output evidence: `references/harnesses/grok.md` at `cd38fa1`. Official
 [permissions](https://docs.x.ai/build/features/permissions) distinguish approval
 rules from the filesystem/network sandbox; check both.
+
+No user-question tool is verified on this host; [triage](../triage.md) ("Question delivery:") owns delivery from a session with none.

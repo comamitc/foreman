@@ -335,7 +335,8 @@ Order: base drift/conflicts → CI → required approvals → final mergeability
    accepting it as the head delivers it, and publish it as the question
    blocker that [triage.md](triage.md) ("publish each round as a question blocker")
    states; keep `foreman:pre-merge`, do not project `foreman:ready-to-deploy`,
-   and stop. [triage.md](triage.md) ("Auto-triage:") owns whether auto-triage
+   and stop as [triage](triage.md) ("Question delivery:") states.
+   [triage.md](triage.md) ("Auto-triage:") owns whether auto-triage
    covers this round.
    [telemetry.md](telemetry.md) ("Every Ask round a delivery run asks") owns this round's events.
    On resume, run "Newer trusted comments" before republishing the spec, then

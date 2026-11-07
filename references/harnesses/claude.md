@@ -86,6 +86,8 @@ Run each GitHub read as one `gh` read command with no pipe, no chained command, 
 
 A refused command is a denied coordinator step: [recovery](../recovery.md) ("## Denied coordinator step") owns its outcome.
 
+On this host the user-question tool of [triage](../triage.md) ("Question delivery:") is `AskUserQuestion`: `question` carries the question ID, the question, and its context, `header` is `rRqK`, `multiSelect` is `false`, and each option's `label` and `description` carry the option and its effect. Plain `claude -p` has no such tool. A `claude --bg` session has it and no person, so its invoker passes `--unattended`. Evidence: Claude Code 2.1.319 stream-json prototype at 156d28b.
+
 Two optional operator settings help the coordinator host. Foreman never writes either one; the operator adds them.
 
 `permissions.allow`, in the operator's user or local project settings, holds narrow rules for the read-only `gh` commands the coordinator runs, one read command per rule. It holds no `gh api` rule and no rule that can match a write.

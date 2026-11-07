@@ -4,7 +4,7 @@
 - Delivery from an issue URL, or from an issue number that resolves in the current checkout.
 - Resume: the same invocation resumes the delivery.
 - Overrides in the invocation, such as the worker roles or a wall budget.
-- Triage questions; [triage](../../references/triage.md) ("An ask is one numbered round of the current frontier.") owns them. Each round is a question blocker on the issue: [triage](../../references/triage.md) ("publish each round as a question blocker") owns its publication and [recovery](../../references/recovery.md) ("A question blocker's resume condition") owns its resume.
+- Triage questions; [triage](../../references/triage.md) ("An ask is one numbered round of the current frontier.") owns them. Each round is a question blocker on the issue: [triage](../../references/triage.md) ("publish each round as a question blocker") owns its publication and [recovery](../../references/recovery.md) ("A question blocker's resume condition") owns its resume. [triage](../../references/triage.md) ("Question delivery:") owns how each round reaches the person.
 - Stage labels from `foreman:triage` to `foreman:ready-to-deploy`, and the `foreman:blocked` overlay.
 - Optional `.foreman.json` configuration; [README](../../README.md) ("Configuration") lists the fields.
 - Opt-in residual-effect approval; [pre-merge](../../references/pre-merge.md) owns it.
@@ -40,6 +40,7 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Foreman never merges or deploys; `foreman:ready-to-deploy` is the live gate, not a deploy step.
 - Deliveries started under the `capstan` names: [contract](../../references/contract.md) ("## Compat read path") owns them.
 - Run only one coordinator per issue at a time.
+- A run with no person at the session takes `--unattended`; [contract](../../references/contract.md) ("`--unattended` is an allowed override") owns it.
 - Changing the issue title does not change the branch, the worktree, or the marked PR lookup.
 - Issues by authors other than OWNER, MEMBER, or COLLABORATOR need confirmation; untrusted comments are excluded by default.
 - A worktree is not a security sandbox.

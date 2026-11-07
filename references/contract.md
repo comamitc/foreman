@@ -12,6 +12,8 @@ overrides stay overrides. An invocation that is an issue number, with or
 without those overrides, uses that issue when it resolves in the current
 checkout. Other prose is not this path even if it contains a digit.
 
+`--unattended` is an allowed override that marks one invocation's run unattended; [triage](triage.md) ("Question delivery:") owns what it changes. It sets no configuration field, has no environment or file form, and does not carry to a later invocation.
+
 An invocation whose every token is an issue URL, an issue number, or an
 allowed override, separated by spaces or commas, naming two or more distinct
 issues, is a batch invocation;

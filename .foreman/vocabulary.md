@@ -56,7 +56,7 @@
 
 **Dismissal**: a published reason that the claim is noise, out of scope, already fixed, or not reproducible on the current head. Rejected: silence.
 
-**Host session**: the interactive session that invoked Foreman. Its interface is the coordinator's visible final message. Rejected: a worker transcript or a host plugin.
+**Host session**: the interactive session that invoked Foreman. Its interface is the coordinator's visible final message and, when the session has one, its user-question tool. Rejected: a worker transcript or a host plugin.
 
 **Stage analysis**: the station-attempt table and two wall totals defined by #29. Rejected: a second host-specific wording.
 
@@ -252,7 +252,7 @@
 
 **Authority widening**: a term that `references/triage.md` ("If a visited decision is an authority widening") defines and owns; `references/pre-merge.md` ("Ready backstop:") owns the ready withhold. Rejected: two pause categories, which a `.foreman.json` list could split; a `money` marker or label.
 
-**Question blocker**: a `product-decision` blocker comment on the issue that carries one numbered Ask round with recommended answers. The rule owner is `references/triage.md` ("publish each round as a question blocker"); `references/recovery.md` ("A question blocker's resume condition") owns its resume. Rejected: a `question` marker kind, or a host-session wait.
+**Question blocker**: a `product-decision` blocker comment on the issue that carries one numbered Ask round with recommended answers. The rule owner is `references/triage.md` ("publish each round as a question blocker"); `references/recovery.md` ("A question blocker's resume condition") owns its resume. Rejected: a `question` marker kind, or a host-session wait before the blocker reads back.
 
 **Action timeline**: a delivery's `events.jsonl`, read in time order. The rule owners are `references/telemetry.md` ("Create `events.jsonl` at run acceptance") and `references/modes/timeline.md` ("file order is not time order"). Rejected: a second timeline file.
 
@@ -261,3 +261,7 @@
 **Question and answer events**: `events.jsonl` lines with kind `question` or `answer`. The rule owner is `references/telemetry.md` ("Every Ask round a delivery run asks"). Rejected: reusing `blocker`, which has no answer record.
 
 **Artifact event**: an `events.jsonl` line with kind `artifact`. The rule owner is `references/telemetry.md` ("The coordinator writes one `artifact` event"). Rejected: timing each coordinator `git` or `gh` call.
+
+**Question delivery**: getting an open question in front of the person who answers it, separate from the durable blocker. The rule owner is `references/triage.md` ("Question delivery:"). Rejected: counting a blocker comment, a label, or a final message as delivery; a new stage.
+
+**Question ID**: the stable identifier of one question. The rule owner is `references/triage.md` ("Question ID:"). Rejected: a random ID, which needs a store.

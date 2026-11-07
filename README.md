@@ -59,6 +59,7 @@ The completion endpoint is a verified open merge-ready PR. Foreman does not depl
 The same invocation resumes. Issue-title changes do not change branch `foreman/N`,
 worktree `.worktrees/foreman+N`, or marked PR lookup. You may specify overrides in
 the invocation, for example: “primary codex, secondary claude, wall budget 90 minutes.”
+The override `--unattended` marks a run with no person at the session; [contract](references/contract.md) ("`--unattended` is an allowed override") owns it.
 Only one coordinator should work on an issue at a time. These delivery forms do not
 enter init.
 The invocation `status` alone, for example `/foreman status`, prints a read-only report of this repository's open issues that carry a Foreman stage label or the `foreman:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
@@ -225,7 +226,8 @@ change Foreman labels, and rerun eligible CI. Workers may edit/commit only their
 worktree at write stations. Human commits are preserved; published branches are
 never force-pushed. Missing credentials, permissions, purchase decisions, required
 approvals, consequential product choices, and budget decisions produce one typed
-human action. Tests, code defects, conflicts, and CI diagnosis remain agent work.
+human action. [triage](references/triage.md) ("Question delivery:") owns how a consequential choice reaches you.
+Tests, code defects, conflicts, and CI diagnosis remain agent work.
 
 Unsafe permission-bypass mode requires explicit user configuration and appears
 in the final report. Default mode retains each host's strongest supported scoped

@@ -84,15 +84,45 @@
    Each round is asked on the issue: before the delivery's final message, publish
    each round as a question blocker, which is one `blocker` comment from [blocker](../templates/blocker.md) with blocker kind
    `product-decision`, whose reason names the round number and lists each numbered question with
-   `Recommended:` and its recommended answer and `Effect:` and the effect of that
-   answer. Add `foreman:blocked` and keep the stage label, as
+   its question ID, `Context:` and the context of the decision, `Recommended:` and its
+   recommended answer and `Effect:` and the effect of that answer, and `Options:` and every
+   other option with its effect, and whose resume action asks for a reply that names each
+   question ID or question number. A question has at least two options. A question with no
+   recommended answer states `Recommended: none`. Add `foreman:blocked` and keep the stage label, as
    [contract](contract.md) ("A blocker adds only `foreman:blocked`") states. Read
    the comment and the labels back. Write the `ledger.md` row with the blocker URL
-   and the `blocker`, `question`, and `run-end` events, and stop; nothing waits in the host
-   session. [telemetry](telemetry.md) ("Every Ask round a delivery run asks")
+   and the `blocker` and `question` events, then deliver the round as "Question delivery:"
+   below states; nothing waits in the host session before that read-back.
+   [telemetry](telemetry.md) ("Every Ask round a delivery run asks")
    owns the `question` and `answer` events.
    [recovery](recovery.md) ("A question blocker's resume condition")
    owns its resume.
+
+   Question ID: `owner/repo#N:rR:qK` is a question's stable identifier, from its delivery, its round number R, and its question number K. A retry or a resume keeps them, and reads each question, its context, and its options from the blocker comment.
+
+   Question delivery: this rule delivers every question blocker of a delivery run, whichever step publishes it. It runs only after the blocker comment and the labels read back. A blocker comment, a label, or a final message never counts as delivery.
+
+   - Picker: a session whose own tool list has a user-question tool, on a run without `--unattended`, presents the round: one prompt per unanswered question, in number order, each carrying the question ID, the question, its context, and every option with its effect, the recommended option first with `(Recommended)` after its label. A tool that cannot hold every option fails that question's delivery; trim nothing. Do not choose for the person.
+   - Answer: relay each picker answer as [recovery](recovery.md) ("When the invoker replies to a question blocker") states before the next prompt.
+   - Handoff: a session with no such tool, or a run with `--unattended`, prompts nothing and hands the round off.
+   - Once: a question is prompted at most once in a run. A `question-delivery` line for it after the run's `run-start` or `run-resume` line means no prompt; when that read fails, the run hands the question off. A failed delivery gets no second prompt in that run, and no later question of the round is prompted in that run.
+   - Outcome: `presented` needs a tool result that carries the person's answer; any other tool result is `failed`; a question handed off is `handed-off`; a question not prompted after a failure, or after a blocker read-back that failed, is `not-attempted`. [telemetry](telemetry.md) ("Every delivered question") owns the record. No comment, status line, or message says a picker was shown without that tool result.
+   - End: when every question of the blocker has an answer, the run continues as [recovery](recovery.md) ("A question blocker's resume condition") states. Otherwise write the `run-end` event and stop with `foreman:blocked` on the issue, and end the final message with this block, one `Delivery:` group per unanswered question:
+
+     ```text
+     Foreman question handoff: owner/repo#N round R
+     Blocker: BLOCKER_URL
+     Resume: INVOCATION
+     Answer rule: Present each question to the person with your user-question tool, recommended option first. Post the person's answer as a comment on the blocker's issue that quotes it and names the question ID, then send the Resume invocation. If you cannot present a question, tell the person delivery failed and show this block. Never answer for the person.
+     Delivery: QUESTION_ID OUTCOME — EVIDENCE
+     Question: TEXT
+     Context: CONTEXT
+     Option: LABEL (Recommended) — EFFECT
+     Option: LABEL — EFFECT
+     ```
+
+   The [boundary pass](modes/boundary-pass.md) ("**Ask round.**") round and the [contract](contract.md) ("### Init") question stay in the session: neither is a delivery stop, so neither has a question blocker to deliver.
+
    Auto-triage: this paragraph applies only when `triage.auto_accept_recommended`
    resolves to `true` under [contract](contract.md)
    ("`triage.auto_accept_recommended` is a boolean"). With `false`, this

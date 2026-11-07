@@ -8,6 +8,7 @@ This file is a procedure trace ([.foreman/vocabulary.md](../vocabulary.md) ("**P
 - Configuration: the default configuration.
 - Plan review: the plan-review census has no findings.
 - Code review: the code-review census has no findings, so it has no effective blockers.
+- Ask rounds: none, so this path writes no `question-delivery` event and shows no picker.
 
 No fix station runs on this path.
 
