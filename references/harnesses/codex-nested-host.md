@@ -63,3 +63,5 @@ interactive host's owned terminal inventory and stop interface (`/ps` and
 `/stop`). Do not use tmux. Do not use an out-of-sandbox relay.
 
 Verified on Codex CLI 0.153.4 and Grok 1.0.34 (probe evidence: commit 4769b12).
+
+No user-question tool is verified on this host; [triage](../triage.md) ("Question delivery:") owns delivery from a session with none.

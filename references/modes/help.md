@@ -53,6 +53,8 @@ Each row names the file that owns the answer. The owner states the rule; this ma
 | Resume a delivery | [README](../../README.md) ("The same invocation resumes") |
 | Resume or unblock a blocked issue | [recovery](../recovery.md) "## Blocked overlays" |
 | Why an issue is stuck | [recovery](../recovery.md) "## Blocked overlays"; [status](status.md) ("This file owns the status invocation") |
+| What happened in a delivery | [timeline](timeline.md) ("This file owns the timeline invocation") |
+| Answer a delivery question, or why no picker appeared | [triage](../triage.md) ("Question delivery:"); [recovery](../recovery.md) ("When the invoker replies to a question blocker") |
 | Overrides in one invocation | [contract](../contract.md) ("Allowed overrides stay overrides"); [README](../../README.md) ("You may specify overrides in the invocation") |
 | Config, environment, and `.foreman.json` | [contract](../contract.md) "## Configuration" |
 | The init invocation | [contract](../contract.md) "### Init" ("This section owns the init invocation") |
@@ -72,8 +74,9 @@ Each recipe is the text after the host form "## Answer" states. The owners in "#
 - Deliver two or more issues: `N M`.
 - Resume: `https://github.com/OWNER/REPO/issues/42`; [README](../../README.md) ("The same invocation resumes").
 - Overrides: `https://github.com/OWNER/REPO/issues/N primary codex, secondary claude, wall budget 90 minutes`.
+- Run with no person present: `N --unattended`.
 - Init: `init`.
-- A read-only invocation: its keyword alone, for each row of the keyword table under [contract](../contract.md) "## Read-only invocations".
+- A read-only invocation: its keyword and the arguments its grammar requires, for each row of the keyword table under [contract](../contract.md) "## Read-only invocations".
 - Help: `help`, or `help <question>`.
 
 ## Review

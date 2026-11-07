@@ -4,7 +4,7 @@
 - Delivery from an issue URL, or from an issue number that resolves in the current checkout.
 - Resume: the same invocation resumes the delivery.
 - Overrides in the invocation, such as the worker roles or a wall budget.
-- Triage questions; [triage](../../references/triage.md) ("An ask is one numbered round of the current frontier.") owns them. Each round is a question blocker on the issue: [triage](../../references/triage.md) ("publish each round as a question blocker") owns its publication and [recovery](../../references/recovery.md) ("A question blocker's resume condition") owns its resume.
+- Triage questions; [triage](../../references/triage.md) ("An ask is one numbered round of the current frontier.") owns them. Each round is a question blocker on the issue: [triage](../../references/triage.md) ("publish each round as a question blocker") owns its publication and [recovery](../../references/recovery.md) ("A question blocker's resume condition") owns its resume. [triage](../../references/triage.md) ("Question delivery:") owns how each round reaches the person.
 - Stage labels from `foreman:triage` to `foreman:ready-to-deploy`, and the `foreman:blocked` overlay.
 - Optional `.foreman.json` configuration; [README](../../README.md) ("Configuration") lists the fields.
 - Opt-in residual-effect approval; [pre-merge](../../references/pre-merge.md) owns it.
@@ -19,6 +19,7 @@
 - Divergence line in the pull-request body; [implementing](../../references/implementing.md) ("Divergence line:") owns it.
 - Local evidence under `${XDG_STATE_HOME:-$HOME/.local/state}/foreman/OWNER/REPO/N/` by default.
 - Events and the ledger: [telemetry](../../references/telemetry.md) ("Create `events.jsonl` at run acceptance") owns the events file and the ledger.
+- Action timeline: [timeline](../../references/modes/timeline.md) ("This file owns the timeline invocation") owns its view.
 - Review-noise rollup in the ledger and the issue summary; [end of run](../../references/end-of-run.md) ("Review-noise rollup.") owns it.
 - Review files ([vocabulary](../vocabulary.md) ("**Review file**")): [pack](../../references/pack.md) ("each nested `REVIEW.md`") owns which are quoted, [code-review convergence](../../references/review-convergence.md) ("A review file can add review depth") owns what one can change, and [end of run](../../references/end-of-run.md) ("suggest a review-file line for the target repository") owns the suggested line on a recurring review finding class.
 - Opt-in verification vote and its council; [code-review convergence](../../references/review-convergence.md) ("## Verification vote") owns the vote, and [contract](../../references/contract.md) ("`review_policy.voters` is a list of seat objects") owns the seats.
@@ -39,6 +40,7 @@ Repository check: `bash scripts/test-launch.sh` tests the coordinator's launch b
 - Foreman never merges or deploys; `foreman:ready-to-deploy` is the live gate, not a deploy step.
 - Deliveries started under the `capstan` names: [contract](../../references/contract.md) ("## Compat read path") owns them.
 - Run only one coordinator per issue at a time.
+- A run with no person at the session takes `--unattended`; [contract](../../references/contract.md) ("`--unattended` is an allowed override") owns it.
 - Changing the issue title does not change the branch, the worktree, or the marked PR lookup.
 - Issues by authors other than OWNER, MEMBER, or COLLABORATOR need confirmation; untrusted comments are excluded by default.
 - A worktree is not a security sandbox.

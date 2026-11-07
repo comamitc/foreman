@@ -3,7 +3,7 @@
 At the contract's delivery evidence root, create owner-only `briefs/`, `results/`,
 `workers/`, `checks/`, and `events.jsonl`. Create `events.jsonl` at run acceptance of every delivery run, single or batch, including a resume, and append each event when its trigger occurs. A resumed run appends to it. If it was lost, recreate it and record a `telemetry-gap`. A read-only invocation and init are not runs and write no `events.jsonl`. Always write `ledger.md` at
 run acceptance and rewrite it at each station end, an interrupted or failed
-attempt, a blocker publication, a cancellation, review exhaustion, and
+attempt, a blocker publication, a question delivery outcome, a cancellation, review exhaustion, and
 ready-to-deploy, whether or not deletion is enabled. `run.md` is not a second source of
 truth. Give attempts unique
 human-readable filenames, for example `planning-20260921T120000Z-1.md`. On resume,
@@ -11,6 +11,7 @@ append rather than overwrite surviving attempts. Follow security before capture.
 
 Write the ledger row directly. Record delivery
 identity, spec revision,
+whether the invocation carried `--unattended`,
 effective nonsecret configuration with the source of `heavy_checks.max_concurrent`
 and the resolved `boundary_pass` with its source,
 the resolved `review_policy.verify_voters` with its source,
@@ -103,12 +104,15 @@ Use these event kinds when their trigger occurs:
 | telemetry-gap | missing, malformed, or failed evidence capture |
 | run-end | ready, blocked handoff, cancellation, or decomposition end |
 | tool-call | a coordinator worker process, check command, or wait ends; a worker tool call completes |
+| question / answer | each numbered question of an Ask round, and each answer observed |
+| question-delivery | each delivery outcome of a question |
+| artifact | the coordinator creates a branch, worktree, pull request, marked comment, or report |
 
 Every event line is one JSON object with these fields: `time`, `kind`, `delivery`, `station`, and `attempt`, then the added fields of its kind. `time` is UTC `YYYY-MM-DDTHH:MM:SS[.ffffff]Z`; `delivery` is `owner/repo#N`; `station` is the stage name as in the attempt table; `attempt` is the Attempt cell, or `—` outside an attempt. The added fields:
 
 - run-start, run-resume: `spec_revision`, `budget_start`.
 - station-start, station-end: `time` is the station's UTC start or end; station-end adds `outcome`.
-- worker-start, worker-end: `harness`, `model`, `process_start`, `process_exit`, `exit`.
+- worker-start, worker-end: `harness`, `model`, `process_start`, `process_exit`, `exit`. worker-start adds `brief`, the brief's path as launched. worker-end adds `result`, the path of the file that holds the attempt's result.
 - check: `command`, `head`, `start`, `end`, `duration_s`, `exit`, and `source`: `coordinator` for a check the coordinator ran, `worker` for a check a worker reports.
 - finding-census: `verdict`, `round`, `blocking`, `advisory`, `head`.
 - recovery: `failure`, `hypothesis`, `next`.
@@ -117,12 +121,22 @@ Every event line is one JSON object with these fields: `time`, `kind`, `delivery
 - telemetry-gap: `what`, `error` (redacted).
 - run-end: `outcome`.
 - tool-call: `source`, `tool`, `start`, `end`, `duration_s`. A coordinator call has `source` `coordinator`, `tool` `worker`, `check`, or `wait`, `command` with its command or a label, and `exit` with its exit status or `outcome` with its wait outcome: `settled`, `exited`, `timeout`, or `interrupted`. A worker call has `source` `worker`, `tool` with the tool name, `id`, and `error` with the Claude `is_error` or `exit` with the Codex `exit_code`.
+- question: `round`, `number`, `text`, `blocker_url`.
+- answer: `round`, `number`, `answer_url`, `source`: `comment`, `relay`, or `auto-accepted`.
+- question-delivery: `round`, `number`, `outcome`: `presented`, `failed`, `handed-off`, or `not-attempted`, and `evidence`.
+- artifact: `type`, `ref`.
 
 A value that was not observed is `"unknown"`, never zero or an estimate. `duration_s` is `end` minus `start` in seconds.
 
 The coordinator writes each of its own lines itself, escaping every string per JSON, as one append-mode write of a whole line. It never rewrites the file, and it never concatenates unescaped worker text into a line. Every declared check, coordinator-run or worker-reported, gets a `check` event. A worker-reported check's `command`, `head`, and `exit` come from the result's `## Checks`; a field the worker omitted is `unknown`. Its `start`, `end`, and `duration_s` come from the matching worker `tool-call` line in the capture when the harness records one, and are otherwise `"unknown"`. A worker `tool-call` line carries no command, so it matches only through its `id`: the coordinator takes each shell tool call in the capture's `stream` whose input command is the reported command, either exactly or followed by ` > `, a log path, and ` 2>&1`, the check-log redirect that [templates/brief.md](../templates/brief.md) ("followed by ` > LOG 2>&1`") owns; when the result gives that run's log path, only a call that redirects to that path matches. When exactly one call matches, the coordinator takes the `tool-call` line with that call's `id`; when no call matches, more than one does, or no line has that `id`, the three fields are `"unknown"`. Each worker process, check command, and wait the coordinator runs (a worker wait, a silent-check wait, or a CI wait) gets a coordinator `tool-call` event when it ends. An accepted same-head check record ([harnesses/shared.md](harnesses/shared.md) ("The coordinator accepts a same-head check record")) gets its `check` event with `source` `worker`, and the coordinator writes no coordinator `check` event and no `tool-call` event for that check; a check the coordinator runs instead gets both, as above.
 
 The run script that [harnesses/shared.md](harnesses/shared.md) ("A run script that `scripts/launch.sh write` writes takes `--capture DIR`") describes appends each worker `tool-call` line when that call completes, during the worker run. A worker call's `start` and `end` are the arrival times of its start and end records in the capture's stream. The coordinator does not read those lines during the run. At worker-end, a `telemetry-error` file in the capture becomes one `telemetry-gap` that cites it. A Grok or Oh My Pi worker's tool-call durations are `unknown`, recorded as one `telemetry-gap` per attempt.
+
+Every Ask round a delivery run asks on its issue writes `question` and `answer` events in that delivery's `events.jsonl`, whichever step asks it. Each numbered question of a question blocker writes one `question` event after the blocker reads back. Each question a round auto-accepts writes one after its `auto-answer` comment reads back, with `blocker_url` `none`. `round` and `number` are the values the published comment names, which [triage](triage.md) ("A published round's number counts from 1") owns, and `text` is the question as published, on one line. Each answer observed writes one `answer` event with that question's `round` and `number`: `source` is `comment` for a qualifying comment, `relay` for a relay comment, and `auto-accepted` for an auto-accepted question, whose `answer_url` is its `auto-answer` comment URL. A later answer to a question, with its own URL, writes its own `answer` event. A stale answer ([recovery](recovery.md) ("A stale answer is")) writes none. An `answer` event holds no comment text. An `answer` event is written before the ledger records that answer. Before appending, the coordinator reads `events.jsonl`: a line of kind `answer` with the same `round`, `number`, and `answer_url` makes this a repeated observation, which writes no event. The ledger is never that check. When the read or the append fails, the gap rule below applies, the ledger still records the answer, and the next observation appends it. In a recreated `events.jsonl` no earlier line exists: the next observation of each answer writes it once, nothing reconstructs an answer not observed again, and the `telemetry-gap` that recreation records names the loss. A round with no active delivery run, such as the [boundary pass](modes/boundary-pass.md) ("**Ask round.**") round, writes neither event, and that absence is not a `telemetry-gap`.
+
+Every delivered question writes one `question-delivery` event per run when [triage](triage.md) ("Question delivery:") settles its outcome, with the `round` and `number` of its `question` event, or, for a round that "Failed read-back:" leaves unpublished, of its unpublished question, and one `ledger.md` line `Delivery: QUESTION_ID OUTCOME — EVIDENCE`. `evidence` is the tool name and its result status, with the redacted error on `failed`, or the reason on `handed-off` and `not-attempted`; it holds no answer text. The delivery outcome is apart from the blocked state: no outcome adds or removes a label. An auto-accepted question and a round with no active delivery run write no `question-delivery` event. A run that wrote no outcome for a question it held unanswered ended before one, which nothing reconstructs. A cycle round writes these events in each linked delivery's own `events.jsonl`, under that delivery's `round` and `number`: one `question` event for each question of its blocker, one `question-delivery` event with the outcome of the one presentation and `evidence` that names the canonical ID, and one `answer` event with the one answer URL.
+
+The coordinator writes one `artifact` event after it observes each branch, worktree, pull request, marked comment, or report it creates. `type` is `branch`, `worktree`, `pull-request`, `report`, or, for a marked comment, its KIND from [contract](contract.md) ("## Marked Markdown artifacts"). `ref` is the artifact's name or URL. A first push that creates a remote branch is its own `branch` event, with `ref` `REMOTE/BRANCH`. An artifact found rather than created, and an edit of an existing comment, write none. An artifact created after [end of run](end-of-run.md) ("Event cutoff:") applies follows that cutoff, so the marked summary writes no `artifact` event, and the [boundary report](modes/boundary-pass.md) ("Print the boundary report once, as one block after the final message.") writes none.
 
 No validator, parser, helper, or event is needed to choose a station. A failed append or a malformed event is
 a telemetry gap under the gap rule below. A remote comment may still publish the

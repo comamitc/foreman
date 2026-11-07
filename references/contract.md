@@ -12,6 +12,8 @@ overrides stay overrides. An invocation that is an issue number, with or
 without those overrides, uses that issue when it resolves in the current
 checkout. Other prose is not this path even if it contains a digit.
 
+`--unattended` is an allowed override that marks one invocation's run unattended; [triage](triage.md) ("Question delivery:") owns what it changes. It sets no configuration field, has no environment or file form, and does not carry to a later invocation.
+
 An invocation whose every token is an issue URL, an issue number, or an
 allowed override, separated by spaces or commas, naming two or more distinct
 issues, is a batch invocation;
@@ -65,6 +67,8 @@ Inspect and resolve the base first. Before creating `foreman/N`, run `git fetch 
 - Matching issue worktree exists: continue it. Do not rebase or recreate it.
 - Matching `foreman/N` branch exists with no worktree attached: attach that branch without `-b`. Do not run `git worktree add -b` again. A matching delivery under its old form follows [Compat read path](#compat-read-path).
 - Neither exists: from the repository root, run `git worktree add -b foreman/N ./.worktrees/foreman+N <recorded-sha>`. Its parent is the recorded SHA, not the ref name.
+
+[telemetry](telemetry.md) ("The coordinator writes one `artifact` event") owns the events for a created branch and worktree.
 
 Preserve dirty work and human commits. An unrelated branch, worktree, or PR occupying the identity is a
 collision, not permission to overwrite it. Observe ancestry, marked comments,
@@ -142,6 +146,7 @@ Trim the invocation and split it on whitespace into tokens. An invocation whose 
 | `guardrails` | [references/modes/guardrails.md](modes/guardrails.md) ("This file owns the guardrails invocation") | [guardrails](modes/guardrails.md) ("The invocation is `guardrails` followed by zero or more path tokens") |
 | `learn` | [references/modes/learn.md](modes/learn.md) ("This file owns the learn invocation") | [learn](modes/learn.md) ("The invocation is `learn` followed by zero or more `repo OWNER/REPO` pairs") |
 | `help` | [references/modes/help.md](modes/help.md) ("This file owns the help invocation") | [help](modes/help.md) ("The invocation is `help` followed by zero or more tokens of any kind") |
+| `timeline` | [references/modes/timeline.md](modes/timeline.md) ("This file owns the timeline invocation") | [timeline](modes/timeline.md) ("The invocation is `timeline` followed by exactly one issue number") |
 
 This table is the only list of read-only keywords. A keyword is one lowercase word that is not an issue number or an allowed override. A new read-only mode adds its row here and owns its argument grammar in its mode file.
 
@@ -157,7 +162,7 @@ Every read-only invocation follows these rules. A mode file may state a stricter
 
 A [boundary pass](modes/boundary-pass.md) ("## Procedure") dispatches the `architect` keyword and then the `guardrails` keyword, each with no path token, in the invoking session. Each dispatch loads that row's mode file and is a read-only invocation under the rules above, with one difference: its report is printed once inside the boundary report, and its stop ends that procedure, not the boundary pass.
 
-A read-only report other than `status` or `help` states each finding with:
+A read-only report other than `status`, `help`, or `timeline` states each finding with:
 
 1. **Rule:** the Foreman rule applied, as its file and quoted heading.
 2. **Evidence:** `path:line`, or a URL plus its commit SHA.
@@ -258,7 +263,7 @@ ambiguous publication, compare marker, revision/SHAs, and content before repeati
 Only update Foreman-authored artifacts; never replace another author's comment.
 Use body files with `gh issue edit/comment`, `gh pr create/edit/comment`, or
 `gh api ... -F body=@FILE`; never interpolate issue text into shell command code.
-Read back the body/comment after writing. Markers locate claims, not proof.
+Read back the body/comment after writing. [telemetry](telemetry.md) ("The coordinator writes one `artifact` event") owns the event for a created comment. Markers locate claims, not proof.
 
 ## Start condition
 

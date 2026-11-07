@@ -75,8 +75,9 @@ Before step 1, read [contract](references/contract.md) "## Read-only invocations
 
 Stop only at verified `foreman:ready-to-deploy`, a verified review-exhausted
 blocked overlay, a verified question blocker that [triage](references/triage.md)
-("publish each round as a question blocker") owns, a typed human capability or
-budget decision from recovery,
+("publish each round as a question blocker") owns, with a question
+[triage](references/triage.md) ("Question delivery:") leaves unanswered, a typed
+human capability or budget decision from recovery,
 a verified decomposition end that [decomposition](references/modes/decomposition.md)
 ("**Decomposition end.**") owns, or user cancellation. Pending infrastructure and
 activity markers call for bounded waiting and observation, not abandonment.

@@ -59,6 +59,7 @@ The completion endpoint is a verified open merge-ready PR. Foreman does not depl
 The same invocation resumes. Issue-title changes do not change branch `foreman/N`,
 worktree `.worktrees/foreman+N`, or marked PR lookup. You may specify overrides in
 the invocation, for example: “primary codex, secondary claude, wall budget 90 minutes.”
+The override `--unattended` marks a run with no person at the session; [contract](references/contract.md) ("`--unattended` is an allowed override") owns it.
 Only one coordinator should work on an issue at a time. These delivery forms do not
 enter init.
 The invocation `status` alone, for example `/foreman status`, prints a read-only report of this repository's open issues that carry a Foreman stage label or the `foreman:blocked` overlay, and changes nothing. `status` with other words is a text invocation.
@@ -66,6 +67,7 @@ The invocation `architect`, alone or followed by paths in this repository, for e
 The invocation `guardrails`, alone or followed by paths in this repository, for example `/foreman guardrails` or `/foreman guardrails tests`, prints a read-only report that inventories this repository's guardrails with whether each runs and grades its test files, or those under the paths, against Foreman's check rules, and changes nothing. [guardrails](references/modes/guardrails.md) owns its argument grammar.
 The invocation `learn`, alone or followed by `repo OWNER/REPO` and `since YYYY-MM-DD` pairs, for example `/foreman learn` or `/foreman learn since 2026-10-04`, prints a read-only report from every Foreman run on this machine that groups mistakes and friction into classes across repositories and ranks Foreman-process proposals, with target-product learnings apart, a review noise block, and a reviewer case candidates block, and changes nothing. It runs from any workspace. [learn](references/modes/learn.md) owns its argument grammar.
 The invocation `help`, alone or followed by a question, for example `/foreman help` or `/foreman help how do I resume a blocked issue`, prints a menu of topics, or an answer from the installed Foreman package that cites the file that owns it and the invocation to send next, and changes nothing. It starts no work; every invocation whose first word is `help` is a help invocation. [help](references/modes/help.md) owns its argument grammar.
+The invocation `timeline N`, for example `/foreman timeline 42`, prints a delivery's action timeline. [timeline](references/modes/timeline.md) ("This file owns the timeline invocation") owns it.
 The invocation `init` alone, for example `/foreman init` in Claude Code or Grok Build, `$foreman init` in Codex CLI, or `/skill:foreman init` in Oh My Pi, writes an absent `.foreman.json` in this repository's checkout, leaves it uncommitted, and ensures the Foreman labels. `init` with other words is a text invocation.
 
 ### Text invocation
@@ -224,7 +226,8 @@ change Foreman labels, and rerun eligible CI. Workers may edit/commit only their
 worktree at write stations. Human commits are preserved; published branches are
 never force-pushed. Missing credentials, permissions, purchase decisions, required
 approvals, consequential product choices, and budget decisions produce one typed
-human action. Tests, code defects, conflicts, and CI diagnosis remain agent work.
+human action. [triage](references/triage.md) ("Question delivery:") owns how a consequential choice reaches you.
+Tests, code defects, conflicts, and CI diagnosis remain agent work.
 
 Unsafe permission-bypass mode requires explicit user configuration and appears
 in the final report. Default mode retains each host's strongest supported scoped
@@ -238,6 +241,7 @@ record observed commands and usage. Secrets are redacted before persistence or
 publication. [references/telemetry.md](references/telemetry.md) owns the ledger,
 the pile, deletion, and missing-usage rules. [references/end-of-run.md](references/end-of-run.md) owns the ledger digest and its check.
 [references/contract.md](references/contract.md) owns `evidence.delete_pile` and `evidence.retain_replay`.
+[timeline](references/modes/timeline.md) ("This file owns the timeline invocation") owns the view of `events.jsonl`.
 
 To clean raw logs manually before ready-to-deploy, first resolve the exact
 delivery directory, inspect its contents, and confirm no worker is active.

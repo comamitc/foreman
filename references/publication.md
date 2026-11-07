@@ -19,3 +19,4 @@ issue, leave it unchanged and do not double the suffix. If `Closes #N` is
 missing, add that line on the same pull request. If the body already contains
 `Closes #N` for that issue, leave it and do not write the keyword a second
 time. Rollout evidence: #23, AC 5.
+[telemetry](telemetry.md) ("The coordinator writes one `artifact` event") owns the events for the push and the pull request.

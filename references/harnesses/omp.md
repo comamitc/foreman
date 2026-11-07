@@ -29,3 +29,5 @@ later aggregate events can repeat the same messages. The probe initially produce
 thinking-only output before a final text response; inspect actual result text, not
 merely exit zero. Unknown formats retain redacted raw output and unknown usage
 without blocking delivery.
+
+No user-question tool is verified on this host; [triage](../triage.md) ("Question delivery:") owns delivery from a session with none.
