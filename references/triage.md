@@ -106,7 +106,7 @@
    - Answer: relay each picker answer as [recovery](recovery.md) ("When the invoker replies to a question blocker") states before the next prompt.
    - Handoff: a session with no such tool, or a run with `--unattended`, prompts nothing and hands the round off.
    - Once: a question is prompted at most once in a run. A `question-delivery` line for it after the run's `run-start` or `run-resume` line means no prompt; when that read fails, the run hands the question off. A failed delivery gets no second prompt in that run, and no later question of the round is prompted in that run.
-   - Outcome: `presented` needs a tool result that carries the person's answer; any other tool result is `failed`; a question handed off is `handed-off`; a question not prompted after a failure, or after a blocker read-back that failed, is `not-attempted`. [telemetry](telemetry.md) ("Every delivered question") owns the record. No comment, status line, or message says a picker was shown without that tool result.
+   - Outcome: `presented` needs a tool result that carries the person's answer; any other tool result is `failed`; a question handed off is `handed-off`; a question not prompted after a failure is `not-attempted`. [telemetry](telemetry.md) ("Every delivered question") owns the record. No comment, status line, or message says a picker was shown without that tool result.
    - End: when every question of the blocker has an answer, the run continues as [recovery](recovery.md) ("A question blocker's resume condition") states. Otherwise write the `run-end` event and stop with `foreman:blocked` on the issue, and end the final message with this block, one `Delivery:` group per unanswered question:
 
      ```text
@@ -120,6 +120,8 @@
      Option: LABEL (Recommended) — EFFECT
      Option: LABEL — EFFECT
      ```
+
+   Failed read-back: when the blocker comment or a label still does not read back after [recovery](recovery.md) ("## Observe, diagnose, retry"), the round is unpublished and "Question delivery:" does not run. Do not publish the blocker again without [contract](contract.md) ("Inspect all paginated comments and exact markers before publishing"). Then prompt nothing, write no `question` event, and write one `question-delivery` event `not-attempted` for each question of the round, with the reason in its evidence. Write the `run-end` event and stop, and end the final message with the block above, `Blocker: none`, and one `Delivery:` group per question. A later invocation publishes the round under the same round number.
 
    The [boundary pass](modes/boundary-pass.md) ("**Ask round.**") round and the [contract](contract.md) ("### Init") question stay in the session: neither is a delivery stop, so neither has a question blocker to deliver.
 
