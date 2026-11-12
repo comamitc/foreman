@@ -86,7 +86,7 @@ Review exhaustion is the one technical blocked overlay.
 ("## Bounded rounds and recurrence", "## Coordinator-evidence findings", "## Verification vote").
 It is not evidence that a person must diagnose or
 repair the code. Its published resume conditions are a materially different
-candidate repair, a policy/spec change, or an explicit trusted disposition, and, for an exhausted seat, the one more that "## Verification vote" publishes.
+candidate repair, a policy/spec change, or an explicit trusted disposition, and, for an exhausted seat, the one more that "## Verification vote" publishes, and, for an unresolved or unmet backend requirement, the ones "## Bounded rounds and recurrence" lists.
 
 All other blocked overlays identify a missing human capability:
 

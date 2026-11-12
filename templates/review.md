@@ -51,7 +51,7 @@ dispositions; counted round and remaining allowance. Coordinator-evidence findin
 [code-review convergence](../references/review-convergence.md) ("## Coordinator-evidence findings")
 owns what this section records for them. Use “not applicable” for plan review.
 
-Verification vote: the council's source, `voters` or `verify_voters`, and each seat's index, harness, model, and effort; for each voted candidate, its local ID, each voter's attempt and seat index, vote, and reason, and its outcome. [code-review convergence](../references/review-convergence.md) ("## Verification vote") owns the vote.
+Verification vote: the council's source, `voters` or `verify_voters`, and each seat's index, harness, model, and effort; for each seat, its requested model, reported model, and routed backend with its source or `unknown`, as three separate values; for each voter attempt, its seat index, requested model, reported model, and routed backend with its source or `unknown`; the resolved `review_policy.distinct_backends` and, when it is `true`, the backend requirement's outcome, met, unmet, or unresolved; for each voted candidate, its local ID, each voter's attempt and seat index, vote, and reason, and its outcome. [code-review convergence](../references/review-convergence.md) ("## Verification vote") owns the vote.
 
 ## Verdict
 

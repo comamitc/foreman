@@ -15,7 +15,8 @@ whether the invocation carried `--unattended`,
 effective nonsecret configuration with the source of `heavy_checks.max_concurrent`
 and the resolved `boundary_pass` with its source,
 the resolved `review_policy.verify_voters` with its source,
-the resolved `review_policy.voters` with its source, its seats, the number of seats, and the number of distinct harness and model pairs, where a `null` model counts as one value, and a set `review_policy.verify_voters` that a non-empty `voters` overrides, as ignored, by name and source,
+the resolved `review_policy.voters` with its source, its seats, the number of seats, and the number of distinct harness and model pairs, where a `null` model counts as one value, for each seat, by its seat index, its requested model, its reported model, and its routed backend with that backend's source or `unknown`, as three separate values, where a seat's reported model and routed backend are those of its latest voter attempt or `unknown` before one, and for each voter attempt, with that attempt's seat index, its requested model, its reported model, and its routed backend with that backend's source or `unknown`, as three separate values, and a set `review_policy.verify_voters` that a non-empty `voters` overrides, as ignored, by name and source,
+the resolved `review_policy.distinct_backends` with its source,
 the resolved `triage.auto_accept_recommended` with its source and the resolved `triage.pause_categories` with its source,
 each ignored unknown or retired configuration field or ignored file, environment, or invocation value by name and source (file, environment, or
 invocation override) apart from effective configuration and without its value,
@@ -244,7 +245,12 @@ Do not add a schema server or an unsupported security guarantee.
 Provenance is part of `ledger.md`. It records revision or digest, nonsecret
 configuration, spec revision, initial target SHA, pack identities, harness
 version, and reported model identity. A missing harness version or reported
-model identity stays `unknown`. No switch suppresses provenance. Delivery
+model identity stays `unknown`.
+Provenance records three separate model facts for each launch: the requested model, the seat's or role's configured `model` or `null`; the reported model, the provider and model the harness reported, or `unknown`; and the routed backend, the model that served the launch, with its named source, or `unknown`.
+A routed backend is evidenced only by a source the coordinator already captures that states the serving model separately from the requested name, and the record names that source.
+Neither the requested model nor the reported model is a routed backend by itself, and Foreman reads no router header or router log.
+The model fields that [omp](harnesses/omp.md) ("Assistant messages"), [claude](harnesses/claude.md) ("Observed JSON fields of the stream's final `result` event"), and [grok](harnesses/grok.md) ("Observed JSON fields:") name, the reported model/provider and `modelUsage`, are reported models, not routed-backend sources; a routed backend with no named source stays `unknown` and is never inferred.
+No switch suppresses provenance. Delivery
 identity, run identity, and attempt identity stay distinct. Retention does not
 change branch identity. Retention does not change pull-request identity. The
 ledger records the resolved `evidence.retain_replay`.
