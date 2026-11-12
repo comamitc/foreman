@@ -206,6 +206,54 @@ and the repair delta. Counted review censuses are capped by
 [code-review convergence](references/review-convergence.md)
 ("## Bounded rounds and recurrence", "## Coordinator-evidence findings", "## Verification vote").
 
+### Opt-in: OMP workers through Jev
+
+Run the coordinator in an Oh My Pi session with `/skill:foreman https://github.com/OWNER/REPO/issues/N`. The coordinator session's own model selection does not configure workers. This example selects OMP workers through `primary`, `secondary`, `fallback`, and the `review_policy.voters` seats, each set to `"harness": "omp"` in `.foreman.json`; [contract](references/contract.md) ("## Configuration") owns those fields and their precedence. [omp adapter](references/harnesses/omp.md) ("# Oh My Pi adapter") owns the worker launch recipe.
+
+comamitc/jev-router@796ba7699289734866869c33e3e271863cb4f571 `integrations/omp/models.yml` defines these omp ids under provider `jev-router`:
+
+| Jev route | omp model id |
+| --- | --- |
+| auto | `jev-router/jev/auto` |
+| forced low | `jev-router/anthropic/claude-haiku-5.5` |
+| forced medium | `jev-router/route-medium` |
+| forced analysis | `jev-router/route-analysis` |
+| forced code | `jev-router/route-code` |
+| forced high | `jev-router/anthropic/claude-opus-5.5` |
+
+A seat's `model` resolves against the operator's own omp `models.yml`; an operator copy that registers different ids needs those ids in the seats.
+
+```json
+{
+  "primary": {"harness": "omp", "model": "jev-router/jev/auto", "effort": null},
+  "secondary": {"harness": "omp", "model": "jev-router/route-analysis", "effort": null},
+  "fallback": {"harness": "omp", "model": "jev-router/route-medium", "effort": null},
+  "review_policy": {
+    "voters": [
+      {"harness": "omp", "model": "jev-router/anthropic/claude-opus-5.5", "effort": null},
+      {"harness": "omp", "model": "jev-router/route-code", "effort": null}
+    ]
+  }
+}
+```
+
+Demonstrated on omp 18.18.3, 2026-11-12, read-probe launches only:
+- `jev-router/jev/auto`: reported provider `jev-router`, model `jev/auto`
+- `jev-router/route-analysis`: reported provider `jev-router`, model `route-analysis`
+- `openai-codex/gpt-5.6-sol`: reported provider `openai-codex`, model `gpt-5.6-sol`
+
+The first ran with a temporary omp agent directory holding the pinned upstream `models.yml` verbatim; the other two used the host's own omp `models.yml`.
+
+- **Missing custom provider.** With no `jev-router` provider in the operator's omp `models.yml`, omp exits 1 with `Model "jev-router/jev/auto" not found`, followed by a hint to set a provider API key or create `models.yml`, and starts no session, so that seat's launch probe fails; [shared](references/harnesses/shared.md) ("This section owns the launch probe") owns the probe.
+- **Unavailable model.** An id the operator's `models.yml` does not register exits 1 with `Model "jev-router/jev/nonexistent" not found`; with the operator's `retry.fallbackChains` active, no fallback model answered either.
+- **Direct-provider override.** A seat `model` on a direct provider, such as `openai-codex/gpt-5.6-sol`, bypasses Jev: omp reported provider `openai-codex`, with no `retry_fallback_applied`.
+- **Legacy Claude/Codex.** A configuration with no `omp` seat is unchanged: this recipe adds no field, default, or profile, and the defaults stay as [contract](references/contract.md) ("Defaults: primary claude") lists them.
+
+Limitations:
+- The routed backend stays `unknown` for an OMP-through-Jev launch; [omp adapter](references/harnesses/omp.md) ("Through a router such as Jev, omp reports the requested alias") and [telemetry](references/telemetry.md) ("Provenance records three separate model facts") own why.
+- No review-independence claim is made for OMP-through-Jev seats; [code-review convergence](references/review-convergence.md) ("## Verification vote") owns the backend requirement for `review_policy.distinct_backends`.
+- The issue-to-ready-PR example is not demonstrated by this delivery; only read-probe launches ran.
+
 ## Init
 
 [contract](references/contract.md) owns init.
