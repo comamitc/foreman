@@ -186,6 +186,7 @@ never adds:
   #303 records it for the config field `boundary_pass`;
   #367 records it for the config field `review_policy.verify_voters`;
   #377 records it for the config field `review_policy.voters`;
+  #388 records it for the config field `review_policy.distinct_backends`;
   #294 records it for the config fields `triage.auto_accept_recommended` and
   `triage.pause_categories`, the label `foreman:needs-human`, and the marker
   kind `auto-answer`; #302 records it for the labels `foreman:risk-low`,
@@ -459,6 +460,11 @@ A seat's set `model` or `effort` is an explicitly requested setting.
 [code-review convergence](review-convergence.md) ("## Verification vote") owns what the council enables.
 [telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
 
+`review_policy.distinct_backends` is a boolean with default `false`.
+Precedence is invocation, then `FOREMAN_REVIEW_POLICY_DISTINCT_BACKENDS`, then `.foreman.json`, then the default; an invalid value is called out and falls through.
+[code-review convergence](review-convergence.md) ("## Verification vote") owns what `true` enables; `false` enables nothing.
+[telemetry.md](telemetry.md) ("Write the ledger row directly.") owns its ledger record.
+
 `boundary_pass` is a boolean with default `false`.
 Precedence is invocation, then `FOREMAN_BOUNDARY_PASS`, then `.foreman.json`,
 then the default; an invalid value is called out and falls through.
@@ -512,9 +518,9 @@ run_wall_timeout_min 360;
 worker_timeout_min 60; ci_timeout_min 45; unsafe_autonomy false;
 review_policy block_threshold medium, min_confidence 0.70,
 max_review_fix_rounds 3, surface_recurrence_rounds 3,
-residual_effect_approval false, verify_voters 0, voters []; boundary_pass false; triage.auto_accept_recommended false, triage.pause_categories the default list.
+residual_effect_approval false, verify_voters 0, voters [], distinct_backends false; boundary_pass false; triage.auto_accept_recommended false, triage.pause_categories the default list.
 Timeouts must be positive; retry counts nonnegative integers;
-unsafe_autonomy boolean; residual_effect_approval boolean; boundary_pass boolean; voters a list of seat objects; triage.auto_accept_recommended boolean. Review threshold
+unsafe_autonomy boolean; residual_effect_approval boolean; boundary_pass boolean; voters a list of seat objects; distinct_backends boolean; triage.auto_accept_recommended boolean. Review threshold
 must be critical/high/medium/low,
 confidence from 0 through 1, max rounds a positive integer, and recurrence rounds
 a nonnegative integer where 0 disables that early guard. Null model/effort uses the harness default and is

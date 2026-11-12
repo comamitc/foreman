@@ -120,6 +120,12 @@
 
 **Council**: the seats that vote on one census. The rule owner is `references/contract.md` ("A non-empty `voters` is the council of the verification vote"). Rejected: a lens panel with a lead judge (#50).
 
+**Requested model**: the rule owner is `references/telemetry.md` ("Provenance records three separate model facts").
+
+**Reported model**: the rule owner is `references/telemetry.md` ("Provenance records three separate model facts").
+
+**Routed backend**: the rule owner is `references/telemetry.md` ("Provenance records three separate model facts").
+
 **Stable anchor**: a heading's exact text or a verbatim phrase of the target rule, named next to the owner-file link. Rejected: a line number.
 
 **Mode file**: a file under `references/modes/` that holds one mode's rules and states its trigger in its first paragraph. The coordinator loads it only when that trigger holds. Rejected: a station, a stage, or a file workers read directly.

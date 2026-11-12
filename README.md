@@ -162,6 +162,8 @@ acting through a human account looks like a person to this gate.
 
 `review_policy.voters`: [code-review convergence](references/review-convergence.md) ("## Verification vote") owns what its council does, and [contract](references/contract.md) ("`review_policy.voters` is a list of seat objects") owns the seat shape, its resolution, and its relationship to `verify_voters`.
 
+`review_policy.distinct_backends`: [code-review convergence](references/review-convergence.md) ("## Verification vote") owns what `true` requires, and [contract](references/contract.md) ("`review_policy.distinct_backends` is a boolean") owns its resolution.
+
 `boundary_pass` opts in to the boundary pass;
 [boundary pass](references/modes/boundary-pass.md) owns it, and
 [contract](references/contract.md) ("`boundary_pass` is a boolean") owns its resolution.

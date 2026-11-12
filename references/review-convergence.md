@@ -165,9 +165,18 @@ The coordinator launches one voter per seat of the council for that census. Each
 
 For each voted candidate, a voter returns `real` or `refute` and a reason that names the diff location or the rule it relied on. `real` means the candidate is real at the reviewed head and in scope for this change. A voter refutes a style-only, diagnostics-only, or cleanup-only candidate unless the pack's `## Rules that apply` quotes a repository rule that asks for that kind of change. [references/review.md](review.md) ("A verification voter uses") owns its result headings; under `## Votes` it writes one line per voted candidate: local ID, vote, reason.
 
-A voted candidate with more than N/2 `real` votes is partitioned under "## Effective policy". Any other voted candidate, a tie included, is `refuted-by-vote`: the census records it with each voter's vote and reason, it is advisory, it is never routed to fix, and it cannot by itself keep the delivery out of pre-merge. Voters add no round: "## Bounded rounds and recurrence" and "## Coordinator-evidence findings" count the census as they count a census without a vote, an evidence-only census included, however many voters ran.
+Once the vote is complete and, when it applies, the backend requirement below is met, a voted candidate with more than N/2 `real` votes is partitioned under "## Effective policy". Any other voted candidate, a tie included, is `refuted-by-vote`: the census records it with each voter's vote and reason, it is advisory, it is never routed to fix, and it cannot by itself keep the delivery out of pre-merge. Voters add no round: "## Bounded rounds and recurrence" and "## Coordinator-evidence findings" count the census as they count a census without a vote, an evidence-only census included, however many voters ran.
 
 A vote is incomplete when a voter's result is missing, malformed, or timed out, or does not give a `real` or `refute` vote with a reason on every voted candidate. The coordinator does not partition a census with an incomplete vote. It recovers that voter under [recovery](recovery.md) ("missing/weak/malformed result") or ("crash/timeout"), counts a missing vote neither for nor against a candidate, and never partitions with fewer than N complete votes. [templates/review.md](../templates/review.md) ("## Policy partition") records the vote, and [telemetry.md](telemetry.md) ("Attempt: the qualifier and nothing else.") owns each voter's attempt row.
+
+When [contract](contract.md) ("`review_policy.distinct_backends` is a boolean") resolves `true` and voters ran, a complete vote also meets a backend requirement before the coordinator partitions its census.
+The order is fixed: first a complete vote, then the backend requirement, then either the stop this paragraph states or the partition; a vote that never completes, including one whose seat is exhausted, never reaches the requirement.
+Its inputs are the number of distinct requested (harness, model) pairs of the council, where a `null` model counts as one value, and each voting seat's routed backend that [telemetry](telemetry.md) ("Provenance records three separate model facts") records.
+The requirement is unresolved when any voting seat's routed backend is `unknown`; otherwise it is met when the number of distinct evidenced routed backends across the votes is at least the number of distinct requested pairs, and unmet when it is not.
+The alias count and the distinct harness and model pair count never satisfy it.
+With an unresolved or unmet requirement, the coordinator does not partition that census: it publishes a `review-exhausted` blocker as [recovery](recovery.md) ("## Blocked overlays") states, with [blocker](../templates/blocker.md) ("# Delivery blocked"), naming each seat index with its requested model, reported model, and routed backend, and the resume conditions that "## Bounded rounds and recurrence" lists for a backend requirement; it adds `foreman:blocked`, keeps the stage label, and stops.
+On resume, the council votes that census again from its first seat, and the same order applies to that new vote.
+With `false`, nothing in this paragraph applies, and the vote, partition, and seat rules above and below are unchanged.
 
 A seat that [recovery](recovery.md) ("failed seat:") exhausts is review exhaustion. Besides the resume conditions that [recovery](recovery.md) ("Its published resume conditions are") lists, its blocker has one more: a launch probe of that seat's recipe that passes on a later invocation; running that probe is not a station rerun. On resume after a changed `review_policy.voters`, the new council votes that census from its first seat; otherwise a replacement voter on the exhausted seat completes the vote.
 
@@ -210,8 +219,9 @@ Resume a review-exhausted run only after observing one of:
 - a new candidate head containing a materially different repair;
 - an admitted spec or policy change that changes the partition;
 - an explicit trusted operator disposition for named finding lineages with a
-  reason, published in the next marked review/summary artifact; or
-- for an exhausted seat, the added resume condition that "## Verification vote" publishes.
+  reason, published in the next marked review/summary artifact;
+- for an exhausted seat, the added resume condition that "## Verification vote" publishes; or
+- for an unresolved or unmet backend requirement that "## Verification vote" states, a changed `review_policy.voters`, a changed `review_policy.distinct_backends`, or new backend evidence observed on a later invocation by that invocation's launch probe of a seat the blocker names; running that probe is not a station rerun.
 
 Repartition at the current policy. A disposition is audit evidence, never an
 implicit deletion. A new candidate head receives one fresh confirmation review;
